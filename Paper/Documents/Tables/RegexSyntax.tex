@@ -1,0 +1,34 @@
+\begin{tabular}{ |c|c|c|c| }
+    \hline
+    \textbf{Name} & \textbf{TRegex Semantics} & \textbf{Regex Syntax} & \textbf{TRegex Syntax} \\
+    \hline
+    Empty string & $\epsilon$ & $-$ & $-$ \\
+    \hline
+    Match & $a$ & $a$ & $a$ \\
+    \hline
+    Match any & $x$ & $.$ & $.$ \\
+    \hline
+    Order of operations & $-$ & $(a)$ & $(a)$ \\
+    \hline
+    Union & $\varphi_1\vee\varphi_2$ & $a|b$ & $a|b$ \\
+    & & $[ab]$ &  \\
+    \hline
+    Intersection & $\varphi_1\wedge\varphi_2$ & $-$ & $-$ \\
+    \hline
+    Concatenation & $\varphi_1\cdot\varphi_2$ & $ab$ & $a\&b$ \\
+    \hline
+    Absorbed concatenation & $\varphi_1\circ\varphi_2$ & $-$ & $a\verb|^|\&b$ \\
+    \hline
+    Guaranteed iteration & $\varphi^+$ & $a+$ & $a+$ \\
+    \hline
+    Absorbed guaranteed iteration & $\varphi^\oplus$ & $-$ & $a\verb|^|+$ \\
+    \hline
+    Iteration & $\varphi_1*$ & $a*$ & $a*$ \\
+    \hline
+    Absorbed iteration & $\varphi_1\ostar\varphi_2$ & $-$ & $a\verb|^|*$ \\
+    \hline
+    Interval & $\varphi_I$ & $-$ & $a[t_1;t_2[$ \\
+    \hline
+    Rename & $\theta(\varphi)$ & $-$ & $-$ \\
+    \hline
+\end{tabular}
