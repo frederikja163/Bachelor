@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimedRegex", "TimedRegex\TimedRegex.csproj", "{DFDBC7D2-4115-4D00-BD83-3C5050479082}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimedRegex.Test", "TimedRegex.Test\TimedRegex.Test.csproj", "{BA40180D-F2ED-4647-AE0E-DF3038FBB8A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VersionControl", "VersionControl", "{6E5F0C8B-BCA4-4BA6-851E-2CE3C7FD8F07}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		LICENSE = LICENSE
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFDBC7D2-4115-4D00-BD83-3C5050479082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFDBC7D2-4115-4D00-BD83-3C5050479082}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFDBC7D2-4115-4D00-BD83-3C5050479082}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFDBC7D2-4115-4D00-BD83-3C5050479082}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA40180D-F2ED-4647-AE0E-DF3038FBB8A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA40180D-F2ED-4647-AE0E-DF3038FBB8A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA40180D-F2ED-4647-AE0E-DF3038FBB8A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA40180D-F2ED-4647-AE0E-DF3038FBB8A9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
