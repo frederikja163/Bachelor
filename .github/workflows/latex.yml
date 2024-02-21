@@ -1,4 +1,4 @@
-name: .NET
+name: LaTex
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  compile:
     strategy:
       matrix:
         file: ["main.tex", "figures.tex"]
