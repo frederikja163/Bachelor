@@ -1,0 +1,25 @@
+? = optional
+* = 0 or more
+
+\begin{lstlisting}[language=XML]
+
+<nta>
+	<declaration>	?
+	<template> 	    *
+		<name>
+		<parameter>	    ?
+		<declaration> 	?
+		<location id> 	*
+			<name>	        ?
+			<label kind>	*
+			<urgent>	    ?
+			<committed>	    ?
+		<branchpoint>   *
+		<init>		    ?
+		<transition id>	*
+			<source ref>
+			<target ref>
+			<label kind> 	*
+	<system>
+
+\end{lstlisting}
