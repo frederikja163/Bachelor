@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "./"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/*.aux": true,
+			"**/*.bbl": true,
+			"**/*.bcf": true,
+			"**/*.blg": true,
+			"**/*.fdb_latexmk": true,
+			"**/*.fls": true,
+			"**/*.gz": true,
+			"**/*.run.xml": true,
+
+			".vs": true,
+			".idea": true,
+		},
+	}
+}
