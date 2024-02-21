@@ -1,0 +1,23 @@
+name: LaTeX
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  compile:
+    strategy:
+      matrix:
+        file: ["main.tex", "figures.tex"]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+      - name: Compile LaTeX document ${{ matrix.file }}
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: ${{ matrix.file }}
+          working_directory: Paper/
