@@ -9,6 +9,8 @@
 *.blg
 *.run.xml
 
-.idea
+.vscode/
+.idea/
+.vs/
 [Bb]in/
 [Oo]bj/

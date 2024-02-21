@@ -1,5 +1,0 @@
-TimedRegex
-guranteedIterator
-absorbedIteration
-absorbedGuranteedIterator
-absorbedConcatenation
