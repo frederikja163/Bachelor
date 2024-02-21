@@ -19,4 +19,4 @@ jobs:
       - name: Compile LaTeX document ${{ matrix.file }}
         uses: xu-cheng/latex-action@v2
         with:
-          root_file: ${{ matrix.file }}
+          root_file: Paper/${{ matrix.file }}
