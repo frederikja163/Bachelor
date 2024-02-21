@@ -1,0 +1,51 @@
+\scalebox{0.8}{\begin{tikzpicture}
+    \umlclass[x=0,y=0]{nta}{}{}
+    
+    %classes
+    \umlclass[x=0,y=-3]{template}{}{}
+    \umlclass[x=3,y=-3,alias=global decl]{declaration}{}{}
+    \umlclass[x=6,y=-3]{system}{}{} 
+    %relations
+    \umlcompo[attr2=0..*|,pos2=0.87]{nta}{template}
+    \umlcompo[geometry=|-|,attr1=1|,attr2=0..1|,pos1=0.25,pos2=2.75]{nta}{global decl}
+    \umlcompo[geometry=|-|,attr2=1|,pos2=2.75]{nta}{system}
+    
+    %classes
+    %\umlclass[x=-6,y=-6]{parameter}{}{}
+    %\umlclass[x=-3,y=-6]{branchpoint}{}{}
+    \umlclass[x=0,y=-6]{location}{id : string}{}
+    \umlclass[x=3,y=-6]{transition}{id : string}{}
+    \umlclass[x=6,y=-6,alias=local decl]{declaration}{}{}
+    \umlclass[x=9,y=-6,alias=temp_name]{name}{}{}
+    \umlclass[x=12,y=-6]{init}{}{}
+    \umlclass[x=15,y=-6]{parameter}{}{}
+    %relations
+    \umlcompo[attr1=1|,attr2=0..*|,pos2=0.87]{template}{location}
+    \umlVHVcompo[attr2=0..*|,pos2=2.75]{template}{transition}
+    \umlVHVcompo[attr2=0..1|,pos2=2.75]{template}{local decl}
+    \umlVHVcompo[attr2=1|,pos2=2.75]{template}{temp_name}
+    \umlVHVcompo[attr2=0..1|,pos2=2.75]{template}{init}
+    \umlVHVcompo[attr2=0..1|,pos2=2.75]{template}{parameter}
+    
+    %classes
+    \umlclass[x=0,y=-9,alias=l_name]{name}{}{}
+    \umlclass[x=-3,y=-9,alias=l_label]{label}{kind : string}{}
+    %\umlclass[x=-6,y=-9]{committed}{}{}
+    %\umlclass[x=-9,y=-9]{urgent}{}{}
+    %relations
+    \umlcompo[attr1=1|,attr2=1|,pos2=0.87]{location}{l_name}
+    \umlVHVcompo[attr2=0..*|,pos2=2.75]{location}{l_label}
+    %\umlVHVcompo[attr2=0..1|,pos2=2.75]{location}{committed}
+    %\umlVHVcompo[attr2=0..1|,pos2=2.75]{location}{urgent}
+    
+    %classes
+    \umlclass[x=3,y=-9]{source}{ref : string}{}
+    \umlclass[x=6,y=-9]{target}{ref : string}{}
+    \umlclass[x=9,y=-9,alias=t_label]{label}{kind : string}{}
+    %relations
+    \umlcompo[attr1=1|,attr2=1|,pos2=0.87]{transition}{source}
+    \umlVHVcompo[attr2=1|,pos2=2.75]{transition}{target}
+    \umlVHVcompo[attr2=0..1|,pos2=2.75]{transition}{t_label}
+    
+\end{tikzpicture}}
+
