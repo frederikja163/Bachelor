@@ -1,0 +1,42 @@
+
+CFG
+TimedRegex := Match
+
+\qquad	$\mid$ Parentheses
+
+Parentheses := (Match)
+
+\qquad	$\mid$ Parentheses Binary Match
+
+\qquad	$\mid$ Parentheses Unary
+
+Match := match Unary
+
+\qquad	$\mid$ match Interval
+
+\qquad    $\mid$ Match Binary match
+
+\qquad	$\mid$ match
+
+Interval := Bracket number ; number Bracket
+
+Bracket := [
+
+\qquad	$\mid$ ]
+
+Unary := iterator
+
+\qquad	$\mid$ guranteedIterator
+
+\qquad	$\mid$ absorbedIteration
+
+\qquad	$\mid$ absorbedGuranteedIterator
+
+Binary := union
+
+\qquad	$\mid$ concatenation
+
+\qquad	$\mid$ intersection
+
+\qquad	$\mid$ absorbedConcatenation
+
