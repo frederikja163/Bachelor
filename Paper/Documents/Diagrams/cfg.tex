@@ -29,9 +29,11 @@ Unary := iterator
 
 \qquad	$\mid$ guranteedIterator
 
-\qquad	$\mid$ absorbedIteration
+\qquad	$\mid$ AbsorbedIteration
 
-\qquad	$\mid$ absorbedGuranteedIterator
+\qquad	$\mid$ AbsorbedGuranteedIterator
+
+\qquad	$\mid$ Rename
 
 Binary := union
 
@@ -39,5 +41,16 @@ Binary := union
 
 \qquad	$\mid$ intersection
 
-\qquad	$\mid$ absorbedConcatenation
+\qquad	$\mid$ AbsorbedConcatenation
 
+AbsorbedIteration := iterator absorb 
+
+AbsorbedGuranteedIterator := guranteedIterator absorb 
+
+AbsorbedConcatenation := absorb concatenation
+
+Rename := @\{RenameSymbols\}
+
+RenameSymbols := match
+
+\qquad	$\mid$ match , RenameSymbols
