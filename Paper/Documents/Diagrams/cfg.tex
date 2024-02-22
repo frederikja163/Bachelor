@@ -5,7 +5,7 @@ TimedRegex := Match
 
 \qquad	$\mid$ Parentheses
 
-Parentheses := (Match)
+Parentheses := leftParentheses Match rightParentheses
 
 \qquad	$\mid$ Parentheses Binary Match
 
@@ -19,17 +19,19 @@ Match := match Unary
 
 \qquad	$\mid$ match
 
-Interval := Bracket number ; number Bracket
+Interval := Bracket number semiColon number Bracket
 
-Bracket := [
+Bracket := leftSquareBracket
 
-\qquad	$\mid$ ]
+\qquad	$\mid$ rightSquareBracket
 
 Unary := iterator
 
 \qquad	$\mid$ guranteedIterator
 
 \qquad	$\mid$ AbsorbedIteration
+
+AbsorbedIteration := iterator absorb 
 
 \qquad	$\mid$ AbsorbedGuranteedIterator
 
@@ -43,14 +45,12 @@ Binary := union
 
 \qquad	$\mid$ AbsorbedConcatenation
 
-AbsorbedIteration := iterator absorb 
-
 AbsorbedGuranteedIterator := guranteedIterator absorb 
 
 AbsorbedConcatenation := absorb concatenation
 
-Rename := @\{RenameSymbols\}
+Rename := at leftCurlyBrace RenameSymbols rightCurlyBrace
 
-RenameSymbols := match
+RenameSymbols := match match
 
-\qquad	$\mid$ match , RenameSymbols
+\qquad	$\mid$ match match comma RenameSymbols
