@@ -5,9 +5,11 @@
 *.pdf
 *.gz
 *.bbl
+*.bbl-SAVE-ERROR
 *.bcf
 *.blg
 *.run.xml
+*.synctex(busy)
 
 .vscode/
 .idea/
