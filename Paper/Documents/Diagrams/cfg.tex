@@ -31,8 +31,6 @@ Unary := iterator
 
 \qquad	$\mid$ AbsorbedIteration
 
-AbsorbedIteration := iterator absorb 
-
 \qquad	$\mid$ AbsorbedGuranteedIterator
 
 \qquad	$\mid$ Rename
@@ -48,6 +46,8 @@ Binary := union
 AbsorbedGuranteedIterator := guranteedIterator absorb 
 
 AbsorbedConcatenation := absorb concatenation
+
+AbsorbedIteration := iterator absorb 
 
 Rename := at leftCurlyBrace RenameSymbols rightCurlyBrace
 
