@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+    \umlsimpleclass{RegEx}
+    \umlsimpleclass[x=3]{AST}
+    \umlsimpleclass[x=6]{NTA}
+    \umlsimpleclass[x=6,y=-2]{Flat TA}
+    \umlsimpleclass[x=6,y=-4]{XML}
+
+    \umluniassoc{RegEx}{AST}
+    \umluniassoc{AST}{NTA}
+    \umluniassoc{NTA}{Flat TA}
+    \umluniassoc{Flat TA}{XML}
+\end{tikzpicture}
