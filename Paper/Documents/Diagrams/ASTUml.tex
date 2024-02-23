@@ -1,7 +1,27 @@
 \scalebox{0.8}{\begin{tikzpicture}
+    \umlclass[anchor=north,x=0,y=0]{AST}{}{}
 
+    %interfaces
+    \umlclass[anchor=north,x=0,y=-3]{IAstNode}{}{}
 
+    %classes
+    \umlclass[anchor=north,x=0,y=-6]{Binary}{}{}
+    \umlclass[anchor=north,x=3,y=-6]{Unary}{}{}
+    \umlclass[anchor=north,x=6,y=-6]{match}{}{}
+    \umlclass[anchor=north,x=3,y=-9]{Interval}{numbers}{}
+    \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols}{}
 
+    %transitions
+    \umlcompo[]{AST}{IAstNode}
 
+    \umlVHVinherit[]{Unary}{IAstNode}
+    \umlVHVinherit[]{Binary}{IAstNode}
+    \umlVHVinherit[]{match}{IAstNode}
 
-\end\end{tikzpicture}}
+    \umlaggreg[]{Binary}{IAstNode}
+    \umlaggreg[anchor2=west,anchor1=south,geometry=-|,arm1=10cm]{Unary}{IAstNode}
+
+    \umlVHVinherit[]{Interval}{Unary}
+    \umlVHVinherit[]{Rename}{Unary}
+
+\end{tikzpicture}}
