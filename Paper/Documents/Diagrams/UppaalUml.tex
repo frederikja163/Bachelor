@@ -9,8 +9,8 @@
         %classes
         %\umlclass[x=-6,y=-6]{parameter}{}{}
         %\umlclass[x=-3,y=-6]{branchpoint}{}{}
-        \umlclass[anchor=north,width=25ex,x=0,y=-9]{location}{id : string\\name : string\\label : (string, string)}{}
-        \umlclass[anchor=north,width=25ex,x=6,y=-9]{transition}{id : string\\source : string\\target : string\\label : (string, string)}{}
+        \umlclass[anchor=north,width=25ex,x=0,y=-9]{location}{id : string\\name : string\\label : List$<$(string, string)$>$}{}
+        \umlclass[anchor=north,width=25ex,x=6,y=-9]{transition}{id : string\\source : string\\target : string\\label : List$<$(string, string)$>$}{}
         %\umlclass[x=15,y=-6]{parameter}{}{}
         %relations
         \umlcompo[attr1=1|,attr2=0..*|,pos1=0.15,pos2=0.9]{template}{location}
