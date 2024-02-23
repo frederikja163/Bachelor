@@ -1,6 +1,6 @@
 namespace TimedRegex;
 
-public class XmlGenerator
+public class Template
 {
     
 }
