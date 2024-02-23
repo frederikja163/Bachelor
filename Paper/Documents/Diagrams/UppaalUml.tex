@@ -1,16 +1,16 @@
 \scalebox{0.8}{\begin{tikzpicture}
-        \umlclass[anchor=north,width=25ex,x=0,y=0]{nta}{declaration : string\\system : string}{}
+        \umlclass[anchor=north,width=31ex,x=0,y=0]{nta}{declaration : string\\system : string}{}
 
         %classes
-        \umlclass[anchor=north,width=25ex,x=0,y=-4.3]{template}{declaration : string\\name : string\\ init : string}{}
+        \umlclass[anchor=north,width=31ex,x=0,y=-4.3]{template}{declaration : string\\name : string\\ init : string}{}
         %relations
         \umlcompo[attr1=1|,attr2=0..*|,pos2=0.87]{nta}{template}
 
         %classes
         %\umlclass[x=-6,y=-6]{parameter}{}{}
         %\umlclass[x=-3,y=-6]{branchpoint}{}{}
-        \umlclass[anchor=north,width=25ex,x=0,y=-9]{location}{id : string\\name : string\\label : List$<$(string, string)$>$}{}
-        \umlclass[anchor=north,width=25ex,x=6,y=-9]{transition}{id : string\\source : string\\target : string\\label : List$<$(string, string)$>$}{}
+        \umlclass[anchor=north,width=31ex,x=0,y=-9]{location}{id : string\\name : string\\label : List$<$(string, string)$>$}{}
+        \umlclass[anchor=north,width=31ex,x=6,y=-9]{transition}{id : string\\source : string\\target : string\\label : List$<$(string, string)$>$}{}
         %\umlclass[x=15,y=-6]{parameter}{}{}
         %relations
         \umlcompo[attr1=1|,attr2=0..*|,pos1=0.15,pos2=0.9]{template}{location}
