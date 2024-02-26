@@ -12,7 +12,7 @@
     \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols}{}
 
     %transitions
-    \umlcompo[attr1=1..*|,attr2=1|]{AST}{IAstNode}
+    \umlcompo[attr1=0..*|,attr2=1|]{AST}{IAstNode}
 
     \umlVHVinherit[attr1=1|,anchor2=-60]{Unary}{IAstNode}
     \umlVHVinherit[anchor2=-60, anchor1=60]{Binary}{IAstNode}
