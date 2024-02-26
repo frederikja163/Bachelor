@@ -12,16 +12,19 @@
     \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols}{}
 
     %transitions
-    \umlcompo[]{AST}{IAstNode}
+    \umlcompo[attr1=1..*|,attr2=1|]{AST}{IAstNode}
 
-    \umlVHVinherit[]{Unary}{IAstNode}
-    \umlVHVinherit[]{Binary}{IAstNode}
-    \umlVHVinherit[]{match}{IAstNode}
+    \umlVHVinherit[attr1=1|,anchor2=-60]{Unary}{IAstNode}
+    \umlVHVinherit[anchor2=-60, anchor1=60]{Binary}{IAstNode}
+    \umlVHVinherit[anchor2=-60]{match}{IAstNode}
 
     \umlaggreg[]{Binary}{IAstNode}
-    \umlaggreg[anchor2=west,anchor1=south,geometry=-|,arm1=10cm]{Unary}{IAstNode}
+    %\umlaggreg[anchor2=west,anchor1=south,geometry=-|,arm1=10cm]{Unary}{IAstNode}
 
     \umlVHVinherit[]{Interval}{Unary}
     \umlVHVinherit[]{Rename}{Unary}
+
+    \draw [tikzuml aggregation style] (Unary.-120)-- ++(0cm,-1cm)node[pos=0.2, left]{1} -- ++(-4.5cm,0cm) |- (IAstNode.west)node[pos=0.8, below]{0..*};
+    %\draw [tikzuml aggregation style] (Binary.south)-- ++(0cm,-1cm)node[pos=0.2, left]{1} -- ++(-1.881cm,0cm) |- (IAstNode.west);
 
 \end{tikzpicture}}
