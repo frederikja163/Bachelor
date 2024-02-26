@@ -7,9 +7,9 @@
     %classes
     \umlclass[anchor=north,x=0,y=-6]{Binary}{}{}
     \umlclass[anchor=north,x=3,y=-6]{Unary}{}{}
-    \umlclass[anchor=north,x=6,y=-6]{match}{token}{}
-    \umlclass[anchor=north,x=3,y=-9]{Interval}{numbers}{}
-    \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols}{}
+    \umlclass[anchor=north,x=6,y=-6]{match}{token: string}{}
+    \umlclass[anchor=north,x=1,y=-9]{Interval}{startInterval: int\\endInterval: int\\startInclusive: bool\\endInclusive: bool}{}
+    \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols: symbolReplace[]}{}
 
     %transitions
     \umlcompo[attr1=0..*|,attr2=1|]{AST}{IAstNode}
