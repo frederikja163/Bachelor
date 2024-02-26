@@ -2,10 +2,11 @@ namespace TimedRegex;
 
 internal sealed class Config
 {
-    private readonly string _tRegex;
 
     internal Config(string[] args)
     {
-        _tRegex = args[^1];
+        TimeRegex = args[^1];
     }
+    
+    internal string TimeRegex { get; }
 }
