@@ -1,8 +1,15 @@
 namespace TimedRegex;
 
-public class Location(string id, string name, List<(string, string)> labels)
+public class Location
 {
-    public string Id { get; set; } = id;
-    public string Name { get; set; } = name;
-    public List<(string, string)> Labels { get; set; } = labels;
+    public Location(string id, string name, List<(string, string)> labels)
+    {
+        Id = id;
+        Name = name;
+        Labels = labels;
+    }
+
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public List<(string, string)> Labels { get; set; }
 }
