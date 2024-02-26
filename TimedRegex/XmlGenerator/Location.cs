@@ -4,9 +4,9 @@ internal sealed class Location
 {
     private readonly string _id = "";
     private readonly string _name = "";
-    private readonly List<(string kind, string label)> _labels = [];
+    private readonly List<Label> _labels = [];
     
-    internal Location(string id, string name, List<(string, string)> labels)
+    internal Location(string id, string name, List<Label> labels)
     {
         _id = id;
         _name = name;
