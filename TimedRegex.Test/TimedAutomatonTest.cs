@@ -1,10 +1,11 @@
+using NUnit.Framework;
 using TimedRegex.Intermediate;
 
 namespace TimedRegex.Test;
 
 public sealed class TimedAutomatonTest
 {
-    private TimedAutomaton CreateRecursiveAutomaton()
+    private static TimedAutomaton CreateRecursiveAutomaton()
     {
         var final1 = new Location();
         var final2 = new Location();
@@ -27,7 +28,7 @@ public sealed class TimedAutomatonTest
             new Location[] { automaton1, automaton2, init }, init);
     }
 
-    private TimedAutomaton CreateFlatAutomaton()
+    private static TimedAutomaton CreateFlatAutomaton()
     {
         var final1 = new Location();
         var final2 = new Location();
@@ -44,5 +45,17 @@ public sealed class TimedAutomatonTest
         var orEdge2 = new Edge(init, loc2, null);
 
         return new TimedAutomaton(0, new Edge[]{recognizeEdge1, recognizeEdge2, orEdge1, orEdge2}, new Location[] { init, final1, final2, loc1, loc2 }, init);
+    }
+
+    [Test]
+    public void IsFlatTest()
+    {
+        Assert.True(CreateFlatAutomaton().IsFlat());
+    }
+
+    [Test]
+    public void IsNotFlatTest()
+    {
+        Assert.False(CreateRecursiveAutomaton().IsFlat());
     }
 }
