@@ -1,58 +1,39 @@
 
 \textbf{CFG}
 
-TimedRegex := Match
+TimedRegex := Rename
 
-\qquad	$\mid$ Parentheses
+\qquad	$\mid$ $\epsilon$
 
-Parentheses := parenthesisStart Match parenthesisEnd
+Rename := Rename renameStart parenthesisStart RenameSymbols parenthesisEnd
 
-\qquad	$\mid$ Parentheses Binary Match
+\qquad $\mid$ Binary
 
-\qquad	$\mid$ Parentheses Unary
+RenameSymbols := match match comma RenameSymbols
 
-\qquad $\mid$ Parentheses Interval
+\qquad $\mid$ match match comma match match
 
-Match := match Unary
+Unary := Unary*
 
-\qquad	$\mid$ match Interval
+\qquad $\mid$ Unary* absorb
 
-\qquad    $\mid$ Match Binary match
+\qquad $\mid$ Unary intervalStart number intervalSeperator number intervalEnd
 
-\qquad	$\mid$ match
+\qquad $\mid$ Unary guranteedIterator
 
-Interval := IntervalBoundry number intervalSeperator number IntervalBoundry
+\qquad $\mid$ Unary iterator
 
-IntervalBoundry := intervalLeft
+\qquad $\mid$ Match
 
-\qquad	$\mid$ intervalRight
+Binary := Binary union Unary
 
-Unary := iterator
+\qquad $\mid$ Binary concatenation Unary
 
-\qquad	$\mid$ guranteedIterator
+\qquad $\mid$ Unary
 
-\qquad	$\mid$ AbsorbedIteration
+Match := parenthesisStart Rename parenthesisEnd
 
-\qquad	$\mid$ AbsorbedGuranteedIterator
+\qquad $\mid$ match
 
-\qquad	$\mid$ Rename
+\qquad $\mid$ matchAny
 
-Binary := union
-
-\qquad	$\mid$ concatenation
-
-\qquad	$\mid$ intersection
-
-\qquad	$\mid$ AbsorbedConcatenation
-
-AbsorbedGuranteedIterator := guranteedIterator absorb 
-
-AbsorbedConcatenation := absorb concatenation
-
-AbsorbedIteration := iterator absorb 
-
-Rename := renameStart leftCurlyBrace RenameSymbols rightCurlyBrace
-
-RenameSymbols := match match
-
-\qquad	$\mid$ match match comma RenameSymbols
