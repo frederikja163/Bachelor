@@ -1,15 +1,15 @@
-namespace TimedRegex;
+namespace TimedRegex.XmlGenerator;
 
-public class NTA
+internal sealed class NTA
 {
-    public NTA(string declaration, string system, List<Template> templates)
+    private readonly string _declaration = "";
+    private readonly string _system = "";
+    private readonly List<Template> _templates = [];
+    
+    internal NTA(string declaration, string system, List<Template> templates)
     {
-        Declaration = declaration;
-        System = system;
-        Templates = templates;
+        _declaration = declaration;
+        _system = system;
+        _templates = templates;
     }
-
-    public string Declaration { get; set; }
-    public string System { get; set; }
-    public List<Template> Templates { get; set; }
 }

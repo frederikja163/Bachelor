@@ -1,15 +1,15 @@
-namespace TimedRegex;
+namespace TimedRegex.XmlGenerator;
 
-public class Location
+internal sealed class Location
 {
-    public Location(string id, string name, List<(string, string)> labels)
+    private readonly string _id = "";
+    private readonly string _name = "";
+    private readonly List<(string kind, string label)> _labels = [];
+    
+    internal Location(string id, string name, List<(string, string)> labels)
     {
-        Id = id;
-        Name = name;
-        Labels = labels;
+        _id = id;
+        _name = name;
+        _labels = labels;
     }
-
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public List<(string, string)> Labels { get; set; }
 }

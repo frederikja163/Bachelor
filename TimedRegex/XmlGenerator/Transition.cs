@@ -1,17 +1,17 @@
-namespace TimedRegex;
+namespace TimedRegex.XmlGenerator;
 
-public class Transition
+internal sealed class Transition
 {
-    public Transition(string id, string source, string target, List<(string Kind, string Label)> labels)
+    private readonly string _id = "";
+    private readonly string _source = "";
+    private readonly string _target = "";
+    private readonly List<(string kind, string label)> _labels = [];
+    
+    internal Transition(string id, string source, string target, List<(string Kind, string Label)> labels)
     {
-        Id = id;
-        Source = source;
-        Target = target;
-        Labels = labels;
+        _id = id;
+        _source = source;
+        _target = target;
+        _labels = labels;
     }
-
-    public string Id { get; set; }
-    public string Source { get; set; }
-    public string Target { get; set; }
-    public List<(string Kind, string Label)> Labels { get; set; }
 }

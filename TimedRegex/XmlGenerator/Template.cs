@@ -1,20 +1,19 @@
-namespace TimedRegex;
+namespace TimedRegex.XmlGenerator;
 
-public class Template
+internal sealed class Template
 {
-    public Template(string declaration, string name, string init, List<Location> locations, List<Transition> transitions)
+    private readonly string _declaration = "";
+    private readonly string _name = "";
+    private readonly string _init = "";
+    private readonly List<Location> _locations = [];
+    private readonly List<Transition> _transitions = [];
+    
+    internal Template(string declaration, string name, string init, List<Location> locations, List<Transition> transitions)
     {
-        Declaration = declaration;
-        this.name = name;
-        this.init = init;
-        Locations = locations;
-        Transitions = transitions;
+        _declaration = declaration;
+        _name = name;
+        _init = init;
+        _locations = locations;
+        _transitions = transitions;
     }
-
-    public string Declaration { get; set; }
-    public string name { get; set; }
-    // init must be set to id that exists.
-    public string init { get; set; }
-    public List<Location> Locations { get; set; }
-    public List<Transition> Transitions { get; set; }
 }
