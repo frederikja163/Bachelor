@@ -19,4 +19,21 @@ Unary := Unary*
 
 \qquad $\mid$ Unary intervalStart number intervalSeperator number intervalEnd
 
-\qquad $\mid$ Unary 
+\qquad $\mid$ Unary guranteedIterator
+
+\qquad $\mid$ Unary iterator
+
+\qquad $\mid$ Match
+
+Binary := Binary union Unary
+
+\qquad $\mid$ Binary concatenation Unary
+
+\qquad $\mid$ Unary
+
+Match := parenthesisStart Rename parenthesisEnd
+
+\qquad $\mid$ match
+
+\qquad $\mid$ matchAny
+
