@@ -1,4 +1,4 @@
-namespace TimedRegex.XmlGenerator;
+namespace TimedRegex.Generators.Xml;
 
 internal sealed class Location
 {
