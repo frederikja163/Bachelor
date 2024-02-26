@@ -14,11 +14,11 @@
     %transitions
     \umlcompo[attr1=0..*|,attr2=1|]{AST}{IAstNode}
 
-    \umlVHVinherit[attr1=1|,anchor2=-60]{Unary}{IAstNode}
+    \umlVHVinherit[anchor2=-60]{Unary}{IAstNode}
     \umlVHVinherit[anchor2=-60, anchor1=60]{Binary}{IAstNode}
     \umlVHVinherit[anchor2=-60]{match}{IAstNode}
 
-    \umlaggreg[]{Binary}{IAstNode}
+    \umlaggreg[attr1=1|,attr2=2|]{Binary}{IAstNode}
     %\umlaggreg[anchor2=west,anchor1=south,geometry=-|,arm1=10cm]{Unary}{IAstNode}
 
     \umlVHVinherit[]{Interval}{Unary}
