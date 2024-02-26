@@ -7,14 +7,14 @@
     %classes
     \umlclass[anchor=north,x=0,y=-6]{Binary}{}{}
     \umlclass[anchor=north,x=3,y=-6]{Unary}{}{}
-    \umlclass[anchor=north,x=6,y=-6]{match}{}{}
+    \umlclass[anchor=north,x=6,y=-6]{match}{token}{}
     \umlclass[anchor=north,x=3,y=-9]{Interval}{numbers}{}
     \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols}{}
 
     %transitions
     \umlcompo[attr1=0..*|,attr2=1|]{AST}{IAstNode}
 
-    \umlVHVinherit[anchor2=-60]{Unary}{IAstNode}
+    \umlVHVinherit[anchor2=-60,arm1=1.42cm]{Unary}{IAstNode}
     \umlVHVinherit[anchor2=-60, anchor1=60]{Binary}{IAstNode}
     \umlVHVinherit[anchor2=-60]{match}{IAstNode}
 
