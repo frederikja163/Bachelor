@@ -7,15 +7,30 @@ internal sealed class TimedAutomaton
 
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
-    private readonly Dictionary<int, Location> _allLocations;
+    private readonly Dictionary<int, Location> _locations;
     private Location? _initialLocation;
 
     internal TimedAutomaton()
     {
         _clocks = new Dictionary<int, Clock>();
         _edges = new Dictionary<int, Edge>();
-        _allLocations = new Dictionary<int, Location>();
+        _locations = new Dictionary<int, Location>();
         _initialLocation = null;
+    }
+
+    internal IEnumerable<Clock> GetClocks()
+    {
+        return _clocks.Values;
+    }
+
+    internal IEnumerable<Edge> GetEdges()
+    {
+        return _edges.Values;
+    }
+
+    internal IEnumerable<Location> GetLocations()
+    {
+        return _locations.Values;
     }
 
     internal Clock AddClock()
@@ -36,7 +51,7 @@ internal sealed class TimedAutomaton
             _initialLocation = location;
         }
         
-        _allLocations.Add(location.Id, location);
+        _locations.Add(location.Id, location);
 
         return location;
     }

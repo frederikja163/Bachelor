@@ -9,6 +9,9 @@ public sealed class TimedAutomatonTest
     {
         TimedAutomaton timedAutomaton = new TimedAutomaton();
 
+        timedAutomaton.AddClock();
+        timedAutomaton.AddClock();
+
         Location final1 = timedAutomaton.AddLocation(true);
         Location final2 = timedAutomaton.AddLocation(true);
 
@@ -30,11 +33,15 @@ public sealed class TimedAutomatonTest
     public void CreatedIdsTest()
     {
         TimedAutomaton automaton = CreateAutomaton();
+        
+        Assert.That(automaton.GetEdges().Select(e => e.Id).Max(), Is.EqualTo(9));
     }
     
     [Test]
     public void CreatedClocksTest()
     {
         TimedAutomaton automaton = CreateAutomaton();
+        
+        Assert.That(automaton.GetClocks().Select(c => c.Id).Max(), Is.EqualTo(2));
     }
 }

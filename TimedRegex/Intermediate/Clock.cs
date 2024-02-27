@@ -7,5 +7,5 @@ internal sealed class Clock
         Id = id;
     }
     
-    public int Id { get; }
+    internal int Id { get; }
 }

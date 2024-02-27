@@ -2,13 +2,12 @@ namespace TimedRegex.Intermediate;
 
 internal sealed class Location
 {
-    private readonly bool _isFinal;
-
     internal Location(int id, bool isFinal)
     {
         Id = id;
-        _isFinal = isFinal;
+        IsFinal = isFinal;
     }
     
-    public int Id { get; }
+    internal int Id { get; }
+    internal bool IsFinal { get; }
 }
