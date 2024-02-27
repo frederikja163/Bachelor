@@ -2,7 +2,7 @@ namespace TimedRegex.Intermediate;
 
 internal sealed class Edge : IEquatable<Edge>
 {
-    private readonly Dictionary<int, Range> _guards;
+    private readonly Dictionary<Clock, Range> _clockRanges;
     private readonly HashSet<Clock> _clockResets;
 
     internal Edge(int id, Location from, Location to, char? symbol)
@@ -11,7 +11,7 @@ internal sealed class Edge : IEquatable<Edge>
         From = from;
         To = to;
         Symbol = symbol;
-        _guards = new Dictionary<int, Range>();
+        _clockRanges = new Dictionary<Clock, Range>();
         _clockResets = new HashSet<Clock>();
     }
     
@@ -20,11 +20,37 @@ internal sealed class Edge : IEquatable<Edge>
     private Location To { get; }
     private char? Symbol { get; }
 
+    internal void AddClockReset(Clock clock)
+    {
+        _clockResets.Add(clock);
+    }
+
+    internal IEnumerable<Clock> GetClockResets()
+    {
+        foreach (Clock clockReset in _clockResets)
+        {
+            yield return clockReset;
+        }
+    }
+
+    internal void AddClockRange(Clock clock, Range range)
+    {
+        _clockRanges.Add(clock, range);
+    }
+
+    internal IEnumerable<(Clock, Range)> GetClockRanges()
+    {
+        foreach ((Clock clock, Range range) in _clockRanges)
+        {
+            yield return (clock, range);
+        }
+    }
+
     public bool Equals(Edge? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return _guards.Equals(other._guards) && _clockResets.Equals(other._clockResets) && Id == other.Id && From.Equals(other.From) && To.Equals(other.To) && Symbol == other.Symbol;
+        return _clockRanges.Equals(other._clockRanges) && _clockResets.Equals(other._clockResets) && Id == other.Id && From.Equals(other.From) && To.Equals(other.To) && Symbol == other.Symbol;
     }
 
     public override bool Equals(object? obj)
@@ -34,6 +60,6 @@ internal sealed class Edge : IEquatable<Edge>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_guards, _clockResets, Id, From, To, Symbol);
+        return HashCode.Combine(_clockRanges, _clockResets, Id, From, To, Symbol);
     }
 }
