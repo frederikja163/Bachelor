@@ -1,30 +1,43 @@
 namespace TimedRegex.Intermediate;
 
-internal sealed class TimedAutomaton : Location
+internal sealed class TimedAutomaton
 {
-    private readonly int _clockCount;
-    private readonly Edge[] _edges;
-    private readonly Location[] _allLocations;
-    private readonly Location _initialState;
+    internal static int IdCount { get; private set; }
 
-    internal TimedAutomaton(int clockCount, Edge[] edges, IEnumerable<Location> allLocations, Location initialState)
+    private readonly Dictionary<int, Clock> _clocks;
+    private readonly Dictionary<int, Edge> _edges;
+    private readonly Dictionary<int, Location> _allLocations;
+    private Location? _initialLocation;
+
+    internal TimedAutomaton()
     {
-        _clockCount = clockCount;
-        _edges = edges;
-        _allLocations = allLocations.ToArray();
-        _initialState = initialState;
+        _clocks = new Dictionary<int, Clock>();
+        _edges = new Dictionary<int, Edge>();
+        _allLocations = new Dictionary<int, Location>();
+        _initialLocation = null;
     }
 
-    internal bool IsFlat()
+    internal Location AddLocation(bool final = false, bool newInitial = false)
     {
-        foreach (Location location in _allLocations)
+        Location location = new Location(this, CreateId(), final);
+        
+        if (newInitial)
         {
-            if (location is TimedAutomaton)
-            {
-                return false;
-            }
+            _initialLocation = location;
         }
 
-        return true;
+        return location;
+    }
+
+    internal Edge AddEdge(Location from, Location to, char? symbol)
+    {
+        Edge edge = new Edge(this, CreateId(), from, to, symbol);
+        
+        return edge;
+    }
+    
+    private static int CreateId()
+    {
+        return IdCount++;
     }
 }
