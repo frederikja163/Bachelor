@@ -13,4 +13,24 @@ internal sealed class XmlGenerator : IGenerator
     {
         throw new NotImplementedException();
     }
+
+    private void PopulateNta(TimedAutomaton automaton)
+    {
+        throw new NotImplementedException();
+    }
+    
+    private void PopulateTemplate(TimedAutomaton automaton)
+    {
+        throw new NotImplementedException();
+    }
+    
+    private void PopulateLocation(TimedAutomaton automaton)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void PopulateTransition(TimedAutomaton automaton)
+    {
+        throw new NotImplementedException();
+    }
 }
