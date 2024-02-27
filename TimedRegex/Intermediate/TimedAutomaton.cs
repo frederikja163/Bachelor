@@ -10,6 +10,14 @@ internal sealed class TimedAutomaton
     private readonly Dictionary<int, Location> _locations;
     private Location? _initialLocation;
 
+    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right)
+    {
+        _clocks = left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary();
+        _edges = left._edges.UnionBy(right._edges, kvp => kvp.Key).ToDictionary();
+        _locations = left._locations.UnionBy(right._locations, kvp => kvp.Key).ToDictionary();
+        _initialLocation = left._initialLocation ?? right._initialLocation;
+    }
+    
     internal TimedAutomaton()
     {
         _clocks = new Dictionary<int, Clock>();
