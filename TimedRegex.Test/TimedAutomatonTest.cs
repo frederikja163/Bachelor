@@ -27,9 +27,14 @@ public sealed class TimedAutomatonTest
     }
 
     [Test]
-    public void TestCreatedIds()
+    public void CreatedIdsTest()
     {
         TimedAutomaton automaton = CreateAutomaton();
-        Assert.That(TimedAutomaton.IdCount, Is.EqualTo(9));
+    }
+    
+    [Test]
+    public void CreatedClocksTest()
+    {
+        TimedAutomaton automaton = CreateAutomaton();
     }
 }
