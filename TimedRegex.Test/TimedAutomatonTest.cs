@@ -34,7 +34,8 @@ public sealed class TimedAutomatonTest
     {
         TimedAutomaton automaton = CreateAutomaton();
         
-        Assert.That(automaton.GetEdges().Select(e => e.Id).Max(), Is.EqualTo(9));
+        Assert.That(automaton.GetEdges().ToHashSet().Count(), Is.EqualTo(4));
+        Assert.That(automaton.GetLocations().ToHashSet().Count(), Is.EqualTo(5));
     }
     
     [Test]
@@ -42,6 +43,6 @@ public sealed class TimedAutomatonTest
     {
         TimedAutomaton automaton = CreateAutomaton();
         
-        Assert.That(automaton.GetClocks().Select(c => c.Id).Max(), Is.EqualTo(2));
+        Assert.That(automaton.GetClocks().ToHashSet().Count(), Is.EqualTo(2));
     }
 }
