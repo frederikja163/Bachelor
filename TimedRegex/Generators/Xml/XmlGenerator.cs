@@ -11,25 +11,30 @@ internal sealed class XmlGenerator : IGenerator
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
-        throw new NotImplementedException();
+        string declaration = "clock ";
+        string system = "system ";
+
+        NTA nta = new NTA(declaration, system, Enumerable.Empty<Template>());
+        
+        PopulateNta(nta, automaton);
     }
 
-    private void PopulateNta(TimedAutomaton automaton)
+    private void PopulateNta(NTA nta, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
     }
     
-    private void PopulateTemplate(TimedAutomaton automaton)
+    private void PopulateTemplate(Template template, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
     }
     
-    private void PopulateLocation(TimedAutomaton automaton)
+    private void PopulateLocation(Location location, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
     }
 
-    private void PopulateTransition(TimedAutomaton automaton)
+    private void PopulateTransition(Transition transition, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
     }
