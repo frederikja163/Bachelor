@@ -12,7 +12,7 @@
     \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols: symbolReplace[]}{}
 
     %transitions
-    \umlcompo[attr1=0..*|,attr2=1|]{AST}{IAstNode}
+    \umlcompo[attr1=1|,attr2=0..*|]{AST}{IAstNode}
 
     \umlVHVinherit[anchor2=-60,arm1=1.42cm]{Unary}{IAstNode}
     \umlVHVinherit[anchor2=-60, anchor1=60]{Binary}{IAstNode}
@@ -24,7 +24,7 @@
     \umlVHVinherit[]{Interval}{Unary}
     \umlVHVinherit[]{Rename}{Unary}
 
-    \draw [tikzuml aggregation style] (Unary.-120)-- ++(0cm,-1cm)node[pos=0.2, left]{1} -- ++(-4.5cm,0cm) |- (IAstNode.west)node[pos=0.8, below]{0..*};
+    \draw [tikzuml aggregation style] (Unary.-120)-- ++(0cm,-1cm)node[pos=0.2, left]{1} -- ++(-4.5cm,0cm) |- (IAstNode.west)node[pos=0.8, below]{1};
     %\draw [tikzuml aggregation style] (Binary.south)-- ++(0cm,-1cm)node[pos=0.2, left]{1} -- ++(-1.881cm,0cm) |- (IAstNode.west);
 
 \end{tikzpicture}}
