@@ -1,4 +1,4 @@
-﻿namespace TimedRegex.Parser
+﻿namespace TimedRegex.Parser;
 {
     internal class Rename
     {
