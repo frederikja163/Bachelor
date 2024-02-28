@@ -1,18 +1,15 @@
-﻿
-namespace TimedRegex.Parser
+﻿namespace TimedRegex.Parser;
+
+internal sealed class Binary : IAstNode
 {
-    internal class Binary : IAstNode
+    private readonly IAstNode _leftNode;
+    private readonly IAstNode _rightNode;
+
+    internal Binary(IAstNode leftNode, IAstNode rightNode)
     {
-        IAstNode? IAstNode.Parent => throw new NotImplementedException();
-
-        public bool Equals(IAstNode? other)
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerable<IAstNode> IAstNode.Children()
-        {
-            throw new NotImplementedException();
-        }
+        _leftNode = leftNode;
+        _rightNode = rightNode;
     }
+
+    public IAstNode? parent => throw new NotImplementedException();
 }

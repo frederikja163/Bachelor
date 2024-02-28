@@ -1,8 +1,13 @@
-﻿namespace TimedRegex.Parser
+﻿namespace TimedRegex.Parser;
+
+internal sealed class SymbolReplace
 {
-    internal class SymbolReplace
+    private readonly char oldSymbol;
+    private readonly char newSymbol;
+
+    internal SymbolReplace(char oldSymbol, char newSymbol)
     {
-        protected char oldSymbol { get; set; }
-        protected char newSymbol { get; set; }
+        _oldSymbol = oldSymbol;
+        _newSymbol = newSymbol;
     }
 }
