@@ -12,15 +12,30 @@ internal sealed class Tokenizer
         _lookAhead = new List<Token>();
     }
 
+    internal Token Current
+    {
+        get
+        {
+            EnsureLookAhead(0);
+            return _lookAhead[0];
+        }
+    }
+
     internal Token Peek(int n = 1)
     {
-        EnsureLookAhead(n);
-        return _lookAhead[n - 1];
+        if (!EnsureLookAhead(n))
+        {
+            throw new Exception("Reached end of input.");
+        }
+        return _lookAhead[n];
     }
 
     internal Token GetNext()
     {
-        EnsureLookAhead(1);
+        if (!EnsureLookAhead(0))
+        {
+            throw new Exception("Reached end of input.");
+        }
         Token token = _lookAhead[0];
         _lookAhead.RemoveAt(0);
         return token;
@@ -29,13 +44,17 @@ internal sealed class Tokenizer
     internal void Skip(int n = 1)
     {
         EnsureLookAhead(n);
-        _lookAhead.RemoveRange(0, n - 1);
+        _lookAhead.RemoveRange(0, n);
     }
 
-    private void EnsureLookAhead(int lookAhead)
+    private bool EnsureLookAhead(int lookAhead)
     {
-        while (lookAhead > _lookAhead.Count)
+        while (lookAhead >= _lookAhead.Count)
         {
+            if (_head >= _input.Length)
+            {
+                return false;
+            }
             Token token = _input[_head] switch
             {
                 char c when char.IsLetter(c) => new Token(_head, c, TokenType.Match),
@@ -58,6 +77,9 @@ internal sealed class Tokenizer
                 _ => throw new Exception($"Unrecognized token at {_head}: '{_input[_head]}'")
             };
             _lookAhead.Add(token);
+            _head += 1;
         }
+
+        return true;
     }
 }

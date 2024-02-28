@@ -18,5 +18,5 @@ internal enum TokenType
     LeftCurlyBrace,
     RightCurlyBrace,
     Comma,
-    Digit
+    Digit,
 }
