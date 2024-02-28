@@ -2,12 +2,12 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class Label
 {
-    private readonly string _kind;
-    private readonly string _label;
+    internal string Kind { get; }
+    internal string LabelString { get; }
 
-    internal Label(string kind, string label)
+    internal Label(string kind, string labelString)
     {
-        _kind = kind;
-        _label = label;
+        Kind = kind;
+        LabelString = labelString;
     }
 }

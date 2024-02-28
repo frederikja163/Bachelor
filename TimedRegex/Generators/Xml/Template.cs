@@ -2,18 +2,20 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class Template
 {
-    private readonly string _declaration;
-    private readonly string _name;
-    private readonly string _init;
-    private readonly Location[] _locations;
-    private readonly Transition[] _transitions;
+    internal string Declaration { get; }
+    internal string Name { get; }
+    internal string Init { get; }
+    internal Location[] Locations { get; }
+    internal Transition[] Transitions { get; }
+    
+    
     
     internal Template(string declaration, string name, string init, IEnumerable<Location> locations, IEnumerable<Transition> transitions)
     {
-        _declaration = declaration;
-        _name = name;
-        _init = init;
-        _locations = locations.ToArray();
-        _transitions = transitions.ToArray();
+        Declaration = declaration;
+        Name = name;
+        Init = init;
+        Locations = locations.ToArray();
+        Transitions = transitions.ToArray();
     }
 }
