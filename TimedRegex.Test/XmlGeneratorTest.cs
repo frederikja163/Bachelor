@@ -1,61 +1,27 @@
+using NUnit.Framework;
 using TimedRegex.Generators.Xml;
 using TimedRegex.Intermediate;
+using Location = TimedRegex.Generators.Xml.Location;
 
 namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
-    private static string GenerateXml(TimedAutomaton automaton)
+    private static NTA PopulateNta()
     {
-        NTA nta = new NTA("", "", []);
-        string output = "";
+        Location id0 = new Location("id0", "id0", Enumerable.Empty<Label>());
+        Location id1 = new Location("id1", "id1", Enumerable.Empty<Label>());
+        Location id2 = new Location("id2", "id2", Enumerable.Empty<Label>());
+        Location id3 = new Location("id3", "id3", Enumerable.Empty<Label>());
+        Location id4 = new Location("id4", "id4", Enumerable.Empty<Label>());
 
-        output += "<nta>\n" +
-                  "<declaration>" + nta.Declaration + "</declaration>\n";
+        Transition id5 = new Transition("id5", "id0", "id1", Enumerable.Empty<Label>());
+        Transition id6 = new Transition("id6", "id0", "id2", Enumerable.Empty<Label>());
+        Transition id7 = new Transition("id7", "id1", "id3", new []{new Label("guard","1 <= A < 5")});
+        Transition id8 = new Transition("id8", "id2", "id4", new []{new Label("guard","1 <= B < 3")});
+
+        Template ta1 = new Template("", "ta1", "id0", new[] { id0, id1, id2, id3, id4 }, new[] { id5, id6, id7, id8 });
         
-        foreach (var template in nta.Templates)
-        {
-            output += "<template>\n" +
-                      "<name>" + template.Name + "</name>\n";
-            
-            foreach (var location in template.Locations)
-            {
-                output += "<location id=\"" + location.Id + "\">\n";
-                if (!String.IsNullOrWhiteSpace(location.Name))
-                {
-                    output += "<name>" + location.Name + "</name>\n";
-                }
-
-                foreach (var label in location.Labels)
-                {
-                    output += "<label kind=\"" + label.Kind + "\">" + label.LabelString + "</label>\n";
-                }
-                
-                output += "</location>\n";
-            }
-
-            output += "<init ref=\"" + template.Init + "\"/>\n";
-
-            foreach (var transition in template.Transitions)
-            {
-                output += "<transition id=\"" + transition.Id + "\">\n" +
-                          "<source ref=\"" + transition.Source + "\">\n" +
-                          "<target ref=\"" + transition.Target + "\">\n";
-                
-                foreach (var label in transition.Labels)
-                {
-                    output += "<label kind=\"" + label.Kind + "\">" + label.LabelString + "</label>\n";
-                }
-                
-                output += "</transition>\n";
-            }
-
-            output += "</template>\n";
-        }
-
-        output += "<system>" + nta.System + "</system>\n";
-        output += "</nta>";
-        
-        return output;
+        return new NTA("clock a, b;", "system ta1", new []{ta1});
     }
 }
