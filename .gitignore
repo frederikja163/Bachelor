@@ -14,5 +14,6 @@
 .vscode/
 .idea/
 .vs/
+*.DotSettings.user
 [Bb]in/
 [Oo]bj/
