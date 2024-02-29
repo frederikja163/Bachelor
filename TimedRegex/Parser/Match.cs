@@ -8,5 +8,4 @@ internal sealed class Match :IAstNode
     {
         _token = token;
     }
-    public IAstNode? parent => throw new NotImplementedException();
 }
