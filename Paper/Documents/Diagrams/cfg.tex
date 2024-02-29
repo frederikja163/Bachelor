@@ -21,11 +21,15 @@ Match := match Unary
 
 \qquad	$\mid$ match
 
-Interval := IntervalBoundry number intervalSeperator number IntervalBoundry
+Interval := IntervalBoundry Number intervalSeperator Number IntervalBoundry
 
 IntervalBoundry := intervalLeft
 
 \qquad	$\mid$ intervalRight
+
+Number := Number digit
+
+\qquad	$\mid$ digit
 
 Unary := iterator
 
