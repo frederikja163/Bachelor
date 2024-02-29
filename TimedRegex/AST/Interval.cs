@@ -1,4 +1,4 @@
-﻿namespace TimedRegex.Parser;
+﻿namespace TimedRegex.AST;
 
 internal sealed class Interval : IUnary
 {
