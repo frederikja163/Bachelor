@@ -73,7 +73,8 @@ internal static class AutomatonGenerator
         throw new NotImplementedException();
     }
 
-    private static TimedAutomaton CreateMatchAutomaton(Match a){
+    private static TimedAutomaton CreateMatchAutomaton(Match a)
+    {
         throw new NotImplementedException();
     }
 
