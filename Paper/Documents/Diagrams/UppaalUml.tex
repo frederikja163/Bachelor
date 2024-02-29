@@ -9,8 +9,8 @@
         %classes
         %\umlclass[x=-6,y=-6]{parameter}{}{}
         %\umlclass[x=-3,y=-6]{branchpoint}{}{}
-        \umlclass[anchor=north,width=31ex,x=0,y=-9]{location}{id : string\\name : string\\label : List$<$(string, string)$>$}{}
-        \umlclass[anchor=north,width=31ex,x=6,y=-9]{transition}{id : string\\source : string\\target : string\\label : List$<$(string, string)$>$}{}
+        \umlclass[anchor=north,width=31ex,x=0,y=-9]{location}{id : string\\name : string}{}
+        \umlclass[anchor=north,width=31ex,x=6,y=-9]{transition}{id : string\\source : string\\target : string}{}
         %\umlclass[x=15,y=-6]{parameter}{}{}
         %relations
         \umlcompo[attr1=1|,attr2=0..*|,pos1=0.15,pos2=0.9]{template}{location}
@@ -18,9 +18,15 @@
         %\umlVHVcompo[attr2=0..1|,pos2=2.75]{template}{parameter}
 
         %classes
+        \umlclass[anchor=north,width=31ex,x=0,y=-14]{label}{kind : string\\ content : string}{}
+        %relations
+        \umlcompo[arg1=1,arg2=0..*,pos1=0.15,pos2=0.9]{location}{label}
+        \umlVHcompo[arg1=1,arg2=0..*,pos1=0.1,pos2=1.9]{transition}{label}
+
+        %classes
         %\umlclass[x=-6,y=-9]{committed}{}{}
         %\umlclass[x=-9,y=-9]{urgent}{}{}
-        %relations
+        %relationsde
         %\umlVHVcompo[attr2=0..1|,pos2=2.75]{location}{committed}
         %\umlVHVcompo[attr2=0..1|,pos2=2.75]{location}{urgent}
     \end{tikzpicture}}
