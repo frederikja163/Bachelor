@@ -1,8 +1,8 @@
 ﻿namespace TimedRegex.Parser;
 
-internal sealed class GuranteedIterator : IUnary
+internal sealed class GuaranteedIterator : IUnary
 {
-    public GuranteedIterator(IAstNode child)
+    public GuaranteedIterator(IAstNode child)
     {
         Child = child;
     }
