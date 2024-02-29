@@ -73,9 +73,16 @@ internal static class AutomatonGenerator
         throw new NotImplementedException();
     }
 
-    private static TimedAutomaton CreateMatchAutomaton(Match a)
+    private static TimedAutomaton CreateMatchAutomaton(Match match)
     {
-        throw new NotImplementedException();
+        TimedAutomaton ta = new TimedAutomaton();
+        
+        Location initial = ta.AddLocation(newInitial: true);
+        Location final = ta.AddLocation(true);
+
+        ta.AddEdge(initial, final, match.Token.Match);
+
+        return ta;
     }
 
     private static TimedAutomaton CreateRenameAutomaton(Rename a){
