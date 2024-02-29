@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Parser\" />
+      <Compile Remove="Parser\**" />
+      <EmbeddedResource Remove="Parser\**" />
+      <None Remove="Parser\**" />
     </ItemGroup>
 </Project>
