@@ -56,6 +56,19 @@ public sealed class TokenizerTests
             Assert.That(tokenizer.GetNext().CharacterIndex, Is.EqualTo(i));
         }
     }
+
+    [TestCase("<")]
+    [TestCase(">")]
+    [TestCase("$")]
+    [TestCase("^")]
+    [TestCase("!")]
+    [TestCase(" ")]
+    [TestCase("~")]
+    public void CannotParseInvalidTokens(string str)
+    {
+        Tokenizer tokenizer = new Tokenizer(str);
+        Assert.Throws<Exception>(() => tokenizer.GetNext());
+    }
     
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]
     public void PeekTest(string str, params int[] tokenTypes)
