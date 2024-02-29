@@ -33,11 +33,15 @@ Number := Number digit
 
 Binary := Binary union Unary
 
-\qquad $\mid$ Binary concatenation Unary
+\qquad $\mid$ Binary intersection Unary
 
 \qquad $\mid$ Unary
 
 Match := parenthesisStart Rename parenthesisEnd
+
+\qquad $\mid$ Match match
+
+\qquad $\mid$ Match matchAny
 
 \qquad $\mid$ match
 
