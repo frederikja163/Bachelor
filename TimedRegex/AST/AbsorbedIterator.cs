@@ -1,8 +1,8 @@
 ﻿namespace TimedRegex.AST;
 
-internal sealed class Absorb : IUnary
+internal sealed class AbsorbedIterator : IUnary
 {
-    public Absorb(IAstNode child)
+    public AbsorbedIterator(IAstNode child)
     {
         Child = child;
     }
