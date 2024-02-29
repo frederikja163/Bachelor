@@ -15,13 +15,15 @@ RenameSymbols := RenameSymbols comma match match
 
 Unary := Unary
 
-\qquad $\mid$ Unary absorb
-
 \qquad $\mid$ Unary intervalStart Number intervalSeperator Number intervalEnd
 
-\qquad $\mid$ Unary guranteedIterator
+\qquad $\mid$ Unary guaranteedIterator
+
+\qquad $\mid$ Unary guaranteedIterator absorb
 
 \qquad $\mid$ Unary iterator
+
+\qquad $\mid$ Unary iterator absorb
 
 \qquad $\mid$ Match
 
