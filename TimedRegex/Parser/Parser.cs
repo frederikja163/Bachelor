@@ -1,59 +1,109 @@
-﻿using TimedRegex.AST;
+﻿using System.Net.NetworkInformation;
+using TimedRegex.AST;
 using TimedRegex.Parsing;
 
 namespace TimedRegex.Parser
 {
     internal static class Parser
     {
-        private static IAstNode ParseAbsorbedGuaranteedIterator()
+        /// <summary>
+        /// Parses a tokenizer into an AST.
+        /// </summary>
+        /// <param name="tokenizer"></param>
+        /// <returns>An IAstNode that is the head of an AST.</returns>
+        public static IAstNode Parse(Tokenizer tokenizer)
+        {
+            return ParseRename(tokenizer);
+        }
+        private static IAstNode ParseAbsorbedGuaranteedIterator(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseAbsorbedIterator()
+        private static IAstNode ParseAbsorbedIterator(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseConcatenation()
+        private static IAstNode ParseConcatenation(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseGuaranteedIterator()
+        private static IAstNode ParseGuaranteedIterator(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseInterval()
+        private static IAstNode ParseIntersection(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseIterator()
+        private static IAstNode ParseInterval(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseMatch(Token token) //Might require further development to support matchAny
-        {
-            return new Match(token.Match);
-        }
-
-        private static IAstNode ParseRename()
-        {
-            throw new NotImplementedException();
-        }
-        private static IAstNode ParseSymbolReplace()
+        private static IAstNode ParseIterator(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseUnion()
+        private static IAstNode ParseMatch(Tokenizer tokenizer) //Might require further development to support matchAny
+        {
+            if (tokenizer.Current.Type == TokenType.Match)
+            {
+                return new Match(tokenizer.Current.Match);
+            }
+            if ((tokenizer.Current.Type == TokenType.ParenthesisStart)|(tokenizer.Current.Type == TokenType.ParenthesisEnd))
+            {
+                tokenizer.GetNext();
+                return ParseRename(tokenizer);
+            }
+            throw new Exception("Invalid token \""+ tokenizer.Current.ToString() + "\"");
+        }
+
+        private static IAstNode ParseRename(Tokenizer tokenizer)
+        {
+            if (tokenizer.Current.Type == TokenType.RenameStart)
+            {
+                throw new NotImplementedException();
+            }
+            return ParseBinary(tokenizer);
+        }
+        private static IAstNode ParseSymbolReplace(Tokenizer tokenizer)
         {
             throw new NotImplementedException();
         }
 
+        private static IAstNode ParseUnion(Tokenizer tokenizer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IAstNode ParseUnary(Tokenizer tokenizer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static IAstNode ParseBinary(Tokenizer tokenizer)
+        {
+            switch (tokenizer.Current.Type)
+            {
+/*                case TokenType.Concatenation: 
+                    return ParseConcatenation(tokenizer);*/
+                    //Concatenation must be handled differently
+                case TokenType.Union:
+                    return ParseUnion(tokenizer);
+
+                case TokenType.Intersection:
+                    return ParseIntersection(tokenizer);
+
+                default:
+                    return ParseUnary(tokenizer);
+            }
+        }
 
     }
 }
