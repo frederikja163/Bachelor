@@ -1,11 +1,13 @@
-﻿namespace TimedRegex.AST;
+﻿using TimedRegex.Parsing;
+
+namespace TimedRegex.AST;
 
 internal sealed class Match :IAstNode
 {
-    private readonly string _token;
-
-    internal Match(string token)
+    internal Match(Token token)
     {
-        _token = token;
+        Token = token;
     }
+
+    public Token Token { get; }
 }
