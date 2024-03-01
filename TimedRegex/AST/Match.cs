@@ -2,9 +2,9 @@
 
 internal sealed class Match :IAstNode
 {
-    private readonly string _token;
+    private readonly char _token;
 
-    internal Match(string token)
+    internal Match(char token)
     {
         _token = token;
     }
