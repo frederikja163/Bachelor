@@ -50,7 +50,8 @@ namespace TimedRegex.Parser
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseMatch(Tokenizer tokenizer) //Might require further development to support matchAny
+         // TODO: Might require further development to support "matchAny".
+        private static IAstNode ParseMatch(Tokenizer tokenizer)
         {
             if (tokenizer.Current.Type == TokenType.Match)
             {
