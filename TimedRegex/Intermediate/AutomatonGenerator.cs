@@ -7,42 +7,20 @@ internal static class AutomatonGenerator
 {
     internal static TimedAutomaton CreateAutomaton(IAstNode root)
     {
-        switch (root)
+        return root switch
         {
-            case AbsorbedIterator absorbedIterator:
-                CreateAbsorbedIteratorAutomaton(absorbedIterator);
-                break;
-            case Concatenation concatenation:
-                CreateConcatenationAutomaton(concatenation);
-                break;
-            case GuaranteedIterator guaranteedIterator:
-                CreateGuaranteedIteratorAutomaton(guaranteedIterator);
-                break;
-            case AbsorbedGuaranteedIterator absorbedGuaranteedIterator:
-                CreateAbsorbedGuaranteedIteratorAutomaton(absorbedGuaranteedIterator);
-                break;
-            case Intersection intersection:
-                CreateIntersectionAutomaton(intersection);
-                break;
-            case Interval interval:
-                CreateIntervalAutomaton(interval);
-                break;
-            case Iterator iterator:
-                CreateIteratorAutomaton(iterator);
-                break;
-            case Match match:
-                CreateMatchAutomaton(match);
-                break;
-            case Rename rename:
-                CreateRenameAutomaton(rename);
-                break;
-            case Union union:
-                CreateUnionAutomaton(union);
-                break;
-            default:
-                throw new UnreachableException();
-        }
-        throw new NotImplementedException();
+            AbsorbedIterator absorbedIterator => CreateAbsorbedIteratorAutomaton(absorbedIterator),
+            Concatenation concatenation => CreateConcatenationAutomaton(concatenation),
+            GuaranteedIterator guaranteedIterator => CreateGuaranteedIteratorAutomaton(guaranteedIterator),
+            AbsorbedGuaranteedIterator absorbedGuaranteedIterator => CreateAbsorbedGuaranteedIteratorAutomaton(absorbedGuaranteedIterator),
+            Intersection intersection => CreateIntersectionAutomaton(intersection),
+            Interval interval => CreateIntervalAutomaton(interval),
+            Iterator iterator => CreateIteratorAutomaton(iterator),
+            Match match => CreateMatchAutomaton(match),
+            Rename rename => CreateRenameAutomaton(rename),
+            Union union => CreateUnionAutomaton(union),
+            _ => throw new UnreachableException(),
+        };
     }
 
     private static TimedAutomaton CreateAbsorbedIteratorAutomaton(AbsorbedIterator a){
@@ -73,9 +51,16 @@ internal static class AutomatonGenerator
         throw new NotImplementedException();
     }
 
-    private static TimedAutomaton CreateMatchAutomaton(Match a)
+    private static TimedAutomaton CreateMatchAutomaton(Match match)
     {
-        throw new NotImplementedException();
+        TimedAutomaton ta = new TimedAutomaton();
+        
+        Location initial = ta.AddLocation(newInitial: true);
+        Location final = ta.AddLocation(true);
+
+        ta.AddEdge(initial, final, match.Token.Match);
+
+        return ta;
     }
 
     private static TimedAutomaton CreateRenameAutomaton(Rename a){
