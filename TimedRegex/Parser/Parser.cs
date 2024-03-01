@@ -1,4 +1,5 @@
 ﻿using TimedRegex.AST;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.Parser
 {
@@ -34,9 +35,9 @@ namespace TimedRegex.Parser
             throw new NotImplementedException();
         }
 
-        private static IAstNode ParseMatch()
+        private static IAstNode ParseMatch(Token token) //Might require further development to support matchAny
         {
-            throw new NotImplementedException();
+            return new Match(token.Match);
         }
 
         private static IAstNode ParseRename()
