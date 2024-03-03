@@ -24,4 +24,41 @@ public sealed class XmlGeneratorTest
         
         return new NTA("clock a, b;", "system ta1", new []{ta1});
     }
+  
+    [Test]
+    public void ContainsLocationsTest()
+    {
+        NTA nta = PopulateNta();
+        
+        Assert.That(nta.Templates[0].Locations.Length, Is.EqualTo(5));
+    }
+    
+    [Test]
+    public void ContainsTransitionsTest()
+    {
+        NTA nta = PopulateNta();
+        
+        Assert.That(nta.Templates[0].Transitions.Length, Is.EqualTo(4));
+    }
+
+    [TestCase(0, "id0", "id1")]
+    [TestCase(1, "id0", "id2")]
+    [TestCase(2, "id1", "id3")]
+    [TestCase(3, "id2", "id4")]
+    public void TransitionSrcDstTest(int t_index, string src, string dst)
+    {
+        NTA nta = PopulateNta();
+        
+        Assert.That(nta.Templates[0].Transitions[t_index].Source, Is.EqualTo(src));
+        Assert.That(nta.Templates[0].Transitions[t_index].Target, Is.EqualTo(dst));
+    }
+
+    [TestCase(2, "1 <= A < 5")]
+    [TestCase(3, "1 <= B < 3")]
+    public void TransitionGuardTest(int t_index, string guard)
+    {
+        NTA nta = PopulateNta();
+        
+        Assert.That(nta.Templates[0].Transitions[t_index].Labels[0].LabelString, Is.EqualTo(guard));
+    }
 }
