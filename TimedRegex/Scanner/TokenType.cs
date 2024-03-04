@@ -1,4 +1,4 @@
-namespace TimedRegex.Tokenizer;
+namespace TimedRegex.Scanner;
 
 internal enum TokenType
 {

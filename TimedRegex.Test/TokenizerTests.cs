@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using TimedRegex.Tokenizer;
+using TimedRegex.Scanner;
 
 namespace TimedRegex.Test;
 

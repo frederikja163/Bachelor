@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using TimedRegex.AST;
 using TimedRegex.Intermediate;
-using TimedRegex.Tokenizer;
+using TimedRegex.Scanner;
 
 namespace TimedRegex.Test;
 

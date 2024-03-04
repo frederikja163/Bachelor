@@ -1,4 +1,4 @@
-﻿using TimedRegex.Tokenizer;
+﻿using TimedRegex.Scanner;
 
 namespace TimedRegex.AST;
 
