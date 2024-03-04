@@ -16,7 +16,9 @@ public sealed class ParserTests
     public void ParseMatchValid(string inputString)
     {
         Tokenizer tokenizer = new Tokenizer(inputString);
-        Assert.IsInstanceOf<Match>(Parser.Parse(tokenizer));
+        Match match = (Match)Parser.Parse(tokenizer);
+        Assert.IsInstanceOf<Match>(match);
+        Assert.IsTrue(match.Token.Match == inputString[0]);
     }
 
 
