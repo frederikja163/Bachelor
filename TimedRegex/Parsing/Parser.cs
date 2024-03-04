@@ -35,11 +35,39 @@ namespace TimedRegex.Parsing
                 {
 
                 }
+            }*/
             return ParseBinary(tokenizer);
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
         {
+            Match match = new Match(tokenizer.Current);
+            if (tokenizer.Peek().Type == TokenType.Absorb)
+            {
+                switch (tokenizer.Current.Type) 
+                {
+                    case (TokenType.Iterator):
+                        return new AbsorbedIterator(match, tokenizer.Current);
+
+                    case (TokenType.GuaranteedIterator):
+                        return new AbsorbedGuaranteedIterator(match, tokenizer.Current);
+
+                    default:
+                        throw new Exception("Absorb was unary, but not valid type.");
+                }
+            }
+            switch (tokenizer.Current.Type)
+            {
+                case (TokenType.Iterator):
+                    return new Iterator(match, tokenizer.Current);
+
+                case (TokenType.GuaranteedIterator):
+                    return new GuaranteedIterator(match, tokenizer.Current);
+
+                default:
+                    return match;
+
+            }
         }
 
         private static IAstNode ParseBinary(Tokenizer tokenizer)
