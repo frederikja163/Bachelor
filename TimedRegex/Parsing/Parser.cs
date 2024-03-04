@@ -15,40 +15,6 @@ namespace TimedRegex.Parsing
         {
             return ParseRename(tokenizer);
         }
-        private static IAstNode ParseAbsorbedGuaranteedIterator(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IAstNode ParseAbsorbedIterator(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IAstNode ParseConcatenation(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IAstNode ParseGuaranteedIterator(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IAstNode ParseIntersection(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IAstNode ParseInterval(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IAstNode ParseIterator(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
 
          // TODO: Might require further development to support "matchAny".
         private static IAstNode ParseMatch(Tokenizer tokenizer)
@@ -68,15 +34,6 @@ namespace TimedRegex.Parsing
                         }
                         return ParseBinary(tokenizer);*/
             return ParseBinary(tokenizer);
-        }
-        private static IAstNode ParseSymbolReplace(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
-        }
-
-        private static IAstNode ParseUnion(Tokenizer tokenizer)
-        {
-            throw new NotImplementedException();
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
