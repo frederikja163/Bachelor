@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace TimedRegex.Parsing;
 
 internal sealed class Tokenizer
@@ -19,6 +21,23 @@ internal sealed class Tokenizer
             EnsureLookAhead(0);
             return _lookAhead[0];
         }
+    }
+    
+    internal bool TryPeek(int n, [NotNullWhen(true)] out Token? token)
+    {
+        if (!EnsureLookAhead(n))
+        {
+            token = null;
+            return false;
+        }
+
+        token = _lookAhead[n];
+        return true;
+    }
+    
+    internal bool TryPeek([NotNullWhen(true)] out Token? token)
+    {
+        return TryPeek(1, out token);
     }
 
     internal Token Peek(int n = 1)
