@@ -42,7 +42,7 @@ namespace TimedRegex.Parsing
         private static IAstNode ParseUnary(Tokenizer tokenizer)
         {
             Match match = new Match(tokenizer.Current);
-            if (tokenizer.Peek().Type == TokenType.Absorb)
+            if (tokenizer.TryPeek(1, out Token? token) && token.Type == TokenType.Absorb)
             {
                 switch (tokenizer.Current.Type) 
                 {

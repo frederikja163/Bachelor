@@ -28,7 +28,10 @@ public sealed class ParserTests
         [Test]
         public void ParseAbsorbedGuaranteedIterator()
         {
-
+            Tokenizer tokenizer = new Tokenizer("a+'");
+            AbsorbedGuaranteedIterator node = (AbsorbedGuaranteedIterator)Parser.Parse(tokenizer);
+            Assert.IsInstanceOf<AbsorbedGuaranteedIterator>(node);
+            Assert.
         }
     }
 }
