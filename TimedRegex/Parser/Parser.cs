@@ -2,7 +2,7 @@
 using TimedRegex.AST;
 using TimedRegex.Scanner;
 
-namespace TimedRegex.Parser
+namespace TimedRegex.Parsing
 {
     internal static class Parser
     {
