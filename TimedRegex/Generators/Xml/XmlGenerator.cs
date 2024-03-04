@@ -15,7 +15,7 @@ internal sealed class XmlGenerator : IGenerator
         // Empty NTA is temporary, missing implementation of NTA instantiation
         NTA nta = new NTA("", "", Enumerable.Empty<Template>());
 
-        XmlWriterSettings settings = new() { Indent = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
         using XmlWriter xmlWriter = XmlWriter.Create(stream, settings);
 
         xmlWriter.WriteStartDocument();
@@ -25,12 +25,12 @@ internal sealed class XmlGenerator : IGenerator
     internal void WriteNta(XmlWriter xmlWriter, NTA nta)
     {
         xmlWriter.WriteStartElement("nta");
-        
+
         if (String.IsNullOrWhiteSpace(nta.Declaration)) return;
         xmlWriter.WriteStartElement("declaration");
         xmlWriter.WriteValue(nta.Declaration);
         xmlWriter.WriteEndElement();
-        
+
         foreach (var template in nta.Templates)
         {
             WriteTemplate(xmlWriter, template);

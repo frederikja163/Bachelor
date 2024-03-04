@@ -34,10 +34,10 @@ public sealed class XmlGeneratorTest
         NTA nta = CreateNta();
 
         string expected =
-            "<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<nta>\r\n  <declaration>clock a, b;</declaration>\r\n  <template>\r\n    <name>ta1</name>\r\n    <location id=\"id0\" />\r\n    <location id=\"id1\" />\r\n    <location id=\"id2\" />\r\n    <location id=\"id3\" />\r\n    <location id=\"id4\" />\r\n    <init ref=\"id0\" />\r\n    <transition ref=\"id5\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id1\" />\r\n    </transition>\r\n    <transition ref=\"id6\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id2\" />\r\n    </transition>\r\n    <transition ref=\"id7\">\r\n      <source ref=\"id1\" />\r\n      <target ref=\"id3\" />\r\n      <label kind=\"guard\">1 &lt;= A &lt; 5</label>\r\n    </transition>\r\n    <transition ref=\"id8\">\r\n      <source ref=\"id2\" />\r\n      <target ref=\"id4\" />\r\n      <label kind=\"guard\">1 &lt;= B &lt; 3</label>\r\n    </transition>\r\n    <system>system ta1</system>\r\n  </template>\r\n</nta>";
+            "<nta>\r\n  <declaration>clock a, b;</declaration>\r\n  <template>\r\n    <name>ta1</name>\r\n    <location id=\"id0\" />\r\n    <location id=\"id1\" />\r\n    <location id=\"id2\" />\r\n    <location id=\"id3\" />\r\n    <location id=\"id4\" />\r\n    <init ref=\"id0\" />\r\n    <transition ref=\"id5\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id1\" />\r\n    </transition>\r\n    <transition ref=\"id6\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id2\" />\r\n    </transition>\r\n    <transition ref=\"id7\">\r\n      <source ref=\"id1\" />\r\n      <target ref=\"id3\" />\r\n      <label kind=\"guard\">1 &lt;= A &lt; 5</label>\r\n    </transition>\r\n    <transition ref=\"id8\">\r\n      <source ref=\"id2\" />\r\n      <target ref=\"id4\" />\r\n      <label kind=\"guard\">1 &lt;= B &lt; 3</label>\r\n    </transition>\r\n    <system>system ta1</system>\r\n  </template>\r\n</nta>";
         StringBuilder sb = new StringBuilder();
 
-        XmlWriterSettings settings = new() { Indent = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
             xmlGenerator.WriteNta(xmlWriter, nta);
