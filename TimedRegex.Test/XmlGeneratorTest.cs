@@ -7,7 +7,7 @@ namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
-    private static NTA PopulateNta()
+    private static NTA CreateNta()
     {
         Location id0 = new Location("id0", "id0", Enumerable.Empty<Label>());
         Location id1 = new Location("id1", "id1", Enumerable.Empty<Label>());
