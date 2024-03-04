@@ -114,8 +114,11 @@ public sealed class TokenizerTests
     public void GetNextMany(int n, string inputString)
     {
         Tokenizer tokenizer = new Tokenizer(inputString);
-        Assert.That(tokenizer.GetNext(n), Is.EqualTo(new Token(0, inputString[0], TokenType.Match)));
-        Assert.That(tokenizer.Next, Is.EqualTo(new Token(n, inputString[n],TokenType.Match)));
+        Token token = tokenizer.GetNext(n);
+        Assert.That(token.Match, Is.EqualTo('a'));
+        Assert.That(token.CharacterIndex, Is.EqualTo(0));
+        Assert.That(tokenizer.Next.Match, Is.EqualTo(inputString[n]));
+        Assert.That(tokenizer.Next.CharacterIndex, Is.EqualTo(n));
     }
     
     [Test]

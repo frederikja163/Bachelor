@@ -42,15 +42,19 @@ namespace TimedRegex.Parsing
         private static IAstNode ParseUnary(Tokenizer tokenizer)
         {
             Match match = new Match(tokenizer.Next);
+            if (tokenizer.Peek().Type == TokenType.)
+            {
+
+            }
             if (tokenizer.TryPeek(1, out Token? token) && token.Type == TokenType.Absorb)
             {
                 switch (tokenizer.Next.Type) 
                 {
                     case (TokenType.Iterator):
-                        return new AbsorbedIterator(match, tokenizer.GetNext());
+                        return new AbsorbedIterator(match, tokenizer.GetNext(2));
 
                     case (TokenType.GuaranteedIterator):
-                        return new AbsorbedGuaranteedIterator(match, tokenizer.Next);
+                        return new AbsorbedGuaranteedIterator(match, tokenizer.GetNext(2));
 
                     default:
                         throw new Exception("Absorb was unary, but not valid type.");
@@ -59,10 +63,10 @@ namespace TimedRegex.Parsing
             switch (tokenizer.Next.Type)
             {
                 case (TokenType.Iterator):
-                    return new Iterator(match, tokenizer.Next);
+                    return new Iterator(match, tokenizer.GetNext());
 
                 case (TokenType.GuaranteedIterator):
-                    return new GuaranteedIterator(match, tokenizer.Next);
+                    return new GuaranteedIterator(match, tokenizer.GetNext());
 
                 default:
                     return match;
