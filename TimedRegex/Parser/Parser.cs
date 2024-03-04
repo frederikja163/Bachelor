@@ -55,23 +55,24 @@ namespace TimedRegex.Parser
         {
             if (tokenizer.Current.Type == TokenType.Match)
             {
-                return new Match(tokenizer.Current.Match);
+                return new Match(tokenizer.Current);
             }
-            if ((tokenizer.Current.Type == TokenType.ParenthesisStart)|(tokenizer.Current.Type == TokenType.ParenthesisEnd))
+/*            if ((tokenizer.Current.Type == TokenType.ParenthesisStart)|(tokenizer.Current.Type == TokenType.ParenthesisEnd))
             {
                 tokenizer.GetNext();
                 return ParseRename(tokenizer);
-            }
+            }*/
             throw new Exception("Invalid token \""+ tokenizer.Current.ToString() + "\"");
         }
 
         private static IAstNode ParseRename(Tokenizer tokenizer)
         {
-            if (tokenizer.Current.Type == TokenType.RenameStart)
-            {
-                throw new NotImplementedException();
-            }
-            return ParseBinary(tokenizer);
+            /*            if (tokenizer.Current.Type == TokenType.RenameStart)
+                        {
+                            throw new NotImplementedException();
+                        }
+                        return ParseBinary(tokenizer);*/
+            throw new NotImplementedException();
         }
         private static IAstNode ParseSymbolReplace(Tokenizer tokenizer)
         {
@@ -90,20 +91,21 @@ namespace TimedRegex.Parser
 
         private static IAstNode ParseBinary(Tokenizer tokenizer)
         {
-            switch (tokenizer.Current.Type)
-            {
-/*                case TokenType.Concatenation: 
-                    return ParseConcatenation(tokenizer);*/
-                    //Concatenation must be handled differently
-                case TokenType.Union:
-                    return ParseUnion(tokenizer);
+            /*            switch (tokenizer.Current.Type)
+                        {
+            *//*                case TokenType.Concatenation: 
+                                return ParseConcatenation(tokenizer);*//*
+                                //Concatenation must be handled differently
+                            case TokenType.Union:
+                                return ParseUnion(tokenizer);
 
-                case TokenType.Intersection:
-                    return ParseIntersection(tokenizer);
+                            case TokenType.Intersection:
+                                return ParseIntersection(tokenizer);
 
-                default:
-                    return ParseUnary(tokenizer);
-            }
+                            default:
+                                return ParseUnary(tokenizer);
+                        }*/
+            throw new NotImplementedException();
         }
 
     }
