@@ -1,5 +1,4 @@
-﻿using TimedRegex.Parsing;
-
+﻿using TimedRegex.Scanner;
 namespace TimedRegex.AST;
 
 internal sealed class Match :IAstNode

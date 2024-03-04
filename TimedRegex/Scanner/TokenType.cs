@@ -1,4 +1,4 @@
-namespace TimedRegex.Parsing;
+namespace TimedRegex.Scanner;
 
 internal enum TokenType
 {
@@ -7,6 +7,7 @@ internal enum TokenType
     ParenthesisStart,
     ParenthesisEnd,
     Union,
+    Intersection,
     Concatenation,
     Absorb,
     Iterator,
