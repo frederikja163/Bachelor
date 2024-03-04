@@ -29,36 +29,50 @@ public sealed class XmlGeneratorTest
     public void ContainsLocationsTest()
     {
         NTA nta = PopulateNta();
+        Location[] locations = nta.Templates[0].Locations;
         
-        Assert.That(nta.Templates[0].Locations.Length, Is.EqualTo(5));
+        Assert.That(locations.Length, Is.EqualTo(5));
+
+        for (int i = 0; i < locations.Length; i++)
+        {
+            Assert.That(locations[i].Id, Is.EqualTo("id" + i));
+            Assert.That(locations[i].Name, Is.EqualTo("id" + i));
+            Assert.That(locations[i].Labels, Is.Empty);
+        }
     }
     
     [Test]
     public void ContainsTransitionsTest()
     {
         NTA nta = PopulateNta();
+        Transition[] transitions = nta.Templates[0].Transitions;
         
         Assert.That(nta.Templates[0].Transitions.Length, Is.EqualTo(4));
+
+        for (int i = 0; i < transitions.Length ; i++)
+        {
+            Assert.That(transitions[i].Id, Is.EqualTo("id" + (i + 5)));
+        }
     }
 
     [TestCase(0, "id0", "id1")]
     [TestCase(1, "id0", "id2")]
     [TestCase(2, "id1", "id3")]
     [TestCase(3, "id2", "id4")]
-    public void TransitionSrcDstTest(int t_index, string src, string dst)
+    public void TransitionSrcDstTest(int transitionIndex, string src, string dst)
     {
         NTA nta = PopulateNta();
         
-        Assert.That(nta.Templates[0].Transitions[t_index].Source, Is.EqualTo(src));
-        Assert.That(nta.Templates[0].Transitions[t_index].Target, Is.EqualTo(dst));
+        Assert.That(nta.Templates[0].Transitions[transitionIndex].Source, Is.EqualTo(src));
+        Assert.That(nta.Templates[0].Transitions[transitionIndex].Target, Is.EqualTo(dst));
     }
 
     [TestCase(2, "1 <= A < 5")]
     [TestCase(3, "1 <= B < 3")]
-    public void TransitionGuardTest(int t_index, string guard)
+    public void TransitionGuardTest(int transitionIndex, string guard)
     {
         NTA nta = PopulateNta();
         
-        Assert.That(nta.Templates[0].Transitions[t_index].Labels[0].LabelString, Is.EqualTo(guard));
+        Assert.That(nta.Templates[0].Transitions[transitionIndex].Labels[0].LabelString, Is.EqualTo(guard));
     }
 }
