@@ -38,7 +38,7 @@ public sealed class XmlGeneratorTest
         XmlWriterSettings settings = new() { Indent = true };
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
-            xmlGenerator.WriteInfo(xmlWriter, nta);
+            xmlGenerator.WriteNta(xmlWriter, nta);
         }
 
         Assert.That(sb.ToString(), Is.Not.EqualTo(""));
