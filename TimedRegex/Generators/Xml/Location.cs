@@ -2,14 +2,14 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class Location
 {
-    private readonly string _id;
-    private readonly string _name;
-    private readonly Label[] _labels;
-    
     internal Location(string id, string name, IEnumerable<Label> labels)
     {
-        _id = id;
-        _name = name;
-        _labels = labels.ToArray();
+        Id = id;
+        Name = name;
+        Labels = labels.ToArray();
     }
+    
+    internal string Id { get; }
+    internal string Name { get; }
+    internal Label[] Labels { get; }
 }
