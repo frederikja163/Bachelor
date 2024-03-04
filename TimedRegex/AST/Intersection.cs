@@ -1,4 +1,4 @@
-using TimedRegex.Parsing;
+using TimedRegex.Tokenizer;
 
 namespace TimedRegex.AST;
 

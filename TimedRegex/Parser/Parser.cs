@@ -1,6 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 using TimedRegex.AST;
-using TimedRegex.Parsing;
+using TimedRegex.Tokenizer;
 
 namespace TimedRegex.Parser
 {

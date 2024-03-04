@@ -1,4 +1,4 @@
-namespace TimedRegex.Parsing;
+namespace TimedRegex.Tokenizer;
 
 internal sealed class Token
 {
