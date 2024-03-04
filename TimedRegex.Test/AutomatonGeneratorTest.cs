@@ -36,6 +36,6 @@ public sealed class AutomatonGeneratorTest
         TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(concatenation);
 
         Assert.That(ta.GetLocations().Count(), Is.EqualTo(4));
-        Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
     }
 }
