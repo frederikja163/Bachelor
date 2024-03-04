@@ -4,14 +4,13 @@ namespace TimedRegex.AST;
 
 internal sealed class Concatenation : IBinary
 {
-    public Concatenation(IAstNode leftNode, IAstNode rightNode, Token token)
+    public Concatenation(IAstNode leftNode, IAstNode rightNode)
     {
         LeftNode = leftNode;
         RightNode = rightNode;
-        Token = token;
     }
 
     public IAstNode LeftNode { get; }
     public IAstNode RightNode { get; }
-    public Token Token { get; }
+    public Token Token => LeftNode.Token;
 }
