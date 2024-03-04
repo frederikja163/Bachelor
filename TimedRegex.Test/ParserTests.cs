@@ -18,7 +18,9 @@ public sealed class ParserTests
         Tokenizer tokenizer = new Tokenizer(inputString);
         Match match = (Match)Parser.Parse(tokenizer);
         Assert.IsInstanceOf<Match>(match);
-        Assert.IsTrue(match.Token.Match == inputString[0]);
+        Assert.That(match.Token.Match, Is.EqualTo(inputString[0]));
+        Assert.That(match.Token.CharacterIndex, Is.EqualTo(0));
+        Assert.That(match, Is.TypeOf<Match>());
     }
 
 
