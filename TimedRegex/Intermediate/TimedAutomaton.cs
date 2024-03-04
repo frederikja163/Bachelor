@@ -8,14 +8,19 @@ internal sealed class TimedAutomaton
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, Location> _locations;
-    private Location? _initialLocation;
 
-    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right)
+    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
     {
-        _clocks = left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary();
-        _edges = left._edges.UnionBy(right._edges, kvp => kvp.Key).ToDictionary();
-        _locations = left._locations.UnionBy(right._locations, kvp => kvp.Key).ToDictionary();
-        _initialLocation = left._initialLocation ?? right._initialLocation;
+        _clocks = !excludeClocks
+            ? left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, Clock>();
+        _edges = !excludeEdges
+            ? left._edges.UnionBy(right._edges, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, Edge>();
+        _locations = !excludeLocations
+            ? left._locations.UnionBy(right._locations, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, Location>();
+        InitialLocation = left.InitialLocation ?? right.InitialLocation;
     }
     
     internal TimedAutomaton()
@@ -23,8 +28,10 @@ internal sealed class TimedAutomaton
         _clocks = new Dictionary<int, Clock>();
         _edges = new Dictionary<int, Edge>();
         _locations = new Dictionary<int, Location>();
-        _initialLocation = null;
+        InitialLocation = null;
     }
+    
+    internal Location? InitialLocation { get; private set; }
 
     internal IEnumerable<Clock> GetClocks()
     {
@@ -56,7 +63,7 @@ internal sealed class TimedAutomaton
         
         if (newInitial)
         {
-            _initialLocation = location;
+            InitialLocation = location;
         }
         
         _locations.Add(location.Id, location);

@@ -27,8 +27,25 @@ internal static class AutomatonGenerator
         throw new NotImplementedException();
     }
 
-    private static TimedAutomaton CreateConcatenationAutomaton(Concatenation a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateConcatenationAutomaton(Concatenation concatenation)
+    {
+        TimedAutomaton left = CreateAutomaton(concatenation.LeftNode);
+        TimedAutomaton right = CreateAutomaton(concatenation.RightNode);
+
+        TimedAutomaton ta = new TimedAutomaton(left, right, excludeEdges: true);
+        foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
+        {
+            Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
+            edge.AddClockRanges(e.GetClockRanges());
+            edge.AddClockResets(ta.GetClocks());
+        }
+
+        foreach (Location location in left.GetLocations().Where(l => l.IsFinal))
+        {
+            location.IsFinal = false;
+        }
+
+        return ta;
     }
 
     private static TimedAutomaton CreateGuaranteedIteratorAutomaton(GuaranteedIterator a){

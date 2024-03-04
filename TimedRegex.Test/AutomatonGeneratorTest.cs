@@ -27,4 +27,15 @@ public sealed class AutomatonGeneratorTest
         
         Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo('a'));
     }
+
+    [Test]
+    public void GenerateConcatenationTaTest()
+    {
+        // TODO: Write better tests once we have intervals.
+        Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(concatenation);
+
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(4));
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
+    }
 }

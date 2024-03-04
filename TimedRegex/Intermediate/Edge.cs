@@ -16,13 +16,21 @@ internal sealed class Edge : IEquatable<Edge>
     }
     
     internal int Id { get; }
-    private Location From { get; }
-    private Location To { get; }
+    internal Location From { get; }
+    internal Location To { get; }
     internal char? Symbol { get; }
 
     internal void AddClockReset(Clock clock)
     {
         _clockResets.Add(clock);
+    }
+    
+    internal void AddClockResets(IEnumerable<Clock> clocks)
+    {
+        foreach (Clock clock in clocks)
+        {
+            _clockResets.Add(clock);
+        }
     }
 
     internal IEnumerable<Clock> GetClockResets()
@@ -36,6 +44,14 @@ internal sealed class Edge : IEquatable<Edge>
     internal void AddClockRange(Clock clock, Range range)
     {
         _clockRanges.Add(clock, range);
+    }
+    
+    internal void AddClockRanges(IEnumerable<(Clock clock, Range range)> ranges)
+    {
+        foreach ((Clock clock, Range range) in ranges)
+        {
+            _clockRanges.Add(clock, range);
+        }
     }
 
     internal IEnumerable<(Clock, Range)> GetClockRanges()
