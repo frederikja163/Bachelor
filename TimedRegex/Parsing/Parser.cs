@@ -28,17 +28,18 @@ namespace TimedRegex.Parsing
 
         private static IAstNode ParseRename(Tokenizer tokenizer)
         {
-            /*            if (tokenizer.Current.Type == TokenType.RenameStart)
-                        {
-                            throw new NotImplementedException();
-                        }
-                        return ParseBinary(tokenizer);*/
+/*            if (tokenizer.Current.Type == TokenType.RenameStart)
+            {
+                SymbolReplace[] replacelist;
+                while (true)
+                {
+
+                }
             return ParseBinary(tokenizer);
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
         {
-            return ParseMatch(tokenizer);
         }
 
         private static IAstNode ParseBinary(Tokenizer tokenizer)

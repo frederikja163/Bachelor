@@ -23,5 +23,12 @@ public sealed class ParserTests
         Assert.That(match, Is.TypeOf<Match>());
     }
 
+    public sealed class ParseUnaryTests
+    {
+        [Test]
+        public void ParseAbsorbedGuaranteedIterator()
+        {
 
+        }
+    }
 }
