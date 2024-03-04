@@ -21,7 +21,7 @@ internal sealed class XmlGenerator : IGenerator
         WriteInfo(xmlWriter, nta);
     }
 
-    private void WriteInfo(XmlWriter xmlWriter, NTA nta)
+    internal void WriteInfo(XmlWriter xmlWriter, NTA nta)
     {
         xmlWriter.WriteStartDocument();
 
@@ -38,6 +38,7 @@ internal sealed class XmlGenerator : IGenerator
             xmlWriter.WriteStartElement("template");
             xmlWriter.WriteStartElement("name");
             xmlWriter.WriteValue(template.Name);
+            xmlWriter.WriteEndElement();
 
             foreach (var location in template.Locations)
             {
@@ -65,10 +66,16 @@ internal sealed class XmlGenerator : IGenerator
                 xmlWriter.WriteAttributeString("ref", transition.Target);
                 xmlWriter.WriteEndElement();
 
+                foreach (var label in transition.Labels)
+                {
+                    xmlWriter.WriteStartElement("label");
+                    xmlWriter.WriteAttributeString("kind", "guard");
+                    xmlWriter.WriteValue(label.LabelString);
+                    xmlWriter.WriteEndElement();
+                }
+
                 xmlWriter.WriteEndElement();
             }
-
-            xmlWriter.WriteEndElement();
         }
 
         xmlWriter.WriteStartElement("system");
