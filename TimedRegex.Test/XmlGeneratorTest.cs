@@ -79,7 +79,7 @@ public sealed class XmlGeneratorTest
             },
             new List<Transition>());
 
-        var expected = "<template>\n  <name>ta1</name>\n  <location id=\"id0\" />\n  <init ref=\"id0\" />\n</template>";
+        var expected = "<template>\n  <name>ta1</name>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
         StringBuilder sb = new StringBuilder();
         XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true , NewLineChars = "\n"};
         
