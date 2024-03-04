@@ -7,7 +7,7 @@ namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
-    private static NTA PopulateNta()
+    private static NTA CreateNta()
     {
         Location id0 = new Location("id0", "id0", Enumerable.Empty<Label>());
         Location id1 = new Location("id1", "id1", Enumerable.Empty<Label>());
@@ -28,7 +28,7 @@ public sealed class XmlGeneratorTest
     [Test]
     public void ContainsLocationsTest()
     {
-        NTA nta = PopulateNta();
+        NTA nta = CreateNta();
         Location[] locations = nta.Templates[0].Locations;
         
         Assert.That(locations.Length, Is.EqualTo(5));
@@ -44,7 +44,7 @@ public sealed class XmlGeneratorTest
     [Test]
     public void ContainsTransitionsTest()
     {
-        NTA nta = PopulateNta();
+        NTA nta = CreateNta();
         Transition[] transitions = nta.Templates[0].Transitions;
         
         Assert.That(nta.Templates[0].Transitions.Length, Is.EqualTo(4));
@@ -61,7 +61,7 @@ public sealed class XmlGeneratorTest
     [TestCase(3, "id2", "id4")]
     public void TransitionSrcDstTest(int transitionIndex, string src, string dst)
     {
-        NTA nta = PopulateNta();
+        NTA nta = CreateNta();
         
         Assert.That(nta.Templates[0].Transitions[transitionIndex].Source, Is.EqualTo(src));
         Assert.That(nta.Templates[0].Transitions[transitionIndex].Target, Is.EqualTo(dst));
@@ -71,7 +71,7 @@ public sealed class XmlGeneratorTest
     [TestCase(3, "1 <= B < 3")]
     public void TransitionGuardTest(int transitionIndex, string guard)
     {
-        NTA nta = PopulateNta();
+        NTA nta = CreateNta();
         
         Assert.That(nta.Templates[0].Transitions[transitionIndex].Labels[0].LabelString, Is.EqualTo(guard));
     }
