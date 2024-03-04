@@ -60,8 +60,27 @@ internal static class AutomatonGenerator
         throw new NotImplementedException();
     }
 
-    private static TimedAutomaton CreateIntervalAutomaton(Interval a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateIntervalAutomaton(Interval interval)
+    {
+        TimedAutomaton ta = CreateAutomaton(interval.Child);
+
+        Range range = new Range(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval - (interval.EndInclusive ? 1 : 0));
+        Location newFinal = ta.AddLocation(true);
+        Clock clock = ta.AddClock();
+
+        foreach (Edge e in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
+        {
+            Edge edge = ta.AddEdge(e.From, newFinal, e.Symbol);
+            edge.AddClockRange(clock, range);
+            edge.AddClockRanges(e.GetClockRanges());
+        }
+
+        foreach (Location location in ta.GetLocations().Where(l => l.IsFinal && l.Id != newFinal.Id))
+        {
+            location.IsFinal = false;
+        }
+
+        return ta;
     }
 
     private static TimedAutomaton CreateIteratorAutomaton(Iterator a){
