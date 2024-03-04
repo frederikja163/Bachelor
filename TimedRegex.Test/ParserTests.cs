@@ -31,7 +31,9 @@ public sealed class ParserTests
             Tokenizer tokenizer = new Tokenizer("a+'");
             AbsorbedGuaranteedIterator node = (AbsorbedGuaranteedIterator)Parser.Parse(tokenizer);
             Assert.IsInstanceOf<AbsorbedGuaranteedIterator>(node);
-            Assert.
+            Assert.That(node.Child, Is.TypeOf<Match>());
+            Assert.That(node.Token.Match, Is.EqualTo('+'));
+            Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
         }
     }
 }

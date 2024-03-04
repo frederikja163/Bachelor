@@ -28,7 +28,7 @@ public sealed class TokenizerTests
     {
         Tokenizer tokenizer = new Tokenizer(str);
 
-        Assert.That(tokenizer.Current.Type, Is.EqualTo((TokenType)type));
+        Assert.That(tokenizer.Next.Type, Is.EqualTo((TokenType)type));
     }
 
     [Test]
@@ -107,6 +107,15 @@ public sealed class TokenizerTests
             Assert.That(token.CharacterIndex, Is.EqualTo(i));
             Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
         }
+    }
+
+    [TestCase(1, "abcde")]
+    [TestCase(3, "abcde")]
+    public void GetNextMany(int n, string inputString)
+    {
+        Tokenizer tokenizer = new Tokenizer(inputString);
+        Assert.That(tokenizer.GetNext(n), Is.EqualTo(new Token(0, inputString[0], TokenType.Match)));
+        Assert.That(tokenizer.Next, Is.EqualTo(new Token(n, inputString[n],TokenType.Match)));
     }
     
     [Test]

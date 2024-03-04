@@ -19,11 +19,11 @@ namespace TimedRegex.Parsing
          // TODO: Might require further development to support "matchAny".
         private static IAstNode ParseMatch(Tokenizer tokenizer)
         {
-            if (tokenizer.Current.Type == TokenType.Match)
+            if (tokenizer.Next.Type == TokenType.Match)
             {
-                return new Match(tokenizer.Current);
+                return new Match(tokenizer.GetNext());
             }
-            throw new Exception("Invalid token \""+ tokenizer.Current.ToString() + "\"");
+            throw new Exception("Invalid token \""+ tokenizer.Next.ToString() + "\"");
         }
 
         private static IAstNode ParseRename(Tokenizer tokenizer)
@@ -41,32 +41,31 @@ namespace TimedRegex.Parsing
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
         {
-            Match match = new Match(tokenizer.Current);
+            Match match = new Match(tokenizer.Next);
             if (tokenizer.TryPeek(1, out Token? token) && token.Type == TokenType.Absorb)
             {
-                switch (tokenizer.Current.Type) 
+                switch (tokenizer.Next.Type) 
                 {
                     case (TokenType.Iterator):
-                        return new AbsorbedIterator(match, tokenizer.Current);
+                        return new AbsorbedIterator(match, tokenizer.GetNext());
 
                     case (TokenType.GuaranteedIterator):
-                        return new AbsorbedGuaranteedIterator(match, tokenizer.Current);
+                        return new AbsorbedGuaranteedIterator(match, tokenizer.Next);
 
                     default:
                         throw new Exception("Absorb was unary, but not valid type.");
                 }
             }
-            switch (tokenizer.Current.Type)
+            switch (tokenizer.Next.Type)
             {
                 case (TokenType.Iterator):
-                    return new Iterator(match, tokenizer.Current);
+                    return new Iterator(match, tokenizer.Next);
 
                 case (TokenType.GuaranteedIterator):
-                    return new GuaranteedIterator(match, tokenizer.Current);
+                    return new GuaranteedIterator(match, tokenizer.Next);
 
                 default:
                     return match;
-
             }
         }
 
