@@ -32,12 +32,12 @@ internal static class AutomatonGenerator
         TimedAutomaton left = CreateAutomaton(concatenation.LeftNode);
         TimedAutomaton right = CreateAutomaton(concatenation.RightNode);
 
-        TimedAutomaton ta = new TimedAutomaton(left, right, excludeEdges: true);
+        TimedAutomaton ta = new TimedAutomaton(left, right);
         foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
             edge.AddClockRanges(e.GetClockRanges());
-            edge.AddClockResets(ta.GetClocks());
+            edge.AddClockResets(right.GetClocks());
         }
 
         foreach (Location location in left.GetLocations().Where(l => l.IsFinal))
