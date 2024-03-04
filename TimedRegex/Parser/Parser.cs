@@ -67,7 +67,7 @@ namespace TimedRegex.Parser
                             throw new NotImplementedException();
                         }
                         return ParseBinary(tokenizer);*/
-            throw new NotImplementedException();
+            return ParseBinary(tokenizer);
         }
         private static IAstNode ParseSymbolReplace(Tokenizer tokenizer)
         {
@@ -81,7 +81,7 @@ namespace TimedRegex.Parser
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
         {
-            throw new NotImplementedException();
+            return ParseMatch(tokenizer);
         }
 
         private static IAstNode ParseBinary(Tokenizer tokenizer)
@@ -100,7 +100,7 @@ namespace TimedRegex.Parser
                             default:
                                 return ParseUnary(tokenizer);
                         }*/
-            throw new NotImplementedException();
+            return ParseUnary(tokenizer);
         }
 
     }
