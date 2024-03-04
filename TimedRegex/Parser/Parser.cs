@@ -57,11 +57,6 @@ namespace TimedRegex.Parser
             {
                 return new Match(tokenizer.Current);
             }
-/*            if ((tokenizer.Current.Type == TokenType.ParenthesisStart)|(tokenizer.Current.Type == TokenType.ParenthesisEnd))
-            {
-                tokenizer.GetNext();
-                return ParseRename(tokenizer);
-            }*/
             throw new Exception("Invalid token \""+ tokenizer.Current.ToString() + "\"");
         }
 
