@@ -33,10 +33,9 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new XmlGenerator();
         NTA nta = CreateNta();
         string expected =
-            "<nta>\r\n  <declaration>clock a, b;</declaration>\r\n  <template>\r\n    <name>ta1</name>\r\n    <location id=\"id0\" />\r\n    <location id=\"id1\" />\r\n    <location id=\"id2\" />\r\n    <location id=\"id3\" />\r\n    <location id=\"id4\" />\r\n    <init ref=\"id0\" />\r\n    <transition ref=\"id5\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id1\" />\r\n    </transition>\r\n    <transition ref=\"id6\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id2\" />\r\n    </transition>\r\n    <transition ref=\"id7\">\r\n      <source ref=\"id1\" />\r\n      <target ref=\"id3\" />\r\n      <label kind=\"guard\">1 &lt;= A &lt; 5</label>\r\n    </transition>\r\n    <transition ref=\"id8\">\r\n      <source ref=\"id2\" />\r\n      <target ref=\"id4\" />\r\n      <label kind=\"guard\">1 &lt;= B &lt; 3</label>\r\n    </transition>\r\n  </template>\r\n  <system>system ta1</system>\r\n</nta>";
-
+            "<nta>\n  <declaration>clock a, b;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition ref=\"id5\">\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition ref=\"id6\">\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition ref=\"id7\">\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= A &lt; 5</label>\n    </transition>\n    <transition ref=\"id8\">\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= B &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1</system>\n</nta>";
         StringBuilder sb = new StringBuilder();
-        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true , NewLineChars = "\n"};
         
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
@@ -53,9 +52,9 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new XmlGenerator();
         NTA nta = new NTA("clock a, b;", "ta1", new List<Template>());
         
-        string expected = "<nta>\r\n  <declaration>clock a, b;</declaration>\r\n  <system>ta1</system>\r\n</nta>";
+        string expected = "<nta>\n  <declaration>clock a, b;</declaration>\n  <system>ta1</system>\n</nta>";
         StringBuilder sb = new StringBuilder();
-        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true , NewLineChars = "\n"};
         
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
@@ -80,9 +79,9 @@ public sealed class XmlGeneratorTest
             },
             new List<Transition>());
 
-        var expected = "<template>\r\n  <name>ta1</name>\r\n  <location id=\"id0\" />\r\n  <init ref=\"id0\" />\r\n</template>";
+        var expected = "<template>\n  <name>ta1</name>\n  <location id=\"id0\" />\n  <init ref=\"id0\" />\n</template>";
         StringBuilder sb = new StringBuilder();
-        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true , NewLineChars = "\n"};
         
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
@@ -98,9 +97,9 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new XmlGenerator();
         Location location = new Location("id0", "loc1", new List<Label>());
         
-        string expected = "<location id=\"id0\">\r\n  <name>loc1</name>\r\n</location>";
+        string expected = "<location id=\"id0\">\n  <name>loc1</name>\n</location>";
         StringBuilder sb = new StringBuilder();
-        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true , NewLineChars = "\n"};
         
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
@@ -116,9 +115,9 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new XmlGenerator();
         Transition transition = new Transition("id2", "id1", "id2", new List<Label>());
         
-        string expected = "<transition ref=\"id2\">\r\n  <source ref=\"id1\" />\r\n  <target ref=\"id2\" />\r\n</transition>";
+        string expected = "<transition ref=\"id2\">\n  <source ref=\"id1\" />\n  <target ref=\"id2\" />\n</transition>";
         StringBuilder sb = new StringBuilder();
-        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true , NewLineChars = "\n"};
         
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
@@ -136,7 +135,7 @@ public sealed class XmlGeneratorTest
         
         string expected = "<label kind=\"guard\">0&lt;a&lt;=10</label>";
         StringBuilder sb = new StringBuilder();
-        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true , NewLineChars = "\n"};
         
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
