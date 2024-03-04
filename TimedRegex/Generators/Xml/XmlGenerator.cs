@@ -63,14 +63,21 @@ internal sealed class XmlGenerator : IGenerator
         {
             WriteTransition(xmlWriter, transition);
         }
+
+        xmlWriter.WriteEndElement();
     }
 
     internal void WriteLocation(XmlWriter xmlWriter, Location location)
     {
         xmlWriter.WriteStartElement("location");
         xmlWriter.WriteAttributeString("id", location.Id);
-        //if we want to account for location names, and name differs from id
-        //xmlWriter.WriteValue(location.Name);
+        if (!String.IsNullOrWhiteSpace(location.Name))
+        {
+            xmlWriter.WriteStartElement("name");
+            xmlWriter.WriteValue(location.Name);
+            xmlWriter.WriteEndElement();
+        }
+
         xmlWriter.WriteEndElement();
     }
 

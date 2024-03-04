@@ -32,18 +32,117 @@ public sealed class XmlGeneratorTest
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
         NTA nta = CreateNta();
-
         string expected =
-            "<nta>\r\n  <declaration>clock a, b;</declaration>\r\n  <template>\r\n    <name>ta1</name>\r\n    <location id=\"id0\" />\r\n    <location id=\"id1\" />\r\n    <location id=\"id2\" />\r\n    <location id=\"id3\" />\r\n    <location id=\"id4\" />\r\n    <init ref=\"id0\" />\r\n    <transition ref=\"id5\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id1\" />\r\n    </transition>\r\n    <transition ref=\"id6\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id2\" />\r\n    </transition>\r\n    <transition ref=\"id7\">\r\n      <source ref=\"id1\" />\r\n      <target ref=\"id3\" />\r\n      <label kind=\"guard\">1 &lt;= A &lt; 5</label>\r\n    </transition>\r\n    <transition ref=\"id8\">\r\n      <source ref=\"id2\" />\r\n      <target ref=\"id4\" />\r\n      <label kind=\"guard\">1 &lt;= B &lt; 3</label>\r\n    </transition>\r\n    <system>system ta1</system>\r\n  </template>\r\n</nta>";
-        StringBuilder sb = new StringBuilder();
+            "<nta>\r\n  <declaration>clock a, b;</declaration>\r\n  <template>\r\n    <name>ta1</name>\r\n    <location id=\"id0\" />\r\n    <location id=\"id1\" />\r\n    <location id=\"id2\" />\r\n    <location id=\"id3\" />\r\n    <location id=\"id4\" />\r\n    <init ref=\"id0\" />\r\n    <transition ref=\"id5\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id1\" />\r\n    </transition>\r\n    <transition ref=\"id6\">\r\n      <source ref=\"id0\" />\r\n      <target ref=\"id2\" />\r\n    </transition>\r\n    <transition ref=\"id7\">\r\n      <source ref=\"id1\" />\r\n      <target ref=\"id3\" />\r\n      <label kind=\"guard\">1 &lt;= A &lt; 5</label>\r\n    </transition>\r\n    <transition ref=\"id8\">\r\n      <source ref=\"id2\" />\r\n      <target ref=\"id4\" />\r\n      <label kind=\"guard\">1 &lt;= B &lt; 3</label>\r\n    </transition>\r\n  </template>\r\n  <system>system ta1</system>\r\n</nta>";
 
+        StringBuilder sb = new StringBuilder();
         XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
         {
             xmlGenerator.WriteNta(xmlWriter, nta);
         }
 
         Assert.That(sb.ToString(), Is.Not.EqualTo(""));
+        Assert.That(sb.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void WriteNtaTest()
+    {
+        XmlGenerator xmlGenerator = new XmlGenerator();
+        NTA nta = new NTA("clock a, b;", "ta1", new List<Template>());
+        
+        string expected = "<nta>\r\n  <declaration>clock a, b;</declaration>\r\n  <system>ta1</system>\r\n</nta>";
+        StringBuilder sb = new StringBuilder();
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
+        {
+            xmlGenerator.WriteNta(xmlWriter, nta);
+        }
+        
+        Assert.That(sb.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void WriteTemplateTest()
+    {
+        XmlGenerator xmlGenerator = new XmlGenerator();
+        Template template = new Template("clock a, b; chan x, y;",
+            "ta1",
+            "id0",
+            new List<Location>
+            {
+                new Location("id0",
+                    "id0",
+                    new List<Label>())
+            },
+            new List<Transition>());
+
+        var expected = "<template>\r\n  <name>ta1</name>\r\n  <location id=\"id0\" />\r\n  <init ref=\"id0\" />\r\n</template>";
+        StringBuilder sb = new StringBuilder();
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
+        {
+            xmlGenerator.WriteTemplate(xmlWriter, template);
+        }
+        
+        Assert.That(sb.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void WriteLocationTest()
+    {
+        XmlGenerator xmlGenerator = new XmlGenerator();
+        Location location = new Location("id0", "loc1", new List<Label>());
+        
+        string expected = "<location id=\"id0\">\r\n  <name>loc1</name>\r\n</location>";
+        StringBuilder sb = new StringBuilder();
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
+        {
+            xmlGenerator.WriteLocation(xmlWriter, location);
+        }
+        
+        Assert.That(sb.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void WriteTransitionTest()
+    {
+        XmlGenerator xmlGenerator = new XmlGenerator();
+        Transition transition = new Transition("id2", "id1", "id2", new List<Label>());
+        
+        string expected = "<transition ref=\"id2\">\r\n  <source ref=\"id1\" />\r\n  <target ref=\"id2\" />\r\n</transition>";
+        StringBuilder sb = new StringBuilder();
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
+        {
+            xmlGenerator.WriteTransition(xmlWriter, transition);
+        }
+        
+        Assert.That(sb.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void WriteLabelTest()
+    {
+        XmlGenerator xmlGenerator = new XmlGenerator();
+        Label label = new Label("guard", "0<a<=10");
+        
+        string expected = "<label kind=\"guard\">0&lt;a&lt;=10</label>";
+        StringBuilder sb = new StringBuilder();
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
+        
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
+        {
+            xmlGenerator.WriteLabel(xmlWriter, label);
+        }
+        
         Assert.That(sb.ToString(), Is.EqualTo(expected));
     }
 
