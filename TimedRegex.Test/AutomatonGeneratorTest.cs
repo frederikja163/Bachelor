@@ -16,6 +16,11 @@ public sealed class AutomatonGeneratorTest
     {
         return new Match(Token(TokenType.Match, c));
     }
+    
+    private Interval Interval(char c, int start, int end)
+    {
+        return new Interval(Match(c), start, end, true, false, Token(TokenType.IntervalLeft, '['));
+    }
 
     [Test]
     public void GenerateMatchTaTest()
@@ -42,7 +47,7 @@ public sealed class AutomatonGeneratorTest
     [Test]
     public void GenerateIntervalTaTest()
     {
-        Interval interval = new Interval(Match('a'), 2, 4, true, true, Token(TokenType.IntervalRight, '['));
+        Interval interval = Interval('a', 2, 4);
         TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(interval);
         
         Assert.That(ta.GetLocations().Count(), Is.EqualTo(3));
@@ -51,6 +56,6 @@ public sealed class AutomatonGeneratorTest
         Edge e = ta.GetEdges().First(e => e.To.IsFinal);
         Assert.That(e.Symbol, Is.EqualTo('a'));
         Assert.That(e.GetClockRanges().Count(), Is.EqualTo(1));
-        Assert.That(e.GetClockRanges().First().Item2, Is.EqualTo(2..3));
+        Assert.That(e.GetClockRanges().First().Item2, Is.EqualTo(2..4));
     }
 }
