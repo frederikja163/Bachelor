@@ -26,7 +26,10 @@ internal sealed class XmlGenerator : IGenerator
     {
         xmlWriter.WriteStartElement("nta");
 
-        if (String.IsNullOrWhiteSpace(nta.Declaration)) return;
+        if (String.IsNullOrWhiteSpace(nta.Declaration))
+        {
+                return;
+        }
         xmlWriter.WriteStartElement("declaration");
         xmlWriter.WriteValue(nta.Declaration);
         xmlWriter.WriteEndElement();
