@@ -8,7 +8,7 @@ internal sealed class NTA
         System = system;
         Templates = templates.ToArray();
     }
-    
+
     internal Declaration Declaration { get; }
     internal string System { get; }
     internal Template[] Templates { get; }
