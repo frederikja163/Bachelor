@@ -42,20 +42,20 @@ internal sealed class XmlGenerator : IGenerator
 
     internal void WriteDeclaration(XmlWriter xmlWriter, Declaration declaration)
     {
-        if (declaration.Clocks.Count == 0 && declaration.Channels.Count == 0)
+        if (!declaration.GetClocks().Any() && !declaration.GetChannels().Any())
         {
             return;
         }
 
         xmlWriter.WriteStartElement("declaration");
-        if (declaration.Clocks.Count != 0)
+        if (declaration.GetClocks().Any())
         {
-            xmlWriter.WriteValue("clock " + string.Join(", ", declaration.Clocks) + ";");
+            xmlWriter.WriteValue("clock " + string.Join(", ", declaration.GetClocks()) + ";");
         }
 
-        if (declaration.Channels.Count != 0)
+        if (declaration.GetChannels().Any())
         {
-            xmlWriter.WriteValue("chan " + string.Join(", ", declaration.Channels) + ";");
+            xmlWriter.WriteValue("chan " + string.Join(", ", declaration.GetChannels()) + ";");
         }
 
         xmlWriter.WriteEndElement();
