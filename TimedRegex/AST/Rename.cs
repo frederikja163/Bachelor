@@ -15,4 +15,12 @@ internal sealed class Rename : IUnary
 
     public IAstNode Child { get; }
     public Token Token { get; }
+
+    public IEnumerable<SymbolReplace> GetReplaceList()
+    {
+        foreach (SymbolReplace symbolReplace in _replaceList)
+        {
+            yield return symbolReplace;
+        }
+    }
 }

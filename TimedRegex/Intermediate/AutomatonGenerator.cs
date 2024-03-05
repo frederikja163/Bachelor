@@ -32,12 +32,12 @@ internal static class AutomatonGenerator
         TimedAutomaton left = CreateAutomaton(concatenation.LeftNode);
         TimedAutomaton right = CreateAutomaton(concatenation.RightNode);
 
-        TimedAutomaton ta = new TimedAutomaton(left, right, excludeEdges: true);
+        TimedAutomaton ta = new TimedAutomaton(left, right);
         foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
             edge.AddClockRanges(e.GetClockRanges());
-            edge.AddClockResets(ta.GetClocks());
+            edge.AddClockResets(right.GetClocks());
         }
 
         foreach (Location location in left.GetLocations().Where(l => l.IsFinal))
@@ -60,8 +60,27 @@ internal static class AutomatonGenerator
         throw new NotImplementedException();
     }
 
-    private static TimedAutomaton CreateIntervalAutomaton(Interval a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateIntervalAutomaton(Interval interval)
+    {
+        TimedAutomaton ta = CreateAutomaton(interval.Child);
+
+        Range range = new Range(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval - (interval.EndInclusive ? 1 : 0));
+        Location newFinal = ta.AddLocation(true);
+        Clock clock = ta.AddClock();
+
+        foreach (Edge e in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
+        {
+            Edge edge = ta.AddEdge(e.From, newFinal, e.Symbol);
+            edge.AddClockRange(clock, range);
+            edge.AddClockRanges(e.GetClockRanges());
+        }
+
+        foreach (Location location in ta.GetLocations().Where(l => l.IsFinal && l.Id != newFinal.Id))
+        {
+            location.IsFinal = false;
+        }
+
+        return ta;
     }
 
     private static TimedAutomaton CreateIteratorAutomaton(Iterator a){
@@ -80,11 +99,38 @@ internal static class AutomatonGenerator
         return ta;
     }
 
-    private static TimedAutomaton CreateRenameAutomaton(Rename a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateRenameAutomaton(Rename rename)
+    {
+        TimedAutomaton ta = CreateAutomaton(rename.Child);
+
+        Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol, r => r.NewSymbol);
+
+        foreach (Edge edge in ta.GetEdges())
+        {
+            char? symbol = edge.Symbol;
+            if (symbol is not null && replaceList.TryGetValue(symbol.Value, out char newSymbol))
+            {
+                edge.Symbol = newSymbol;
+            }
+        }
+
+        return ta;
     }
 
-    private static TimedAutomaton CreateUnionAutomaton(Union a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateUnionAutomaton(Union union)
+    {
+        TimedAutomaton left = CreateAutomaton(union.LeftNode);
+        TimedAutomaton right = CreateAutomaton(union.RightNode);
+        TimedAutomaton ta = new TimedAutomaton(left, right);
+
+        Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
+        
+        ta.AddLocation(newInitial: true);
+        Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, null);
+        lEdge.AddClockRange(clock, 0..1);
+        Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, null);
+        rEdge.AddClockRange(clock, 0..1);
+        
+        return ta;
     }
 }

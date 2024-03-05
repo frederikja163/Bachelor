@@ -45,35 +45,28 @@ namespace TimedRegex.Parsing
 
         private static IAstNode? ParseUnary(Tokenizer tokenizer)
         {
-            IAstNode? match = ParseMatch(tokenizer);
-            if (tokenizer.Next is null || match is null)
+            IAstNode? child = ParseMatch(tokenizer);
+            if (tokenizer.Next is null || child is null)
             {
-                return match;
+                return child;
             }
-            if (tokenizer.TryPeek(1, out Token? token) && token.Type == TokenType.Absorb)
+            TokenType? peek = tokenizer.TryPeek(1, out Token? token) ? token.Type : null;
+            switch (tokenizer.Next.Type, peek)
             {
-                switch (tokenizer.Next.Type) 
-                {
-                    case (TokenType.Iterator):
-                        return new AbsorbedIterator(match, tokenizer.GetNext(2));
+                case (TokenType.Iterator, not TokenType.Absorb):
+                    return new Iterator(child, tokenizer.GetNext());
 
-                    case (TokenType.GuaranteedIterator):
-                        return new AbsorbedGuaranteedIterator(match, tokenizer.GetNext(2));
+                case (TokenType.GuaranteedIterator, not TokenType.Absorb):
+                    return new GuaranteedIterator(child, tokenizer.GetNext());
+                
+                case (TokenType.Iterator, TokenType.Absorb):
+                    return new AbsorbedIterator(child, tokenizer.GetNext(2));
 
-                    default:
-                        throw new Exception("Absorb was unary, but not valid type.");
-                }
-            }
-            switch (tokenizer.Next.Type)
-            {
-                case (TokenType.Iterator):
-                    return new Iterator(match, tokenizer.GetNext());
-
-                case (TokenType.GuaranteedIterator):
-                    return new GuaranteedIterator(match, tokenizer.GetNext());
-
+                case (TokenType.GuaranteedIterator, TokenType.Absorb):
+                    return new AbsorbedGuaranteedIterator(child, tokenizer.GetNext(2));
+                
                 default:
-                    return match;
+                    return child;
             }
         }
 

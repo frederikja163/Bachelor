@@ -18,7 +18,7 @@ internal sealed class Edge : IEquatable<Edge>
     internal int Id { get; }
     internal Location From { get; }
     internal Location To { get; }
-    internal char? Symbol { get; }
+    internal char? Symbol { get; set; }
 
     internal void AddClockReset(Clock clock)
     {
