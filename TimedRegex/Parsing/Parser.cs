@@ -79,20 +79,11 @@ namespace TimedRegex.Parsing
 
         private static IAstNode? ParseBinary(Tokenizer tokenizer)
         {
-            /*            switch (tokenizer.Current.Type)
-                        {
-            *//*                case TokenType.Concatenation: 
-                                return ParseConcatenation(tokenizer);*//*
-                                //Concatenation must be handled differently
-                            case TokenType.Union:
-                                return ParseUnion(tokenizer);
-
-                            case TokenType.Intersection:
-                                return ParseIntersection(tokenizer);
-
-                            default:
-                                return ParseUnary(tokenizer);
-                        }*/
+            IAstNode? child = ParseUnary(tokenizer);
+            if (tokenizer.Next is null || child is null)
+            {
+                return null;
+            }
             return ParseUnary(tokenizer);
         }
 
