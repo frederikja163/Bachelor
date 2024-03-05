@@ -168,6 +168,24 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
+    public void WriteDeclarationTest()
+    {
+        XmlGenerator xmlGenerator = new XmlGenerator();
+        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
+        
+        string expected = "<declaration>clock c1, c2;chan x, y;</declaration>";
+        StringBuilder sb = new StringBuilder();
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true, NewLineChars = "\n" };
+
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
+        {
+            xmlGenerator.WriteDeclaration(xmlWriter, declaration);
+        }
+
+        Assert.That(sb.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
     public void ContainsLocationsTest()
     {
         NTA nta = CreateNta();

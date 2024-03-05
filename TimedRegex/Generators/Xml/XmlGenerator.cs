@@ -27,7 +27,7 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteStartElement("nta");
 
         WriteDeclaration(xmlWriter, nta.Declaration);
-        
+
         foreach (var template in nta.Templates)
         {
             WriteTemplate(xmlWriter, template);
@@ -40,21 +40,24 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteEndElement();
     }
 
-    private void WriteDeclaration(XmlWriter xmlWriter, Declaration declaration)
+    internal void WriteDeclaration(XmlWriter xmlWriter, Declaration declaration)
     {
         if (declaration.Clocks.Count == 0 && declaration.Channels.Count == 0)
         {
             return;
         }
+
         xmlWriter.WriteStartElement("declaration");
         if (declaration.Clocks.Count != 0)
         {
             xmlWriter.WriteValue("clock " + string.Join(", ", declaration.Clocks) + ";");
         }
+
         if (declaration.Channels.Count != 0)
         {
-            xmlWriter.WriteValue("chan " + string.Join(", ", declaration.Clocks) + ";");
+            xmlWriter.WriteValue("chan " + string.Join(", ", declaration.Channels) + ";");
         }
+
         xmlWriter.WriteEndElement();
     }
 
