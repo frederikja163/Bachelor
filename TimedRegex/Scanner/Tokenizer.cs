@@ -14,12 +14,11 @@ internal sealed class Tokenizer
         _lookAhead = new List<Token>();
     }
 
-    internal Token Next
+    internal Token? Next
     {
         get
         {
-            EnsureLookAhead(0);
-            return _lookAhead[0];
+            return EnsureLookAhead(0) ? _lookAhead[0] : null;
         }
     }
     

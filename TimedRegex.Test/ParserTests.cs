@@ -16,24 +16,31 @@ public sealed class ParserTests
     public void ParseMatchValid(string inputString)
     {
         Tokenizer tokenizer = new Tokenizer(inputString);
-        Match match = (Match)Parser.Parse(tokenizer);
-        Assert.IsInstanceOf<Match>(match);
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Match>(astNode);
+        Match match = (Match)astNode;
         Assert.That(match.Token.Match, Is.EqualTo(inputString[0]));
         Assert.That(match.Token.CharacterIndex, Is.EqualTo(0));
         Assert.That(match, Is.TypeOf<Match>());
     }
 
-    public sealed class ParseUnaryTests
-    {
         [Test]
-        public void ParseAbsorbedGuaranteedIterator()
-        {
-            Tokenizer tokenizer = new Tokenizer("a+'");
-            AbsorbedGuaranteedIterator node = (AbsorbedGuaranteedIterator)Parser.Parse(tokenizer);
-            Assert.IsInstanceOf<AbsorbedGuaranteedIterator>(node);
-            Assert.That(node.Child, Is.TypeOf<Match>());
-            Assert.That(node.Token.Match, Is.EqualTo('+'));
-            Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
-        }
+    public void ParseEmptyString()
+    {
+        Tokenizer tokenizer = new Tokenizer("");
+        Assert.IsNull(Parser.Parse(tokenizer));
+    }
+
+
+        [Test]
+    public void ParseAbsorbedGuaranteedIterator()
+    {
+        Tokenizer tokenizer = new Tokenizer("a+'");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<AbsorbedGuaranteedIterator>(astNode);
+        AbsorbedGuaranteedIterator node = (AbsorbedGuaranteedIterator)astNode;
+        Assert.That(node.Child, Is.TypeOf<Match>());
+        Assert.That(node.Token.Match, Is.EqualTo('+'));
+        Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
     }
 }

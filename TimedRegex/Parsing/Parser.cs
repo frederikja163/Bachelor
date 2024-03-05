@@ -11,14 +11,18 @@ namespace TimedRegex.Parsing
         /// </summary>
         /// <param name="tokenizer"></param>
         /// <returns>An IAstNode that is the head of an AST.</returns>
-        public static IAstNode Parse(Tokenizer tokenizer)
+        public static IAstNode? Parse(Tokenizer tokenizer)
         {
             return ParseRename(tokenizer);
         }
 
          // TODO: Might require further development to support "matchAny".
-        private static IAstNode ParseMatch(Tokenizer tokenizer)
+        private static IAstNode? ParseMatch(Tokenizer tokenizer)
         {
+            if (tokenizer.Next is null)
+            {
+                return null;
+            }
             if (tokenizer.Next.Type == TokenType.Match)
             {
                 return new Match(tokenizer.GetNext());
@@ -26,7 +30,7 @@ namespace TimedRegex.Parsing
             throw new Exception("Invalid token \""+ tokenizer.Next.ToString() + "\"");
         }
 
-        private static IAstNode ParseRename(Tokenizer tokenizer)
+        private static IAstNode? ParseRename(Tokenizer tokenizer)
         {
 /*            if (tokenizer.Current.Type == TokenType.RenameStart)
             {
@@ -39,12 +43,12 @@ namespace TimedRegex.Parsing
             return ParseBinary(tokenizer);
         }
 
-        private static IAstNode ParseUnary(Tokenizer tokenizer)
+        private static IAstNode? ParseUnary(Tokenizer tokenizer)
         {
-            Match match = new Match(tokenizer.Next);
-            if (tokenizer.Peek().Type == TokenType.)
+            IAstNode? match = ParseMatch(tokenizer);
+            if (tokenizer.Next is null || match is null)
             {
-
+                return match;
             }
             if (tokenizer.TryPeek(1, out Token? token) && token.Type == TokenType.Absorb)
             {
@@ -73,7 +77,7 @@ namespace TimedRegex.Parsing
             }
         }
 
-        private static IAstNode ParseBinary(Tokenizer tokenizer)
+        private static IAstNode? ParseBinary(Tokenizer tokenizer)
         {
             /*            switch (tokenizer.Current.Type)
                         {

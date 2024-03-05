@@ -27,8 +27,15 @@ public sealed class TokenizerTests
     public void ParseTokenTypeTest(string str, int type)
     {
         Tokenizer tokenizer = new Tokenizer(str);
-
+        Assert.IsNotNull(tokenizer.Next);
         Assert.That(tokenizer.Next.Type, Is.EqualTo((TokenType)type));
+    }
+
+    [Test]
+    public void ParseEmptyString()
+    {
+        Tokenizer tokenizer = new Tokenizer("");
+        Assert.IsNull(tokenizer.Next);
     }
 
     [Test]
@@ -115,6 +122,7 @@ public sealed class TokenizerTests
     {
         Tokenizer tokenizer = new Tokenizer(inputString);
         Token token = tokenizer.GetNext(n);
+        Assert.IsNotNull(tokenizer.Next);
         Assert.That(token.Match, Is.EqualTo('a'));
         Assert.That(token.CharacterIndex, Is.EqualTo(0));
         Assert.That(tokenizer.Next.Match, Is.EqualTo(inputString[n]));
