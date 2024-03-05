@@ -10,7 +10,7 @@ internal sealed class XmlGenerator : IGenerator
         throw new NotImplementedException();
     }
 
-    internal void GenerateFile(Stream stream, TimedAutomaton automaton)
+    public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
         // Empty NTA is temporary, missing implementation of NTA instantiation
         NTA nta = new NTA("", "", Enumerable.Empty<Template>());
