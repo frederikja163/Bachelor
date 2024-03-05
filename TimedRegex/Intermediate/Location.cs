@@ -9,7 +9,7 @@ internal sealed class Location : IEquatable<Location>
     }
     
     internal int Id { get; }
-    internal bool IsFinal { get; }
+    internal bool IsFinal { get; set; }
 
     public bool Equals(Location? other)
     {
