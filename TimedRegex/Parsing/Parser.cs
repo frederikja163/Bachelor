@@ -75,7 +75,7 @@ namespace TimedRegex.Parsing
             IAstNode? left = ParseUnary(tokenizer);
             if (tokenizer.Next is null || left is null)
             {
-                return null;
+                return left;
             }
             if (tokenizer.Next.Type == TokenType.Absorb)
             {
@@ -85,7 +85,7 @@ namespace TimedRegex.Parsing
             if (tokenizer.Next.Type == TokenType.Union)
             {
                 tokenizer.Skip();
-                return new Union(left, ParseUnary(tokenizer)!, tokenizer.GetNext());
+                return new Union(left, ParseUnary(tokenizer)!, tokenizer.Next);
             }
             return new Concatenation(left, ParseUnary(tokenizer)!);
             throw new Exception("Expected binary token, but recieved no token after " + left.Token.ToString());

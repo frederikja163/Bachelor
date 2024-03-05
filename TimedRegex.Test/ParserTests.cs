@@ -92,4 +92,32 @@ public sealed class ParserTests
         Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
         Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
     }
+
+    [Test]
+    public void ParseConcatenation()
+    {
+        Tokenizer tokenizer = new Tokenizer("ab");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Concatenation>(astNode);
+        Concatenation node = (Concatenation)astNode;
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Assert.That(node.RightNode, Is.TypeOf<Match>());
+        Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void ParseAbsorbedConcatenation() 
+    {
+        Tokenizer tokenizer = new Tokenizer("a'b");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<AbsorbedConcatenation>(astNode);
+        AbsorbedConcatenation node = (AbsorbedConcatenation)astNode;
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Assert.That(node.RightNode, Is.TypeOf<Match>());
+        Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
+    }
 }
