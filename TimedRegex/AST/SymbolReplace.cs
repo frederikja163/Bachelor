@@ -2,12 +2,12 @@
 
 internal sealed class SymbolReplace
 {
-    private readonly char _oldSymbol;
-    private readonly char _newSymbol;
-
     internal SymbolReplace(char oldSymbol, char newSymbol)
     {
-        _oldSymbol = oldSymbol;
-        _newSymbol = newSymbol;
+        OldSymbol = oldSymbol;
+        NewSymbol = newSymbol;
     }
+    
+    internal char OldSymbol { get; }
+    internal char NewSymbol { get; }
 }
