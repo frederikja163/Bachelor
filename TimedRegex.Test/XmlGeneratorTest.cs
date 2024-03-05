@@ -186,6 +186,28 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
+    public void LineEndingsTest()
+    {
+        XmlGenerator xmlGenerator = new XmlGenerator();
+        Location location = new Location("id0", "loc1", new List<Label>());
+
+        string crlf = "<location id=\"id0\">\r\n  <name>loc1</name>\r\n</location>";
+        string lf = "<location id=\"id0\">\n  <name>loc1</name>\n</location>";
+        StringBuilder sb = new StringBuilder();
+        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true, NewLineChars = "\n" };
+
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, settings))
+        {
+            xmlGenerator.WriteLocation(xmlWriter, location);
+        }
+
+        Assert.That(sb.ToString(), Is.Not.EqualTo(crlf));
+        Assert.That(sb.ToString(), Is.EqualTo(lf));
+    }
+    
+    
+
+    [Test]
     public void ContainsLocationsTest()
     {
         NTA nta = CreateNta();
