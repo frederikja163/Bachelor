@@ -32,10 +32,10 @@ public sealed class ParserTests
     }
 
 
-    [TestCase("a+'")]
-    public void ParseAbsorbedGuaranteedIterator(string str)
+    [Test]
+    public void ParseAbsorbedGuaranteedIterator()
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new Tokenizer("a+'");
         IAstNode astNode = Parser.Parse(tokenizer)!;
         Assert.IsInstanceOf<AbsorbedGuaranteedIterator>(astNode);
         AbsorbedGuaranteedIterator node = (AbsorbedGuaranteedIterator)astNode;
@@ -44,10 +44,10 @@ public sealed class ParserTests
         Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
     }
 
-    [TestCase("a*'")]
-    public void ParseAbsorbedIterator(string str)
+    [Test]
+    public void ParseAbsorbedIterator()
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new Tokenizer("a*'");
         IAstNode astNode = Parser.Parse(tokenizer)!;
         Assert.IsInstanceOf<AbsorbedIterator>(astNode);
         AbsorbedIterator node = (AbsorbedIterator)astNode;
@@ -56,10 +56,10 @@ public sealed class ParserTests
         Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
     }
 
-    [TestCase("a*")]
-    public void ParseIterator(string str)
+    [Test]
+    public void ParseIterator()
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new Tokenizer("a*");
         IAstNode astNode = Parser.Parse(tokenizer)!;
         Assert.IsInstanceOf<Iterator>(astNode);
         Iterator node = (Iterator)astNode;
@@ -68,10 +68,10 @@ public sealed class ParserTests
         Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
     }
 
-    [TestCase("a+")]
-    public void ParseGuaranteedIterator(string str)
+    [Test]
+    public void ParseGuaranteedIterator()
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new Tokenizer("a+");
         IAstNode astNode = Parser.Parse(tokenizer)!;
         Assert.IsInstanceOf<GuaranteedIterator>(astNode);
         GuaranteedIterator node = (GuaranteedIterator)astNode;
