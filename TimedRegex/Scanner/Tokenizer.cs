@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace TimedRegex.Scanner;
 
 internal sealed class Tokenizer
@@ -12,13 +14,29 @@ internal sealed class Tokenizer
         _lookAhead = new List<Token>();
     }
 
-    internal Token Current
+    internal Token? Next
     {
         get
         {
-            EnsureLookAhead(0);
-            return _lookAhead[0];
+            return EnsureLookAhead(0) ? _lookAhead[0] : null;
         }
+    }
+    
+    internal bool TryPeek(int n, [NotNullWhen(true)] out Token? token)
+    {
+        if (!EnsureLookAhead(n))
+        {
+            token = null;
+            return false;
+        }
+
+        token = _lookAhead[n];
+        return true;
+    }
+    
+    internal bool TryPeek([NotNullWhen(true)] out Token? token)
+    {
+        return TryPeek(1, out token);
     }
 
     internal Token Peek(int n = 1)
@@ -30,20 +48,21 @@ internal sealed class Tokenizer
         return _lookAhead[n];
     }
 
-    internal Token GetNext()
+    internal Token GetNext(int n = 1)
     {
-        if (!EnsureLookAhead(0))
+        if (!EnsureLookAhead(n-1))
         {
             throw new Exception("Reached end of input.");
         }
         Token token = _lookAhead[0];
-        _lookAhead.RemoveAt(0);
+        _lookAhead.RemoveRange(0, n);
         return token;
     }
 
+
     internal void Skip(int n = 1)
     {
-        EnsureLookAhead(n);
+        EnsureLookAhead(n-1);
         _lookAhead.RemoveRange(0, n);
     }
 

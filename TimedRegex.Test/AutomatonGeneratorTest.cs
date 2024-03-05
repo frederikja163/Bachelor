@@ -31,6 +31,7 @@ public sealed class AutomatonGeneratorTest
         Assert.That(ta.GetClocks().Count(), Is.EqualTo(0));
         
         Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo('a'));
+        Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'a'}));
     }
 
     [Test]
@@ -46,6 +47,20 @@ public sealed class AutomatonGeneratorTest
         Edge final = ta.GetEdges().First(e => e.GetClockResets().Any());
         Assert.That(final.GetClockRanges().First().Item2, Is.EqualTo(0..3));
         Assert.That(final.GetClockResets().Count(), Is.EqualTo(1));
+    }
+    
+    
+    [Test]
+    public void SimpleConcatenationTest()
+    {
+        Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(concatenation);
+        
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(4));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(2));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(1));
+        Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'a', 'b'}));
     }
 
     [Test]
@@ -90,5 +105,21 @@ public sealed class AutomatonGeneratorTest
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'c'), Is.EqualTo(0));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == '1'), Is.EqualTo(2));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == '0'), Is.EqualTo(3));
+        Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'0', '1', 'b'}));
+    }
+    
+    [Test]
+    public void RenameSwapTest()
+    {
+        Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
+        Rename rename = new Rename(new List<SymbolReplace>()
+            { new SymbolReplace('a', 'b'), new SymbolReplace('b', 'a') }, concatenation, Token(TokenType.RenameStart, '@'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(rename);
+        
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(4));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(1));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(2));
+        Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'a', 'b'}));
     }
 }
