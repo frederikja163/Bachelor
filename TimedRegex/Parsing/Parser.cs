@@ -72,12 +72,23 @@ namespace TimedRegex.Parsing
 
         private static IAstNode? ParseBinary(Tokenizer tokenizer)
         {
-            IAstNode? child = ParseUnary(tokenizer);
-            if (tokenizer.Next is null || child is null)
+            IAstNode? left = ParseUnary(tokenizer);
+            if (tokenizer.Next is null || left is null)
             {
                 return null;
             }
-            return ParseUnary(tokenizer);
+            if (tokenizer.Next.Type == TokenType.Absorb)
+            {
+                tokenizer.Skip();
+                return new AbsorbedConcatenation(left, ParseUnary(tokenizer)!);
+            }
+            if (tokenizer.Next.Type == TokenType.Union)
+            {
+                tokenizer.Skip();
+                return new Union(left, ParseUnary(tokenizer)!, tokenizer.GetNext());
+            }
+            return new Concatenation(left, ParseUnary(tokenizer)!);
+            throw new Exception("Expected binary token, but recieved no token after " + left.Token.ToString());
         }
 
     }
