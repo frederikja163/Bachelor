@@ -5,6 +5,13 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
+    internal static XmlWriterSettings XmlSettings { get; } = new()
+    {
+        Indent = true,
+        OmitXmlDeclaration = true,
+        NewLineChars = "\n"
+    };
+
     public void GenerateFile(string fileName, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
@@ -13,10 +20,9 @@ internal sealed class XmlGenerator : IGenerator
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
         // Empty NTA is temporary, missing implementation of NTA instantiation
-        NTA nta = new NTA("", "", Enumerable.Empty<Template>());
+        NTA nta = new NTA(new Declaration(new List<string>(), new List<string>()), "", Enumerable.Empty<Template>());
 
-        XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
-        using XmlWriter xmlWriter = XmlWriter.Create(stream, settings);
+        using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
 
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
@@ -26,13 +32,7 @@ internal sealed class XmlGenerator : IGenerator
     {
         xmlWriter.WriteStartElement("nta");
 
-        if (String.IsNullOrWhiteSpace(nta.Declaration))
-        {
-                return;
-        }
-        xmlWriter.WriteStartElement("declaration");
-        xmlWriter.WriteValue(nta.Declaration);
-        xmlWriter.WriteEndElement();
+        WriteDeclaration(xmlWriter, nta.Declaration);
 
         foreach (var template in nta.Templates)
         {
@@ -42,6 +42,27 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteStartElement("system");
         xmlWriter.WriteValue(nta.System);
         xmlWriter.WriteEndElement();
+
+        xmlWriter.WriteEndElement();
+    }
+
+    internal void WriteDeclaration(XmlWriter xmlWriter, Declaration declaration)
+    {
+        if (!declaration.GetClocks().Any() && !declaration.GetChannels().Any())
+        {
+            return;
+        }
+
+        xmlWriter.WriteStartElement("declaration");
+        if (declaration.GetClocks().Any())
+        {
+            xmlWriter.WriteValue("clock " + string.Join(", ", declaration.GetClocks()) + ";");
+        }
+
+        if (declaration.GetChannels().Any())
+        {
+            xmlWriter.WriteValue("chan " + string.Join(", ", declaration.GetChannels()) + ";");
+        }
 
         xmlWriter.WriteEndElement();
     }
@@ -113,7 +134,7 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteEndElement();
     }
 
-    private void PopulateNta(TimedAutomaton automaton)
+    private void PopulateNta(NTA nta, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
     }
@@ -128,7 +149,7 @@ internal sealed class XmlGenerator : IGenerator
         throw new NotImplementedException();
     }
 
-    private void PopulateTransition(TimedAutomaton automaton)
+    private void PopulateTransition(Transition transition, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
     }

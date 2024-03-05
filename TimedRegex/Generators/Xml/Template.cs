@@ -2,7 +2,7 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class Template
 {
-    internal Template(string declaration, string name, string init, IEnumerable<Location> locations, IEnumerable<Transition> transitions)
+    internal Template(Declaration declaration, string name, string init, IEnumerable<Location> locations, IEnumerable<Transition> transitions)
     {
         Declaration = declaration;
         Name = name;
@@ -11,7 +11,7 @@ internal sealed class Template
         Transitions = transitions.ToArray();
     }
     
-    internal string Declaration { get; }
+    internal Declaration Declaration { get; }
     internal string Name { get; }
     internal string Init { get; }
     internal Location[] Locations { get; }
