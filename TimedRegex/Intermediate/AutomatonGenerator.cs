@@ -99,8 +99,22 @@ internal static class AutomatonGenerator
         return ta;
     }
 
-    private static TimedAutomaton CreateRenameAutomaton(Rename a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateRenameAutomaton(Rename rename)
+    {
+        TimedAutomaton ta = CreateAutomaton(rename.Child);
+
+        Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol, r => r.NewSymbol);
+
+        foreach (Edge edge in ta.GetEdges())
+        {
+            char? symbol = edge.Symbol;
+            if (symbol is not null && replaceList.TryGetValue(symbol.Value, out char newSymbol))
+            {
+                edge.Symbol = newSymbol;
+            }
+        }
+
+        return ta;
     }
 
     private static TimedAutomaton CreateUnionAutomaton(Union a){

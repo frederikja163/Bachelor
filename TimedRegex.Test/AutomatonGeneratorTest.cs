@@ -63,4 +63,20 @@ public sealed class AutomatonGeneratorTest
         Assert.That(e.GetClockRanges().Count(), Is.EqualTo(1));
         Assert.That(e.GetClockRanges().First().Item2, Is.EqualTo(2..4));
     }
+
+    [Test]
+    public void GenerateRenameTaTest()
+    {
+        Concatenation concatenation = new Concatenation(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
+        Rename rename = new Rename(new List<SymbolReplace>()
+            { new SymbolReplace('a', '0'), new SymbolReplace('c', '1') }, concatenation, Token(TokenType.RenameStart, '@'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(rename);
+        
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(7));
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(8));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(0));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'c'), Is.EqualTo(0));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == '1'), Is.EqualTo(2));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == '0'), Is.EqualTo(3));
+    }
 }
