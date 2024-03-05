@@ -104,6 +104,7 @@ internal static class AutomatonGenerator
         TimedAutomaton ta = CreateAutomaton(rename.Child);
 
         Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol, r => r.NewSymbol);
+        ta.Rename(replaceList);
 
         foreach (Edge edge in ta.GetEdges())
         {
