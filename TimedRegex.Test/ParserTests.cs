@@ -120,4 +120,21 @@ public sealed class ParserTests
         Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
         Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
     }
+
+    [TestCase("a|b|c")]
+    [TestCase("abc")]
+    [TestCase("a|bc")]
+    [TestCase("a'bc")]
+    public void ParseBinaryMultiple(string input)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        Assert.DoesNotThrow(() => Parser.Parse(tokenizer));
+    }
+
+    [TestCase("a|")]
+    public void ParseInvalidBinary(string input)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
 }
