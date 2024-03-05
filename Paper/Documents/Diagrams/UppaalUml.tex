@@ -3,8 +3,12 @@
 
         %classes
         \umlclass[anchor=north,width=31ex,x=0,y=-4.3]{template}{declaration : string\\name : string\\ init : string}{}
+        \umlclass[anchor=north,width=31ex,x=-6,y=-9]{declaration}{clocks : list<string>\\channels : list<string>}{}
+
         %relations
         \umlcompo[attr1=1|,attr2=0..*|,pos2=0.87]{nta}{template}
+        \umlHVcompo[attr1=1|,attr2=1|,pos1=0.1,pos2=1.98]{nta}{declaration}
+        \umlHVcompo[attr1=1|,pos1=0.1,pos2=1.98]{template}{declaration}
 
         %classes
         %\umlclass[x=-6,y=-6]{parameter}{}{}
