@@ -79,13 +79,13 @@ namespace TimedRegex.Parsing
             }
             if (tokenizer.Next.Type == TokenType.Absorb)
             {
-                tokenizer.Skip();
-                return new AbsorbedConcatenation(left, ParseUnary(tokenizer)!);
+                Token token = tokenizer.GetNext();
+                return new AbsorbedConcatenation(left, ParseUnary(tokenizer)!, token);
             }
             if (tokenizer.Next.Type == TokenType.Union)
             {
-                tokenizer.Skip();
-                return new Union(left, ParseUnary(tokenizer)!, tokenizer.Next);
+                Token token = tokenizer.GetNext();
+                return new Union(left, ParseUnary(tokenizer)!, token);
             }
             return new Concatenation(left, ParseUnary(tokenizer)!);
             throw new Exception("Expected binary token, but recieved no token after " + left.Token.ToString());
