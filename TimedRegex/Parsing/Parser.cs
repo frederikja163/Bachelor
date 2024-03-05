@@ -45,20 +45,20 @@ namespace TimedRegex.Parsing
 
         private static IAstNode? ParseUnary(Tokenizer tokenizer)
         {
-            IAstNode? match = ParseMatch(tokenizer);
-            if (tokenizer.Next is null || match is null)
+            IAstNode? child = ParseMatch(tokenizer);
+            if (tokenizer.Next is null || child is null)
             {
-                return match;
+                return child;
             }
             if (tokenizer.TryPeek(1, out Token? token) && token.Type == TokenType.Absorb)
             {
                 switch (tokenizer.Next.Type) 
                 {
                     case (TokenType.Iterator):
-                        return new AbsorbedIterator(match, tokenizer.GetNext(2));
+                        return new AbsorbedIterator(child, tokenizer.GetNext(2));
 
                     case (TokenType.GuaranteedIterator):
-                        return new AbsorbedGuaranteedIterator(match, tokenizer.GetNext(2));
+                        return new AbsorbedGuaranteedIterator(child, tokenizer.GetNext(2));
 
                     default:
                         throw new Exception("Absorb was unary, but not valid type.");
@@ -67,13 +67,13 @@ namespace TimedRegex.Parsing
             switch (tokenizer.Next.Type)
             {
                 case (TokenType.Iterator):
-                    return new Iterator(match, tokenizer.GetNext());
+                    return new Iterator(child, tokenizer.GetNext());
 
                 case (TokenType.GuaranteedIterator):
-                    return new GuaranteedIterator(match, tokenizer.GetNext());
+                    return new GuaranteedIterator(child, tokenizer.GetNext());
 
                 default:
-                    return match;
+                    return child;
             }
         }
 
