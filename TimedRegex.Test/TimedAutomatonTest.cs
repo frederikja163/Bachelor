@@ -65,4 +65,34 @@ public sealed class TimedAutomatonTest
         
         Assert.True(automaton.GetEdges().All(e => !e.GetClockResets().Any()));
     }
+    
+    private static IEnumerable<object[]> RenameSource()
+    {
+        yield return new object[]
+        {
+            new (char, char?)[] { ('A', null), ('B', null) },
+        };
+        yield return new object[]
+        {
+            new (char, char?)[] { ('A', 'B'), ('B', null) },
+        };
+        yield return new object[]
+        {
+            new (char, char?)[] { ('A', 'B'), ('B', 'C'), ('C', null), ('B', null) },
+        };
+        yield return new object[]
+        {
+            new (char, char?)[] { ('A', 'B'), ('B', 'A'), ('A', null), ('B', null) },
+        };
+    }
+    
+    [TestCaseSource(nameof(RenameSource))]
+    public void RenameTest((char from, char? to)[] rename)
+    {
+        TimedAutomaton automaton = CreateAutomaton();
+        Dictionary<char, char> renameList = rename.Where(r => r.to is not null).ToDictionary(r => r.from, r => r.to!.Value);
+        List<char> expected = rename.Where(r => r.to is null).Select(r => r.from).ToList();
+        automaton.Rename(renameList);
+        Assert.That(automaton.GetAlphabet(), Is.EquivalentTo(expected));
+    }
 }
