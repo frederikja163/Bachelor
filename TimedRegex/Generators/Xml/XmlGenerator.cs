@@ -13,7 +13,7 @@ internal sealed class XmlGenerator : IGenerator
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
         // Empty NTA is temporary, missing implementation of NTA instantiation
-        NTA nta = new NTA("", "", Enumerable.Empty<Template>());
+        NTA nta = new NTA(new Declaration(new List<string>(), new List<string>()), "", Enumerable.Empty<Template>());
 
         XmlWriterSettings settings = new() { Indent = true, OmitXmlDeclaration = true };
         using XmlWriter xmlWriter = XmlWriter.Create(stream, settings);
@@ -26,14 +26,8 @@ internal sealed class XmlGenerator : IGenerator
     {
         xmlWriter.WriteStartElement("nta");
 
-        if (String.IsNullOrWhiteSpace(nta.Declaration))
-        {
-                return;
-        }
-        xmlWriter.WriteStartElement("declaration");
-        xmlWriter.WriteValue(nta.Declaration);
-        xmlWriter.WriteEndElement();
-
+        WriteDeclaration(xmlWriter, nta.Declaration);
+        
         foreach (var template in nta.Templates)
         {
             WriteTemplate(xmlWriter, template);
@@ -43,6 +37,24 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteValue(nta.System);
         xmlWriter.WriteEndElement();
 
+        xmlWriter.WriteEndElement();
+    }
+
+    private void WriteDeclaration(XmlWriter xmlWriter, Declaration declaration)
+    {
+        if (declaration.Clocks.Count == 0 && declaration.Channels.Count == 0)
+        {
+            return;
+        }
+        xmlWriter.WriteStartElement("declaration");
+        if (declaration.Clocks.Count != 0)
+        {
+            xmlWriter.WriteValue("clock " + string.Join(", ", declaration.Clocks) + ";");
+        }
+        if (declaration.Channels.Count != 0)
+        {
+            xmlWriter.WriteValue("chan " + string.Join(", ", declaration.Clocks) + ";");
+        }
         xmlWriter.WriteEndElement();
     }
 
