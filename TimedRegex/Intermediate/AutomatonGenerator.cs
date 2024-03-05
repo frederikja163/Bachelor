@@ -117,7 +117,20 @@ internal static class AutomatonGenerator
         return ta;
     }
 
-    private static TimedAutomaton CreateUnionAutomaton(Union a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateUnionAutomaton(Union union)
+    {
+        TimedAutomaton left = CreateAutomaton(union.LeftNode);
+        TimedAutomaton right = CreateAutomaton(union.RightNode);
+        TimedAutomaton ta = new TimedAutomaton(left, right);
+
+        Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
+        
+        ta.AddLocation(newInitial: true);
+        Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, null);
+        lEdge.AddClockRange(clock, 0..1);
+        Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, null);
+        rEdge.AddClockRange(clock, 0..1);
+        
+        return ta;
     }
 }
