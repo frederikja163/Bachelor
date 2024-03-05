@@ -5,6 +5,13 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
+    internal static XmlWriterSettings XmlSettings { get; } = new()
+    {
+        Indent = true,
+        OmitXmlDeclaration = true,
+        NewLineChars = "\n"
+    };
+
     public void GenerateFile(string fileName, TimedAutomaton automaton)
     {
         throw new NotImplementedException();
@@ -15,20 +22,10 @@ internal sealed class XmlGenerator : IGenerator
         // Empty NTA is temporary, missing implementation of NTA instantiation
         NTA nta = new NTA(new Declaration(new List<string>(), new List<string>()), "", Enumerable.Empty<Template>());
 
-        using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings());
+        using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
 
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
-    }
-
-    internal XmlWriterSettings XmlSettings()
-    {
-        return new XmlWriterSettings
-        {
-            Indent = true,
-            OmitXmlDeclaration = true,
-            NewLineChars = "\n"
-        };
     }
 
     internal void WriteNta(XmlWriter xmlWriter, NTA nta)
