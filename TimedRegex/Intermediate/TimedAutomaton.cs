@@ -82,15 +82,12 @@ internal sealed class TimedAutomaton
         return location;
     }
 
-    internal Edge AddEdge(Location from, Location to, char? symbol)
+    internal Edge AddEdge(Location from, Location to, char symbol)
     {
         Edge edge = new Edge(CreateId(), from, to, symbol);
         
         _edges.Add(edge.Id, edge);
-        if (symbol is not null)
-        {
-            _alphabet.Add(symbol.Value);
-        }
+        _alphabet.Add(symbol);
         
         return edge;
     }

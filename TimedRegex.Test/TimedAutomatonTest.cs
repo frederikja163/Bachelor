@@ -25,9 +25,9 @@ public sealed class TimedAutomatonTest
         Edge recognizeEdge2 = timedAutomaton.AddEdge(loc2, final2, 'B');
         recognizeEdge2.AddClockRange(clock2, new Range(1, 3));
         
-        Edge orEdge1 = timedAutomaton.AddEdge(init, loc1, null);
+        Edge orEdge1 = timedAutomaton.AddEdge(init, loc1, '\0');
         orEdge1.AddClockRange(clock1, new Range(0, 0));
-        Edge orEdge2 = timedAutomaton.AddEdge(init, loc2, null);
+        Edge orEdge2 = timedAutomaton.AddEdge(init, loc2, '\0');
         orEdge2.AddClockRange(clock2, new Range(0, 0));
 
         return timedAutomaton;
@@ -70,19 +70,19 @@ public sealed class TimedAutomatonTest
     {
         yield return new object[]
         {
-            new (char, char?)[] { ('A', null), ('B', null) },
+            new (char, char?)[] { ('A', null), ('B', null), ('\0', null) },
         };
         yield return new object[]
         {
-            new (char, char?)[] { ('A', 'B'), ('B', null) },
+            new (char, char?)[] { ('A', 'B'), ('B', null), ('\0', null) },
         };
         yield return new object[]
         {
-            new (char, char?)[] { ('A', 'B'), ('B', 'C'), ('C', null), ('B', null) },
+            new (char, char?)[] { ('A', 'B'), ('B', 'C'), ('C', null), ('B', null), ('\0', null) },
         };
         yield return new object[]
         {
-            new (char, char?)[] { ('A', 'B'), ('B', 'A'), ('A', null), ('B', null) },
+            new (char, char?)[] { ('A', 'B'), ('B', 'A'), ('A', null), ('B', null), ('\0', null) },
         };
     }
     

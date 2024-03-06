@@ -73,7 +73,7 @@ public sealed class AutomatonGeneratorTest
         Assert.That(ta.GetLocations().Count(), Is.EqualTo(5));
         Assert.That(ta.GetLocations().Count(l => l.IsFinal), Is.EqualTo(2));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(4));
-        Assert.That(ta.GetEdges().Count(e => e.Symbol is null), Is.EqualTo(2));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == '\0'), Is.EqualTo(2));
     }
 
     [Test]
