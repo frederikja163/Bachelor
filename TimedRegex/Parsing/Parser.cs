@@ -77,20 +77,24 @@ namespace TimedRegex.Parsing
             {
                 return left;
             }
-            if (tokenizer.Next.Type == TokenType.Absorb)
+            switch (tokenizer.Next.Type)
             {
-                Token token = tokenizer.GetNext();
-                return new AbsorbedConcatenation(left, ParseUnary(tokenizer)!, token);
-            }
-            if (tokenizer.Next.Type == TokenType.Union)
-            {
-                Token token = tokenizer.GetNext();
-                if (tokenizer.Next is null) throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
-                return new Union(left, ParseUnary(tokenizer)!, token);
-            }
-            return new Concatenation(left, ParseUnary(tokenizer)!);
-            throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
-        }
+                case (TokenType.Absorb):
+                    Token tokenAbsorb = tokenizer.GetNext();
+                    return new AbsorbedConcatenation(left, ParseUnary(tokenizer)!, tokenAbsorb);
 
+                case (TokenType.Union):
+                    Token tokenUnion = tokenizer.GetNext();
+                    if (tokenizer.Next is null) throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
+                    return new Union(left, ParseUnary(tokenizer)!, tokenUnion);
+
+                case (TokenType.Intersection):
+                    Token tokenIntersection = tokenizer.GetNext();
+                    return new Intersection(left, ParseUnary(tokenizer)!, tokenIntersection);
+
+                default:
+                    return new Concatenation(left, ParseUnary(tokenizer)!);
+            }
+        }
     }
 }
