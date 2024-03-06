@@ -1,12 +1,12 @@
 \scalebox{0.8}{\begin{tikzpicture}
-        \umlclass[anchor=north,width=31ex,x=0,y=0]{nta}{declaration : string\\system : string}{}
+        \umlclass[anchor=north,width=31ex,x=0,y=0]{nta}{system : string}{}
 
         %classes
-        \umlclass[anchor=north,width=31ex,x=0,y=-4.3]{template}{declaration : string\\name : string\\ init : string}{}
+        \umlclass[anchor=north,width=31ex,x=0,y=-4.3]{template}{name : string\\ init : string}{}
         \umlclass[anchor=north,width=31ex,x=-6,y=-9]{declaration}{clocks : list<string>\\channels : list<string>}{}
 
         %relations
-        \umlcompo[attr1=1|,attr2=0..*|,pos2=0.87]{nta}{template}
+        \umlcompo[attr1=1|,attr2=1..*|,pos2=0.87]{nta}{template}
         \umlHVcompo[attr1=1|,attr2=1|,pos1=0.1,pos2=1.98]{nta}{declaration}
         \umlHVcompo[attr1=1|,pos1=0.1,pos2=1.98]{template}{declaration}
 
