@@ -34,7 +34,7 @@ internal sealed class TimedAutomaton
         _alphabet = new HashSet<char>();
     }
     
-    internal Location? InitialLocation { get; private set; }
+    internal Location? InitialLocation { get; set; }
 
     internal IEnumerable<Clock> GetClocks()
     {
