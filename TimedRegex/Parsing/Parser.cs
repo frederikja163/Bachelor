@@ -89,7 +89,7 @@ namespace TimedRegex.Parsing
                 return new Union(left, ParseUnary(tokenizer)!, token);
             }
             return new Concatenation(left, ParseUnary(tokenizer)!);
-            throw new Exception("Expected binary token, but recieved no token after " + left.Token.ToString());
+            throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
         }
 
     }
