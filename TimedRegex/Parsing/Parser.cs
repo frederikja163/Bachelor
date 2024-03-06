@@ -72,22 +72,32 @@ namespace TimedRegex.Parsing
 
         private static IAstNode? ParseBinary(Tokenizer tokenizer)
         {
-            /*            switch (tokenizer.Current.Type)
-                        {
-            *//*                case TokenType.Concatenation: 
-                                return ParseConcatenation(tokenizer);*//*
-                                //Concatenation must be handled differently
-                            case TokenType.Union:
-                                return ParseUnion(tokenizer);
+            IAstNode? left = ParseUnary(tokenizer);
+            if (tokenizer.Next is null || left is null)
+            {
+                return left;
+            }
+            switch (tokenizer.Next.Type)
+            {
+                case (TokenType.Absorb):
+                    Token tokenAbsorb = tokenizer.GetNext();
+                    return new AbsorbedConcatenation(left, ParseUnary(tokenizer)!, tokenAbsorb);
 
-                            case TokenType.Intersection:
-                                return ParseIntersection(tokenizer);
+                case (TokenType.Union):
+                    Token tokenUnion = tokenizer.GetNext();
+                    if (tokenizer.Next is null) 
+                    {
+                        throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
+                    }
+                    return new Union(left, ParseUnary(tokenizer)!, tokenUnion);
 
-                            default:
-                                return ParseUnary(tokenizer);
-                        }*/
-            return ParseUnary(tokenizer);
+                case (TokenType.Intersection):
+                    Token tokenIntersection = tokenizer.GetNext();
+                    return new Intersection(left, ParseUnary(tokenizer)!, tokenIntersection);
+
+                default:
+                    return new Concatenation(left, ParseUnary(tokenizer)!);
+            }
         }
-
     }
 }
