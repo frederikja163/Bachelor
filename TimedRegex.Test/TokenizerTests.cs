@@ -11,7 +11,7 @@ public sealed class TokenizerTests
     [TestCase("(", TokenType.ParenthesisStart)]
     [TestCase(")", TokenType.ParenthesisEnd)]
     [TestCase("|", TokenType.Union)]
-    [TestCase("&", TokenType.Concatenation)]
+    [TestCase("&", TokenType.Intersection)]
     [TestCase("'", TokenType.Absorb)]
     [TestCase("*", TokenType.Iterator)]
     [TestCase("+", TokenType.GuaranteedIterator)]
