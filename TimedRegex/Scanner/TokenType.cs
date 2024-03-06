@@ -8,7 +8,6 @@ internal enum TokenType
     ParenthesisEnd,
     Union,
     Intersection,
-    Concatenation,
     Absorb,
     Iterator,
     GuaranteedIterator,
