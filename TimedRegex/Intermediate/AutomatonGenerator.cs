@@ -104,6 +104,7 @@ internal static class AutomatonGenerator
         TimedAutomaton ta = CreateAutomaton(rename.Child);
 
         Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol, r => r.NewSymbol);
+        ta.Rename(replaceList);
 
         foreach (Edge edge in ta.GetEdges())
         {
@@ -126,9 +127,9 @@ internal static class AutomatonGenerator
         Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
         
         ta.AddLocation(newInitial: true);
-        Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, null);
+        Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, '\0');
         lEdge.AddClockRange(clock, 0..1);
-        Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, null);
+        Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, '\0');
         rEdge.AddClockRange(clock, 0..1);
         
         return ta;

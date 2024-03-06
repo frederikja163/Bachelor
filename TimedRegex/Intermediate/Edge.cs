@@ -5,7 +5,7 @@ internal sealed class Edge : IEquatable<Edge>
     private readonly Dictionary<Clock, Range> _clockRanges;
     private readonly HashSet<Clock> _clockResets;
 
-    internal Edge(int id, Location from, Location to, char? symbol)
+    internal Edge(int id, Location from, Location to, char symbol)
     {
         Id = id;
         From = from;
@@ -18,7 +18,7 @@ internal sealed class Edge : IEquatable<Edge>
     internal int Id { get; }
     internal Location From { get; }
     internal Location To { get; }
-    internal char? Symbol { get; set; }
+    internal char Symbol { get; set; }
 
     internal void AddClockReset(Clock clock)
     {

@@ -5,6 +5,7 @@ internal sealed class TimedAutomaton
     private static int _idCount;
     private static int _clockCount;
 
+    private readonly HashSet<char> _alphabet;
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, Location> _locations;
@@ -21,6 +22,7 @@ internal sealed class TimedAutomaton
             ? left._locations.UnionBy(right._locations, kvp => kvp.Key).ToDictionary()
             : new Dictionary<int, Location>();
         InitialLocation = left.InitialLocation ?? right.InitialLocation;
+        _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
     internal TimedAutomaton()
@@ -29,6 +31,7 @@ internal sealed class TimedAutomaton
         _edges = new Dictionary<int, Edge>();
         _locations = new Dictionary<int, Location>();
         InitialLocation = null;
+        _alphabet = new HashSet<char>();
     }
     
     internal Location? InitialLocation { get; private set; }
@@ -46,6 +49,14 @@ internal sealed class TimedAutomaton
     internal IEnumerable<Location> GetLocations()
     {
         return _locations.Values;
+    }
+    
+    internal IEnumerable<char> GetAlphabet()
+    {
+        foreach (char c in _alphabet)
+        {
+            yield return c;
+        }
     }
 
     internal Clock AddClock()
@@ -71,13 +82,24 @@ internal sealed class TimedAutomaton
         return location;
     }
 
-    internal Edge AddEdge(Location from, Location to, char? symbol)
+    internal Edge AddEdge(Location from, Location to, char symbol)
     {
         Edge edge = new Edge(CreateId(), from, to, symbol);
         
         _edges.Add(edge.Id, edge);
+        _alphabet.Add(symbol);
         
         return edge;
+    }
+
+    internal void Rename(IReadOnlyDictionary<char, char> renameList)
+    {
+        IEnumerable<char> newChars = renameList.IntersectBy(_alphabet, kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+        _alphabet.RemoveWhere(renameList.ContainsKey);
+        foreach (char newChar in newChars)
+        {
+            _alphabet.Add(newChar);
+        }
     }
     
     private static int CreateId()
