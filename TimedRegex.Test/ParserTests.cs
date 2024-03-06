@@ -121,10 +121,25 @@ public sealed class ParserTests
         Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
     }
 
+    [Test]
+    public void ParseIntersection() 
+    {
+        Tokenizer tokenizer = new Tokenizer("a&b");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Intersection>(astNode);
+        Intersection node = (Intersection)astNode;
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Assert.That(node.RightNode, Is.TypeOf<Match>());
+        Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
+    }
+
     [TestCase("a|b|c")]
     [TestCase("abc")]
     [TestCase("a|bc")]
     [TestCase("a'bc")]
+    [TestCase("a&b|cd")]
     public void ParseBinaryMultiple(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
