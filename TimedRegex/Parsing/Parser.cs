@@ -85,7 +85,10 @@ namespace TimedRegex.Parsing
 
                 case (TokenType.Union):
                     Token tokenUnion = tokenizer.GetNext();
-                    if (tokenizer.Next is null) throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
+                    if (tokenizer.Next is null) 
+                    {
+                        throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
+                    }
                     return new Union(left, ParseUnary(tokenizer)!, tokenUnion);
 
                 case (TokenType.Intersection):
