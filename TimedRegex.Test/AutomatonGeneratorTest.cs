@@ -65,6 +65,21 @@ public sealed class AutomatonGeneratorTest
         Assert.That(final.GetClockRanges().First().Item2, Is.EqualTo(0..3));
         Assert.That(final.GetClockResets().Count(), Is.EqualTo(1));
     }
+
+    [Test]
+    public void GenerateIntersectionTaTest()
+    {
+        Intersection intersection = new Intersection(Interval('a', 1, 3), Interval('a', 2, 5), Token(TokenType.Intersection, '&'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(intersection);
+        
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(10));
+        Assert.That(ta.GetLocations().Count(l => l.IsFinal), Is.EqualTo(1));
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
+        Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(1));
+        Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(4));
+        Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(0));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(5));
+    }
     
     
     [Test]

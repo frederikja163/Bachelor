@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using TimedRegex.AST;
+using TimedRegex.Extensions;
 
 namespace TimedRegex.Intermediate;
 
@@ -65,8 +66,77 @@ internal static class AutomatonGenerator
         throw new NotImplementedException();
     }
 
-    private static TimedAutomaton CreateIntersectionAutomaton(Intersection a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateIntersectionAutomaton(Intersection intersection)
+    {
+        TimedAutomaton left = CreateAutomaton(intersection.LeftNode);
+        TimedAutomaton right = CreateAutomaton(intersection.RightNode);
+        TimedAutomaton ta = new TimedAutomaton(left, right, excludeLocations: true, excludeEdges: true);
+
+        Dictionary<(int, int), Location> newLocs = new Dictionary<(int, int), Location>();
+        foreach (Location lLoc in left.GetLocations())
+        {
+            foreach (Location rLoc in right.GetLocations())
+            {
+                newLocs.Add((lLoc.Id, rLoc.Id), ta.AddLocation());
+            }
+        }
+
+        Location final = ta.AddLocation(true);
+        ta.InitialLocation = newLocs[(left.InitialLocation!.Id, right.InitialLocation!.Id)];
+
+        Dictionary<char, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
+        Dictionary<char, List<Edge>> rSymEdges = right.GetEdges().ToListDictionary(e => e.Symbol, e => e);
+        foreach (char c in ta.GetAlphabet().Where(c => c != '\0'))
+        {
+            List<Edge> lEdges = lSymEdges.TryGetValue(c, out List<Edge>? le) ? le : new List<Edge>();
+            List<Edge> rEdges = rSymEdges.TryGetValue(c, out List<Edge>? re) ? re : new List<Edge>();
+            foreach (Edge lEdge in lEdges)
+            {
+                foreach (Edge rEdge in rEdges)
+                {
+                    Location from = newLocs[(lEdge.From.Id, rEdge.From.Id)];
+                    Location to = newLocs[(lEdge.To.Id, rEdge.To.Id)];
+                    Edge edge = ta.AddEdge(from, to, c);
+                    edge.AddClockRanges(lEdge.GetClockRanges());
+                    edge.AddClockRanges(rEdge.GetClockRanges());
+                    edge.AddClockResets(lEdge.GetClockResets());
+                    edge.AddClockResets(rEdge.GetClockResets());
+
+                    if (lEdge.To.IsFinal && rEdge.To.IsFinal)
+                    {
+                        edge = ta.AddEdge(from, final, c);
+                        edge.AddClockRanges(lEdge.GetClockRanges());
+                        edge.AddClockRanges(rEdge.GetClockRanges());
+                        edge.AddClockResets(lEdge.GetClockResets());
+                        edge.AddClockResets(rEdge.GetClockResets());
+                    }
+                }
+            }
+        }
+        AddEmptyEdges(lSymEdges, right.GetEdges().ToList());
+        AddEmptyEdges(rSymEdges, left.GetEdges().ToList());
+        return ta;
+
+
+        void AddEmptyEdges(Dictionary<char, List<Edge>> primary, List<Edge> secondary)
+        {
+            if (!primary.TryGetValue('\0', out List<Edge>? edges))
+            {
+                return;
+            }
+
+            foreach (Edge pEdge in edges)
+            {
+                foreach (Edge sEdge in secondary)
+                {
+                    Location from = newLocs[(pEdge.From.Id, sEdge.From.Id)];
+                    Location to = newLocs[(pEdge.To.Id, sEdge.To.Id)];
+                    Edge edge = ta.AddEdge(from, to, '\0');
+                    edge.AddClockRanges(pEdge.GetClockRanges());
+                    edge.AddClockResets(pEdge.GetClockResets());
+                }
+            }
+        }
     }
 
     private static TimedAutomaton CreateIntervalAutomaton(Interval interval)
