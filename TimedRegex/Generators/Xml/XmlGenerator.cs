@@ -55,7 +55,7 @@ internal sealed class XmlGenerator : IGenerator
     {
         Declaration declaration = new Declaration();
         string name = "ta" + id;
-        string init = automaton.InitialLocation.ToString();
+        string init = automaton.GetLocations().Any() ? automaton.InitialLocation.ToString() : "" ;
         Location[] locations = new Location[automaton.GetLocations().Count()];
         Transition[] transitions = new Transition[automaton.GetEdges().Count()];
         
