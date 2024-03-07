@@ -167,4 +167,11 @@ public sealed class ParserTests
         Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'y' && s.NewSymbol.Match == 'Y')));
         Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'u' && s.NewSymbol.Match == 'U')));
     }
+
+    [Test]
+    public void ParseInvalidRename()
+    {
+
+    }
+
 }
