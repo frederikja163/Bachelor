@@ -5,13 +5,13 @@ TimedRegex := Rename
 
 \qquad	$\mid$ $\epsilon$
 
-Rename := Rename renameStart leftCurlyBrace RenameSymbols rightCurlyBrace
+Rename := Rename leftCurlyBrace RenameSymbols rightCurlyBrace
 
 \qquad $\mid$ Binary
 
 RenameSymbols := RenameSymbols comma match match
 
-\qquad $\mid$ match match comma match match
+\qquad $\mid$ match match
 
 Unary := Unary
 
