@@ -41,7 +41,6 @@ namespace TimedRegex.Parsing
             {
                 Token token = tokenizer.GetNext();
                 List<SymbolReplace> replaceList = new List<SymbolReplace>();
-                tokenizer.Skip();
                 if (tokenizer.Next.Type != TokenType.Match)
                 {
                     throw new Exception("Expected Match token after left curly brace, but got " + tokenizer.Next.ToString());
@@ -52,10 +51,7 @@ namespace TimedRegex.Parsing
                     tokenizer.Skip();
                     replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
                 }
-                if (tokenizer.GetNext().Type != TokenType.RightCurlyBrace) //Also skips to next token.
-                {
-                    throw new Exception("Expected Match token after right curly brace, but got " + tokenizer.Next.ToString());
-                }
+                tokenizer.Skip(); //Skips right curly brace
                 return new Rename(replaceList, child, token);
             }
             return child;
@@ -76,6 +72,9 @@ namespace TimedRegex.Parsing
 
                 case (TokenType.GuaranteedIterator, not TokenType.Absorb):
                     return new GuaranteedIterator(child, tokenizer.GetNext());
+
+                case (TokenType.IntervalLeft, not TokenType.Absorb):
+                    throw new NotImplementedException();
                 
                 case (TokenType.Iterator, TokenType.Absorb):
                     return new AbsorbedIterator(child, tokenizer.GetNext(2));
@@ -113,8 +112,11 @@ namespace TimedRegex.Parsing
                     Token tokenIntersection = tokenizer.GetNext();
                     return new Intersection(left, ParseUnary(tokenizer)!, tokenIntersection);
 
-                default:
+                case (TokenType.Match):
                     return new Concatenation(left, ParseUnary(tokenizer)!);
+
+                default:
+                    return left;
             }
         }
     }
