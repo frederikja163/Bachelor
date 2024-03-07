@@ -14,7 +14,6 @@ internal enum TokenType
     IntervalLeft,
     IntervalRight,
     IntervalSeparator,
-    RenameStart,
     LeftCurlyBrace,
     RightCurlyBrace,
     Comma,

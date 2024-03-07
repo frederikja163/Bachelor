@@ -32,15 +32,33 @@ namespace TimedRegex.Parsing
 
         private static IAstNode? ParseRename(Tokenizer tokenizer)
         {
-/*            if (tokenizer.Current.Type == TokenType.RenameStart)
+            IAstNode? child = ParseBinary(tokenizer);
+            if (child is null || tokenizer.Next is null)
             {
-                SymbolReplace[] replacelist;
-                while (true)
+                return child;
+            }
+            if (tokenizer.Next.Type == TokenType.LeftCurlyBrace)
+            {
+                Token token = tokenizer.GetNext();
+                List<SymbolReplace> replaceList = new List<SymbolReplace>();
+                tokenizer.Skip();
+                if (tokenizer.Next.Type != TokenType.Match)
                 {
-
+                    throw new Exception("Expected Match token after left curly brace, but got " + tokenizer.Next.ToString());
                 }
-            }*/
-            return ParseBinary(tokenizer);
+                replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
+                while (tokenizer.Next.Type == TokenType.Comma) 
+                {
+                    tokenizer.Skip();
+                    replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
+                }
+                if (tokenizer.GetNext().Type != TokenType.RightCurlyBrace) //Also skips to next token.
+                {
+                    throw new Exception("Expected Match token after right curly brace, but got " + tokenizer.Next.ToString());
+                }
+                return new Rename(replaceList, child, token);
+            }
+            return child;
         }
 
         private static IAstNode? ParseUnary(Tokenizer tokenizer)

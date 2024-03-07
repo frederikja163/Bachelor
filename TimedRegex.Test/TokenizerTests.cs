@@ -18,7 +18,6 @@ public sealed class TokenizerTests
     [TestCase("[", TokenType.IntervalLeft)]
     [TestCase("]", TokenType.IntervalRight)]
     [TestCase(";", TokenType.IntervalSeparator)]
-    [TestCase("@", TokenType.RenameStart)]
     [TestCase("{", TokenType.LeftCurlyBrace)]
     [TestCase("}", TokenType.RightCurlyBrace)]
     [TestCase(",", TokenType.Comma)]

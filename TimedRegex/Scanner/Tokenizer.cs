@@ -88,7 +88,6 @@ internal sealed class Tokenizer
                 '[' => new Token(_head, '[', TokenType.IntervalLeft),
                 ']' => new Token(_head, ']', TokenType.IntervalRight),
                 ';' => new Token(_head, ';', TokenType.IntervalSeparator),
-                '@' => new Token(_head, '@', TokenType.RenameStart),
                 '{' => new Token(_head, '{', TokenType.LeftCurlyBrace),
                 '}' => new Token(_head, '}', TokenType.RightCurlyBrace),
                 ',' => new Token(_head, ',', TokenType.Comma),
