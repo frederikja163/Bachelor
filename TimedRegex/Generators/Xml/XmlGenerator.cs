@@ -30,7 +30,7 @@ internal sealed class XmlGenerator : IGenerator
         WriteNta(xmlWriter, nta);
     }
 
-    private NTA PopulateNta(TimedAutomaton automaton)
+    internal NTA PopulateNta(TimedAutomaton automaton)
     {
         return new NTA(
             PopulateDeclaration(automaton),
@@ -39,10 +39,10 @@ internal sealed class XmlGenerator : IGenerator
         );
     }
 
-    private Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
+    internal Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
     {
-        List<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
-        List<char> channels = timedAutomaton.GetAlphabet().ToList();
+        IEnumerable<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
+        IEnumerable<char> channels = timedAutomaton.GetAlphabet().ToList().Where(x => x != '\0');
 
         return new Declaration(clocks, channels);
     }
