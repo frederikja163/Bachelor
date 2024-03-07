@@ -56,23 +56,26 @@ internal sealed class XmlGenerator : IGenerator
         Declaration declaration = new Declaration();
         string name = "ta" + id;
         string init = automaton.InitialLocation!.ToString()!;
-        Location[] locations = new Location[automaton.GetLocations().Count()];
-        Transition[] transitions = new Transition[automaton.GetEdges().Count()];
         
-        for (int i = 0; i < automaton.GetLocations().Count(); i++)
+        Intermediate.Location[] automatonLocations = automaton.GetLocations().ToArray();
+        Edge[] automatonEdges = automaton.GetEdges().ToArray();
+        Location[] templateLocations = new Location[automatonLocations.Length];
+        Transition[] transitions = new Transition[automatonEdges.Length];
+        
+        for (int i = 0; i < automatonLocations.Length; i++)
         {
-            locations[i] = GenerateLocation(automaton, automaton.GetLocations().ElementAt(i));
+            templateLocations[i] = GenerateLocation(automaton, automatonLocations[i]);
         }
 
-        for (int i = 0; i < automaton.GetEdges().Count(); i++)
+        for (int i = 0; i < automatonEdges.Length; i++)
         {
-            transitions[i] = GenerateTransition(automaton, automaton.GetEdges().ElementAt(i));
+            transitions[i] = GenerateTransition(automaton, automatonEdges[i]);
         }
 
-        return new Template(declaration, name, init, locations, transitions);
+        return new Template(declaration, name, init, templateLocations, transitions);
     }
 
-    private Location GenerateLocation(TimedAutomaton automaton, TimedRegex.Intermediate.Location location)
+    private Location GenerateLocation(TimedAutomaton automaton, Intermediate.Location location)
     {
         // temporary, only for testing purposes
         return new Location("", "", new List<Label> { GenerateLabel(automaton) });
