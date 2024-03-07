@@ -32,14 +32,18 @@ internal sealed class XmlGenerator : IGenerator
 
     internal NTA PopulateNta(TimedAutomaton automaton)
     {
+        int id = 0;
+        IEnumerable<Template> templates = new List<Template> { PopulateTemplate(automaton, id++) };
+        string system = String.Join(",", templates.Select(x => x.Name));
+
         return new NTA(
             PopulateDeclaration(automaton),
-            "ta",
-            new List<Template> { PopulateTemplate(automaton) }
+            system,
+            templates
         );
     }
 
-    internal Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
+    private Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
     {
         IEnumerable<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
         IEnumerable<char> channels = timedAutomaton.GetAlphabet().ToList().Where(x => x != '\0');
@@ -47,14 +51,28 @@ internal sealed class XmlGenerator : IGenerator
         return new Declaration(clocks, channels);
     }
 
-    private Template PopulateTemplate(TimedAutomaton automaton)
+    private Template PopulateTemplate(TimedAutomaton automaton, int id)
     {
-        // temporary, only for testing purposes
-        return new Template(PopulateDeclaration(automaton), "", "", new List<Location> { PopulateLocation(automaton) },
-            new List<Transition> { PopulateTransition(automaton) });
+        Declaration declaration = new Declaration();
+        string name = "ta" + id;
+        string init = automaton.InitialLocation.ToString();
+        Location[] locations = new Location[automaton.GetLocations().Count()];
+        Transition[] transitions = new Transition[automaton.GetEdges().Count()];
+        
+        for (int i = 0; i < automaton.GetLocations().Count(); i++)
+        {
+            locations[i] = PopulateLocation(automaton, automaton.GetLocations().ElementAt(i));
+        }
+
+        for (int i = 0; i < automaton.GetEdges().Count(); i++)
+        {
+            transitions[i] = PopulateTransition(automaton, automaton.GetEdges().ElementAt(i));
+        }
+
+        return new Template(declaration, name, init, locations, transitions);
     }
 
-    private Location PopulateLocation(TimedAutomaton automaton)
+    private Location PopulateLocation(TimedAutomaton automaton, TimedRegex.Intermediate.Location location)
     {
         // temporary, only for testing purposes
         return new Location("", "", new List<Label> { PopulateLabel(automaton) });
@@ -66,7 +84,7 @@ internal sealed class XmlGenerator : IGenerator
         return new Label("", "");
     }
 
-    private Transition PopulateTransition(TimedAutomaton automaton)
+    private Transition PopulateTransition(TimedAutomaton automaton, Edge edge)
     {
         // temporary, only for testing purposes
         return new Transition("", "", "", new List<Label> { PopulateLabel(automaton) });
@@ -123,9 +141,12 @@ internal sealed class XmlGenerator : IGenerator
             WriteLocation(xmlWriter, location);
         }
 
-        xmlWriter.WriteStartElement("init");
-        xmlWriter.WriteAttributeString("ref", template.Init);
-        xmlWriter.WriteEndElement();
+        if (template.Locations.Length != 0)
+        {
+            xmlWriter.WriteStartElement("init");
+            xmlWriter.WriteAttributeString("ref", template.Init);
+            xmlWriter.WriteEndElement();
+        }
 
         foreach (var transition in template.Transitions)
         {
