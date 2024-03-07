@@ -152,4 +152,52 @@ public sealed class ParserTests
         Tokenizer tokenizer = new Tokenizer(input);
         Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
     }
+
+    [Test]
+    public void ParseRename() 
+    {
+        Tokenizer tokenizer = new Tokenizer("a{tT,yY,uU}");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Rename>(astNode);
+        Rename node = (Rename)astNode;
+        
+        Assert.That(node.Child, Is.InstanceOf<Match>());
+        Assert.That(node.Child.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 't' && s.NewSymbol.Match == 'T')));
+        Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'y' && s.NewSymbol.Match == 'Y')));
+        Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'u' && s.NewSymbol.Match == 'U')));
+    }
+
+    [Test]
+    public void ParseInvalidRenameNoRightBrace()
+    {
+        Tokenizer tokenizer = new Tokenizer("a{t,f");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
+
+    [Test]
+    public void ParseInvalidRenameSingle()
+    {
+        Tokenizer tokenizer = new Tokenizer("a{a}");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
+
+    [Test]
+    public void ParseRenameSingle()
+    {
+        Tokenizer tokenizer = new Tokenizer("a{ty}");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Rename>(astNode);
+        Rename node = (Rename)astNode;
+
+        Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 't' && s.NewSymbol.Match == 'y')));
+        Assert.That(node.GetReplaceList().Count() == 1);
+    }
+
+    [Test]
+    public void ParseRenameSingleWrongFormat()
+    {
+        Tokenizer tokenizer = new Tokenizer("a{t,y}");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
 }

@@ -15,13 +15,12 @@ public sealed class TokenizerTests
     [TestCase("'", TokenType.Absorb)]
     [TestCase("*", TokenType.Iterator)]
     [TestCase("+", TokenType.GuaranteedIterator)]
-    [TestCase("[", TokenType.IntervalLeft)]
-    [TestCase("]", TokenType.IntervalRight)]
+    [TestCase("[", TokenType.IntervalOpen)]
+    [TestCase("]", TokenType.IntervalClose)]
     [TestCase(";", TokenType.IntervalSeparator)]
-    [TestCase("@", TokenType.RenameStart)]
-    [TestCase("{", TokenType.LeftCurlyBrace)]
-    [TestCase("}", TokenType.RightCurlyBrace)]
-    [TestCase(",", TokenType.Comma)]
+    [TestCase("{", TokenType.RenameStart)]
+    [TestCase("}", TokenType.RenameEnd)]
+    [TestCase(",", TokenType.RenameSeparator)]
     [TestCase("1", TokenType.Digit)]
     [TestCase("9", TokenType.Digit)]
     public void ParseTokenTypeTest(string str, int type)
@@ -41,7 +40,7 @@ public sealed class TokenizerTests
     [Test]
     public void ParseMatchTest()
     {
-        string str = ".1234567890asdfghjklqwertyuiop{}&*();'@";
+        string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new Tokenizer(str);
 
@@ -54,7 +53,7 @@ public sealed class TokenizerTests
     [Test]
     public void ParseIndexTest()
     {
-        string str = ".1234567890asdfghjklqwertyuiop{}&*();'@";
+        string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new Tokenizer(str);
 
@@ -71,6 +70,7 @@ public sealed class TokenizerTests
     [TestCase("!")]
     [TestCase(" ")]
     [TestCase("~")]
+    [TestCase("@")]
     public void CannotParseInvalidTokens(string str)
     {
         Tokenizer tokenizer = new Tokenizer(str);
