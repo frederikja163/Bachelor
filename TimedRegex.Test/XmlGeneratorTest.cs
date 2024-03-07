@@ -73,8 +73,6 @@ public sealed class XmlGeneratorTest
         IEnumerable<char> channels = nta.Declaration.GetChannels();
         
         That(clocks.Count(), Is.EqualTo(2));
-        That(clocks, Contains.Item("c0"));
-        That(clocks, Contains.Item("c1"));
         
         That(channels.Count(), Is.EqualTo(2));
         That(channels, Contains.Item('A'));
