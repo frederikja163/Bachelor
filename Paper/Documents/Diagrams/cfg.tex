@@ -5,17 +5,15 @@ TimedRegex := Rename
 
 \qquad	$\mid$ $\epsilon$
 
-Rename := Rename leftCurlyBrace RenameSymbols rightCurlyBrace
+Rename := Rename renameStart RenameSymbols renameEnd
 
 \qquad $\mid$ Binary
 
-RenameSymbols := RenameSymbols comma match match
+RenameSymbols := RenameSymbols renameSeparator match match
 
 \qquad $\mid$ match match
 
-Unary := Unary
-
-\qquad $\mid$ Unary intervalStart Number intervalSeperator Number intervalEnd
+Unary := Unary IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
 
 \qquad $\mid$ Unary guaranteedIterator
 
@@ -26,6 +24,10 @@ Unary := Unary
 \qquad $\mid$ Unary iterator absorb
 
 \qquad $\mid$ Match
+
+IntervalStartEnd := intervalOpen
+
+\qquad $\mid$ intervalClose
 
 Number := Number digit
 

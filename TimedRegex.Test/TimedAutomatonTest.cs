@@ -5,7 +5,7 @@ namespace TimedRegex.Test;
 
 public sealed class TimedAutomatonTest
 {
-    private static TimedAutomaton CreateAutomaton()
+    internal static TimedAutomaton CreateAutomaton()
     {
         TimedAutomaton timedAutomaton = new TimedAutomaton();
 
