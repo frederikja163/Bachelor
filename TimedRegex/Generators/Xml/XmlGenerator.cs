@@ -42,7 +42,10 @@ internal sealed class XmlGenerator : IGenerator
 
     private Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
     {
-        throw new NotImplementedException();
+        List<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
+        List<char> channels = timedAutomaton.GetAlphabet().ToList();
+
+        return new Declaration(clocks, channels);
     }
 
     private Template PopulateTemplate(TimedAutomaton automaton)

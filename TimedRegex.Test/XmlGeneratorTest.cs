@@ -23,7 +23,7 @@ public sealed class XmlGeneratorTest
         Transition id8 = new Transition("id8", "id2", "id4", new[] { new Label("guard", "1 <= c2 < 3") });
 
         Template ta1 = new Template(new Declaration(new List<string>(),
-                new List<string>()),
+                new List<char>()),
             "ta1",
             "id0",
             new[]
@@ -42,7 +42,7 @@ public sealed class XmlGeneratorTest
                 id8
             });
 
-        return new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<string>()), "ta1",
+        return new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<char>()), "ta1",
             new[] { ta1 });
     }
 
@@ -68,7 +68,7 @@ public sealed class XmlGeneratorTest
     public void WriteNtaTest()
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
-        NTA nta = new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<string>()), "ta1",
+        NTA nta = new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<char>()), "ta1",
             new List<Template>());
 
         string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <system>system ta1</system>\n</nta>";
@@ -87,7 +87,7 @@ public sealed class XmlGeneratorTest
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
         Template template = new Template(
-            new Declaration(new List<string>(), new List<string>()),
+            new Declaration(new List<string>(), new List<char>()),
             "ta1",
             "id0",
             new List<Location>
@@ -165,7 +165,7 @@ public sealed class XmlGeneratorTest
     public void WriteDeclarationTest()
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
-        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
+        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<char> { 'x', 'y' });
 
         string expected = "<declaration>clock c1, c2;chan x, y;</declaration>";
         StringBuilder sb = new StringBuilder();
