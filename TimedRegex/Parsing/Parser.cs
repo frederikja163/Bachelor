@@ -84,10 +84,41 @@ namespace TimedRegex.Parsing
 
                 case (TokenType.GuaranteedIterator, TokenType.Absorb):
                     return new AbsorbedGuaranteedIterator(child, tokenizer.GetNext(2));
+
+                case(TokenType.IntervalOpen or TokenType.IntervalClose, not TokenType.Absorb):
+                    return ParseInterval(tokenizer, child);
                 
                 default:
                     return child;
             }
+        }
+
+        private static Interval ParseInterval(Tokenizer tokenizer, IAstNode child)
+        {
+            Token token = tokenizer.GetNext()!;
+            bool startInclusive = token.Type == TokenType.IntervalOpen;
+            int startInterval = parseNumber(tokenizer);
+            if (tokenizer.Next?.Type != TokenType.IntervalSeparator)
+            {
+                throw new Exception("No interval separator in interval " + token.ToString());
+            }
+            int endInterval = parseNumber(tokenizer);
+            if (tokenizer.Next.Type != TokenType.IntervalOpen || tokenizer.Next.Type != TokenType.IntervalClose)
+            {
+                throw new Exception("Invalid interval syntax after " + token.ToString());
+            }
+            bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
+            return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
+        }
+
+        private static int parseNumber(Tokenizer tokenizer)
+        {
+            int number = 0;
+            while (tokenizer.Next?.Type == TokenType.Digit)
+            {
+                number = (number * 10) + (tokenizer.GetNext().Match - '0');
+            }
+            return number;
         }
 
         private static IAstNode? ParseBinary(Tokenizer tokenizer)
