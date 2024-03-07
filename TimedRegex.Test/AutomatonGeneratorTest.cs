@@ -19,7 +19,7 @@ public sealed class AutomatonGeneratorTest
     
     private Interval Interval(char c, int start, int end)
     {
-        return new Interval(Match(c), start, end, true, false, Token(TokenType.IntervalLeft, '['));
+        return new Interval(Match(c), start, end, true, false, Token(TokenType.IntervalOpen, '['));
     }
 
     [Test]
@@ -128,7 +128,7 @@ public sealed class AutomatonGeneratorTest
     {
         Concatenation concatenation = new Concatenation(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
         Rename rename = new Rename(new List<SymbolReplace>()
-            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new SymbolReplace(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) }, concatenation, Token(TokenType.LeftCurlyBrace, '{'));
+            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new SymbolReplace(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) }, concatenation, Token(TokenType.RenameStart, '{'));
         TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(rename);
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(7));
@@ -145,7 +145,7 @@ public sealed class AutomatonGeneratorTest
     {
         Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
         Rename rename = new Rename(new List<SymbolReplace>()
-            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new SymbolReplace(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) }, concatenation, Token(TokenType.LeftCurlyBrace, '{'));
+            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new SymbolReplace(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) }, concatenation, Token(TokenType.RenameStart, '{'));
         TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(rename);
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));

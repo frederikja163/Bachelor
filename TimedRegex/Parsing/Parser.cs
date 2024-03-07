@@ -37,7 +37,7 @@ namespace TimedRegex.Parsing
             {
                 return child;
             }
-            if (tokenizer.Next.Type == TokenType.LeftCurlyBrace)
+            if (tokenizer.Next.Type == TokenType.RenameStart)
             {
                 Token token = tokenizer.GetNext();
                 List<SymbolReplace> replaceList = new List<SymbolReplace>();
@@ -46,7 +46,7 @@ namespace TimedRegex.Parsing
                     throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
                 }
                 replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
-                while (tokenizer.Next.Type == TokenType.Comma)
+                while (tokenizer.Next.Type == TokenType.RenameSeparator)
                 {
                     tokenizer.Skip(); //Skips comma
                     if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
@@ -55,7 +55,7 @@ namespace TimedRegex.Parsing
                     }
                     replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
                 }
-                if (tokenizer.Next.Type != TokenType.RightCurlyBrace)
+                if (tokenizer.Next.Type != TokenType.RenameEnd)
                 {
                     throw new Exception("Expected right curly brace after " + token.ToString());
                 }
@@ -81,7 +81,7 @@ namespace TimedRegex.Parsing
                 case (TokenType.GuaranteedIterator, not TokenType.Absorb):
                     return new GuaranteedIterator(child, tokenizer.GetNext());
 
-                case (TokenType.IntervalLeft, not TokenType.Absorb):
+                case (TokenType.IntervalOpen, not TokenType.Absorb):
                     throw new NotImplementedException();
                 
                 case (TokenType.Iterator, TokenType.Absorb):

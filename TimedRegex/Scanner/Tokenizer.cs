@@ -85,12 +85,12 @@ internal sealed class Tokenizer
                 '*' => new Token(_head, '*', TokenType.Iterator),
                 '+' => new Token(_head, '+', TokenType.GuaranteedIterator),
                 '&' => new Token(_head, '&', TokenType.Intersection),
-                '[' => new Token(_head, '[', TokenType.IntervalLeft),
-                ']' => new Token(_head, ']', TokenType.IntervalRight),
+                '[' => new Token(_head, '[', TokenType.IntervalOpen),
+                ']' => new Token(_head, ']', TokenType.IntervalClose),
                 ';' => new Token(_head, ';', TokenType.IntervalSeparator),
-                '{' => new Token(_head, '{', TokenType.LeftCurlyBrace),
-                '}' => new Token(_head, '}', TokenType.RightCurlyBrace),
-                ',' => new Token(_head, ',', TokenType.Comma),
+                '{' => new Token(_head, '{', TokenType.RenameStart),
+                '}' => new Token(_head, '}', TokenType.RenameEnd),
+                ',' => new Token(_head, ',', TokenType.RenameSeparator),
                 char c when char.IsDigit(c) => new Token(_head, c, TokenType.Digit),
                 _ => throw new Exception($"Unrecognized token at {_head}: '{_input[_head]}'")
             };
