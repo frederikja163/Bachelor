@@ -41,15 +41,23 @@ namespace TimedRegex.Parsing
             {
                 Token token = tokenizer.GetNext();
                 List<SymbolReplace> replaceList = new List<SymbolReplace>();
-                if (tokenizer.Next.Type != TokenType.Match)
+                if (tokenizer.Next.Type != TokenType.Match || tokenizer.Peek(1).Type != TokenType.Match)
                 {
-                    throw new Exception("Expected Match token after left curly brace, but got " + tokenizer.Next.ToString());
+                    throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
                 }
                 replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
-                while (tokenizer.Next.Type == TokenType.Comma) 
+                while (tokenizer.Next.Type == TokenType.Comma)
                 {
-                    tokenizer.Skip();
+                    tokenizer.Skip(); //Skips comma
+                    if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
+                    {
+                        throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
+                    }
                     replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
+                }
+                if (tokenizer.Next.Type != TokenType.RightCurlyBrace)
+                {
+                    throw new Exception("Expected right curly brace after " + token.ToString());
                 }
                 tokenizer.Skip(); //Skips right curly brace
                 return new Rename(replaceList, child, token);
