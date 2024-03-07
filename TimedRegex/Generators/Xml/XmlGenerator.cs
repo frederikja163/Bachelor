@@ -5,6 +5,10 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
+    public XmlGenerator()
+    {
+    }
+
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
         Indent = true,
@@ -20,12 +24,45 @@ internal sealed class XmlGenerator : IGenerator
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
         // Empty NTA is temporary, missing implementation of NTA instantiation
-        NTA nta = new NTA(new Declaration(new List<string>(), new List<string>()), "", Enumerable.Empty<Template>());
+        NTA nta = PopulateNta(automaton);
 
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
-
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
+    }
+
+    private NTA PopulateNta(TimedAutomaton automaton)
+    {
+        return new NTA(
+            PopulateDeclaration(automaton),
+            "ta",
+            new List<Template> { PopulateTemplate(automaton) }
+        );
+    }
+
+    private Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
+    {
+        throw new NotImplementedException();
+    }
+
+    private Template PopulateTemplate(TimedAutomaton automaton)
+    {
+        throw new NotImplementedException();
+    }
+
+    private Location PopulateLocation(TimedAutomaton automaton)
+    {
+        throw new NotImplementedException();
+    }
+
+    private Label PopulateLabel(TimedAutomaton timedAutomaton)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void PopulateTransition(Transition transition, TimedAutomaton automaton)
+    {
+        throw new NotImplementedException();
     }
 
     internal void WriteNta(XmlWriter xmlWriter, NTA nta)
@@ -40,7 +77,7 @@ internal sealed class XmlGenerator : IGenerator
         }
 
         xmlWriter.WriteStartElement("system");
-        xmlWriter.WriteValue(nta.System);
+        xmlWriter.WriteValue("system " + nta.System);
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteEndElement();
@@ -132,25 +169,5 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteAttributeString("kind", "guard");
         xmlWriter.WriteValue(label.LabelString);
         xmlWriter.WriteEndElement();
-    }
-
-    private void PopulateNta(NTA nta, TimedAutomaton automaton)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void PopulateTemplate(TimedAutomaton automaton)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void PopulateLocation(TimedAutomaton automaton)
-    {
-        throw new NotImplementedException();
-    }
-
-    private void PopulateTransition(Transition transition, TimedAutomaton automaton)
-    {
-        throw new NotImplementedException();
     }
 }

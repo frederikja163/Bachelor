@@ -42,7 +42,7 @@ public sealed class XmlGeneratorTest
                 id8
             });
 
-        return new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<string>()), "system ta1",
+        return new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<string>()), "ta1",
             new[] { ta1 });
     }
 
@@ -71,7 +71,7 @@ public sealed class XmlGeneratorTest
         NTA nta = new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<string>()), "ta1",
             new List<Template>());
 
-        string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <system>ta1</system>\n</nta>";
+        string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <system>system ta1</system>\n</nta>";
         StringBuilder sb = new StringBuilder();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
