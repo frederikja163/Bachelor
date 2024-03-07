@@ -23,4 +23,36 @@ internal static class LinqExtensions
 
         return dict;
     }
+
+    internal static SortedSet<TSource> ToSortedSet<TSource>(this IEnumerable<TSource> source)
+        where TSource: IComparable
+    {
+        return new SortedSet<TSource>(source);
+    }
+
+    internal static IEnumerable<IEnumerable<TSource>> PowerSet<TSource>(this IEnumerable<TSource> source)
+    {
+        TSource[] set = source.ToArray();
+        List<TSource> rest = new List<TSource>();
+        return PowerSetRec(set, rest, set.Length);
+        
+        static IEnumerable<IEnumerable<TSource>> PowerSetRec(TSource[] set, List<TSource> rest, int n)
+        {
+            if (n == 0)
+            {
+                yield return rest.ToList();
+                yield break;
+            }
+            
+            rest.Add(set[n - 1]);
+            List<IEnumerable<TSource>> with = PowerSetRec(set, rest, n - 1).ToList();
+            rest.RemoveAt(rest.Count - 1);
+            with = with.Concat(PowerSetRec(set, rest, n - 1)).ToList();
+
+            foreach (IEnumerable<TSource> sources in with)
+            {
+                yield return sources;
+            }
+        }
+    }
 }
