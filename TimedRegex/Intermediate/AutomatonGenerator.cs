@@ -73,7 +73,7 @@ internal static class AutomatonGenerator
             .ToDictionary(l => l,
                 l => clockPowerSet
                     .ToDictionary(c => c.ToSortedSet(),
-                        _ => ta.AddLocation(l.IsFinal, l.Equals(child.InitialLocation)), sortedSetEqualityComparer));
+                        c => ta.AddLocation(l.IsFinal, l.Equals(child.InitialLocation) && c.Count == 0), sortedSetEqualityComparer));
         Clock newClock = ta.AddClock();
 
         foreach (Edge childEdge in child.GetEdges())
@@ -81,7 +81,7 @@ internal static class AutomatonGenerator
             foreach (SortedSet<Clock> clockSet in clockPowerSet)
             {
                 Location from = newLocs[childEdge.From][clockSet];
-                Location to = newLocs[childEdge.From][clockSet.Union(childEdge.GetClockResets()).ToSortedSet()];
+                Location to = newLocs[childEdge.To][clockSet.Union(childEdge.GetClockResets()).ToSortedSet()];
                 List<(Clock, Range)> ranges = childEdge.GetClockRanges()
                     .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
                     .ToList();
