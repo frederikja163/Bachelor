@@ -31,7 +31,6 @@ public sealed class ParserTests
         Assert.IsNull(Parser.Parse(tokenizer));
     }
 
-
     [Test]
     public void ParseAbsorbedGuaranteedIterator()
     {
@@ -78,5 +77,79 @@ public sealed class ParserTests
         Assert.That(node.Child, Is.TypeOf<Match>());
         Assert.That(node.Token.Match, Is.EqualTo('+'));
         Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void ParseUnion() 
+    {
+        Tokenizer tokenizer = new Tokenizer("a|b");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Union>(astNode);
+        Union node = (Union)astNode;
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Assert.That(node.RightNode, Is.TypeOf<Match>());
+        Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void ParseConcatenation()
+    {
+        Tokenizer tokenizer = new Tokenizer("ab");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Concatenation>(astNode);
+        Concatenation node = (Concatenation)astNode;
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Assert.That(node.RightNode, Is.TypeOf<Match>());
+        Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void ParseAbsorbedConcatenation() 
+    {
+        Tokenizer tokenizer = new Tokenizer("a'b");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<AbsorbedConcatenation>(astNode);
+        AbsorbedConcatenation node = (AbsorbedConcatenation)astNode;
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Assert.That(node.RightNode, Is.TypeOf<Match>());
+        Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
+    }
+
+    [Test]
+    public void ParseIntersection() 
+    {
+        Tokenizer tokenizer = new Tokenizer("a&b");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Intersection>(astNode);
+        Intersection node = (Intersection)astNode;
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Assert.That(node.RightNode, Is.TypeOf<Match>());
+        Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
+    }
+
+    [TestCase("a|b|c")]
+    [TestCase("abc")]
+    [TestCase("a|bc")]
+    [TestCase("a'bc")]
+    [TestCase("a&b|cd")]
+    public void ParseBinaryMultiple(string input)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        Assert.DoesNotThrow(() => Parser.Parse(tokenizer));
+    }
+
+    [TestCase("a|")]
+    public void ParseInvalidBinary(string input)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
     }
 }
