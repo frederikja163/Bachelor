@@ -23,27 +23,27 @@ internal sealed class XmlGenerator : IGenerator
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
-        NTA nta = PopulateNta(automaton);
+        NTA nta = GenerateNta(automaton);
 
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
     }
 
-    internal NTA PopulateNta(TimedAutomaton automaton)
+    internal NTA GenerateNta(TimedAutomaton automaton)
     {
         int id = 0;
-        IEnumerable<Template> templates = new List<Template> { PopulateTemplate(automaton, id++) };
+        IEnumerable<Template> templates = new List<Template> { GenerateTemplate(automaton, id++) };
         string system = String.Join(",", templates.Select(x => x.Name));
 
         return new NTA(
-            PopulateDeclaration(automaton),
+            GenerateDeclaration(automaton),
             system,
             templates
         );
     }
 
-    private Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
+    private Declaration GenerateDeclaration(TimedAutomaton timedAutomaton)
     {
         IEnumerable<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
         IEnumerable<char> channels = timedAutomaton.GetAlphabet().ToList().Where(x => x != '\0');
@@ -51,7 +51,7 @@ internal sealed class XmlGenerator : IGenerator
         return new Declaration(clocks, channels);
     }
 
-    private Template PopulateTemplate(TimedAutomaton automaton, int id)
+    private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
         Declaration declaration = new Declaration();
         string name = "ta" + id;
@@ -61,33 +61,33 @@ internal sealed class XmlGenerator : IGenerator
         
         for (int i = 0; i < automaton.GetLocations().Count(); i++)
         {
-            locations[i] = PopulateLocation(automaton, automaton.GetLocations().ElementAt(i));
+            locations[i] = GenerateLocation(automaton, automaton.GetLocations().ElementAt(i));
         }
 
         for (int i = 0; i < automaton.GetEdges().Count(); i++)
         {
-            transitions[i] = PopulateTransition(automaton, automaton.GetEdges().ElementAt(i));
+            transitions[i] = GenerateTransition(automaton, automaton.GetEdges().ElementAt(i));
         }
 
         return new Template(declaration, name, init, locations, transitions);
     }
 
-    private Location PopulateLocation(TimedAutomaton automaton, TimedRegex.Intermediate.Location location)
+    private Location GenerateLocation(TimedAutomaton automaton, TimedRegex.Intermediate.Location location)
     {
         // temporary, only for testing purposes
-        return new Location("", "", new List<Label> { PopulateLabel(automaton) });
+        return new Location("", "", new List<Label> { GenerateLabel(automaton) });
     }
 
-    private Label PopulateLabel(TimedAutomaton timedAutomaton)
+    private Label GenerateLabel(TimedAutomaton timedAutomaton)
     {
         // temporary, only for testing purposes
         return new Label("", "");
     }
 
-    private Transition PopulateTransition(TimedAutomaton automaton, Edge edge)
+    private Transition GenerateTransition(TimedAutomaton automaton, Edge edge)
     {
         // temporary, only for testing purposes
-        return new Transition("", "", "", new List<Label> { PopulateLabel(automaton) });
+        return new Transition("", "", "", new List<Label> { GenerateLabel(automaton) });
     }
 
     internal void WriteNta(XmlWriter xmlWriter, NTA nta)

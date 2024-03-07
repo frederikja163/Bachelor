@@ -15,7 +15,7 @@ public sealed class XmlGeneratorTest
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
         XmlGenerator xmlGenerator = new XmlGenerator();
 
-        return xmlGenerator.PopulateNta(automaton);
+        return xmlGenerator.GenerateNta(automaton);
     }
     private static NTA CreateNta()
     {
