@@ -12,6 +12,12 @@ internal sealed class Declaration
         _clocks = clocks.ToList();
         _channels = channels.ToList();
     }
+
+    public Declaration()
+    {
+        _clocks = new List<string>();
+        _channels = new List<char>();
+    }
     
     internal IEnumerable<string> GetClocks()
     {
