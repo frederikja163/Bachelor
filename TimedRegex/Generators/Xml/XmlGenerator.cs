@@ -23,7 +23,6 @@ internal sealed class XmlGenerator : IGenerator
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
-        // Empty NTA is temporary, missing implementation of NTA instantiation
         NTA nta = PopulateNta(automaton);
 
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
@@ -50,22 +49,27 @@ internal sealed class XmlGenerator : IGenerator
 
     private Template PopulateTemplate(TimedAutomaton automaton)
     {
-        throw new NotImplementedException();
+        // temporary, only for testing purposes
+        return new Template(PopulateDeclaration(automaton), "", "", new List<Location> { PopulateLocation(automaton) },
+            new List<Transition> { PopulateTransition(automaton) });
     }
 
     private Location PopulateLocation(TimedAutomaton automaton)
     {
-        throw new NotImplementedException();
+        // temporary, only for testing purposes
+        return new Location("", "", new List<Label> { PopulateLabel(automaton) });
     }
 
     private Label PopulateLabel(TimedAutomaton timedAutomaton)
     {
-        throw new NotImplementedException();
+        // temporary, only for testing purposes
+        return new Label("", "");
     }
 
-    private void PopulateTransition(Transition transition, TimedAutomaton automaton)
+    private Transition PopulateTransition(TimedAutomaton automaton)
     {
-        throw new NotImplementedException();
+        // temporary, only for testing purposes
+        return new Transition("", "", "", new List<Label> { PopulateLabel(automaton) });
     }
 
     internal void WriteNta(XmlWriter xmlWriter, NTA nta)
