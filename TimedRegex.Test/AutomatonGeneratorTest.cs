@@ -35,6 +35,23 @@ public sealed class AutomatonGeneratorTest
     }
 
     [Test]
+    public void GenerateGuaranteedIteratorTaTest()
+    {
+        GuaranteedIterator iterator = new GuaranteedIterator(Interval('a', 0, 5), Token(TokenType.Iterator, '+'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(iterator);
+        
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(1));
+        Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
+
+        Edge? edge = ta.GetEdges().FirstOrDefault(e => e.From.Id == e.To.Id);
+        Assert.That(edge, Is.Not.Null);
+        Assert.That(edge!.GetClockResets().Count(), Is.EqualTo(1));
+        Assert.That(edge!.GetClockRanges().Count(), Is.EqualTo(1));
+    }
+
+    [Test]
     public void GenerateConcatenationTaTest()
     {
         Concatenation concatenation = new Concatenation(Interval('a', 0, 3), Interval('b', 0, 3));

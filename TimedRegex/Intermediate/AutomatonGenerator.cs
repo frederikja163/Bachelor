@@ -48,8 +48,17 @@ internal static class AutomatonGenerator
         return ta;
     }
 
-    private static TimedAutomaton CreateGuaranteedIteratorAutomaton(GuaranteedIterator a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateGuaranteedIteratorAutomaton(GuaranteedIterator guaranteedIterator){
+        TimedAutomaton ta = CreateAutomaton(guaranteedIterator.Child);
+
+        foreach (Edge oldEdge in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
+        {
+            Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol);
+            edge.AddClockRanges(oldEdge.GetClockRanges());
+            edge.AddClockResets(ta.GetClocks());
+        }
+
+        return ta;
     }
 
     private static TimedAutomaton CreateAbsorbedGuaranteedIteratorAutomaton(AbsorbedGuaranteedIterator a){
