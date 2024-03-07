@@ -62,8 +62,44 @@ internal static class AutomatonGenerator
         return ta;
     }
 
-    private static TimedAutomaton CreateAbsorbedGuaranteedIteratorAutomaton(AbsorbedGuaranteedIterator a){
-        throw new NotImplementedException();
+    private static TimedAutomaton CreateAbsorbedGuaranteedIteratorAutomaton(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
+    {
+        TimedAutomaton child = CreateAutomaton(absorbedGuaranteedIterator.Child);
+        TimedAutomaton ta = new TimedAutomaton(child, excludeLocations: true, excludeEdges: true);
+        
+        SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new SortedSetEqualityComparer<Clock>();
+        List<SortedSet<Clock>> clockPowerSet = child.GetClocks().PowerSet().Select(s => s.ToSortedSet()).ToList();
+        Dictionary<Location, Dictionary<SortedSet<Clock>, Location>> newLocs = child.GetLocations()
+            .ToDictionary(l => l,
+                l => clockPowerSet
+                    .ToDictionary(c => c.ToSortedSet(),
+                        _ => ta.AddLocation(l.IsFinal, l.Equals(child.InitialLocation)), sortedSetEqualityComparer));
+        Clock newClock = ta.AddClock();
+
+        foreach (Edge childEdge in child.GetEdges())
+        {
+            foreach (SortedSet<Clock> clockSet in clockPowerSet)
+            {
+                Location from = newLocs[childEdge.From][clockSet];
+                Location to = newLocs[childEdge.From][clockSet.Union(childEdge.GetClockResets()).ToSortedSet()];
+                List<(Clock, Range)> ranges = childEdge.GetClockRanges()
+                    .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
+                    .ToList();
+                
+                Edge edge = ta.AddEdge(from, to, childEdge.Symbol);
+                edge.AddClockResets(childEdge.GetClockResets());
+                edge.AddClockRanges(ranges);
+
+                if (childEdge.To.IsFinal)
+                {
+                    edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol);
+                    edge.AddClockResets(childEdge.GetClockResets());
+                    edge.AddClockRanges(ranges);
+                }
+            }
+        }
+
+        return ta;
     }
 
     private static TimedAutomaton CreateIntersectionAutomaton(Intersection intersection)
