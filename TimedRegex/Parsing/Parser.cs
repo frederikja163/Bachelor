@@ -39,27 +39,26 @@ namespace TimedRegex.Parsing
             }
             if (tokenizer.Next.Type == TokenType.RenameStart)
             {
-                Token token = tokenizer.GetNext();
+                Token token = tokenizer.Next;
                 List<SymbolReplace> replaceList = new List<SymbolReplace>();
-                if (tokenizer.Next.Type != TokenType.Match || tokenizer.Peek(1).Type != TokenType.Match)
+                if (tokenizer.Peek().Type != TokenType.Match || tokenizer.Peek(2).Type != TokenType.Match)
                 {
                     throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
                 }
-                replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
-                while (tokenizer.Next.Type == TokenType.RenameSeparator)
+                do
                 {
-                    tokenizer.Skip(); //Skips comma
+                    tokenizer.Skip(); // Skips renameSeparator.
                     if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
                     {
                         throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
                     }
                     replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
-                }
+                } while (tokenizer.Next.Type == TokenType.RenameSeparator);
                 if (tokenizer.Next.Type != TokenType.RenameEnd)
                 {
                     throw new Exception("Expected right curly brace after " + token.ToString());
                 }
-                tokenizer.Skip(); //Skips right curly brace
+                tokenizer.Skip(); // Skips renameEnd.
                 return new Rename(replaceList, child, token);
             }
             return child;
