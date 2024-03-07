@@ -41,10 +41,6 @@ namespace TimedRegex.Parsing
             {
                 Token token = tokenizer.Next;
                 List<SymbolReplace> replaceList = new List<SymbolReplace>();
-                if (tokenizer.Peek().Type != TokenType.Match || tokenizer.Peek(2).Type != TokenType.Match)
-                {
-                    throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
-                }
                 do
                 {
                     tokenizer.Skip(); // Skips renameSeparator.
