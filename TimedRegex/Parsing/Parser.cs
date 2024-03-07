@@ -27,7 +27,7 @@ namespace TimedRegex.Parsing
             {
                 return new Match(tokenizer.GetNext());
             }
-            throw new Exception("Invalid token \""+ tokenizer.Next.ToString() + "\"");
+            throw new Exception("Invalid token \""+ tokenizer.Next.ToString());
         }
 
         private static IAstNode? ParseRename(Tokenizer tokenizer)

@@ -40,7 +40,7 @@ public sealed class TokenizerTests
     [Test]
     public void ParseMatchTest()
     {
-        string str = ".1234567890asdfghjklqwertyuiop{}&*();'@";
+        string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new Tokenizer(str);
 
@@ -53,7 +53,7 @@ public sealed class TokenizerTests
     [Test]
     public void ParseIndexTest()
     {
-        string str = ".1234567890asdfghjklqwertyuiop{}&*();'@";
+        string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new Tokenizer(str);
 
@@ -70,6 +70,7 @@ public sealed class TokenizerTests
     [TestCase("!")]
     [TestCase(" ")]
     [TestCase("~")]
+    [TestCase("@")]
     public void CannotParseInvalidTokens(string str)
     {
         Tokenizer tokenizer = new Tokenizer(str);

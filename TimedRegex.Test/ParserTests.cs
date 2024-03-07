@@ -152,4 +152,19 @@ public sealed class ParserTests
         Tokenizer tokenizer = new Tokenizer(input);
         Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
     }
+
+    [Test]
+    public void ParseRename() 
+    {
+        Tokenizer tokenizer = new Tokenizer("a{tT,yY,uU}");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Rename>(astNode);
+        Rename node = (Rename)astNode;
+        
+        Assert.That(node.Child, Is.InstanceOf<Match>());
+        Assert.That(node.Child.Token.Match, Is.EqualTo('a'));
+        Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 't' && s.NewSymbol.Match == 'T')));
+        Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'y' && s.NewSymbol.Match == 'Y')));
+        Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'u' && s.NewSymbol.Match == 'U')));
+    }
 }
