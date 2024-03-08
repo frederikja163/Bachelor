@@ -75,9 +75,6 @@ namespace TimedRegex.Parsing
 
                 case (TokenType.GuaranteedIterator, not TokenType.Absorb):
                     return new GuaranteedIterator(child, tokenizer.GetNext());
-
-                case (TokenType.IntervalOpen, not TokenType.Absorb):
-                    throw new NotImplementedException();
                 
                 case (TokenType.Iterator, TokenType.Absorb):
                     return new AbsorbedIterator(child, tokenizer.GetNext(2));
@@ -98,12 +95,12 @@ namespace TimedRegex.Parsing
             Token token = tokenizer.GetNext()!;
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = parseNumber(tokenizer);
-            if (tokenizer.Next?.Type != TokenType.IntervalSeparator)
+            if (tokenizer.GetNext()?.Type != TokenType.IntervalSeparator)
             {
                 throw new Exception("No interval separator in interval " + token.ToString());
             }
             int endInterval = parseNumber(tokenizer);
-            if (tokenizer.Next.Type != TokenType.IntervalOpen || tokenizer.Next.Type != TokenType.IntervalClose)
+            if (tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose)
             {
                 throw new Exception("Invalid interval syntax after " + token.ToString());
             }

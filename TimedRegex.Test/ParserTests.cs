@@ -200,4 +200,36 @@ public sealed class ParserTests
         Tokenizer tokenizer = new Tokenizer("a{t,y}");
         Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
     }
+
+    [TestCase("a[2;8]")]
+    [TestCase("a[10;19]")]
+    [TestCase("a[1;109]")]
+    [TestCase("a[1099;1902]")]
+
+    public void ParseIntervalVariableNumberLength(string input)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Interval>(astNode);
+        Interval node = (Interval)astNode;
+
+        Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
+        Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
+        Assert.IsTrue(node.StartInclusive);
+        Assert.IsTrue(node.EndInclusive);
+    }
+
+    [Test]
+    public void ParseInterval()
+    {
+        Tokenizer tokenizer = new Tokenizer("m[12;345[");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Interval>(astNode);
+        Interval node = (Interval)astNode;
+
+        Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
+        Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
+        Assert.IsTrue(node.StartInclusive);
+        Assert.IsFalse(node.EndInclusive);
+    }
 }
