@@ -232,4 +232,26 @@ public sealed class ParserTests
         Assert.IsTrue(node.StartInclusive);
         Assert.IsFalse(node.EndInclusive);
     }
+
+    [Test]
+    public void ParseIntervalInvalidNumbers()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[2;1]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
+
+    [TestCase("a[1;2]", true, true)]
+    [TestCase("a[1;2[", true, false)]
+    [TestCase("a]1;2]", false, true)]
+    [TestCase("a]1;2[", false, false)]
+    public void ParseIntervalInclusiveExclusive(string input, bool startInclusive, bool endExclusive)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Interval>(astNode);
+        Interval node = (Interval)astNode;
+
+        Assert.That(node.StartInclusive, Is.EqualTo(startInclusive));
+        Assert.That(node.EndInclusive, Is.EqualTo(endExclusive));
+    }
 }
