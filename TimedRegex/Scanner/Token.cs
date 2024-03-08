@@ -13,4 +13,9 @@ internal sealed class Token
     internal int CharacterIndex { get; }
     internal char Match { get; }
     internal TokenType Type { get; }
+
+    public override string ToString()
+    {
+        return (CharacterIndex.ToString() + '.' + Match + '.' + Type.ToString());
+    }
 }
