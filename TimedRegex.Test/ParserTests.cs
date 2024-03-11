@@ -278,4 +278,11 @@ public sealed class ParserTests
         Tokenizer tokenizer = new Tokenizer("a[1;a]");
         Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
     }
+
+    [Test]
+    public void ParseInvalidEmptyInterval()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[1;]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
 }

@@ -114,6 +114,14 @@ namespace TimedRegex.Parsing
 
         private static int ParseNumber(Tokenizer tokenizer)
         {
+            if (tokenizer.Next?.Type != TokenType.Digit && tokenizer.Next is not null)
+            {
+                throw new Exception("Expected number in interval, but got " + tokenizer.Next.ToString());
+            }
+            if (tokenizer.Next is null)
+            {
+                throw new Exception("Entered ParseNumber, but tokenizer.Next was null.");
+            }
             int number = 0;
             while (tokenizer.Next?.Type == TokenType.Digit)
             {
