@@ -33,7 +33,7 @@ internal sealed class XmlGenerator : IGenerator
         Nta nta = new Nta();
 
         UpdateNta(nta, automaton);
-        
+
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
@@ -83,7 +83,7 @@ internal sealed class XmlGenerator : IGenerator
         string name = _locationIdIsName ? id : "loc" + state.Id;
 
         return new Location(id, name, new List<Label>());
-        }
+    }
 
     private Label GenerateLabel(TimedAutomaton timedAutomaton)
     {
@@ -93,8 +93,18 @@ internal sealed class XmlGenerator : IGenerator
 
     private Transition GenerateTransition(TimedAutomaton automaton, Edge edge)
     {
-        // temporary, only for testing purposes
-        return new Transition("", "", "", new List<Label> { GenerateLabel(automaton) });
+        string id = edge.Id.ToString();
+        string source = _locationIdIsName ? edge.From.Id.ToString() : "loc" + edge.From.Id;
+        string target = _locationIdIsName ? edge.To.Id.ToString() : "loc" + edge.To.Id;
+
+        // transition can have three labels, guard, synchronisation, assignment
+        // guard :  for each (clock, range) in edge.GetClockRanges()
+        //              "(clock >= range.start && clock < range.end)"
+        //              join with &&
+        // synchronisation : if edge.symbol != "\0", then edge.Symbol
+        // assignment : edge.GetClockResets()
+        
+        return new Transition(id, source, target, new List<Label> { GenerateLabel(automaton) });
     }
 
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)

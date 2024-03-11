@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -117,6 +118,7 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = GenerateTestNta();
         Location[] locations = nta.GetTemplates().First().Locations;
+        
         foreach (var location in locations)
         {
             Assert.Multiple(() =>
@@ -127,6 +129,17 @@ public sealed class XmlGeneratorTest
         }
     }
 
+    public void GenerateTransitionTest()
+    {
+        Nta nta = GenerateTestNta();
+        Transition[] transitions = nta.GetTemplates().First().Transitions;
+
+        foreach (var transition in transitions)
+        {
+            // assert that transition has id, source and target
+        }
+    }
+ 
     [Test]
     public void GenerateLocationWithNameTest()
     {
