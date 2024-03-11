@@ -119,7 +119,11 @@ public sealed class XmlGeneratorTest
         Location[] locations = nta.GetTemplates().First().Locations;
         foreach (var location in locations)
         {
-            Assert.That(int.TryParse(location.Name, out _), Is.EqualTo(true));
+            Assert.Multiple(() =>
+            {
+                Assert.That(location.Id, Does.Contain("id"));
+                Assert.That(location.Name, Does.Contain("id"));
+            });
         }
     }
 
@@ -130,7 +134,11 @@ public sealed class XmlGeneratorTest
         Location[] locations = nta.GetTemplates().First().Locations;
         foreach (var location in locations)
         {
-            Assert.That(int.TryParse(location.Name, out _), Is.EqualTo(false));
+            Assert.Multiple(() =>
+            {
+                Assert.That(location.Id, Does.Contain("id"));
+                Assert.That(location.Name, Does.Contain("loc"));
+            });
         }
     }
 
