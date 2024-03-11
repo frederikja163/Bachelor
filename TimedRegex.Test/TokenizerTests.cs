@@ -151,4 +151,11 @@ public sealed class TokenizerTests
         tokenizer.Skip(3);
         Assert.That(tokenizer.GetNext().Match, Is.EqualTo('6'));
     }
+
+    [Test]
+    public void TokenToString()
+    {
+        Token token = new Token(2, 'a', TokenType.Match);
+        Assert.That(token.ToString(), Is.EqualTo("2.a.Match"));
+    }
 }
