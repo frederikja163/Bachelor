@@ -7,11 +7,19 @@ TimedRegex := Rename
 
 Rename := Rename renameStart leftCurlyBrace RenameSymbols rightCurlyBrace
 
-\qquad $\mid$ Binary
+\qquad $\mid$ Intersection
 
 RenameSymbols := RenameSymbols comma match match
 
 \qquad $\mid$ match match comma match match
+
+Intersection := Binary intersection Unary
+
+\qquad $\mid$ Union
+
+Union := Union union Unary
+
+\qquad $\mid$ Unary
 
 Unary := Unary
 
@@ -30,12 +38,6 @@ Unary := Unary
 Number := Number digit
 
 \qquad $\mid$ digit
-
-Binary := Binary union Unary
-
-\qquad $\mid$ Binary intersection Unary
-
-\qquad $\mid$ Unary
 
 Match := parenthesisStart Rename parenthesisEnd
 
