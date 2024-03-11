@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using TimedRegex.Intermediate;
+using TimedRegex.Generators;
 
 namespace TimedRegex.Test;
 
@@ -12,13 +12,13 @@ public sealed class TimedAutomatonTest
         Clock clock1 = timedAutomaton.AddClock();
         Clock clock2 = timedAutomaton.AddClock();
 
-        Location final1 = timedAutomaton.AddLocation(true);
-        Location final2 = timedAutomaton.AddLocation(true);
+        State final1 = timedAutomaton.AddLocation(true);
+        State final2 = timedAutomaton.AddLocation(true);
 
-        Location loc1 = timedAutomaton.AddLocation();
-        Location loc2 = timedAutomaton.AddLocation();
+        State loc1 = timedAutomaton.AddLocation();
+        State loc2 = timedAutomaton.AddLocation();
         
-        Location init = timedAutomaton.AddLocation(newInitial: true);
+        State init = timedAutomaton.AddLocation(newInitial: true);
 
         Edge recognizeEdge1 = timedAutomaton.AddEdge(loc1, final1, 'A');
         recognizeEdge1.AddClockRange(clock1, new Range(1, 5));

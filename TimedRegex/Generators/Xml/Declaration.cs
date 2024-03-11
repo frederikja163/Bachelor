@@ -1,5 +1,3 @@
-using TimedRegex.Intermediate;
-
 namespace TimedRegex.Generators.Xml;
 
 internal sealed class Declaration

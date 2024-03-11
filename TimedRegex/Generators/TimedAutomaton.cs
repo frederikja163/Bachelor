@@ -1,4 +1,4 @@
-namespace TimedRegex.Intermediate;
+namespace TimedRegex.Generators;
 
 internal sealed class TimedAutomaton
 {
@@ -8,7 +8,7 @@ internal sealed class TimedAutomaton
     private readonly HashSet<char> _alphabet;
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
-    private readonly Dictionary<int, Location> _locations;
+    private readonly Dictionary<int, State> _locations;
 
     internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
     {
@@ -20,7 +20,7 @@ internal sealed class TimedAutomaton
             : new Dictionary<int, Edge>();
         _locations = !excludeLocations
             ? left._locations.UnionBy(right._locations, kvp => kvp.Key).ToDictionary()
-            : new Dictionary<int, Location>();
+            : new Dictionary<int, State>();
         InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
@@ -35,7 +35,7 @@ internal sealed class TimedAutomaton
             : new Dictionary<int, Edge>();
         _locations = !excludeLocations
             ? other._locations.ToDictionary()
-            : new Dictionary<int, Location>();
+            : new Dictionary<int, State>();
         InitialLocation = !excludeLocations ? other.InitialLocation : null;
         _alphabet = other._alphabet.ToHashSet();
     }
@@ -44,12 +44,12 @@ internal sealed class TimedAutomaton
     {
         _clocks = new Dictionary<int, Clock>();
         _edges = new Dictionary<int, Edge>();
-        _locations = new Dictionary<int, Location>();
+        _locations = new Dictionary<int, State>();
         InitialLocation = null;
         _alphabet = new HashSet<char>();
     }
     
-    internal Location? InitialLocation { get; set; }
+    internal State? InitialLocation { get; set; }
 
     internal IEnumerable<Clock> GetClocks()
     {
@@ -61,7 +61,7 @@ internal sealed class TimedAutomaton
         return _edges.Values;
     }
 
-    internal IEnumerable<Location> GetLocations()
+    internal IEnumerable<State> GetLocations()
     {
         return _locations.Values;
     }
@@ -83,21 +83,21 @@ internal sealed class TimedAutomaton
         return clock;
     }
 
-    internal Location AddLocation(bool final = false, bool newInitial = false)
+    internal State AddLocation(bool final = false, bool newInitial = false)
     {
-        Location location = new Location(CreateId(), final);
+        State state = new State(CreateId(), final);
         
         if (newInitial)
         {
-            InitialLocation = location;
+            InitialLocation = state;
         }
         
-        _locations.Add(location.Id, location);
+        _locations.Add(state.Id, state);
 
-        return location;
+        return state;
     }
 
-    internal Edge AddEdge(Location from, Location to, char symbol)
+    internal Edge AddEdge(State from, State to, char symbol)
     {
         Edge edge = new Edge(CreateId(), from, to, symbol);
         

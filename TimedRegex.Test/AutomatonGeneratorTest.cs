@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using TimedRegex.AST;
-using TimedRegex.Intermediate;
+using TimedRegex.Generators;
 using TimedRegex.Scanner;
 
 namespace TimedRegex.Test;

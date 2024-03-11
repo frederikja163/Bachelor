@@ -1,8 +1,8 @@
-namespace TimedRegex.Intermediate;
+namespace TimedRegex.Generators;
 
-internal sealed class Location : IEquatable<Location>
+internal sealed class State : IEquatable<State>
 {
-    internal Location(int id, bool isFinal)
+    internal State(int id, bool isFinal)
     {
         Id = id;
         IsFinal = isFinal;
@@ -11,7 +11,7 @@ internal sealed class Location : IEquatable<Location>
     internal int Id { get; }
     internal bool IsFinal { get; set; }
 
-    public bool Equals(Location? other)
+    public bool Equals(State? other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -20,7 +20,7 @@ internal sealed class Location : IEquatable<Location>
 
     public override bool Equals(object? obj)
     {
-        return ReferenceEquals(this, obj) || obj is Location other && Equals(other);
+        return ReferenceEquals(this, obj) || obj is State other && Equals(other);
     }
 
     public override int GetHashCode()

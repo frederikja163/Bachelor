@@ -1,4 +1,4 @@
-namespace TimedRegex.Intermediate;
+namespace TimedRegex.Generators;
 
 internal sealed class Clock : IEquatable<Clock>, IComparable, IComparable<Clock>
 {
