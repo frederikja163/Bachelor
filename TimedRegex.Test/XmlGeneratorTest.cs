@@ -10,10 +10,10 @@ namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
-    private static Nta GenerateTestNta()
+    private static Nta GenerateTestNta(bool LocationIdIsName = true)
     {
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
-        XmlGenerator xmlGenerator = new XmlGenerator();
+        XmlGenerator xmlGenerator = new XmlGenerator(LocationIdIsName);
 
         Nta nta = new Nta();
         
@@ -114,7 +114,31 @@ public sealed class XmlGeneratorTest
     [Test]
     public void GenerateLocationTest()
     {
-        
+        Nta nta = GenerateTestNta();
+        Location[] locations = nta.GetTemplates().First().Locations;
+        for (int i = 0; i < locations.Length; i++)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(locations[i].Id, Is.EqualTo(i.ToString()));
+                Assert.That(locations[i].Name, Is.EqualTo(i.ToString()));
+            });
+        }
+    }
+    
+    [Test]
+    public void GenerateLocationWithNameTest()
+    {
+        Nta nta = GenerateTestNta(false);
+        Location[] locations = nta.GetTemplates().First().Locations;
+        for (int i = 0; i < locations.Length; i++)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(locations[i].Id, Is.EqualTo(i.ToString()));
+                Assert.That(locations[i].Name, Is.EqualTo("loc" + i));
+            });
+        }
     }
     
     [Test]

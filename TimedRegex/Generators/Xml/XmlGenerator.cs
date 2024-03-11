@@ -4,6 +4,18 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
+    private readonly bool _locationIdIsName;
+
+    public XmlGenerator()
+    {
+        _locationIdIsName = true;
+    }
+    
+    public XmlGenerator(bool locationIdIsName)
+    {
+        _locationIdIsName = locationIdIsName;
+    }
+
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
         Indent = true,
@@ -47,7 +59,7 @@ internal sealed class XmlGenerator : IGenerator
         string name = "ta" + id;
         string init = automaton.InitialLocation!.ToString()!;
 
-        Generators.State[] automatonLocations = automaton.GetLocations().ToArray();
+        State[] automatonLocations = automaton.GetLocations().ToArray();
         Edge[] automatonEdges = automaton.GetEdges().ToArray();
         Location[] templateLocations = new Location[automatonLocations.Length];
         Transition[] transitions = new Transition[automatonEdges.Length];
@@ -65,11 +77,13 @@ internal sealed class XmlGenerator : IGenerator
         return new Template(declaration, name, init, templateLocations, transitions);
     }
 
-    private Location GenerateLocation(TimedAutomaton automaton, Generators.State state)
+    private Location GenerateLocation(TimedAutomaton automaton, State state)
     {
-        // temporary, only for testing purposes
-        return new Location("", "", new List<Label> { GenerateLabel(automaton) });
-    }
+        string id = state.Id.ToString();
+        string name = _locationIdIsName ? id : "loc" + id;
+
+        return new Location(id, name, new List<Label>());
+        }
 
     private Label GenerateLabel(TimedAutomaton timedAutomaton)
     {
