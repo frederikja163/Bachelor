@@ -7,23 +7,21 @@ TimedRegex := Rename
 
 Rename := Rename renameStart RenameSymbols renameEnd
 
-\qquad $\mid$ Binary
+\qquad $\mid$ Intersection
 
 RenameSymbols := RenameSymbols renameSeparator match match
 
 \qquad $\mid$ match match
 
-Unary := Unary IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
+Intersection := Binary intersection Unary
 
-\qquad $\mid$ Unary guaranteedIterator
+\qquad $\mid$ Union
 
-\qquad $\mid$ Unary guaranteedIterator absorb
+Union := Union union Interval
 
-\qquad $\mid$ Unary iterator
+\qquad $\mid$ Interval
 
-\qquad $\mid$ Unary iterator absorb
-
-\qquad $\mid$ Match
+Interval := Unary IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
 
 IntervalStartEnd := intervalOpen
 
@@ -33,11 +31,17 @@ Number := Number digit
 
 \qquad $\mid$ digit
 
-Binary := Binary union Unary
-
-\qquad $\mid$ Binary intersection Unary
-
 \qquad $\mid$ Unary
+
+Unary := Unary guaranteedIterator
+
+\qquad $\mid$ Unary guaranteedIterator absorb
+
+\qquad $\mid$ Unary iterator
+
+\qquad $\mid$ Unary iterator absorb
+
+\qquad $\mid$ Match
 
 Match := parenthesisStart Rename parenthesisEnd
 
