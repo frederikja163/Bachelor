@@ -30,6 +30,7 @@ internal static class LinqExtensions
         return new SortedSet<TSource>(source);
     }
 
+    // With great inspiration from: https://www.geeksforgeeks.org/power-set/
     internal static IEnumerable<IEnumerable<TSource>> PowerSet<TSource>(this IEnumerable<TSource> source)
     {
         TSource[] set = source.ToArray();

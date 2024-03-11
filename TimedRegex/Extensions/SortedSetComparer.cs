@@ -32,7 +32,7 @@ internal sealed class SortedSetEqualityComparer<T> : IEqualityComparer<SortedSet
         int value = 0;
         foreach (T val in obj)
         {
-            HashCode.Combine(val.GetHashCode());
+            HashCode.Combine(val?.GetHashCode());
         }
 
         return value;
