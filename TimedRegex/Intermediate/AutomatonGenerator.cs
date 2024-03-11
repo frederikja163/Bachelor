@@ -108,17 +108,17 @@ internal static class AutomatonGenerator
         TimedAutomaton right = CreateAutomaton(intersection.RightNode);
         TimedAutomaton ta = new TimedAutomaton(left, right, excludeLocations: true, excludeEdges: true);
 
-        Dictionary<(int, int), Location> newLocs = new Dictionary<(int, int), Location>();
+        Dictionary<(Location, Location), Location> newLocs = new Dictionary<(Location, Location), Location>();
         foreach (Location lLoc in left.GetLocations())
         {
             foreach (Location rLoc in right.GetLocations())
             {
-                newLocs.Add((lLoc.Id, rLoc.Id), ta.AddLocation());
+                newLocs.Add((lLoc, rLoc), ta.AddLocation());
             }
         }
 
         Location final = ta.AddLocation(true);
-        ta.InitialLocation = newLocs[(left.InitialLocation!.Id, right.InitialLocation!.Id)];
+        ta.InitialLocation = newLocs[(left.InitialLocation!, right.InitialLocation!)];
 
         Dictionary<char, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
         Dictionary<char, List<Edge>> rSymEdges = right.GetEdges().ToListDictionary(e => e.Symbol, e => e);
@@ -130,8 +130,8 @@ internal static class AutomatonGenerator
             {
                 foreach (Edge rEdge in rEdges)
                 {
-                    Location from = newLocs[(lEdge.From.Id, rEdge.From.Id)];
-                    Location to = newLocs[(lEdge.To.Id, rEdge.To.Id)];
+                    Location from = newLocs[(lEdge.From, rEdge.From)];
+                    Location to = newLocs[(lEdge.To, rEdge.To)];
                     Edge edge = ta.AddEdge(from, to, c);
                     edge.AddClockRanges(lEdge.GetClockRanges());
                     edge.AddClockRanges(rEdge.GetClockRanges());
@@ -165,8 +165,8 @@ internal static class AutomatonGenerator
             {
                 foreach (Edge sEdge in secondary)
                 {
-                    Location from = newLocs[(pEdge.From.Id, sEdge.From.Id)];
-                    Location to = newLocs[(pEdge.To.Id, sEdge.To.Id)];
+                    Location from = newLocs[(pEdge.From, sEdge.From)];
+                    Location to = newLocs[(pEdge.To, sEdge.To)];
                     Edge edge = ta.AddEdge(from, to, '\0');
                     edge.AddClockRanges(pEdge.GetClockRanges());
                     edge.AddClockResets(pEdge.GetClockResets());
@@ -218,7 +218,7 @@ internal static class AutomatonGenerator
     {
         TimedAutomaton ta = CreateAutomaton(rename.Child);
 
-        Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol, r => r.NewSymbol);
+        Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol.Match, r => r.NewSymbol.Match);
         ta.Rename(replaceList);
 
         foreach (Edge edge in ta.GetEdges())

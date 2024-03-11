@@ -23,46 +23,74 @@ internal sealed class XmlGenerator : IGenerator
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
-        // Empty NTA is temporary, missing implementation of NTA instantiation
-        NTA nta = PopulateNta(automaton);
+        NTA nta = GenerateNta(automaton);
 
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
     }
 
-    private NTA PopulateNta(TimedAutomaton automaton)
+    internal NTA GenerateNta(TimedAutomaton automaton)
     {
+        int id = 0;
+        IEnumerable<Template> templates = new List<Template> { GenerateTemplate(automaton, id++) };
+        string system = String.Join(",", templates.Select(x => x.Name));
+
         return new NTA(
-            PopulateDeclaration(automaton),
-            "ta",
-            new List<Template> { PopulateTemplate(automaton) }
+            GenerateDeclaration(automaton),
+            system,
+            templates
         );
     }
 
-    private Declaration PopulateDeclaration(TimedAutomaton timedAutomaton)
+    private Declaration GenerateDeclaration(TimedAutomaton timedAutomaton)
     {
-        throw new NotImplementedException();
+        IEnumerable<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
+        IEnumerable<char> channels = timedAutomaton.GetAlphabet().ToList().Where(x => x != '\0');
+
+        return new Declaration(clocks, channels);
     }
 
-    private Template PopulateTemplate(TimedAutomaton automaton)
+    private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
-        throw new NotImplementedException();
+        Declaration declaration = new Declaration();
+        string name = "ta" + id;
+        string init = automaton.InitialLocation!.ToString()!;
+        
+        Intermediate.Location[] automatonLocations = automaton.GetLocations().ToArray();
+        Edge[] automatonEdges = automaton.GetEdges().ToArray();
+        Location[] templateLocations = new Location[automatonLocations.Length];
+        Transition[] transitions = new Transition[automatonEdges.Length];
+        
+        for (int i = 0; i < automatonLocations.Length; i++)
+        {
+            templateLocations[i] = GenerateLocation(automaton, automatonLocations[i]);
+        }
+
+        for (int i = 0; i < automatonEdges.Length; i++)
+        {
+            transitions[i] = GenerateTransition(automaton, automatonEdges[i]);
+        }
+
+        return new Template(declaration, name, init, templateLocations, transitions);
     }
 
-    private Location PopulateLocation(TimedAutomaton automaton)
+    private Location GenerateLocation(TimedAutomaton automaton, Intermediate.Location location)
     {
-        throw new NotImplementedException();
+        // temporary, only for testing purposes
+        return new Location("", "", new List<Label> { GenerateLabel(automaton) });
     }
 
-    private Label PopulateLabel(TimedAutomaton timedAutomaton)
+    private Label GenerateLabel(TimedAutomaton timedAutomaton)
     {
-        throw new NotImplementedException();
+        // temporary, only for testing purposes
+        return new Label("", "");
     }
 
-    private void PopulateTransition(Transition transition, TimedAutomaton automaton)
+    private Transition GenerateTransition(TimedAutomaton automaton, Edge edge)
     {
-        throw new NotImplementedException();
+        // temporary, only for testing purposes
+        return new Transition("", "", "", new List<Label> { GenerateLabel(automaton) });
     }
 
     internal void WriteNta(XmlWriter xmlWriter, NTA nta)
@@ -116,9 +144,12 @@ internal sealed class XmlGenerator : IGenerator
             WriteLocation(xmlWriter, location);
         }
 
-        xmlWriter.WriteStartElement("init");
-        xmlWriter.WriteAttributeString("ref", template.Init);
-        xmlWriter.WriteEndElement();
+        if (template.Locations.Length != 0)
+        {
+            xmlWriter.WriteStartElement("init");
+            xmlWriter.WriteAttributeString("ref", template.Init);
+            xmlWriter.WriteEndElement();
+        }
 
         foreach (var transition in template.Transitions)
         {

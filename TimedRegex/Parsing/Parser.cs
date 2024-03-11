@@ -27,20 +27,37 @@ namespace TimedRegex.Parsing
             {
                 return new Match(tokenizer.GetNext());
             }
-            throw new Exception("Invalid token \""+ tokenizer.Next.ToString() + "\"");
+            throw new Exception("Invalid token \""+ tokenizer.Next.ToString());
         }
 
         private static IAstNode? ParseRename(Tokenizer tokenizer)
         {
-/*            if (tokenizer.Current.Type == TokenType.RenameStart)
+            IAstNode? child = ParseBinary(tokenizer);
+            if (child is null || tokenizer.Next is null)
             {
-                SymbolReplace[] replacelist;
-                while (true)
+                return child;
+            }
+            if (tokenizer.Next.Type == TokenType.RenameStart)
+            {
+                Token token = tokenizer.Next;
+                List<SymbolReplace> replaceList = new List<SymbolReplace>();
+                do
                 {
-
+                    tokenizer.Skip(); // Skips renameSeparator.
+                    if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
+                    {
+                        throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
+                    }
+                    replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
+                } while (tokenizer.Next.Type == TokenType.RenameSeparator);
+                if (tokenizer.Next.Type != TokenType.RenameEnd)
+                {
+                    throw new Exception("Expected right curly brace after " + token.ToString());
                 }
-            }*/
-            return ParseBinary(tokenizer);
+                tokenizer.Skip(); // Skips renameEnd.
+                return new Rename(replaceList, child, token);
+            }
+            return child;
         }
 
         private static IAstNode? ParseUnary(Tokenizer tokenizer)
@@ -58,6 +75,9 @@ namespace TimedRegex.Parsing
 
                 case (TokenType.GuaranteedIterator, not TokenType.Absorb):
                     return new GuaranteedIterator(child, tokenizer.GetNext());
+
+                case (TokenType.IntervalOpen, not TokenType.Absorb):
+                    throw new NotImplementedException();
                 
                 case (TokenType.Iterator, TokenType.Absorb):
                     return new AbsorbedIterator(child, tokenizer.GetNext(2));
@@ -95,8 +115,11 @@ namespace TimedRegex.Parsing
                     Token tokenIntersection = tokenizer.GetNext();
                     return new Intersection(left, ParseUnary(tokenizer)!, tokenIntersection);
 
-                default:
+                case (TokenType.Match):
                     return new Concatenation(left, ParseUnary(tokenizer)!);
+
+                default:
+                    return left;
             }
         }
     }

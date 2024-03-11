@@ -3,12 +3,20 @@ using System.Xml;
 using NUnit.Framework;
 using TimedRegex.Generators.Xml;
 using TimedRegex.Intermediate;
+using Contains = NUnit.Framework.Contains;
 using Location = TimedRegex.Generators.Xml.Location;
 
 namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
+    private static NTA GenerateNta()
+    {
+        TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
+        XmlGenerator xmlGenerator = new XmlGenerator();
+
+        return xmlGenerator.GenerateNta(automaton);
+    }
     private static NTA CreateNta()
     {
         Location id0 = new Location("id0", "id0", Enumerable.Empty<Label>());
@@ -23,7 +31,7 @@ public sealed class XmlGeneratorTest
         Transition id8 = new Transition("id8", "id2", "id4", new[] { new Label("guard", "1 <= c2 < 3") });
 
         Template ta1 = new Template(new Declaration(new List<string>(),
-                new List<string>()),
+                new List<char>()),
             "ta1",
             "id0",
             new[]
@@ -42,10 +50,46 @@ public sealed class XmlGeneratorTest
                 id8
             });
 
-        return new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<string>()), "ta1",
+        return new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<char>()), "ta1",
             new[] { ta1 });
     }
 
+    [Test]
+    public void PopulateNtaTest()
+    {
+        NTA nta = GenerateNta();
+
+        Assert.That(nta.System, Is.EqualTo("ta0"));
+        Assert.That(nta.Templates, Has.Length.EqualTo(1));
+    }
+
+    [Test]
+    public void PopulateDeclarationTest()
+    {
+        NTA nta = GenerateNta();
+        
+        IEnumerable<string> clocks = nta.Declaration.GetClocks();
+        IEnumerable<char> channels = nta.Declaration.GetChannels();
+
+        Assert.That(clocks.Count(), Is.EqualTo(2));
+
+        Assert.That(channels.Count(), Is.EqualTo(2));
+        Assert.That(channels, Contains.Item('A'));
+        Assert.That(channels, Contains.Item('B'));
+    }
+
+    [Test]
+    public void PopulateTemplateTest()
+    {
+        NTA nta = GenerateNta();
+        Template template = nta.Templates[0];
+        
+        Assert.That(template.Name, Is.EqualTo("ta0"));
+        Assert.That(template.Init, Is.Not.EqualTo(""));
+        Assert.That(template.Locations, Has.Length.EqualTo(5));
+        Assert.That(template.Transitions, Has.Length.EqualTo(4));
+    }
+    
     [Test]
     public void GenerateXmlTest()
     {
@@ -68,7 +112,7 @@ public sealed class XmlGeneratorTest
     public void WriteNtaTest()
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
-        NTA nta = new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<string>()), "ta1",
+        NTA nta = new NTA(new Declaration(new List<string> { "c1", "c2" }, new List<char>()), "ta1",
             new List<Template>());
 
         string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <system>system ta1</system>\n</nta>";
@@ -87,7 +131,7 @@ public sealed class XmlGeneratorTest
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
         Template template = new Template(
-            new Declaration(new List<string>(), new List<string>()),
+            new Declaration(new List<string>(), new List<char>()),
             "ta1",
             "id0",
             new List<Location>
@@ -165,7 +209,7 @@ public sealed class XmlGeneratorTest
     public void WriteDeclarationTest()
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
-        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
+        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<char> { 'x', 'y' });
 
         string expected = "<declaration>clock c1, c2;chan x, y;</declaration>";
         StringBuilder sb = new StringBuilder();
