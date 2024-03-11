@@ -11,7 +11,7 @@ internal sealed class XmlGenerator : IGenerator
         _locationIdIsName = true;
     }
     
-    public XmlGenerator(bool locationIdIsName)
+    internal XmlGenerator(bool locationIdIsName)
     {
         _locationIdIsName = locationIdIsName;
     }
