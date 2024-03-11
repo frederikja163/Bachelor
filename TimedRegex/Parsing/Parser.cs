@@ -75,19 +75,59 @@ namespace TimedRegex.Parsing
 
                 case (TokenType.GuaranteedIterator, not TokenType.Absorb):
                     return new GuaranteedIterator(child, tokenizer.GetNext());
-
-                case (TokenType.IntervalOpen, not TokenType.Absorb):
-                    throw new NotImplementedException();
                 
                 case (TokenType.Iterator, TokenType.Absorb):
                     return new AbsorbedIterator(child, tokenizer.GetNext(2));
 
                 case (TokenType.GuaranteedIterator, TokenType.Absorb):
                     return new AbsorbedGuaranteedIterator(child, tokenizer.GetNext(2));
+
+                case(TokenType.IntervalOpen or TokenType.IntervalClose, not TokenType.Absorb):
+                    return ParseInterval(tokenizer, child);
                 
                 default:
                     return child;
             }
+        }
+
+        private static Interval ParseInterval(Tokenizer tokenizer, IAstNode child)
+        {
+            Token token = tokenizer.GetNext()!;
+            bool startInclusive = token.Type == TokenType.IntervalOpen;
+            int startInterval = ParseNumber(tokenizer);
+            if (tokenizer.GetNext()?.Type != TokenType.IntervalSeparator)
+            {
+                throw new Exception("Expected interval separator after number in interval " + token.ToString());
+            }
+            int endInterval = ParseNumber(tokenizer);
+            if (tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose)
+            {
+                throw new Exception("Invalid interval syntax after " + token.ToString());
+            }
+            if (startInterval > endInterval)
+            {
+                throw new Exception("The start interval must be lower or equal to the end interval after " + token.ToString());
+            }
+            bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
+            return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
+        }
+
+        private static int ParseNumber(Tokenizer tokenizer)
+        {
+            if (tokenizer.Next?.Type != TokenType.Digit && tokenizer.Next is not null)
+            {
+                throw new Exception("Expected number in interval, but got " + tokenizer.Next.ToString());
+            }
+            if (tokenizer.Next is null)
+            {
+                throw new Exception("Expected number in Interval, but the input has ended");
+            }
+            int number = 0;
+            while (tokenizer.Next?.Type == TokenType.Digit)
+            {
+                number = (number * 10) + (tokenizer.GetNext().Match - '0');
+            }
+            return number;
         }
 
         private static IAstNode? ParseBinary(Tokenizer tokenizer)

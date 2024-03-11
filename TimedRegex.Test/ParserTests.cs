@@ -200,4 +200,89 @@ public sealed class ParserTests
         Tokenizer tokenizer = new Tokenizer("a{t,y}");
         Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
     }
+
+    [TestCase("a[2;8]")]
+    [TestCase("a[10;19]")]
+    [TestCase("a[1;109]")]
+    [TestCase("a[1099;1902]")]
+
+    public void ParseIntervalVariableNumberLength(string input)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Interval>(astNode);
+        Interval node = (Interval)astNode;
+
+        Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
+        Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
+        Assert.IsTrue(node.StartInclusive);
+        Assert.IsTrue(node.EndInclusive);
+    }
+
+    [Test]
+    public void ParseInterval()
+    {
+        Tokenizer tokenizer = new Tokenizer("m[12;345[");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Interval>(astNode);
+        Interval node = (Interval)astNode;
+
+        Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
+        Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
+        Assert.IsTrue(node.StartInclusive);
+        Assert.IsFalse(node.EndInclusive);
+    }
+
+    [Test]
+    public void ParseIntervalInvalidNumbers()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[2;1]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
+
+    [TestCase("a[1;2]", true, true)]
+    [TestCase("a[1;2[", true, false)]
+    [TestCase("a]1;2]", false, true)]
+    [TestCase("a]1;2[", false, false)]
+    public void ParseIntervalInclusiveExclusive(string input, bool startInclusive, bool endExclusive)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.IsInstanceOf<Interval>(astNode);
+        Interval node = (Interval)astNode;
+
+        Assert.That(node.StartInclusive, Is.EqualTo(startInclusive));
+        Assert.That(node.EndInclusive, Is.EqualTo(endExclusive));
+    }
+
+    [Test]
+    public void ParseIntervalNumber()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[6;789]");
+        Interval node = (Interval)Parser.Parse(tokenizer)!;
+
+        Assert.That(node.StartInterval, Is.EqualTo(6));
+        Assert.That(node.EndInterval, Is.EqualTo(789));
+    }
+
+    [Test]
+    public void ParseIntervalInvalidFirstNumberSymbol()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[a;123]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
+
+    [Test]
+    public void ParseIntervalInvalidSecondNumberSymbol()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[1;a]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
+
+    [Test]
+    public void ParseInvalidEmptyInterval()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[1;]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
 }
