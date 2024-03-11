@@ -5,16 +5,8 @@ namespace TimedRegex.Generators.Xml;
 internal sealed class Nta
 {
     private int _templateId;
-    private readonly StringBuilder sb = new();
     private readonly List<Template> _templates;
     
-    internal Nta(Declaration declaration, string system, IEnumerable<Template> templates)
-    {
-        Declaration = declaration;
-        sb.Append(system);
-        _templates = templates.ToList();
-    }
-
     internal Nta()
     {
         Declaration = new Declaration(new List<string>(), new List<char>());
@@ -32,7 +24,6 @@ internal sealed class Nta
     internal void AddTemplate(Template template)
     {
         _templates.Add(template);
-        sb.Append(_templates.Count == 1 ? template.Name : ", " + template.Name);
     }
 
     internal void AddDeclaration(Declaration declaration)
@@ -60,5 +51,5 @@ internal sealed class Nta
     }
 
     internal Declaration Declaration { get; }
-    internal string System => sb.ToString();
+    internal string System => String.Join(", ", _templates.Select(t => t.Name));
 }
