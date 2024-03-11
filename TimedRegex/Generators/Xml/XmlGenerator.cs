@@ -5,10 +5,6 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
-    public XmlGenerator()
-    {
-    }
-
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
         Indent = true,
@@ -23,24 +19,19 @@ internal sealed class XmlGenerator : IGenerator
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
-        NTA nta = GenerateNta(automaton);
+        Nta nta = new Nta();
 
+        UpdateNta(nta, automaton);
+        
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
     }
 
-    internal NTA GenerateNta(TimedAutomaton automaton)
+    internal void UpdateNta(Nta nta, TimedAutomaton automaton)
     {
-        int id = 0;
-        IEnumerable<Template> templates = new List<Template> { GenerateTemplate(automaton, id++) };
-        string system = String.Join(",", templates.Select(x => x.Name));
-
-        return new NTA(
-            GenerateDeclaration(automaton),
-            system,
-            templates
-        );
+        nta.AddTemplate(GenerateTemplate(automaton, nta.NewTemplateId()));
+        nta.AddDeclaration(GenerateDeclaration(automaton));
     }
 
     private Declaration GenerateDeclaration(TimedAutomaton timedAutomaton)
@@ -56,12 +47,12 @@ internal sealed class XmlGenerator : IGenerator
         Declaration declaration = new Declaration();
         string name = "ta" + id;
         string init = automaton.InitialLocation!.ToString()!;
-        
+
         Intermediate.Location[] automatonLocations = automaton.GetLocations().ToArray();
         Edge[] automatonEdges = automaton.GetEdges().ToArray();
         Location[] templateLocations = new Location[automatonLocations.Length];
         Transition[] transitions = new Transition[automatonEdges.Length];
-        
+
         for (int i = 0; i < automatonLocations.Length; i++)
         {
             templateLocations[i] = GenerateLocation(automaton, automatonLocations[i]);
@@ -93,13 +84,13 @@ internal sealed class XmlGenerator : IGenerator
         return new Transition("", "", "", new List<Label> { GenerateLabel(automaton) });
     }
 
-    internal void WriteNta(XmlWriter xmlWriter, NTA nta)
+    internal void WriteNta(XmlWriter xmlWriter, Nta nta)
     {
         xmlWriter.WriteStartElement("nta");
 
         WriteDeclaration(xmlWriter, nta.Declaration);
 
-        foreach (var template in nta.Templates)
+        foreach (var template in nta.GetTemplates())
         {
             WriteTemplate(xmlWriter, template);
         }
