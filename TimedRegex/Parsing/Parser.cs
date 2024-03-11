@@ -120,7 +120,7 @@ namespace TimedRegex.Parsing
             }
             if (tokenizer.Next is null)
             {
-                throw new Exception("Entered ParseNumber, but tokenizer.Next was null.");
+                throw new Exception("Expected number in Interval, but the input has ended");
             }
             int number = 0;
             while (tokenizer.Next?.Type == TokenType.Digit)
