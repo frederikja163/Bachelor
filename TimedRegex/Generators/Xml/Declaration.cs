@@ -34,4 +34,14 @@ internal sealed class Declaration
             yield return channel;
         }
     }
+
+    internal void AddClock(string clock)
+    {
+        _clocks.Add(clock);
+    }
+
+    internal void AddChannel(char channel)
+    {
+        _channels.Add(channel);
+    }
 }
