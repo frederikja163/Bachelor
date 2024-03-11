@@ -21,6 +21,10 @@ Union := Union union Interval
 
 \qquad $\mid$ Interval
 
+Concatenation := Concatenation Interval
+
+\qquad $\mid$ Interval
+
 Interval := Unary IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
 
 IntervalStartEnd := intervalOpen
@@ -44,10 +48,6 @@ Unary := Unary guaranteedIterator
 \qquad $\mid$ Match
 
 Match := parenthesisStart Rename parenthesisEnd
-
-\qquad $\mid$ Match match
-
-\qquad $\mid$ Match matchAny
 
 \qquad $\mid$ match
 
