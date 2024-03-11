@@ -254,4 +254,28 @@ public sealed class ParserTests
         Assert.That(node.StartInclusive, Is.EqualTo(startInclusive));
         Assert.That(node.EndInclusive, Is.EqualTo(endExclusive));
     }
+
+    [Test]
+    public void ParseIntervalNumber()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[6;789]");
+        Interval node = (Interval)Parser.Parse(tokenizer)!;
+
+        Assert.That(node.StartInterval, Is.EqualTo(6));
+        Assert.That(node.EndInterval, Is.EqualTo(789));
+    }
+
+    [Test]
+    public void ParseIntervalInvalidFirstNumberSymbol()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[a;123]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
+
+    [Test]
+    public void ParseIntervalInvalidSecondNumberSymbol()
+    {
+        Tokenizer tokenizer = new Tokenizer("a[1;a]");
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
 }

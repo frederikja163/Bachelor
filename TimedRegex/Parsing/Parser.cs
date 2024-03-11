@@ -94,12 +94,12 @@ namespace TimedRegex.Parsing
         {
             Token token = tokenizer.GetNext()!;
             bool startInclusive = token.Type == TokenType.IntervalOpen;
-            int startInterval = parseNumber(tokenizer);
+            int startInterval = ParseNumber(tokenizer);
             if (tokenizer.GetNext()?.Type != TokenType.IntervalSeparator)
             {
-                throw new Exception("No interval separator in interval " + token.ToString());
+                throw new Exception("Expected interval separator after number in interval " + token.ToString());
             }
-            int endInterval = parseNumber(tokenizer);
+            int endInterval = ParseNumber(tokenizer);
             if (tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose)
             {
                 throw new Exception("Invalid interval syntax after " + token.ToString());
@@ -112,7 +112,7 @@ namespace TimedRegex.Parsing
             return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
         }
 
-        private static int parseNumber(Tokenizer tokenizer)
+        private static int ParseNumber(Tokenizer tokenizer)
         {
             int number = 0;
             while (tokenizer.Next?.Type == TokenType.Digit)
