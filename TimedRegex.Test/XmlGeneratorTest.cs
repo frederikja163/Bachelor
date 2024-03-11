@@ -23,6 +23,8 @@ public sealed class XmlGeneratorTest
     }
     private static Nta CreateNta()
     {
+        Nta nta = new Nta();
+        
         Location id0 = new Location("id0", "id0", Enumerable.Empty<Label>());
         Location id1 = new Location("id1", "id1", Enumerable.Empty<Label>());
         Location id2 = new Location("id2", "id2", Enumerable.Empty<Label>());
@@ -54,8 +56,10 @@ public sealed class XmlGeneratorTest
                 id8
             });
 
-        return new Nta(new Declaration(new List<string> { "c1", "c2" }, new List<char>()), "ta1",
-            new[] { ta1 });
+        nta.AddTemplate(ta1);
+        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<char>()));
+
+        return nta;
     }
 
     [Test]
@@ -129,10 +133,12 @@ public sealed class XmlGeneratorTest
     public void WriteNtaTest()
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
-        Nta nta = new Nta(new Declaration(new List<string> { "c1", "c2" }, new List<char>()), "ta1",
-            new List<Template>());
+        Nta nta = new Nta();
+        Template template = new Template(new Declaration(), "ta1", "", new List<Location>(), new List<Transition>());
+        nta.AddTemplate(template);
+        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<char>()));
 
-        string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <system>system ta1</system>\n</nta>";
+        string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1</system>\n</nta>";
         StringBuilder sb = new StringBuilder();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
