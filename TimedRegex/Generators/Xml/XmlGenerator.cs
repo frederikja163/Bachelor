@@ -6,7 +6,7 @@ internal sealed class XmlGenerator : IGenerator
 {
     private readonly bool _locationIdIsName;
 
-    public XmlGenerator()
+    internal XmlGenerator()
     {
         _locationIdIsName = true;
     }
