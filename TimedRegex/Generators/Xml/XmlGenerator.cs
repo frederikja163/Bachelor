@@ -79,8 +79,8 @@ internal sealed class XmlGenerator : IGenerator
 
     private Location GenerateLocation(TimedAutomaton automaton, State state)
     {
-        string id = state.Id.ToString();
-        string name = _locationIdIsName ? id : "loc" + id;
+        string id = "id" + state.Id;
+        string name = _locationIdIsName ? id : "loc" + state.Id;
 
         return new Location(id, name, new List<Label>());
         }
