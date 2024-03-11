@@ -15,4 +15,21 @@ public sealed class LinqExtensionsTest
             Assert.That(values.All(i => i == expected), Is.True);
         }
     }
+
+    [Test]
+    public void ToSortedListTest()
+    {
+        SortedSet<int> actual = Enumerable.Range(1, 10).ToSortedSet();
+        SortedSet<int> expected = new SortedSet<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        Assert.That(actual, Is.EquivalentTo(expected));
+    }
+
+    [Test]
+    public void PowerSet()
+    {
+        List<List<int>> actual = Enumerable.Range(1, 5).PowerSet().Select(s => s.ToList()).ToList();
+        
+        Assert.That(actual.Count, Is.EqualTo(Math.Pow(2, 5)));
+        Assert.That(actual.Any(a => a.SequenceEqual(Enumerable.Range(1, 3).Reverse())), Is.True);
+    }
 }

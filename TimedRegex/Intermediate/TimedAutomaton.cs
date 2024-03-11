@@ -21,8 +21,23 @@ internal sealed class TimedAutomaton
         _locations = !excludeLocations
             ? left._locations.UnionBy(right._locations, kvp => kvp.Key).ToDictionary()
             : new Dictionary<int, Location>();
-        InitialLocation = left.InitialLocation ?? right.InitialLocation;
+        InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
+    }
+    
+    internal TimedAutomaton(TimedAutomaton other, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
+    {
+        _clocks = !excludeClocks
+            ? other._clocks.ToDictionary()
+            : new Dictionary<int, Clock>();
+        _edges = !excludeEdges
+            ? other._edges.ToDictionary()
+            : new Dictionary<int, Edge>();
+        _locations = !excludeLocations
+            ? other._locations.ToDictionary()
+            : new Dictionary<int, Location>();
+        InitialLocation = !excludeLocations ? other.InitialLocation : null;
+        _alphabet = other._alphabet.ToHashSet();
     }
     
     internal TimedAutomaton()

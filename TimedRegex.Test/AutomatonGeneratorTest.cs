@@ -67,6 +67,26 @@ public sealed class AutomatonGeneratorTest
     }
 
     [Test]
+    public void GenerateAbsorbedGuaranteedIteratorTaTest()
+    {
+        Union union = new Union(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
+        AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new AbsorbedGuaranteedIterator(union, Token(TokenType.Iterator, '+'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(absorbedGuaranteedIterator);
+        
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(28));
+        Assert.That(ta.GetClocks().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetLocations().Count(l => l.IsFinal), Is.EqualTo(8));
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(32));
+        Assert.That(ta.GetEdges().Count(e => e.From.Equals(ta.InitialLocation)), Is.EqualTo(2));
+        Assert.That(ta.GetEdges().Count(e => e.To.Equals(ta.InitialLocation)), Is.EqualTo(8));
+        Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(0));
+        Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(24));
+        Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(8));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(12));
+        Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(12));
+    }
+
+    [Test]
     public void GenerateIntersectionTaTest()
     {
         Intersection intersection = new Intersection(Interval('a', 1, 3), Interval('a', 2, 5), Token(TokenType.Intersection, '&'));
