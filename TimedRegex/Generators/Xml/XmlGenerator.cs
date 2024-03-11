@@ -93,9 +93,9 @@ internal sealed class XmlGenerator : IGenerator
 
     private Transition GenerateTransition(TimedAutomaton automaton, Edge edge)
     {
-        string id = edge.Id.ToString();
-        string source = _locationIdIsName ? edge.From.Id.ToString() : "loc" + edge.From.Id;
-        string target = _locationIdIsName ? edge.To.Id.ToString() : "loc" + edge.To.Id;
+        string id = "id" + edge.Id;
+        string source = _locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id;
+        string target = _locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id;
 
         // transition can have three labels, guard, synchronisation, assignment
         // guard :  for each (clock, range) in edge.GetClockRanges()
