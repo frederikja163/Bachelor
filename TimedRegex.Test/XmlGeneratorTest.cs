@@ -1,8 +1,8 @@
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
+using TimedRegex.Generators;
 using TimedRegex.Generators.Xml;
-using TimedRegex.Intermediate;
 using Contains = NUnit.Framework.Contains;
 using Location = TimedRegex.Generators.Xml.Location;
 

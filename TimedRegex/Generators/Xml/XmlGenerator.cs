@@ -1,5 +1,4 @@
 using System.Xml;
-using TimedRegex.Intermediate;
 
 namespace TimedRegex.Generators.Xml;
 
@@ -48,7 +47,7 @@ internal sealed class XmlGenerator : IGenerator
         string name = "ta" + id;
         string init = automaton.InitialLocation!.ToString()!;
 
-        Intermediate.Location[] automatonLocations = automaton.GetLocations().ToArray();
+        Generators.State[] automatonLocations = automaton.GetLocations().ToArray();
         Edge[] automatonEdges = automaton.GetEdges().ToArray();
         Location[] templateLocations = new Location[automatonLocations.Length];
         Transition[] transitions = new Transition[automatonEdges.Length];
@@ -66,7 +65,7 @@ internal sealed class XmlGenerator : IGenerator
         return new Template(declaration, name, init, templateLocations, transitions);
     }
 
-    private Location GenerateLocation(TimedAutomaton automaton, Intermediate.Location location)
+    private Location GenerateLocation(TimedAutomaton automaton, Generators.State state)
     {
         // temporary, only for testing purposes
         return new Location("", "", new List<Label> { GenerateLabel(automaton) });

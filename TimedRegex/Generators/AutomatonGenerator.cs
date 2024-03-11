@@ -2,7 +2,7 @@ using System.Diagnostics;
 using TimedRegex.AST;
 using TimedRegex.Extensions;
 
-namespace TimedRegex.Intermediate;
+namespace TimedRegex.Generators;
 
 internal static class AutomatonGenerator
 {
@@ -41,7 +41,7 @@ internal static class AutomatonGenerator
             edge.AddClockResets(right.GetClocks());
         }
 
-        foreach (Location location in left.GetLocations().Where(l => l.IsFinal))
+        foreach (State location in left.GetLocations().Where(l => l.IsFinal))
         {
             location.IsFinal = false;
         }
@@ -69,7 +69,7 @@ internal static class AutomatonGenerator
         
         SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new SortedSetEqualityComparer<Clock>();
         List<SortedSet<Clock>> clockPowerSet = child.GetClocks().PowerSet().Select(s => s.ToSortedSet()).ToList();
-        Dictionary<Location, Dictionary<SortedSet<Clock>, Location>> newLocs = child.GetLocations()
+        Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = child.GetLocations()
             .ToDictionary(l => l,
                 l => clockPowerSet
                     .ToDictionary(c => c.ToSortedSet(),
@@ -80,8 +80,8 @@ internal static class AutomatonGenerator
         {
             foreach (SortedSet<Clock> clockSet in clockPowerSet)
             {
-                Location from = newLocs[childEdge.From][clockSet];
-                Location to = newLocs[childEdge.To][clockSet.Union(childEdge.GetClockResets()).ToSortedSet()];
+                State from = newLocs[childEdge.From][clockSet];
+                State to = newLocs[childEdge.To][clockSet.Union(childEdge.GetClockResets()).ToSortedSet()];
                 List<(Clock, Range)> ranges = childEdge.GetClockRanges()
                     .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
                     .ToList();
@@ -108,16 +108,16 @@ internal static class AutomatonGenerator
         TimedAutomaton right = CreateAutomaton(intersection.RightNode);
         TimedAutomaton ta = new TimedAutomaton(left, right, excludeLocations: true, excludeEdges: true);
 
-        Dictionary<(Location, Location), Location> newLocs = new Dictionary<(Location, Location), Location>();
-        foreach (Location lLoc in left.GetLocations())
+        Dictionary<(State, State), State> newLocs = new Dictionary<(State, State), State>();
+        foreach (State lState in left.GetLocations())
         {
-            foreach (Location rLoc in right.GetLocations())
+            foreach (State rState in right.GetLocations())
             {
-                newLocs.Add((lLoc, rLoc), ta.AddLocation());
+                newLocs.Add((lState, rState), ta.AddLocation());
             }
         }
 
-        Location final = ta.AddLocation(true);
+        State final = ta.AddLocation(true);
         ta.InitialLocation = newLocs[(left.InitialLocation!, right.InitialLocation!)];
 
         Dictionary<char, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
@@ -130,8 +130,8 @@ internal static class AutomatonGenerator
             {
                 foreach (Edge rEdge in rEdges)
                 {
-                    Location from = newLocs[(lEdge.From, rEdge.From)];
-                    Location to = newLocs[(lEdge.To, rEdge.To)];
+                    State from = newLocs[(lEdge.From, rEdge.From)];
+                    State to = newLocs[(lEdge.To, rEdge.To)];
                     Edge edge = ta.AddEdge(from, to, c);
                     edge.AddClockRanges(lEdge.GetClockRanges());
                     edge.AddClockRanges(rEdge.GetClockRanges());
@@ -165,8 +165,8 @@ internal static class AutomatonGenerator
             {
                 foreach (Edge sEdge in secondary)
                 {
-                    Location from = newLocs[(pEdge.From, sEdge.From)];
-                    Location to = newLocs[(pEdge.To, sEdge.To)];
+                    State from = newLocs[(pEdge.From, sEdge.From)];
+                    State to = newLocs[(pEdge.To, sEdge.To)];
                     Edge edge = ta.AddEdge(from, to, '\0');
                     edge.AddClockRanges(pEdge.GetClockRanges());
                     edge.AddClockResets(pEdge.GetClockResets());
@@ -180,7 +180,7 @@ internal static class AutomatonGenerator
         TimedAutomaton ta = CreateAutomaton(interval.Child);
 
         Range range = new Range(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval - (interval.EndInclusive ? 1 : 0));
-        Location newFinal = ta.AddLocation(true);
+        State newFinal = ta.AddLocation(true);
         Clock clock = ta.AddClock();
 
         foreach (Edge e in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
@@ -190,7 +190,7 @@ internal static class AutomatonGenerator
             edge.AddClockRanges(e.GetClockRanges());
         }
 
-        foreach (Location location in ta.GetLocations().Where(l => l.IsFinal && l.Id != newFinal.Id))
+        foreach (State location in ta.GetLocations().Where(l => l.IsFinal && l.Id != newFinal.Id))
         {
             location.IsFinal = false;
         }
@@ -206,8 +206,8 @@ internal static class AutomatonGenerator
     {
         TimedAutomaton ta = new TimedAutomaton();
         
-        Location initial = ta.AddLocation(newInitial: true);
-        Location final = ta.AddLocation(true);
+        State initial = ta.AddLocation(newInitial: true);
+        State final = ta.AddLocation(true);
 
         ta.AddEdge(initial, final, match.Token.Match);
 
