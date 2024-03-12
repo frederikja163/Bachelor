@@ -5,19 +5,25 @@ TimedRegex := Rename
 
 \qquad	$\mid$ $\epsilon$
 
-Rename := Rename renameStart RenameSymbols renameEnd
+Rename := Intersection renameStart RenameSymbols renameEnd
 
 \qquad $\mid$ Intersection
 
-RenameSymbols := RenameSymbols renameSeparator match match
+RenameSymbols := match match renameSeparator RenameSymbols
 
 \qquad $\mid$ match match
 
-Intersection := Binary intersection Unary
+Intersection := Union intersection Intersection
 
 \qquad $\mid$ Union
 
-Union := Union union Interval
+Union := Concatenation union Union
+
+\qquad $\mid$ Concatenation
+
+Concatenation := Interval Concatenation
+
+\qquad $\mid$ Interval absorb Concatenation
 
 \qquad $\mid$ Interval
 
@@ -27,23 +33,23 @@ Concatenation := Concatenation Interval
 
 Interval := Unary IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
 
+\qquad $\mid$ Unary
+
 IntervalStartEnd := intervalOpen
 
 \qquad $\mid$ intervalClose
 
-Number := Number digit
+Number := digit Number
 
 \qquad $\mid$ digit
 
-\qquad $\mid$ Unary
+Unary := Match guaranteedIterator
 
-Unary := Unary guaranteedIterator
+\qquad $\mid$ Match guaranteedIterator absorb
 
-\qquad $\mid$ Unary guaranteedIterator absorb
+\qquad $\mid$ Match iterator
 
-\qquad $\mid$ Unary iterator
-
-\qquad $\mid$ Unary iterator absorb
+\qquad $\mid$ Match iterator absorb
 
 \qquad $\mid$ Match
 
