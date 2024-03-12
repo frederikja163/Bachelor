@@ -21,6 +21,6 @@ internal sealed class AbsorbedGuaranteedIterator : IUnary
 
     public string ToString(bool forceParenthesis = false)
     {
-        return forceParenthesis ? $"({Child.ToString()}+')" : $"{Child.ToString()}+'";
+        return forceParenthesis ? $"({Child.ToString(forceParenthesis)}+')" : $"{Child.ToString(forceParenthesis)}+'";
     }
 }

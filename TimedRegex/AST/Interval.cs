@@ -30,7 +30,7 @@ internal sealed class Interval : IUnary
     public string ToString(bool forceParenthesis = false)
     {
         return forceParenthesis
-            ? $"({Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')})"
-            : $"{Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')}";
+            ? $"({Child.ToString(forceParenthesis)}{Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')})"
+            : $"{Child.ToString(forceParenthesis)}{Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')}";
     }
 }
