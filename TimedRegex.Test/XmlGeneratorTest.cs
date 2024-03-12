@@ -63,6 +63,31 @@ public sealed class XmlGeneratorTest
 
         return nta;
     }
+    
+    [Test]
+    public void GenerateXmlFromNta()
+    {
+        Nta nta = GenerateTestNta();
+        XmlGenerator xmlGenerator = new XmlGenerator();
+
+        StringBuilder sb = new();
+        
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        {
+            xmlGenerator.WriteNta(xmlWriter, nta);
+        }
+        // 
+        Assert.That(sb.ToString(), Is.Not.Empty);
+        
+        Assert.That(sb.ToString(), Contains.Substring("nta"));
+        Assert.That(sb.ToString(), Contains.Substring("declaration"));
+        Assert.That(sb.ToString(), Contains.Substring("template"));
+        Assert.That(sb.ToString(), Contains.Substring("location"));
+        Assert.That(sb.ToString(), Contains.Substring("transition"));
+        Assert.That(sb.ToString(), Contains.Substring("label kind=\"guard\""));
+        Assert.That(sb.ToString(), Contains.Substring("label kind=\"synchronisation\""));
+        Assert.That(sb.ToString(), Contains.Substring("system"));
+    }
 
     [Test]
     public void UpdateNtaTest()
