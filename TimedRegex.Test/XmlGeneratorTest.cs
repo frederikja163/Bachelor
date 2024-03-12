@@ -89,7 +89,7 @@ public sealed class XmlGeneratorTest
         Assert.That(sb.ToString(), Contains.Substring("label kind=\"synchronisation\""));
         Assert.That(sb.ToString(), Contains.Substring("system"));
     }
-
+  
     [Test]
     public void GenerateXmlFileFromNta()
     {
