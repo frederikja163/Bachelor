@@ -1,4 +1,5 @@
-﻿using TimedRegex.Scanner;
+﻿using TimedRegex.AST.Visitors;
+using TimedRegex.Scanner;
 
 namespace TimedRegex.AST;
 
@@ -13,4 +14,10 @@ internal sealed class Concatenation : IBinary
     public IAstNode LeftNode { get; }
     public IAstNode RightNode { get; }
     public Token Token => LeftNode.Token;
+    public void Accept(IAstVisitor visitor)
+    {
+        LeftNode.Accept(visitor);
+        RightNode.Accept(visitor);
+        visitor.Visit(this);
+    }
 }
