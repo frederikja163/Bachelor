@@ -64,7 +64,7 @@ public sealed class XmlGeneratorTest
 
         return nta;
     }
-    
+
     [Test]
     public void GenerateXmlFromNta()
     {
@@ -72,14 +72,15 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new XmlGenerator();
 
         StringBuilder sb = new();
-        
+
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
             xmlGenerator.WriteNta(xmlWriter, nta);
         }
+
         // 
         Assert.That(sb.ToString(), Is.Not.Empty);
-        
+
         Assert.That(sb.ToString(), Contains.Substring("nta"));
         Assert.That(sb.ToString(), Contains.Substring("declaration"));
         Assert.That(sb.ToString(), Contains.Substring("template"));
@@ -89,7 +90,7 @@ public sealed class XmlGeneratorTest
         Assert.That(sb.ToString(), Contains.Substring("label kind=\"synchronisation\""));
         Assert.That(sb.ToString(), Contains.Substring("system"));
     }
-  
+
     [Test]
     public void GenerateXmlFileFromNta()
     {
@@ -98,13 +99,13 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new XmlGenerator();
 
         xmlGenerator.GenerateFile(path, automaton);
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(File.Exists(path), Is.True);
             Assert.That(new FileInfo(path).Length, Is.Not.EqualTo(0));
         });
-        
+
         File.Delete(path);
     }
 
@@ -157,34 +158,26 @@ public sealed class XmlGeneratorTest
         Assert.That(template.Transitions, Has.Length.EqualTo(4));
     }
 
-    [Test]
-    public void GenerateLocationTest()
+    [TestCase(false)]
+    [TestCase(true)]
+    public void GenerateLocationTest(bool LocationIdIsName)
     {
-        Nta nta = GenerateTestNta();
-        Location[] locations = nta.GetTemplates().First().Locations;
-        
-        foreach (var location in locations)
-        {
-            Assert.Multiple(() =>
-            {
-                Assert.That(location.Id, Does.Contain("id"));
-                Assert.That(location.Name, Does.Contain("id"));
-            });
-        }
-    }
+        XmlGenerator xmlGenerator = new(LocationIdIsName);
 
- 
-    [Test]
-    public void GenerateLocationWithNameTest()
-    {
-        Nta nta = GenerateTestNta(false);
-        Location[] locations = nta.GetTemplates().First().Locations;
-        foreach (var location in locations)
+        List<Location> locations =
+        [
+            xmlGenerator.GenerateLocation(new State(0, false)),
+            xmlGenerator.GenerateLocation(new State(1, false)),
+            xmlGenerator.GenerateLocation(new State(2, false))
+        ];
+
+        Assert.That(locations, Has.Count.EqualTo(3));
+        for (var i = 0; i < locations.Count; i++)
         {
             Assert.Multiple(() =>
             {
-                Assert.That(location.Id, Does.Contain("id"));
-                Assert.That(location.Name, Does.Contain("loc"));
+                Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
+                Assert.That(locations[i].Name, Is.EqualTo($"{(LocationIdIsName ? "id" : "loc")}{i}"));
             });
         }
     }
@@ -214,28 +207,28 @@ public sealed class XmlGeneratorTest
         Clock clock1 = new Clock(0);
         Clock clock2 = new Clock(1);
         Edge edge = new(2, new State(0, false), new State(1, false), 'a');
-        
-        edge.AddClockRange(clock1, new Range(1,5));
-        edge.AddClockRange(clock2, new Range(2,3));
+
+        edge.AddClockRange(clock1, new Range(1, 5));
+        edge.AddClockRange(clock2, new Range(2, 3));
         edge.AddClockReset(clock1);
         edge.AddClockReset(clock2);
-        
+
         List<Label> labels =
         [
             xmlGenerator.GenerateLabel(edge, "guard"),
             xmlGenerator.GenerateLabel(edge, "assignment"),
             xmlGenerator.GenerateLabel(edge, "synchronisation")
         ];
-        
+
         Transition transition = xmlGenerator.GenerateTransition(edge);
-        
+
         Assert.Multiple(() =>
         {
             Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 < 5) && (c1 >= 2 && c1 < 3)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
-        
+
         Assert.That(transition.Labels, Is.Not.Empty);
     }
 
@@ -246,7 +239,7 @@ public sealed class XmlGeneratorTest
         Edge edge = new(2, new State(0, false), new State(1, false), '\0');
 
         Transition transition = xmlGenerator.GenerateTransition(edge);
-        
+
         Assert.That(transition.Labels, Is.Empty);
     }
 

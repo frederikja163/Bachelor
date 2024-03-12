@@ -47,10 +47,10 @@ internal sealed class XmlGenerator : IGenerator
         nta.AddDeclaration(GenerateDeclaration(automaton));
     }
 
-    private Declaration GenerateDeclaration(TimedAutomaton timedAutomaton)
+    private Declaration GenerateDeclaration(TimedAutomaton automaton)
     {
-        IEnumerable<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
-        IEnumerable<string> channels = timedAutomaton.GetAlphabet()
+        IEnumerable<string> clocks = automaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
+        IEnumerable<string> channels = automaton.GetAlphabet()
             .Where(x => x != '\0')
             .Select(s => s.ToString())
             .ToList();
@@ -82,7 +82,7 @@ internal sealed class XmlGenerator : IGenerator
         return new Template(declaration, name, init, templateLocations, transitions);
     }
 
-    private Location GenerateLocation(State state)
+    internal Location GenerateLocation(State state)
     {
         string id = "id" + state.Id;
         string name = _locationIdIsName ? id : "loc" + state.Id;
