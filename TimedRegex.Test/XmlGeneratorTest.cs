@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.IO;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -62,6 +63,49 @@ public sealed class XmlGeneratorTest
         nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<char>()));
 
         return nta;
+    }
+    
+    [Test]
+    public void GenerateXmlFromNta()
+    {
+        Nta nta = GenerateTestNta();
+        XmlGenerator xmlGenerator = new XmlGenerator();
+
+        StringBuilder sb = new();
+        
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        {
+            xmlGenerator.WriteNta(xmlWriter, nta);
+        }
+        // 
+        Assert.That(sb.ToString(), Is.Not.Empty);
+        
+        Assert.That(sb.ToString(), Contains.Substring("nta"));
+        Assert.That(sb.ToString(), Contains.Substring("declaration"));
+        Assert.That(sb.ToString(), Contains.Substring("template"));
+        Assert.That(sb.ToString(), Contains.Substring("location"));
+        Assert.That(sb.ToString(), Contains.Substring("transition"));
+        Assert.That(sb.ToString(), Contains.Substring("label kind=\"guard\""));
+        Assert.That(sb.ToString(), Contains.Substring("label kind=\"synchronisation\""));
+        Assert.That(sb.ToString(), Contains.Substring("system"));
+    }
+  
+    [Test]
+    public void GenerateXmlFileFromNta()
+    {
+        string path = Path.GetTempFileName();
+        TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
+        XmlGenerator xmlGenerator = new XmlGenerator();
+
+        xmlGenerator.GenerateFile(path, automaton);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(File.Exists(path), Is.True);
+            Assert.That(new FileInfo(path).Length, Is.Not.EqualTo(0));
+        });
+        
+        File.Delete(path);
     }
 
     [Test]
@@ -212,7 +256,7 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new XmlGenerator();
         Nta nta = CreateTestNta();
         string expected =
-            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition ref=\"id5\">\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition ref=\"id6\">\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition ref=\"id7\">\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition ref=\"id8\">\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1</system>\n</nta>";
+            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition ref=\"id5\">\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition ref=\"id6\">\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition ref=\"id7\">\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition ref=\"id8\">\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new StringBuilder();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
@@ -234,7 +278,7 @@ public sealed class XmlGeneratorTest
         nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<char>()));
 
         string expected =
-            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1</system>\n</nta>";
+            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new StringBuilder();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))

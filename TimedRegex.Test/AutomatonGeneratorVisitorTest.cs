@@ -1,11 +1,12 @@
 using NUnit.Framework;
 using TimedRegex.AST;
+using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
 using TimedRegex.Scanner;
 
 namespace TimedRegex.Test;
 
-public sealed class AutomatonGeneratorTest
+public sealed class AutomatonGeneratorVisitorTest
 {
     internal static Token Token(TokenType type, char c)
     {
@@ -25,8 +26,10 @@ public sealed class AutomatonGeneratorTest
     [Test]
     public void GenerateMatchTaTest()
     {
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(Match('a'));
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(2));
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Match('a').Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
         Assert.That(ta.GetClocks().Count(), Is.EqualTo(0));
         
@@ -38,8 +41,10 @@ public sealed class AutomatonGeneratorTest
     public void GenerateEpsilonTaTest()
     {
         Epsilon epsilon = new Epsilon(Token(TokenType.Match, '\0'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(epsilon);
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(2));
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        epsilon.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
         Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
         
@@ -52,9 +57,11 @@ public sealed class AutomatonGeneratorTest
     public void GenerateGuaranteedIteratorTaTest()
     {
         GuaranteedIterator iterator = new GuaranteedIterator(Interval('a', 0, 5), Token(TokenType.Iterator, '+'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(iterator);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        iterator.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(3));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
         Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(1));
         Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
@@ -69,9 +76,11 @@ public sealed class AutomatonGeneratorTest
     public void GenerateConcatenationTaTest()
     {
         Concatenation concatenation = new Concatenation(Interval('a', 0, 3), Interval('b', 0, 3));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(concatenation);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        concatenation.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
 
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(6));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(6));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
         Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(1));
         Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(3));
@@ -85,11 +94,13 @@ public sealed class AutomatonGeneratorTest
     {
         Union union = new Union(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
         AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new AbsorbedGuaranteedIterator(union, Token(TokenType.Iterator, '+'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(absorbedGuaranteedIterator);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        absorbedGuaranteedIterator.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(28));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(28));
         Assert.That(ta.GetClocks().Count(), Is.EqualTo(3));
-        Assert.That(ta.GetLocations().Count(l => l.IsFinal), Is.EqualTo(8));
+        Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(8));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(32));
         Assert.That(ta.GetEdges().Count(e => e.From.Equals(ta.InitialLocation)), Is.EqualTo(2));
         Assert.That(ta.GetEdges().Count(e => e.To.Equals(ta.InitialLocation)), Is.EqualTo(8));
@@ -104,10 +115,12 @@ public sealed class AutomatonGeneratorTest
     public void GenerateIntersectionTaTest()
     {
         Intersection intersection = new Intersection(Interval('a', 1, 3), Interval('a', 2, 5), Token(TokenType.Intersection, '&'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(intersection);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        intersection.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(10));
-        Assert.That(ta.GetLocations().Count(l => l.IsFinal), Is.EqualTo(1));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(10));
+        Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(1));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
         Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(1));
         Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(4));
@@ -120,10 +133,12 @@ public sealed class AutomatonGeneratorTest
     public void SimpleConcatenationTest()
     {
         Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(concatenation);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        concatenation.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(4));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(4));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(2));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(1));
         Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'a', 'b'}));
@@ -133,11 +148,12 @@ public sealed class AutomatonGeneratorTest
     public void GenerateUnionTaTest()
     {
         Union union = new Union(Match('a'), Match('b'), Token(TokenType.Union, '|'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(union);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        union.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
-        
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(5));
-        Assert.That(ta.GetLocations().Count(l => l.IsFinal), Is.EqualTo(2));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(5));
+        Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(2));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(4));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == '\0'), Is.EqualTo(2));
     }
@@ -146,10 +162,12 @@ public sealed class AutomatonGeneratorTest
     public void GenerateIntervalTaTest()
     {
         Interval interval = Interval('a', 2, 4);
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(interval);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        interval.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(3));
-        Assert.That(ta.GetLocations().Count(l => l.IsFinal), Is.EqualTo(1));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(1));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(2));
         Edge e = ta.GetEdges().First(e => e.To.IsFinal);
         Assert.That(e.Symbol, Is.EqualTo('a'));
@@ -163,10 +181,12 @@ public sealed class AutomatonGeneratorTest
         Concatenation concatenation = new Concatenation(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
         Rename rename = new Rename(new List<SymbolReplace>()
             { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new SymbolReplace(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) }, concatenation, Token(TokenType.RenameStart, '{'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(rename);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        rename.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(7));
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(8));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(8));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(0));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'c'), Is.EqualTo(0));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == '1'), Is.EqualTo(2));
@@ -180,10 +200,12 @@ public sealed class AutomatonGeneratorTest
         Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
         Rename rename = new Rename(new List<SymbolReplace>()
             { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new SymbolReplace(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) }, concatenation, Token(TokenType.RenameStart, '{'));
-        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(rename);
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        rename.Accept(visitor);
+        TimedAutomaton ta = visitor.GetAutomaton();
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
-        Assert.That(ta.GetLocations().Count(), Is.EqualTo(4));
+        Assert.That(ta.GetStates().Count(), Is.EqualTo(4));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(1));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(2));
         Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'a', 'b'}));
