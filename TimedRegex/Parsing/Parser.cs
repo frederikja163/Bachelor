@@ -15,49 +15,88 @@ namespace TimedRegex.Parsing
         {
             return ParseRename(tokenizer);
         }
-
-         // TODO: Might require further development to support "matchAny".
-        private static IAstNode? ParseMatch(Tokenizer tokenizer)
-        {
-            if (tokenizer.Next is null)
-            {
-                return null;
-            }
-            if (tokenizer.Next.Type == TokenType.Match)
-            {
-                return new Match(tokenizer.GetNext());
-            }
-            throw new Exception("Invalid token \""+ tokenizer.Next.ToString());
-        }
-
         private static IAstNode? ParseRename(Tokenizer tokenizer)
         {
-            IAstNode? child = ParseBinary(tokenizer);
-            if (child is null || tokenizer.Next is null)
+            IAstNode? child = ParseIntersection(tokenizer);
+            if (child is null || tokenizer.Next?.Type != TokenType.RenameStart)
             {
                 return child;
             }
-            if (tokenizer.Next.Type == TokenType.RenameStart)
+            Token token = tokenizer.Next;
+            List<SymbolReplace> replaceList = new List<SymbolReplace>();
+            do
             {
-                Token token = tokenizer.Next;
-                List<SymbolReplace> replaceList = new List<SymbolReplace>();
-                do
+                tokenizer.Skip(); // Skips renameSeparator.
+                if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
                 {
-                    tokenizer.Skip(); // Skips renameSeparator.
-                    if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
-                    {
-                        throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
-                    }
-                    replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
-                } while (tokenizer.Next.Type == TokenType.RenameSeparator);
-                if (tokenizer.Next.Type != TokenType.RenameEnd)
-                {
-                    throw new Exception("Expected right curly brace after " + token.ToString());
+                    throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
                 }
-                tokenizer.Skip(); // Skips renameEnd.
-                return new Rename(replaceList, child, token);
+                replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
+            } while (tokenizer.Next.Type == TokenType.RenameSeparator);
+            if (tokenizer.Next.Type != TokenType.RenameEnd)
+            {
+                throw new Exception("Expected right curly brace after " + token.ToString());
             }
-            return child;
+            tokenizer.Skip(); // Skips renameEnd.
+            return new Rename(replaceList, child, token);
+        }
+
+        private static IAstNode? ParseIntersection(Tokenizer tokenizer)
+        {
+            IAstNode? left = ParseUnion(tokenizer);
+            if (tokenizer.Next?.Type != TokenType.Intersection || left is null)
+            {
+                return left;
+            }
+            Token token = tokenizer.GetNext();
+            IAstNode? right = ParseIntersection(tokenizer);
+            if (right is null)
+            {
+                throw new Exception("No token after " + token.ToString());
+            }
+            return new Intersection(left, right, token);
+        }
+
+        private static IAstNode? ParseUnion(Tokenizer tokenizer)
+        {
+            IAstNode? left = ParseConcatenation(tokenizer);
+            
+            if (tokenizer.Next?.Type != TokenType.Union || left is null)
+            {
+                return left;
+            }
+            Token token = tokenizer.GetNext();
+            IAstNode? right = ParseUnion(tokenizer);
+            if (right is null)
+            {
+                throw new Exception("No token after " + token.ToString());
+            }
+            return new Union(left, right, token);
+        }
+
+        private static IAstNode? ParseConcatenation(Tokenizer tokenizer)
+        {
+            IAstNode? left = ParseInterval(tokenizer);
+            if (tokenizer.Next is null || left is null)
+            {
+                return left;
+            }
+            if (tokenizer.Next.Type == TokenType.Absorb)
+            {
+                Token token = tokenizer.GetNext();
+                IAstNode? r = ParseConcatenation(tokenizer);
+                if (r is null)
+                {
+                    throw new Exception("No token after " + token.ToString());
+                }
+                return new AbsorbedConcatenation(left, r, token);
+            }
+            if (tokenizer.Next.Type == TokenType.Match)
+            {
+                IAstNode right = ParseConcatenation(tokenizer)!; // Can only be null if next token is invalid, which throws in ParseMatch().
+                return new Concatenation(left, right);
+            }
+            return left;
         }
 
         private static IAstNode? ParseUnary(Tokenizer tokenizer)
@@ -75,24 +114,40 @@ namespace TimedRegex.Parsing
 
                 case (TokenType.GuaranteedIterator, not TokenType.Absorb):
                     return new GuaranteedIterator(child, tokenizer.GetNext());
-                
+
                 case (TokenType.Iterator, TokenType.Absorb):
                     return new AbsorbedIterator(child, tokenizer.GetNext(2));
 
                 case (TokenType.GuaranteedIterator, TokenType.Absorb):
                     return new AbsorbedGuaranteedIterator(child, tokenizer.GetNext(2));
 
-                case(TokenType.IntervalOpen or TokenType.IntervalClose, not TokenType.Absorb):
-                    return ParseInterval(tokenizer, child);
-                
                 default:
                     return child;
             }
         }
 
-        private static Interval ParseInterval(Tokenizer tokenizer, IAstNode child)
+        // TODO: Might require further development to support "matchAny".
+        private static IAstNode? ParseMatch(Tokenizer tokenizer)
         {
-            Token token = tokenizer.GetNext()!;
+            if (tokenizer.Next is null)
+            {
+                return null;
+            }
+            if (tokenizer.Next.Type == TokenType.Match)
+            {
+                return new Match(tokenizer.GetNext());
+            }
+            throw new Exception("Invalid token " + tokenizer.Next.ToString());
+        }
+
+        private static IAstNode? ParseInterval(Tokenizer tokenizer)
+        {
+            IAstNode? child = ParseUnary(tokenizer);
+            if ((tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose) || child is null)
+            {
+                return child;
+            }
+            Token token = tokenizer.GetNext();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
             if (tokenizer.GetNext()?.Type != TokenType.IntervalSeparator)
@@ -103,10 +158,6 @@ namespace TimedRegex.Parsing
             if (tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose)
             {
                 throw new Exception("Invalid interval syntax after " + token.ToString());
-            }
-            if (startInterval > endInterval)
-            {
-                throw new Exception("The start interval must be lower or equal to the end interval after " + token.ToString());
             }
             bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
             return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
@@ -128,39 +179,6 @@ namespace TimedRegex.Parsing
                 number = (number * 10) + (tokenizer.GetNext().Match - '0');
             }
             return number;
-        }
-
-        private static IAstNode? ParseBinary(Tokenizer tokenizer)
-        {
-            IAstNode? left = ParseUnary(tokenizer);
-            if (tokenizer.Next is null || left is null)
-            {
-                return left;
-            }
-            switch (tokenizer.Next.Type)
-            {
-                case (TokenType.Absorb):
-                    Token tokenAbsorb = tokenizer.GetNext();
-                    return new AbsorbedConcatenation(left, ParseUnary(tokenizer)!, tokenAbsorb);
-
-                case (TokenType.Union):
-                    Token tokenUnion = tokenizer.GetNext();
-                    if (tokenizer.Next is null) 
-                    {
-                        throw new Exception("Expected binary token, but received no token after " + left.Token.ToString());
-                    }
-                    return new Union(left, ParseUnary(tokenizer)!, tokenUnion);
-
-                case (TokenType.Intersection):
-                    Token tokenIntersection = tokenizer.GetNext();
-                    return new Intersection(left, ParseUnary(tokenizer)!, tokenIntersection);
-
-                case (TokenType.Match):
-                    return new Concatenation(left, ParseUnary(tokenizer)!);
-
-                default:
-                    return left;
-            }
         }
     }
 }
