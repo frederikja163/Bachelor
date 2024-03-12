@@ -48,11 +48,11 @@ namespace TimedRegex.Parsing
         private static IAstNode? ParseIntersection(Tokenizer tokenizer)
         {
             IAstNode? left = ParseUnion(tokenizer);
-            Token token = tokenizer.GetNext();
-            if (token is null || left is null)
+            if (tokenizer.Next is null || left is null)
             {
                 return left;
             }
+            Token token = tokenizer.GetNext();
             IAstNode? right = ParseIntersection(tokenizer);
             if (right is null)
             {
@@ -68,11 +68,12 @@ namespace TimedRegex.Parsing
         private static IAstNode? ParseUnion(Tokenizer tokenizer)
         {
             IAstNode? left = ParseConcatenation(tokenizer);
-            Token token = tokenizer.GetNext();
-            if (token is null || left is null)
+            
+            if (tokenizer.Next is null || left is null)
             {
                 return left;
             }
+            Token token = tokenizer.GetNext();
             IAstNode? right = ParseUnion(tokenizer);
             if (right is null)
             {
@@ -102,8 +103,12 @@ namespace TimedRegex.Parsing
                 }
                 return new AbsorbedConcatenation(left, r, token);
             }
-            IAstNode right = ParseConcatenation(tokenizer)!; // Can only be null if next token is invalid, which throws in ParseMatch().
-            return new Concatenation(left, right);
+            if (tokenizer.Next.Type == TokenType.Match)
+            {
+                IAstNode right = ParseConcatenation(tokenizer)!; // Can only be null if next token is invalid, which throws in ParseMatch().
+                return new Concatenation(left, right);
+            }
+            return left;
         }
 
         private static IAstNode? ParseUnary(Tokenizer tokenizer)
@@ -150,11 +155,11 @@ namespace TimedRegex.Parsing
         private static IAstNode? ParseInterval(Tokenizer tokenizer)
         {
             IAstNode? child = ParseUnary(tokenizer);
-            Token token = tokenizer.GetNext();
-            if ((token.Type != TokenType.IntervalOpen || token.Type != TokenType.IntervalClose) || child is null)
+            if ((tokenizer.Next?.Type != TokenType.IntervalOpen || tokenizer.Next?.Type != TokenType.IntervalClose) || child is null)
             {
                 return child;
             }
+            Token token = tokenizer.GetNext();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
             if (tokenizer.GetNext()?.Type != TokenType.IntervalSeparator)
