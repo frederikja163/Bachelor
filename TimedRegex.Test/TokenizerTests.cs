@@ -34,7 +34,7 @@ public sealed class TokenizerTests
     public void ParseEmptyString()
     {
         Tokenizer tokenizer = new Tokenizer("");
-        Assert.IsNull(tokenizer.Next);
+        Assert.That(tokenizer.Next.Type, Is.EqualTo(TokenType.EndOfInput));
     }
 
     [Test]
@@ -83,10 +83,10 @@ public sealed class TokenizerTests
         Tokenizer tokenizer = new Tokenizer(str);
         for (int i = 0; i < tokenTypes.Length; i++)
         {
-            Token token = tokenizer.Peek(i);
-            Assert.That(token.Match, Is.EqualTo(str[i]));
-            Assert.That(token.CharacterIndex, Is.EqualTo(i));
-            Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
+            Assert.True(tokenizer.TryPeek(i, out Token? token));
+            Assert.That(token!.Match, Is.EqualTo(str[i]));
+            Assert.That(token!.CharacterIndex, Is.EqualTo(i));
+            Assert.That(token!.Type, Is.EqualTo((TokenType)tokenTypes[i]));
         }
     }
 
@@ -94,12 +94,12 @@ public sealed class TokenizerTests
     public void PeekRunOutOfInputTest()
     {
         Tokenizer tokenizer = new Tokenizer("aaa");
-        Assert.DoesNotThrow(() => tokenizer.Peek(0));
-        Assert.DoesNotThrow(() => tokenizer.Peek(1));
-        Assert.DoesNotThrow(() => tokenizer.Peek(2));
-        Assert.Throws<Exception>(() => tokenizer.Peek(3));
-        Assert.Throws<Exception>(() => tokenizer.Peek(1000));
-        Assert.Throws<ArgumentOutOfRangeException>(() => tokenizer.Peek(-1));
+        Assert.IsTrue(tokenizer.TryPeek(0, out _));
+        Assert.IsTrue(tokenizer.TryPeek(1, out _));
+        Assert.IsTrue(tokenizer.TryPeek(2, out _));
+        Assert.IsFalse(tokenizer.TryPeek(3, out _));
+        Assert.IsFalse(tokenizer.TryPeek(1000, out _));
+        Assert.Throws<ArgumentOutOfRangeException>(() => tokenizer.TryPeek(-1, out _));
     }
     
     
@@ -133,11 +133,11 @@ public sealed class TokenizerTests
     public void GetNextRunOutOfInputTest()
     {
         Tokenizer tokenizer = new Tokenizer("aaa");
-        Assert.DoesNotThrow(() => tokenizer.GetNext());
-        Assert.DoesNotThrow(() => tokenizer.GetNext());
-        Assert.DoesNotThrow(() => tokenizer.GetNext());
-        Assert.Throws<Exception>(() => tokenizer.GetNext());
-        Assert.Throws<Exception>(() => tokenizer.GetNext());
+        Assert.That(tokenizer.GetNext().Type, Is.Not.EqualTo(TokenType.EndOfInput));
+        Assert.That(tokenizer.GetNext().Type, Is.Not.EqualTo(TokenType.EndOfInput));
+        Assert.That(tokenizer.GetNext().Type, Is.Not.EqualTo(TokenType.EndOfInput));
+        Assert.That(tokenizer.GetNext().Type, Is.EqualTo(TokenType.EndOfInput));
+        Assert.That(tokenizer.GetNext().Type, Is.EqualTo(TokenType.EndOfInput));
     }
 
     [Test]

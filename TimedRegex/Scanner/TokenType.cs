@@ -19,4 +19,5 @@ internal enum TokenType
     RenameSeparator,
     Digit,
     None,
+    EndOfInput,
 }
