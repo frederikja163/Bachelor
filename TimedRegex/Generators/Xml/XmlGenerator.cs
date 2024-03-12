@@ -57,8 +57,8 @@ internal sealed class XmlGenerator : IGenerator
     private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
         Declaration declaration = new Declaration();
-        string name = "ta" + id;
-        string init = automaton.InitialLocation!.ToString()!;
+        string name = $"ta{id}";
+        string init = $"{(_locationIdIsName ? "id" : "loc")}{automaton.InitialLocation!.Id}";
 
         State[] automatonLocations = automaton.GetLocations().ToArray();
         Edge[] automatonEdges = automaton.GetEdges().ToArray();
