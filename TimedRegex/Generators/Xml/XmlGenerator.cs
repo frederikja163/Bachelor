@@ -1,3 +1,4 @@
+using System.Text;
 using System.Xml;
 
 namespace TimedRegex.Generators.Xml;
@@ -56,8 +57,8 @@ internal sealed class XmlGenerator : IGenerator
     private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
         Declaration declaration = new Declaration();
-        string name = "ta" + id;
-        string init = automaton.InitialLocation!.ToString()!;
+        string name = $"ta{id}";
+        string init = $"{(_locationIdIsName ? "id" : "loc")}{automaton.InitialLocation!.Id}";
 
         State[] automatonLocations = automaton.GetLocations().ToArray();
         Edge[] automatonEdges = automaton.GetEdges().ToArray();
@@ -85,31 +86,54 @@ internal sealed class XmlGenerator : IGenerator
         return new Location(id, name, new List<Label>());
     }
 
-    private Label GenerateLabel(Edge edge, string kind)
+    internal Label GenerateLabel(Edge edge, string kind)
     {
-        // temporary, only for testing purposes
-        return new Label("", "");
+        StringBuilder sb = new();
+
+        switch (kind)
+        {
+            case "guard":
+                sb.AppendJoin(" && ", GenerateGuard(edge));
+                break;
+            case "synchronisation":
+                sb.Append($"{edge.Symbol}?");
+                break;
+            case "assignment":
+                sb.AppendJoin(", ", GenerateAssignment(edge));
+                // if edge.To.IsFinal, add 
+                break;
+        }
+        
+        return new Label(kind, sb.ToString());
     }
 
-    private Transition GenerateTransition(Edge edge)
+    private IEnumerable<string> GenerateGuard(Edge edge)
+    {
+        foreach ((Clock clock, Range range) in edge.GetClockRanges())
+        {
+            yield return $"(c{clock.Id} >= {range.Start} && c{clock.Id} < {range.End})";
+        }
+    }
+
+    private IEnumerable<string> GenerateAssignment(Edge edge)
+    {
+        foreach (Clock clock in edge.GetClockResets())
+        {
+            yield return $"c{clock.Id} = 0";
+        }
+    }
+
+    internal Transition GenerateTransition(Edge edge)
     {
         string id = "id" + edge.Id;
         string source = _locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id;
         string target = _locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id;
 
-        List<Label> labels =
-        [
-            GenerateLabel(edge, "guard"),
-            GenerateLabel(edge, "assignment"),
-            GenerateLabel(edge, "synchronisation")
-        ];
+        List<Label> labels = [];
 
-        // transition can have three labels, guard, synchronisation, assignment
-        // guard :  for each (clock, range) in edge.GetClockRanges()
-        //              "(clock >= range.start && clock < range.end)"
-        //              join with &&
-        // synchronisation : if edge.symbol != "\0", then edge.Symbol
-        // assignment : edge.GetClockResets()
+        if (edge.GetClockRanges().Any()) labels.Add(GenerateLabel(edge, "guard"));
+        if (edge.GetClockResets().Any()) labels.Add(GenerateLabel(edge, "assignment"));
+        if (edge.Symbol != '\0') labels.Add(GenerateLabel(edge, "synchronisation"));
 
         return new Transition(id, source, target, labels);
     }
