@@ -326,7 +326,7 @@ public sealed class ParserTests
     [TestCase("a&b|c", "((a)&((b)|(c)))")]
     //[TestCase("a|(b&c)", "((a)|((b)&(c)))")]
     //[TestCase("(ab)c", "((a)(b))(c)")]
-    public void ToStringParsing(string input, string expected)
+    public void ParsePrecedence(string input, string expected)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         IAstNode node = Parser.Parse(tokenizer)!;
