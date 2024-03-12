@@ -1,4 +1,4 @@
-namespace TimedRegex.AST;
+namespace TimedRegex.AST.Visitors;
 
 internal interface IAstVisitor
 {
