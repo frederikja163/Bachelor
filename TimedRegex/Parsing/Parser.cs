@@ -143,7 +143,7 @@ namespace TimedRegex.Parsing
         private static IAstNode? ParseInterval(Tokenizer tokenizer)
         {
             IAstNode? child = ParseUnary(tokenizer);
-            if ((tokenizer.Next?.Type != TokenType.IntervalOpen || tokenizer.Next?.Type != TokenType.IntervalClose) || child is null)
+            if ((tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose) || child is null)
             {
                 return child;
             }
