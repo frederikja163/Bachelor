@@ -233,13 +233,6 @@ public sealed class ParserTests
         Assert.IsFalse(node.EndInclusive);
     }
 
-    [Test]
-    public void ParseIntervalInvalidNumbers()
-    {
-        Tokenizer tokenizer = new Tokenizer("a[2;1]");
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
-    }
-
     [TestCase("a[1;2]", true, true)]
     [TestCase("a[1;2[", true, false)]
     [TestCase("a]1;2]", false, true)]

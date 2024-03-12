@@ -18,37 +18,33 @@ namespace TimedRegex.Parsing
         private static IAstNode? ParseRename(Tokenizer tokenizer)
         {
             IAstNode? child = ParseIntersection(tokenizer);
-            if (child is null || tokenizer.Next is null)
+            if (child is null || tokenizer.Next?.Type != TokenType.RenameStart)
             {
                 return child;
             }
-            if (tokenizer.Next.Type == TokenType.RenameStart)
+            Token token = tokenizer.Next;
+            List<SymbolReplace> replaceList = new List<SymbolReplace>();
+            do
             {
-                Token token = tokenizer.Next;
-                List<SymbolReplace> replaceList = new List<SymbolReplace>();
-                do
+                tokenizer.Skip(); // Skips renameSeparator.
+                if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
                 {
-                    tokenizer.Skip(); // Skips renameSeparator.
-                    if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.Peek().Type == TokenType.Match))
-                    {
-                        throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
-                    }
-                    replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
-                } while (tokenizer.Next.Type == TokenType.RenameSeparator);
-                if (tokenizer.Next.Type != TokenType.RenameEnd)
-                {
-                    throw new Exception("Expected right curly brace after " + token.ToString());
+                    throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
                 }
-                tokenizer.Skip(); // Skips renameEnd.
-                return new Rename(replaceList, child, token);
+                replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
+            } while (tokenizer.Next.Type == TokenType.RenameSeparator);
+            if (tokenizer.Next.Type != TokenType.RenameEnd)
+            {
+                throw new Exception("Expected right curly brace after " + token.ToString());
             }
-            return child;
+            tokenizer.Skip(); // Skips renameEnd.
+            return new Rename(replaceList, child, token);
         }
 
         private static IAstNode? ParseIntersection(Tokenizer tokenizer)
         {
             IAstNode? left = ParseUnion(tokenizer);
-            if (tokenizer.Next is null || left is null)
+            if (tokenizer.Next?.Type != TokenType.Intersection || left is null)
             {
                 return left;
             }
@@ -58,18 +54,14 @@ namespace TimedRegex.Parsing
             {
                 throw new Exception("No token after " + token.ToString());
             }
-            if (token.Type == TokenType.Intersection)
-            {
-                return new Intersection(left, right, token);
-            }
-            return left;
+            return new Intersection(left, right, token);
         }
 
         private static IAstNode? ParseUnion(Tokenizer tokenizer)
         {
             IAstNode? left = ParseConcatenation(tokenizer);
             
-            if (tokenizer.Next is null || left is null)
+            if (tokenizer.Next?.Type != TokenType.Union || left is null)
             {
                 return left;
             }
@@ -79,11 +71,7 @@ namespace TimedRegex.Parsing
             {
                 throw new Exception("No token after " + token.ToString());
             }
-            if (token.Type == TokenType.Union)
-            {
-                return new Union(left, right, token);
-            }
-            return left;
+            return new Union(left, right, token);
         }
 
         private static IAstNode? ParseConcatenation(Tokenizer tokenizer)
