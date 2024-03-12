@@ -21,4 +21,10 @@ internal sealed class Union : IBinary
         RightNode.Accept(visitor);
         visitor.Visit(this);
     }
+
+    public string ToString(bool forceParenthesis = false)
+    {
+        return forceParenthesis ? $"({LeftNode.ToString(forceParenthesis)}|{RightNode.ToString(forceParenthesis)})"
+            : $"{LeftNode.ToString(forceParenthesis)}|{RightNode.ToString(forceParenthesis)}";
+    }
 }

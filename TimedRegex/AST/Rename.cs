@@ -29,4 +29,10 @@ internal sealed class Rename : IUnary
             yield return symbolReplace;
         }
     }
+
+    public string ToString(bool forceParenthesis = false)
+    {
+        return forceParenthesis ? $"({Child.ToString(forceParenthesis)}{{{string.Join(',', _replaceList.Select(r => r.OldSymbol.Match + r.NewSymbol.Match))}}})" :
+            $"{Child.ToString(forceParenthesis)}{{{string.Join(',', _replaceList.Select(r => r.OldSymbol.Match + r.NewSymbol.Match))}}}";
+    }
 }
