@@ -12,4 +12,9 @@ internal sealed class AbsorbedGuaranteedIterator : IUnary
 
     public IAstNode Child { get; }
     public Token Token { get; }
+    public void Accept(IAstVisitor visitor)
+    {
+        Child.Accept(visitor);
+        visitor.Visit(this);
+    }
 }

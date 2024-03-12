@@ -20,4 +20,9 @@ internal sealed class Interval : IUnary
     internal bool EndInclusive { get; }
     public IAstNode Child { get; }
     public Token Token { get; }
+    public void Accept(IAstVisitor visitor)
+    {
+        Child.Accept(visitor);
+        visitor.Visit(this);
+    }
 }

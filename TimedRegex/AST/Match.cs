@@ -9,4 +9,8 @@ internal sealed class Match :IAstNode
     }
 
     public Token Token { get; }
+    public void Accept(IAstVisitor visitor)
+    {
+        visitor.Visit(this);
+    }
 }
