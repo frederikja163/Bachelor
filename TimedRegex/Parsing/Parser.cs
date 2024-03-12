@@ -19,7 +19,7 @@ namespace TimedRegex.Parsing
                 return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
             }
             IAstNode ast = ParseRename(tokenizer);
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
+            if (tokenizer.Next.Type != TokenType.EndOfInput)
             {
                 throw new Exception("Improper syntax after parsing " + ast.ToString());
             }
@@ -59,7 +59,7 @@ namespace TimedRegex.Parsing
                 return left;
             }
             Token token = tokenizer.GetNext();
-            if (tokenizer.Next is null)
+            if (tokenizer.Next.Type == TokenType.EndOfInput)
             {
                 throw new Exception("No token after " + token.ToString());
             }
@@ -141,7 +141,7 @@ namespace TimedRegex.Parsing
         {
             if (tokenizer.Next.Type == TokenType.EndOfInput)
             {
-                throw new Exception("Tried Parsing match but was null");
+                throw new Exception("Tried Parsing match but was EndOfInput");
             }
             if (tokenizer.Next.Type == TokenType.Match)
             {
@@ -174,7 +174,7 @@ namespace TimedRegex.Parsing
             Token token = tokenizer.GetNext();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
-            if (tokenizer.GetNext()?.Type != TokenType.IntervalSeparator)
+            if (tokenizer.GetNext().Type != TokenType.IntervalSeparator)
             {
                 throw new Exception("Expected interval separator after number in interval " + token.ToString());
             }
@@ -189,13 +189,9 @@ namespace TimedRegex.Parsing
 
         private static int ParseNumber(Tokenizer tokenizer)
         {
-            if (tokenizer.Next.Type != TokenType.Digit && tokenizer.Next.Type == TokenType.EndOfInput)
+            if (tokenizer.Next.Type != TokenType.Digit)
             {
                 throw new Exception("Expected number in interval, but got " + tokenizer.Next.ToString());
-            }
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
-            {
-                throw new Exception("Expected number in Interval, but the input has ended");
             }
             int number = 0;
             while (tokenizer.Next?.Type == TokenType.Digit)
