@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.IO;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -87,6 +88,24 @@ public sealed class XmlGeneratorTest
         Assert.That(sb.ToString(), Contains.Substring("label kind=\"guard\""));
         Assert.That(sb.ToString(), Contains.Substring("label kind=\"synchronisation\""));
         Assert.That(sb.ToString(), Contains.Substring("system"));
+    }
+  
+    [Test]
+    public void GenerateXmlFileFromNta()
+    {
+        string path = Path.GetTempFileName();
+        TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
+        XmlGenerator xmlGenerator = new XmlGenerator();
+
+        xmlGenerator.GenerateFile(path, automaton);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(File.Exists(path), Is.True);
+            Assert.That(new FileInfo(path).Length, Is.Not.EqualTo(0));
+        });
+        
+        File.Delete(path);
     }
 
     [Test]

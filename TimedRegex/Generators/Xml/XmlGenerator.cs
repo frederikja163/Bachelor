@@ -24,9 +24,10 @@ internal sealed class XmlGenerator : IGenerator
         NewLineChars = "\n"
     };
 
-    public void GenerateFile(string fileName, TimedAutomaton automaton)
+    public void GenerateFile(string filePath, TimedAutomaton automaton)
     {
-        throw new NotImplementedException();
+        using FileStream fs = File.Open(filePath, FileMode.Append);
+        GenerateFile(fs, automaton);
     }
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
@@ -38,7 +39,7 @@ internal sealed class XmlGenerator : IGenerator
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
-    }
+    }   
 
     internal void UpdateNta(Nta nta, TimedAutomaton automaton)
     {
