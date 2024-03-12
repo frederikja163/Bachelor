@@ -14,11 +14,11 @@ internal sealed class Tokenizer
         _lookAhead = new List<Token>();
     }
 
-    internal Token? Next
+    internal Token Next
     {
         get
         {
-            return EnsureLookAhead(0) ? _lookAhead[0] : null;
+            return EnsureLookAhead(0) ? _lookAhead[0] : new Token(_head, '\0', TokenType.EndOfInput);
         }
     }
     
@@ -39,20 +39,11 @@ internal sealed class Tokenizer
         return TryPeek(1, out token);
     }
 
-    internal Token Peek(int n = 1)
-    {
-        if (!EnsureLookAhead(n))
-        {
-            throw new Exception("Reached end of input.");
-        }
-        return _lookAhead[n];
-    }
-
     internal Token GetNext(int n = 1)
     {
         if (!EnsureLookAhead(n-1))
         {
-            throw new Exception("Reached end of input.");
+            return new Token(_head+1, '\0', TokenType.EndOfInput);
         }
         Token token = _lookAhead[0];
         _lookAhead.RemoveRange(0, n);
