@@ -1,5 +1,3 @@
-using System.Collections.Frozen;
-using System.IO;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -12,10 +10,10 @@ namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
-    private static Nta GenerateTestNta(bool LocationIdIsName = true)
+    private static Nta GenerateTestNta(bool locationIdIsName = true)
     {
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
-        XmlGenerator xmlGenerator = new XmlGenerator(LocationIdIsName);
+        XmlGenerator xmlGenerator = new XmlGenerator(locationIdIsName);
 
         Nta nta = new Nta();
 
@@ -145,7 +143,6 @@ public sealed class XmlGeneratorTest
         IEnumerable<string> channels = nta.Declaration.GetChannels();
 
         Assert.That(clocks.Count(), Is.EqualTo(2));
-
         Assert.That(channels.Count(), Is.EqualTo(2));
         Assert.That(channels, Contains.Item("A"));
         Assert.That(channels, Contains.Item("A"));
@@ -168,9 +165,9 @@ public sealed class XmlGeneratorTest
 
     [TestCase(false)]
     [TestCase(true)]
-    public void GenerateLocationTest(bool LocationIdIsName)
+    public void GenerateLocationTest(bool locationIdIsName)
     {
-        XmlGenerator xmlGenerator = new(LocationIdIsName);
+        XmlGenerator xmlGenerator = new(locationIdIsName);
 
         List<Location> locations =
         [
@@ -185,7 +182,7 @@ public sealed class XmlGeneratorTest
             Assert.Multiple(() =>
             {
                 Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
-                Assert.That(locations[i].Name, Is.EqualTo($"{(LocationIdIsName ? "id" : "loc")}{i}"));
+                Assert.That(locations[i].Name, Is.EqualTo($"{(locationIdIsName ? "id" : "loc")}{i}"));
             });
         }
     }
@@ -196,9 +193,9 @@ public sealed class XmlGeneratorTest
     [TestCase(true, 3, 1)]
     [TestCase(true, 3, 2)]
     [TestCase(true, 2, 3)]
-    public void GenerateTransitionTest(bool LocationIdIsName, int from, int to)
+    public void GenerateTransitionTest(bool locationIdIsName, int from, int to)
     {
-        XmlGenerator xmlGenerator = new(LocationIdIsName);
+        XmlGenerator xmlGenerator = new(locationIdIsName);
 
         List<Transition> transitions =
         [
@@ -213,8 +210,8 @@ public sealed class XmlGeneratorTest
             Assert.Multiple(() =>
             {
                 Assert.That(transitions[i].Id, Is.EqualTo($"id{i}"));
-                Assert.That(transitions[i].Source, Is.EqualTo($"{(LocationIdIsName ? "id" : "loc")}{from}"));
-                Assert.That(transitions[i].Target, Is.EqualTo($"{(LocationIdIsName ? "id" : "loc")}{to}"));
+                Assert.That(transitions[i].Source, Is.EqualTo($"{(locationIdIsName ? "id" : "loc")}{from}"));
+                Assert.That(transitions[i].Target, Is.EqualTo($"{(locationIdIsName ? "id" : "loc")}{to}"));
             });
         }
     }
@@ -352,7 +349,6 @@ public sealed class XmlGeneratorTest
 
         const string expected = "<transition ref=\"id2\">\n  <source ref=\"id1\" />\n  <target ref=\"id2\" />\n</transition>";
         StringBuilder sb = new StringBuilder();
-        ;
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
