@@ -164,6 +164,49 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
+    public void GenerateLabelTest()
+    {
+        XmlGenerator xmlGenerator = new();
+        Clock clock1 = new Clock(0);
+        Clock clock2 = new Clock(1);
+        Edge edge = new(2, new State(0, false), new State(1, false), 'a');
+        
+        edge.AddClockRange(clock1, new Range(1,5));
+        edge.AddClockRange(clock2, new Range(2,3));
+        edge.AddClockReset(clock1);
+        edge.AddClockReset(clock2);
+        
+        List<Label> labels =
+        [
+            xmlGenerator.GenerateLabel(edge, "guard"),
+            xmlGenerator.GenerateLabel(edge, "assignment"),
+            xmlGenerator.GenerateLabel(edge, "synchronisation")
+        ];
+        
+        Transition transition = xmlGenerator.GenerateTransition(edge);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 < 5) && (c1 >= 2 && c1 < 3)"));
+            Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
+            Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
+        });
+        
+        Assert.That(transition.Labels, Is.Not.Empty);
+    }
+
+    [Test]
+    public void GenerateEmptyLabelTest()
+    {
+        XmlGenerator xmlGenerator = new();
+        Edge edge = new(2, new State(0, false), new State(1, false), '\0');
+
+        Transition transition = xmlGenerator.GenerateTransition(edge);
+        
+        Assert.That(transition.Labels, Is.Empty);
+    }
+
+    [Test]
     public void GenerateXmlTest()
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
