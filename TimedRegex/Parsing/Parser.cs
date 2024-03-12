@@ -48,7 +48,7 @@ namespace TimedRegex.Parsing
 
         private static IAstNode ParseIntersection(Tokenizer tokenizer)
         {
-            IAstNode? left = ParseUnion(tokenizer);
+            IAstNode left = ParseUnion(tokenizer);
             if (tokenizer.Next?.Type != TokenType.Intersection)
             {
                 return left;
@@ -89,16 +89,16 @@ namespace TimedRegex.Parsing
             if (tokenizer.Next.Type == TokenType.Absorb)
             {
                 Token token = tokenizer.GetNext();
-                IAstNode? r = ParseConcatenation(tokenizer);
-                if (r is null)
+                if (tokenizer.Next is null)
                 {
                     throw new Exception("No token after " + token.ToString());
                 }
+                IAstNode? r = ParseConcatenation(tokenizer);
                 return new AbsorbedConcatenation(left, r, token);
             }
             if (tokenizer.Next.Type == TokenType.Match)
             {
-                IAstNode right = ParseConcatenation(tokenizer)!; // Can only be null if next token is invalid, which throws in ParseMatch().
+                IAstNode right = ParseConcatenation(tokenizer);
                 return new Concatenation(left, right);
             }
             return left;
