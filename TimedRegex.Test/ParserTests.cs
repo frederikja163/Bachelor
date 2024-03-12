@@ -319,4 +319,19 @@ public sealed class ParserTests
         Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
     }
 
+    [TestCase("a|b&c", "(((a)|(b))&(c))")]
+    [TestCase("abc", "((a)((b)(c)))")]
+    [TestCase("a*'", "((a)*')")]
+    [TestCase("a[3;4]{ab}", "(((a)[3;4]){ab})")]
+    [TestCase("a&b|c", "((a)&((b)|(c)))")]
+    //[TestCase("a|(b&c)", "((a)|((b)&(c)))")]
+    //[TestCase("(ab)c", "((a)(b))(c)")]
+    public void ToStringParsing(string input, string expected)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        IAstNode node = Parser.Parse(tokenizer)!;
+
+        Assert.That(node.ToString(true), Is.EqualTo(expected));
+    }
+
 }
