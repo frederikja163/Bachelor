@@ -145,7 +145,8 @@ public sealed class XmlGeneratorTest
         }
     }
 
-    [TestCase(false), TestCase(true)]
+    [TestCase(false)]
+    [TestCase(true)]
     public void GenerateTransitionTest(bool LocationIdIsName)
     {
         Nta nta = GenerateTestNta(LocationIdIsName);
