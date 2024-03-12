@@ -65,6 +65,24 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
+    public void GenerateXmlFileFromNta()
+    {
+        string path = "C:/Obsidian/Vault Emil/project/code/TimedRegex.Test/xmlunittest.xml";
+        TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
+        XmlGenerator xmlGenerator = new XmlGenerator();
+
+        xmlGenerator.GenerateFile(path, automaton);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(File.Exists(path), Is.True);
+            Assert.That(new FileInfo(path).Length, Is.Not.EqualTo(0));
+        });
+        
+        File.Delete(path);
+    }
+
+    [Test]
     public void UpdateNtaTest()
     {
         Nta nta = GenerateTestNta();
