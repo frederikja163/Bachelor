@@ -90,6 +90,21 @@ internal sealed class XmlGenerator : IGenerator
         return new Location(id, name, new List<Label>());
     }
 
+    internal Transition GenerateTransition(Edge edge)
+    {
+        string id = "id" + edge.Id;
+        string source = _locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id;
+        string target = _locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id;
+
+        List<Label> labels = [];
+
+        if (edge.GetClockRanges().Any()) labels.Add(GenerateLabel(edge, "guard"));
+        if (edge.GetClockResets().Any()) labels.Add(GenerateLabel(edge, "assignment"));
+        if (edge.Symbol != '\0') labels.Add(GenerateLabel(edge, "synchronisation"));
+
+        return new Transition(id, source, target, labels);
+    }
+
     internal Label GenerateLabel(Edge edge, string kind)
     {
         StringBuilder sb = new();
@@ -125,21 +140,6 @@ internal sealed class XmlGenerator : IGenerator
         {
             yield return $"c{clock.Id} = 0";
         }
-    }
-
-    internal Transition GenerateTransition(Edge edge)
-    {
-        string id = "id" + edge.Id;
-        string source = _locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id;
-        string target = _locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id;
-
-        List<Label> labels = [];
-
-        if (edge.GetClockRanges().Any()) labels.Add(GenerateLabel(edge, "guard"));
-        if (edge.GetClockResets().Any()) labels.Add(GenerateLabel(edge, "assignment"));
-        if (edge.Symbol != '\0') labels.Add(GenerateLabel(edge, "synchronisation"));
-
-        return new Transition(id, source, target, labels);
     }
 
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)

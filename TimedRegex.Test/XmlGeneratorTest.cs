@@ -182,20 +182,31 @@ public sealed class XmlGeneratorTest
         }
     }
 
-    [TestCase(false)]
-    [TestCase(true)]
-    public void GenerateTransitionTest(bool LocationIdIsName)
+    [TestCase(false, 0 , 1)]
+    [TestCase(false, 0 , 2)]
+    [TestCase(false, 1 , 3)]
+    [TestCase(true, 3, 1)]
+    [TestCase(true, 3, 2)]
+    [TestCase(true, 2, 3)]
+    public void GenerateTransitionTest(bool LocationIdIsName, int from, int to)
     {
-        Nta nta = GenerateTestNta(LocationIdIsName);
-        Transition[] transitions = nta.GetTemplates().First().Transitions;
+        XmlGenerator xmlGenerator = new(LocationIdIsName);
 
-        foreach (var transition in transitions)
+        List<Transition> transitions =
+        [
+            xmlGenerator.GenerateTransition(new Edge(0, new State(from, false), new State(to, false), 'A')),
+            xmlGenerator.GenerateTransition(new Edge(1, new State(from, false), new State(to, false), 'B')),
+            xmlGenerator.GenerateTransition(new Edge(2, new State(from, false), new State(to, false), '\0'))
+        ];
+        
+        Assert.That(transitions, Has.Count.EqualTo(3));
+        for (int i = 0; i < transitions.Count; i++)
         {
             Assert.Multiple(() =>
             {
-                Assert.That(transition.Id, Does.Contain("id"));
-                Assert.That(transition.Source, Does.Contain(LocationIdIsName ? "id" : "loc"));
-                Assert.That(transition.Target, Does.Contain(LocationIdIsName ? "id" : "loc"));
+                Assert.That(transitions[i].Id, Is.EqualTo($"id{i}"));
+                Assert.That(transitions[i].Source, Is.EqualTo($"{(LocationIdIsName ? "id" : "loc")}{from}"));
+                Assert.That(transitions[i].Target, Is.EqualTo($"{(LocationIdIsName ? "id" : "loc")}{to}"));
             });
         }
     }
