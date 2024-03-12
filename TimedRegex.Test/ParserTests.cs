@@ -347,4 +347,14 @@ public sealed class ParserTests
 
         Assert.That(node, Is.TypeOf(type));
     }
+
+    [TestCase("a}")]
+    [TestCase("/")]
+    [TestCase("a|")]
+    [TestCase("&b")]
+    public void ParseInvalid(string input)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+    }
 }
