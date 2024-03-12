@@ -1,49 +1,35 @@
-using System.Diagnostics;
-using TimedRegex.AST;
 using TimedRegex.Extensions;
+using TimedRegex.Generators;
 
-namespace TimedRegex.Generators;
+namespace TimedRegex.AST.Visitors;
 
-internal static class AutomatonGenerator
+internal class AutomatonGeneratorVisitor : IAstVisitor
 {
-    internal static TimedAutomaton CreateAutomaton(IAstNode root)
+    private readonly Stack<TimedAutomaton> _stack = new();
+    
+    internal TimedAutomaton GetAutomaton()
     {
-        return root switch
-        {
-            AbsorbedIterator absorbedIterator => CreateAbsorbedIteratorAutomaton(absorbedIterator),
-            Concatenation concatenation => CreateConcatenationAutomaton(concatenation),
-            GuaranteedIterator guaranteedIterator => CreateGuaranteedIteratorAutomaton(guaranteedIterator),
-            AbsorbedGuaranteedIterator absorbedGuaranteedIterator => CreateAbsorbedGuaranteedIteratorAutomaton(absorbedGuaranteedIterator),
-            Intersection intersection => CreateIntersectionAutomaton(intersection),
-            Interval interval => CreateIntervalAutomaton(interval),
-            Iterator iterator => CreateIteratorAutomaton(iterator),
-            Match match => CreateMatchAutomaton(match),
-            Rename rename => CreateRenameAutomaton(rename),
-            Union union => CreateUnionAutomaton(union),
-            Epsilon epsilon => CreateEpsilonAutomaton(epsilon),
-            _ => throw new UnreachableException(),
-        };
+        return _stack.Pop();
     }
-
-    private static TimedAutomaton CreateEpsilonAutomaton(Epsilon epsilon)
+    
+    public void Visit(Epsilon epsilon)
     {
         TimedAutomaton ta = new TimedAutomaton();
-        State initial = ta.AddLocation(false, true);
-        State final = ta.AddLocation(true);
+        State initial = ta.AddState(false, true);
+        State final = ta.AddState(true);
         Clock clock = ta.AddClock();
         Edge edge = ta.AddEdge(initial, final, '\0');
         edge.AddClockRange(clock, 0..1);
-        return ta;
+        _stack.Push(ta);
     }
 
-    private static TimedAutomaton CreateAbsorbedIteratorAutomaton(AbsorbedIterator a){
-        throw new NotImplementedException();
+    public void Visit(AbsorbedIterator absorbedIterator){
+        throw new Exception("Iterator is turned off, but was still used.");
     }
 
-    private static TimedAutomaton CreateConcatenationAutomaton(Concatenation concatenation)
+    public void Visit(Concatenation concatenation)
     {
-        TimedAutomaton left = CreateAutomaton(concatenation.LeftNode);
-        TimedAutomaton right = CreateAutomaton(concatenation.RightNode);
+        (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 
         TimedAutomaton ta = new TimedAutomaton(left, right);
         foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
@@ -53,16 +39,17 @@ internal static class AutomatonGenerator
             edge.AddClockResets(right.GetClocks());
         }
 
-        foreach (State location in left.GetLocations().Where(l => l.IsFinal))
+        foreach (State location in left.GetStates().Where(l => l.IsFinal))
         {
             location.IsFinal = false;
         }
 
-        return ta;
+        _stack.Push(ta);
     }
 
-    private static TimedAutomaton CreateGuaranteedIteratorAutomaton(GuaranteedIterator guaranteedIterator){
-        TimedAutomaton ta = CreateAutomaton(guaranteedIterator.Child);
+    public void Visit(GuaranteedIterator guaranteedIterator)
+    {
+        TimedAutomaton ta = _stack.Pop();
 
         foreach (Edge oldEdge in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
         {
@@ -71,21 +58,40 @@ internal static class AutomatonGenerator
             edge.AddClockResets(ta.GetClocks());
         }
 
-        return ta;
+        _stack.Push(ta);
     }
 
-    private static TimedAutomaton CreateAbsorbedGuaranteedIteratorAutomaton(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
+    public void Visit(AbsorbedConcatenation absorbedConcatenation)
     {
-        TimedAutomaton child = CreateAutomaton(absorbedGuaranteedIterator.Child);
+        (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
+
+        TimedAutomaton ta = new TimedAutomaton(left, right);
+        foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
+        {
+            Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
+            edge.AddClockRanges(e.GetClockRanges());
+        }
+
+        foreach (State location in left.GetStates().Where(l => l.IsFinal))
+        {
+            location.IsFinal = false;
+        }
+
+        _stack.Push(ta);
+    }
+
+    public void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
+    {
+        TimedAutomaton child = _stack.Pop();
         TimedAutomaton ta = new TimedAutomaton(child, excludeLocations: true, excludeEdges: true);
         
         SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new SortedSetEqualityComparer<Clock>();
         List<SortedSet<Clock>> clockPowerSet = child.GetClocks().PowerSet().Select(s => s.ToSortedSet()).ToList();
-        Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = child.GetLocations()
+        Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = child.GetStates()
             .ToDictionary(l => l,
                 l => clockPowerSet
                     .ToDictionary(c => c.ToSortedSet(),
-                        c => ta.AddLocation(l.IsFinal, l.Equals(child.InitialLocation) && c.Count == 0), sortedSetEqualityComparer));
+                        c => ta.AddState(l.IsFinal, l.Equals(child.InitialLocation) && c.Count == 0), sortedSetEqualityComparer));
         Clock newClock = ta.AddClock();
 
         foreach (Edge childEdge in child.GetEdges())
@@ -111,25 +117,24 @@ internal static class AutomatonGenerator
             }
         }
 
-        return ta;
+        _stack.Push(ta);
     }
 
-    private static TimedAutomaton CreateIntersectionAutomaton(Intersection intersection)
+    public void Visit(Intersection intersection)
     {
-        TimedAutomaton left = CreateAutomaton(intersection.LeftNode);
-        TimedAutomaton right = CreateAutomaton(intersection.RightNode);
+        (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
         TimedAutomaton ta = new TimedAutomaton(left, right, excludeLocations: true, excludeEdges: true);
 
         Dictionary<(State, State), State> newLocs = new Dictionary<(State, State), State>();
-        foreach (State lState in left.GetLocations())
+        foreach (State lState in left.GetStates())
         {
-            foreach (State rState in right.GetLocations())
+            foreach (State rState in right.GetStates())
             {
-                newLocs.Add((lState, rState), ta.AddLocation());
+                newLocs.Add((lState, rState), ta.AddState());
             }
         }
 
-        State final = ta.AddLocation(true);
+        State final = ta.AddState(true);
         ta.InitialLocation = newLocs[(left.InitialLocation!, right.InitialLocation!)];
 
         Dictionary<char, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
@@ -163,7 +168,7 @@ internal static class AutomatonGenerator
         }
         AddEmptyEdges(lSymEdges, right.GetEdges().ToList());
         AddEmptyEdges(rSymEdges, left.GetEdges().ToList());
-        return ta;
+        _stack.Push(ta);
 
 
         void AddEmptyEdges(Dictionary<char, List<Edge>> primary, List<Edge> secondary)
@@ -187,12 +192,12 @@ internal static class AutomatonGenerator
         }
     }
 
-    private static TimedAutomaton CreateIntervalAutomaton(Interval interval)
+    public void Visit(Interval interval)
     {
-        TimedAutomaton ta = CreateAutomaton(interval.Child);
+        TimedAutomaton ta = _stack.Pop();
 
         Range range = new Range(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval - (interval.EndInclusive ? 1 : 0));
-        State newFinal = ta.AddLocation(true);
+        State newFinal = ta.AddState(true);
         Clock clock = ta.AddClock();
 
         foreach (Edge e in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
@@ -202,33 +207,34 @@ internal static class AutomatonGenerator
             edge.AddClockRanges(e.GetClockRanges());
         }
 
-        foreach (State location in ta.GetLocations().Where(l => l.IsFinal && l.Id != newFinal.Id))
+        foreach (State location in ta.GetStates().Where(l => l.IsFinal && l.Id != newFinal.Id))
         {
             location.IsFinal = false;
         }
 
-        return ta;
+        _stack.Push(ta);
     }
 
-    private static TimedAutomaton CreateIteratorAutomaton(Iterator a){
-        throw new NotImplementedException();
+    public void Visit(Iterator iterator)
+    {
+        throw new Exception("Iterator is turned off, but was still used.");
     }
 
-    private static TimedAutomaton CreateMatchAutomaton(Match match)
+    public void Visit(Match match)
     {
         TimedAutomaton ta = new TimedAutomaton();
         
-        State initial = ta.AddLocation(newInitial: true);
-        State final = ta.AddLocation(true);
+        State initial = ta.AddState(newInitial: true);
+        State final = ta.AddState(true);
 
         ta.AddEdge(initial, final, match.Token.Match);
 
-        return ta;
+        _stack.Push(ta);
     }
 
-    private static TimedAutomaton CreateRenameAutomaton(Rename rename)
+    public void Visit(Rename rename)
     {
-        TimedAutomaton ta = CreateAutomaton(rename.Child);
+        TimedAutomaton ta = _stack.Pop();
 
         Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol.Match, r => r.NewSymbol.Match);
         ta.Rename(replaceList);
@@ -242,23 +248,22 @@ internal static class AutomatonGenerator
             }
         }
 
-        return ta;
+        _stack.Push(ta);
     }
 
-    private static TimedAutomaton CreateUnionAutomaton(Union union)
+    public void Visit(Union union)
     {
-        TimedAutomaton left = CreateAutomaton(union.LeftNode);
-        TimedAutomaton right = CreateAutomaton(union.RightNode);
+        (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
         TimedAutomaton ta = new TimedAutomaton(left, right);
 
         Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
         
-        ta.AddLocation(newInitial: true);
+        ta.AddState(newInitial: true);
         Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, '\0');
         lEdge.AddClockRange(clock, 0..1);
         Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, '\0');
         rEdge.AddClockRange(clock, 0..1);
         
-        return ta;
+        _stack.Push(ta);
     }
 }

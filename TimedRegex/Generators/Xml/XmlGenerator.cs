@@ -60,7 +60,7 @@ internal sealed class XmlGenerator : IGenerator
         string name = $"ta{id}";
         string init = $"{(_locationIdIsName ? "id" : "loc")}{automaton.InitialLocation!.Id}";
 
-        State[] automatonLocations = automaton.GetLocations().ToArray();
+        State[] automatonLocations = automaton.GetStates().ToArray();
         Edge[] automatonEdges = automaton.GetEdges().ToArray();
         Location[] templateLocations = new Location[automatonLocations.Length];
         Transition[] transitions = new Transition[automatonEdges.Length];
