@@ -422,8 +422,8 @@ public sealed class XmlGeneratorTest
         {
             Assert.Multiple(() =>
             {
-                Assert.That(locations[i].Id, Is.EqualTo("id" + i));
-                Assert.That(locations[i].Name, Is.EqualTo("id" + i));
+                Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
+                Assert.That(locations[i].Name, Is.EqualTo($"id{i}"));
                 Assert.That(locations[i].Labels, Is.Empty);
             });
         }
@@ -440,7 +440,7 @@ public sealed class XmlGeneratorTest
 
         for (int i = 0; i < transitions.Length; i++)
         {
-            Assert.That(transitions[i].Id, Is.EqualTo("id" + (i + 5)));
+            Assert.That(transitions[i].Id, Is.EqualTo($"id{i + 5}"));
         }
     }
 
