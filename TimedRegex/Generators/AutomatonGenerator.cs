@@ -20,8 +20,20 @@ internal static class AutomatonGenerator
             Match match => CreateMatchAutomaton(match),
             Rename rename => CreateRenameAutomaton(rename),
             Union union => CreateUnionAutomaton(union),
+            Epsilon epsilon => CreateEpsilonAutomaton(epsilon),
             _ => throw new UnreachableException(),
         };
+    }
+
+    private static TimedAutomaton CreateEpsilonAutomaton(Epsilon epsilon)
+    {
+        TimedAutomaton ta = new TimedAutomaton();
+        State initial = ta.AddLocation(false, true);
+        State final = ta.AddLocation(true);
+        Clock clock = ta.AddClock();
+        Edge edge = ta.AddEdge(initial, final, '\0');
+        edge.AddClockRange(clock, 0..1);
+        return ta;
     }
 
     private static TimedAutomaton CreateAbsorbedIteratorAutomaton(AbsorbedIterator a){
