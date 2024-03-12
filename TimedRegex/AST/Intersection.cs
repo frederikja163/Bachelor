@@ -24,7 +24,7 @@ internal sealed class Intersection : IBinary
 
     public string ToString(bool forceParenthesis = false)
     {
-        return forceParenthesis ? $"({LeftNode.ToString()}&{RightNode.ToString()})"
-            : $"{LeftNode.ToString()}&{RightNode.ToString()}";
+        return forceParenthesis ? $"({LeftNode.ToString(forceParenthesis)}&{RightNode.ToString(forceParenthesis)})"
+            : $"{LeftNode.ToString(forceParenthesis)}&{RightNode.ToString(forceParenthesis)}";
     }
 }
