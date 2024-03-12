@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -117,6 +118,7 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = GenerateTestNta();
         Location[] locations = nta.GetTemplates().First().Locations;
+        
         foreach (var location in locations)
         {
             Assert.Multiple(() =>
@@ -127,6 +129,7 @@ public sealed class XmlGeneratorTest
         }
     }
 
+ 
     [Test]
     public void GenerateLocationWithNameTest()
     {
@@ -138,6 +141,24 @@ public sealed class XmlGeneratorTest
             {
                 Assert.That(location.Id, Does.Contain("id"));
                 Assert.That(location.Name, Does.Contain("loc"));
+            });
+        }
+    }
+
+    [TestCase(false)]
+    [TestCase(true)]
+    public void GenerateTransitionTest(bool LocationIdIsName)
+    {
+        Nta nta = GenerateTestNta(LocationIdIsName);
+        Transition[] transitions = nta.GetTemplates().First().Transitions;
+
+        foreach (var transition in transitions)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(transition.Id, Does.Contain("id"));
+                Assert.That(transition.Source, Does.Contain(LocationIdIsName ? "id" : "loc"));
+                Assert.That(transition.Target, Does.Contain(LocationIdIsName ? "id" : "loc"));
             });
         }
     }
@@ -197,7 +218,7 @@ public sealed class XmlGeneratorTest
             },
             new List<Transition>());
 
-        var expected =
+        string expected =
             "<template>\n  <name>ta1</name>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
         StringBuilder sb = new StringBuilder();
 

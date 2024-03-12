@@ -10,7 +10,7 @@ internal sealed class XmlGenerator : IGenerator
     {
         _locationIdIsName = true;
     }
-    
+
     internal XmlGenerator(bool locationIdIsName)
     {
         _locationIdIsName = locationIdIsName;
@@ -33,7 +33,7 @@ internal sealed class XmlGenerator : IGenerator
         Nta nta = new Nta();
 
         UpdateNta(nta, automaton);
-        
+
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
@@ -66,35 +66,52 @@ internal sealed class XmlGenerator : IGenerator
 
         for (int i = 0; i < automatonLocations.Length; i++)
         {
-            templateLocations[i] = GenerateLocation(automaton, automatonLocations[i]);
+            templateLocations[i] = GenerateLocation(automatonLocations[i]);
         }
 
         for (int i = 0; i < automatonEdges.Length; i++)
         {
-            transitions[i] = GenerateTransition(automaton, automatonEdges[i]);
+            transitions[i] = GenerateTransition(automatonEdges[i]);
         }
 
         return new Template(declaration, name, init, templateLocations, transitions);
     }
 
-    private Location GenerateLocation(TimedAutomaton automaton, State state)
+    private Location GenerateLocation(State state)
     {
         string id = "id" + state.Id;
         string name = _locationIdIsName ? id : "loc" + state.Id;
 
         return new Location(id, name, new List<Label>());
-        }
+    }
 
-    private Label GenerateLabel(TimedAutomaton timedAutomaton)
+    private Label GenerateLabel(Edge edge, string kind)
     {
         // temporary, only for testing purposes
         return new Label("", "");
     }
 
-    private Transition GenerateTransition(TimedAutomaton automaton, Edge edge)
+    private Transition GenerateTransition(Edge edge)
     {
-        // temporary, only for testing purposes
-        return new Transition("", "", "", new List<Label> { GenerateLabel(automaton) });
+        string id = "id" + edge.Id;
+        string source = _locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id;
+        string target = _locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id;
+
+        List<Label> labels =
+        [
+            GenerateLabel(edge, "guard"),
+            GenerateLabel(edge, "assignment"),
+            GenerateLabel(edge, "synchronisation")
+        ];
+
+        // transition can have three labels, guard, synchronisation, assignment
+        // guard :  for each (clock, range) in edge.GetClockRanges()
+        //              "(clock >= range.start && clock < range.end)"
+        //              join with &&
+        // synchronisation : if edge.symbol != "\0", then edge.Symbol
+        // assignment : edge.GetClockResets()
+
+        return new Transition(id, source, target, labels);
     }
 
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)
