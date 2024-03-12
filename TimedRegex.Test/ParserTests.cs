@@ -278,4 +278,45 @@ public sealed class ParserTests
         Tokenizer tokenizer = new Tokenizer("a[1;]");
         Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
     }
+
+    [Test]
+    public void ParsePrecedenceMultipleConcat()
+    {
+        Tokenizer tokenizer = new Tokenizer("abcde");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.That(astNode, Is.TypeOf<Concatenation>());
+        Concatenation node = (Concatenation)astNode;
+
+        Assert.That(node.LeftNode, Is.TypeOf<Match>());
+        Match leftNode = (Match)node.LeftNode;
+        Assert.That(leftNode.Token.Match, Is.EqualTo('a'));
+
+        Assert.That(node.RightNode, Is.TypeOf<Concatenation>());
+        Concatenation rightNode = (Concatenation)node.RightNode;
+        Assert.That(rightNode.LeftNode, Is.TypeOf<Match>());
+        Assert.That(rightNode.LeftNode.Token.Match, Is.EqualTo('b'));
+
+        Assert.That(rightNode.RightNode, Is.TypeOf<Concatenation>());
+        Concatenation rightRightNode = (Concatenation)rightNode.RightNode;
+        Assert.That(rightRightNode.LeftNode, Is.TypeOf<Match>());
+        Assert.That(rightRightNode.LeftNode.Token.Match, Is.EqualTo('c'));
+
+        Assert.That(rightRightNode.RightNode, Is.TypeOf<Concatenation>());
+        Concatenation finalConcatNode = (Concatenation)rightRightNode.RightNode;
+        Assert.That(finalConcatNode.LeftNode.Token.Match, Is.EqualTo('d'));
+        Assert.That(finalConcatNode.RightNode.Token.Match, Is.EqualTo('e'));
+    }
+
+    [Test]
+    public void ParseAbsorbedGuaranteedIteratorWithConcat()
+    {
+        Tokenizer tokenizer = new Tokenizer("a+'b");
+        IAstNode astNode = Parser.Parse(tokenizer)!;
+        Assert.That(astNode, Is.TypeOf<Concatenation>());
+        Concatenation node = (Concatenation)astNode;
+
+        Assert.That(node.LeftNode, Is.TypeOf<AbsorbedGuaranteedIterator>());
+        Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+    }
+
 }
