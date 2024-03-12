@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using System.IO;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -92,7 +93,7 @@ public sealed class XmlGeneratorTest
     [Test]
     public void GenerateXmlFileFromNta()
     {
-        string path = "./xmlunittest.xml";
+        string path = Path.GetTempPath();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
         XmlGenerator xmlGenerator = new XmlGenerator();
 
