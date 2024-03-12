@@ -19,7 +19,7 @@ namespace TimedRegex.Parsing
                 return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
             }
             IAstNode ast = ParseRename(tokenizer);
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
+            if (tokenizer.Next.Type != TokenType.EndOfInput)
             {
                 throw new Exception("Improper syntax after parsing " + ast.ToString());
             }
@@ -59,7 +59,7 @@ namespace TimedRegex.Parsing
                 return left;
             }
             Token token = tokenizer.GetNext();
-            if (tokenizer.Next is null)
+            if (tokenizer.Next.Type == TokenType.EndOfInput)
             {
                 throw new Exception("No token after " + token.ToString());
             }
@@ -141,7 +141,7 @@ namespace TimedRegex.Parsing
         {
             if (tokenizer.Next.Type == TokenType.EndOfInput)
             {
-                throw new Exception("Tried Parsing match but was null");
+                throw new Exception("Tried Parsing match but was EndOfInput");
             }
             if (tokenizer.Next.Type == TokenType.Match)
             {
