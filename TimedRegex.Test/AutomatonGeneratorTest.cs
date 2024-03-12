@@ -33,6 +33,20 @@ public sealed class AutomatonGeneratorTest
         Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo('a'));
         Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'a'}));
     }
+    
+    [Test]
+    public void GenerateEpsilonTaTest()
+    {
+        Epsilon epsilon = new Epsilon(Token(TokenType.Match, '\0'));
+        TimedAutomaton ta = AutomatonGenerator.CreateAutomaton(epsilon);
+        Assert.That(ta.GetLocations().Count(), Is.EqualTo(2));
+        Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
+        Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
+        
+        Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo('\0'));
+        Assert.That(ta.GetEdges().First().GetClockRanges().Count(), Is.EqualTo(1));
+        Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'\0'}));
+    }
 
     [Test]
     public void GenerateGuaranteedIteratorTaTest()
