@@ -166,27 +166,29 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                 }
             }
         }
-        AddEmptyEdges(lSymEdges, right.GetEdges().ToList());
-        AddEmptyEdges(rSymEdges, left.GetEdges().ToList());
+        AddEmptyEdges(lSymEdges, right.GetEdges().ToList(), true);
+        AddEmptyEdges(rSymEdges, left.GetEdges().ToList(), false);
         _stack.Push(ta);
 
 
-        void AddEmptyEdges(Dictionary<char, List<Edge>> primary, List<Edge> secondary)
+        void AddEmptyEdges(Dictionary<char, List<Edge>> primary, List<Edge> sEdges, bool isLeftPrimary)
         {
-            if (!primary.TryGetValue('\0', out List<Edge>? edges))
+            if (!primary.TryGetValue('\0', out List<Edge>? pEdges))
             {
                 return;
             }
 
-            foreach (Edge pEdge in edges)
+            (List<Edge> lEdges, List<Edge> rEdges) = isLeftPrimary ? (pEdges, sEdges) : (sEdges, pEdges);
+
+            foreach (Edge lEdge in lEdges)
             {
-                foreach (Edge sEdge in secondary)
+                foreach (Edge rEdge in rEdges)
                 {
-                    State from = newLocs[(pEdge.From, sEdge.From)];
-                    State to = newLocs[(pEdge.To, sEdge.To)];
+                    State from = newLocs[(lEdge.From, rEdge.From)];
+                    State to = newLocs[(lEdge.To, rEdge.To)];
                     Edge edge = ta.AddEdge(from, to, '\0');
-                    edge.AddClockRanges(pEdge.GetClockRanges());
-                    edge.AddClockResets(pEdge.GetClockResets());
+                    edge.AddClockRanges(lEdge.GetClockRanges());
+                    edge.AddClockResets(lEdge.GetClockResets());
                 }
             }
         }
@@ -196,7 +198,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        Range range = new Range(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval - (interval.EndInclusive ? 1 : 0));
+        Range range = new Range(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval + (interval.EndInclusive ? 1 : 0));
         State newFinal = ta.AddState(true);
         Clock clock = ta.AddClock();
 
