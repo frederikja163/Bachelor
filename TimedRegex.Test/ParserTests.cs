@@ -324,8 +324,8 @@ public sealed class ParserTests
     [TestCase("a*'", "((a)*')")]
     [TestCase("a[3;4]{ab}", "(((a)[3;4]){ab})")]
     [TestCase("a&b|c", "((a)&((b)|(c)))")]
-    //[TestCase("a|(b&c)", "((a)|((b)&(c)))")]
-    //[TestCase("(ab)c", "((a)(b))(c)")]
+    [TestCase("a|(b&c)", "((a)|((b)&(c)))")]
+    [TestCase("(ab)c", "(((a)(b))(c))")]
     public void ToStringParsing(string input, string expected)
     {
         Tokenizer tokenizer = new Tokenizer(input);
@@ -334,4 +334,16 @@ public sealed class ParserTests
         Assert.That(node.ToString(true), Is.EqualTo(expected));
     }
 
+    [TestCase("(ab)*", typeof(Iterator))]
+    [TestCase("ab*", typeof(Concatenation))]
+    [TestCase("(ab)c", typeof(Concatenation))]
+    [TestCase("a|(bc*)", typeof(Union))]
+    [TestCase("(a|b)c*", typeof(Concatenation))]
+    public void ParseParenthesis(string input, Type type)
+    {
+        Tokenizer tokenizer = new Tokenizer(input);
+        IAstNode node = Parser.Parse(tokenizer)!;
+
+        Assert.That(node, Is.TypeOf(type));
+    }
 }

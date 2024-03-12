@@ -1,4 +1,5 @@
 ﻿using System.Net.NetworkInformation;
+using System.Xml.Linq;
 using TimedRegex.AST;
 using TimedRegex.Scanner;
 
@@ -136,6 +137,20 @@ namespace TimedRegex.Parsing
             if (tokenizer.Next.Type == TokenType.Match)
             {
                 return new Match(tokenizer.GetNext());
+            }
+            if (tokenizer.Next.Type == TokenType.ParenthesisStart)
+            {
+                Token token = tokenizer.GetNext();
+                IAstNode? block = ParseRename(tokenizer);
+                if (block is null)
+                {
+                    throw new Exception("Recieved no content in parenthesis " + token.ToString());
+                }
+                if (tokenizer.GetNext().Type != TokenType.ParenthesisEnd)
+                {
+                    throw new Exception("Expected parenthesis end but got " + tokenizer.Next.ToString());
+                }
+                return block;
             }
             throw new Exception("Invalid token " + tokenizer.Next.ToString());
         }
