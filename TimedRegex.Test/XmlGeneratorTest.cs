@@ -252,7 +252,7 @@ public sealed class XmlGeneratorTest
         nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<char>()));
 
         string expected =
-            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1</system>\n</nta>";
+            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new StringBuilder();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
