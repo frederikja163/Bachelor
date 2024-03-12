@@ -171,10 +171,6 @@ namespace TimedRegex.Parsing
             {
                 throw new Exception("Invalid interval syntax after " + token.ToString());
             }
-            if (startInterval > endInterval)
-            {
-                throw new Exception("The start interval must be lower or equal to the end interval after " + token.ToString());
-            }
             bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
             return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
         }
