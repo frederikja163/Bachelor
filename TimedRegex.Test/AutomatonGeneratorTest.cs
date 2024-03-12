@@ -7,17 +7,17 @@ namespace TimedRegex.Test;
 
 public sealed class AutomatonGeneratorTest
 {
-    private Token Token(TokenType type, char c)
+    internal static Token Token(TokenType type, char c)
     {
         return new Token(0, c, type);
     }
 
-    private Match Match(char c)
+    internal static Match Match(char c)
     {
         return new Match(Token(TokenType.Match, c));
     }
     
-    private Interval Interval(char c, int start, int end)
+    internal static Interval Interval(char c, int start, int end)
     {
         return new Interval(Match(c), start, end, true, false, Token(TokenType.IntervalOpen, '['));
     }
