@@ -150,7 +150,7 @@ internal sealed class XmlGenerator : IGenerator
         }
 
         xmlWriter.WriteStartElement("system");
-        xmlWriter.WriteValue("system " + nta.System);
+        xmlWriter.WriteValue("system " + nta.System + ";");
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteEndElement();
@@ -242,7 +242,7 @@ internal sealed class XmlGenerator : IGenerator
     internal void WriteLabel(XmlWriter xmlWriter, Label label)
     {
         xmlWriter.WriteStartElement("label");
-        xmlWriter.WriteAttributeString("kind", "guard");
+        xmlWriter.WriteAttributeString("kind", label.Kind);
         xmlWriter.WriteValue(label.LabelString);
         xmlWriter.WriteEndElement();
     }
