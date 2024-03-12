@@ -18,7 +18,12 @@ namespace TimedRegex.Parsing
             {
                 return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
             }
-            return ParseRename(tokenizer);
+            IAstNode ast = ParseRename(tokenizer);
+            if (tokenizer.Next is not null)
+            {
+                throw new Exception("Improper syntax after parsing " + ast.ToString());
+            }
+            return ast;
         }
         private static IAstNode ParseRename(Tokenizer tokenizer)
         {

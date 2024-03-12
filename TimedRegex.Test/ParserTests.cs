@@ -352,6 +352,13 @@ public sealed class ParserTests
     [TestCase("/")]
     [TestCase("a|")]
     [TestCase("&b")]
+    [TestCase("a]")]
+    [TestCase("a)")]
+    [TestCase("a|b+)")]
+    [TestCase("a(")]
+    [TestCase("a;")]
+    [TestCase("a5")]
+    [TestCase("a<")]
     public void ParseInvalid(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
