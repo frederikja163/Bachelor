@@ -12,11 +12,15 @@ namespace TimedRegex.Parsing
         /// </summary>
         /// <param name="tokenizer"></param>
         /// <returns>An IAstNode that is the head of an AST.</returns>
-        public static IAstNode? Parse(Tokenizer tokenizer)
+        public static IAstNode Parse(Tokenizer tokenizer)
         {
+            if (tokenizer.Next is null)
+            {
+                return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
+            }
             return ParseRename(tokenizer);
         }
-        private static IAstNode? ParseRename(Tokenizer tokenizer)
+        private static IAstNode ParseRename(Tokenizer tokenizer)
         {
             IAstNode? child = ParseIntersection(tokenizer);
             if (child is null || tokenizer.Next?.Type != TokenType.RenameStart)
