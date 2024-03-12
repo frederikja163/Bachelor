@@ -3,9 +3,9 @@ namespace TimedRegex.Generators.Xml;
 internal sealed class Declaration
 {
     private readonly List<string> _clocks;
-    private readonly List<char> _channels;
+    private readonly List<string> _channels;
 
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<char> channels)
+    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels)
     {
         _clocks = clocks.ToList();
         _channels = channels.ToList();
@@ -14,7 +14,7 @@ internal sealed class Declaration
     internal Declaration()
     {
         _clocks = new List<string>();
-        _channels = new List<char>();
+        _channels = new List<string>();
     }
     
     internal IEnumerable<string> GetClocks()
@@ -25,7 +25,7 @@ internal sealed class Declaration
         }
     }
 
-    internal IEnumerable<char> GetChannels()
+    internal IEnumerable<string> GetChannels()
     {
         foreach (var channel in _channels)
         {
@@ -38,7 +38,7 @@ internal sealed class Declaration
         _clocks.Add(clock);
     }
 
-    internal void AddChannel(char channel)
+    internal void AddChannel(string channel)
     {
         _channels.Add(channel);
     }

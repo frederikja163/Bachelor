@@ -9,7 +9,7 @@ internal sealed class Nta
     
     internal Nta()
     {
-        Declaration = new Declaration(new List<string>(), new List<char>());
+        Declaration = new Declaration(new List<string>(), new List<string>());
         _templates = new List<Template>();
     }
 

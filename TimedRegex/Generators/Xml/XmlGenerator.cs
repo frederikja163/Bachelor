@@ -50,7 +50,11 @@ internal sealed class XmlGenerator : IGenerator
     private Declaration GenerateDeclaration(TimedAutomaton timedAutomaton)
     {
         IEnumerable<string> clocks = timedAutomaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
-        IEnumerable<char> channels = timedAutomaton.GetAlphabet().ToList().Where(x => x != '\0');
+        //IEnumerable<string> channels = timedAutomaton.GetAlphabet().ToList().Where(x => x != '\0');
+        IEnumerable<string> channels = timedAutomaton.GetAlphabet()
+            .Where(x => x != '\0')
+            .Select(s => s.ToString())
+            .ToList();
 
         return new Declaration(clocks, channels);
     }

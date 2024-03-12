@@ -40,7 +40,7 @@ public sealed class XmlGeneratorTest
         Transition id8 = new Transition("id8", "id2", "id4", new[] { new Label("guard", "1 <= c2 < 3") });
 
         Template ta1 = new Template(new Declaration(new List<string>(),
-                new List<char>()),
+                new List<string>()),
             "ta1",
             "id0",
             new[]
@@ -60,7 +60,7 @@ public sealed class XmlGeneratorTest
             });
 
         nta.AddTemplate(ta1);
-        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<char>()));
+        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<string>()));
 
         return nta;
     }
@@ -136,13 +136,13 @@ public sealed class XmlGeneratorTest
         Nta nta = GenerateTestNta();
 
         IEnumerable<string> clocks = nta.Declaration.GetClocks();
-        IEnumerable<char> channels = nta.Declaration.GetChannels();
+        IEnumerable<string> channels = nta.Declaration.GetChannels();
 
         Assert.That(clocks.Count(), Is.EqualTo(2));
 
         Assert.That(channels.Count(), Is.EqualTo(2));
-        Assert.That(channels, Contains.Item('A'));
-        Assert.That(channels, Contains.Item('B'));
+        Assert.That(channels, Contains.Item("A"));
+        Assert.That(channels, Contains.Item("A"));
     }
 
     [Test]
@@ -275,7 +275,7 @@ public sealed class XmlGeneratorTest
         Nta nta = new Nta();
         Template template = new Template(new Declaration(), "ta1", "", new List<Location>(), new List<Transition>());
         nta.AddTemplate(template);
-        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<char>()));
+        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<string>()));
 
         string expected =
             "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
@@ -294,7 +294,7 @@ public sealed class XmlGeneratorTest
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
         Template template = new Template(
-            new Declaration(new List<string>(), new List<char>()),
+            new Declaration(new List<string>(), new List<string>()),
             "ta1",
             "id0",
             new List<Location>
@@ -373,7 +373,7 @@ public sealed class XmlGeneratorTest
     public void WriteDeclarationTest()
     {
         XmlGenerator xmlGenerator = new XmlGenerator();
-        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<char> { 'x', 'y' });
+        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
 
         string expected = "<declaration>clock c1, c2;chan x, y;</declaration>";
         StringBuilder sb = new StringBuilder();
