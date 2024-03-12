@@ -1,6 +1,8 @@
 using NUnit.Framework;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
+using TimedRegex.Generators;
+using TimedRegex.Scanner;
 
 namespace TimedRegex.Test;
 
@@ -20,5 +22,45 @@ public sealed class VisitorTests
         {
             Assert.Throws<Exception>(() => interval.Accept(visitor));
         }
+    }
+
+    [Test]
+    public void GenerateIteratorAstTest()
+    {
+        IteratorVisitor visitor = new IteratorVisitor();
+        Match match = AutomatonGeneratorTest.Match('a');
+        Iterator iterator = new Iterator(match, AutomatonGeneratorTest.Token(TokenType.Iterator, '*'));
+        iterator.Accept(visitor);
+        
+        IAstNode node = visitor.GetNode();
+        Assert.IsInstanceOf<Union>(node);
+        Union union = (Union)node;
+        Assert.That(union.Token.Type, Is.EqualTo(TokenType.Iterator));
+        
+        Assert.IsInstanceOf<Epsilon>(union.RightNode);
+        Assert.That(union.RightNode.Token, Is.EqualTo(union.Token));
+        
+        Assert.IsInstanceOf<GuaranteedIterator>(union.LeftNode);
+        Assert.That(union.LeftNode.Token, Is.EqualTo(union.Token));
+    }
+
+    [Test]
+    public void GenerateAbsorbedIteratorAstTest()
+    {
+        IteratorVisitor visitor = new IteratorVisitor();
+        Match match = AutomatonGeneratorTest.Match('a');
+        AbsorbedIterator iterator = new AbsorbedIterator(match, AutomatonGeneratorTest.Token(TokenType.Iterator, '*'));
+        iterator.Accept(visitor);
+        
+        IAstNode node = visitor.GetNode();
+        Assert.IsInstanceOf<Union>(node);
+        Union union = (Union)node;
+        Assert.That(union.Token.Type, Is.EqualTo(TokenType.Iterator));
+        
+        Assert.IsInstanceOf<Epsilon>(union.RightNode);
+        Assert.That(union.RightNode.Token, Is.EqualTo(union.Token));
+        
+        Assert.IsInstanceOf<AbsorbedGuaranteedIterator>(union.LeftNode);
+        Assert.That(union.LeftNode.Token, Is.EqualTo(union.Token));
     }
 }

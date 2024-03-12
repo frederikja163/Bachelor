@@ -51,4 +51,8 @@ internal sealed class ValidIntervalVisitor : IAstVisitor
     public void Visit(Union union)
     {
     }
+
+    public void Visit(Epsilon epsilon)
+    {
+    }
 }
