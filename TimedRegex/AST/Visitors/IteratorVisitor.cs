@@ -3,6 +3,11 @@ namespace TimedRegex.AST.Visitors;
 internal sealed class IteratorVisitor : IAstVisitor
 {
     private readonly Stack<IAstNode> _stack = new();
+
+    internal IAstNode GetNode()
+    {
+        return _stack.Pop();
+    }
     
     public void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
     {
@@ -11,7 +16,11 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(AbsorbedIterator absorbedIterator)
     {
-        _stack.Push(new AbsorbedIterator(_stack.Pop(), absorbedIterator.Token));
+        IAstNode child = _stack.Pop();
+        Epsilon epsilon = new Epsilon(absorbedIterator.Token);
+        AbsorbedGuaranteedIterator guaranteedIterator = new AbsorbedGuaranteedIterator(child, absorbedIterator.Token);
+        Union union = new Union(guaranteedIterator, epsilon, absorbedIterator.Token);
+        _stack.Push(union);
     }
 
     public void Visit(Concatenation concatenation)
@@ -44,7 +53,11 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(Iterator iterator)
     {
-        _stack.Push(new Iterator(_stack.Pop(), iterator.Token));
+        IAstNode child = _stack.Pop();
+        Epsilon epsilon = new Epsilon(iterator.Token);
+        GuaranteedIterator guaranteedIterator = new GuaranteedIterator(child, iterator.Token);
+        Union union = new Union(guaranteedIterator, epsilon, iterator.Token);
+        _stack.Push(union);
     }
 
     public void Visit(Match match)
