@@ -28,7 +28,8 @@ public sealed class ParserTests
     public void ParseEmptyString()
     {
         Tokenizer tokenizer = new Tokenizer("");
-        Assert.IsNull(Parser.Parse(tokenizer));
+        IAstNode node = Parser.Parse(tokenizer);
+        Assert.That(node, Is.TypeOf<Epsilon>());
     }
 
     [Test]

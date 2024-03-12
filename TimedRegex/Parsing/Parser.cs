@@ -12,14 +12,18 @@ namespace TimedRegex.Parsing
         /// </summary>
         /// <param name="tokenizer"></param>
         /// <returns>An IAstNode that is the head of an AST.</returns>
-        public static IAstNode? Parse(Tokenizer tokenizer)
+        public static IAstNode Parse(Tokenizer tokenizer)
         {
+            if (tokenizer.Next is null)
+            {
+                return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
+            }
             return ParseRename(tokenizer);
         }
-        private static IAstNode? ParseRename(Tokenizer tokenizer)
+        private static IAstNode ParseRename(Tokenizer tokenizer)
         {
-            IAstNode? child = ParseIntersection(tokenizer);
-            if (child is null || tokenizer.Next?.Type != TokenType.RenameStart)
+            IAstNode child = ParseIntersection(tokenizer);
+            if (tokenizer.Next?.Type != TokenType.RenameStart)
             {
                 return child;
             }
@@ -42,68 +46,68 @@ namespace TimedRegex.Parsing
             return new Rename(replaceList, child, token);
         }
 
-        private static IAstNode? ParseIntersection(Tokenizer tokenizer)
+        private static IAstNode ParseIntersection(Tokenizer tokenizer)
         {
-            IAstNode? left = ParseUnion(tokenizer);
-            if (tokenizer.Next?.Type != TokenType.Intersection || left is null)
+            IAstNode left = ParseUnion(tokenizer);
+            if (tokenizer.Next?.Type != TokenType.Intersection)
             {
                 return left;
             }
             Token token = tokenizer.GetNext();
-            IAstNode? right = ParseIntersection(tokenizer);
-            if (right is null)
+            if (tokenizer.Next is null)
             {
                 throw new Exception("No token after " + token.ToString());
             }
+            IAstNode right = ParseIntersection(tokenizer);
             return new Intersection(left, right, token);
         }
 
-        private static IAstNode? ParseUnion(Tokenizer tokenizer)
+        private static IAstNode ParseUnion(Tokenizer tokenizer)
         {
-            IAstNode? left = ParseConcatenation(tokenizer);
+            IAstNode left = ParseConcatenation(tokenizer);
             
-            if (tokenizer.Next?.Type != TokenType.Union || left is null)
+            if (tokenizer.Next?.Type != TokenType.Union)
             {
                 return left;
             }
             Token token = tokenizer.GetNext();
-            IAstNode? right = ParseUnion(tokenizer);
-            if (right is null)
+            if (tokenizer.Next is null)
             {
                 throw new Exception("No token after " + token.ToString());
             }
+            IAstNode right = ParseUnion(tokenizer);
             return new Union(left, right, token);
         }
 
-        private static IAstNode? ParseConcatenation(Tokenizer tokenizer)
+        private static IAstNode ParseConcatenation(Tokenizer tokenizer)
         {
-            IAstNode? left = ParseInterval(tokenizer);
-            if (tokenizer.Next is null || left is null)
+            IAstNode left = ParseInterval(tokenizer);
+            if (tokenizer.Next is null)
             {
                 return left;
             }
             if (tokenizer.Next.Type == TokenType.Absorb)
             {
                 Token token = tokenizer.GetNext();
-                IAstNode? r = ParseConcatenation(tokenizer);
-                if (r is null)
+                if (tokenizer.Next is null)
                 {
                     throw new Exception("No token after " + token.ToString());
                 }
+                IAstNode? r = ParseConcatenation(tokenizer);
                 return new AbsorbedConcatenation(left, r, token);
             }
             if (tokenizer.Next.Type == TokenType.Match)
             {
-                IAstNode right = ParseConcatenation(tokenizer)!; // Can only be null if next token is invalid, which throws in ParseMatch().
+                IAstNode right = ParseConcatenation(tokenizer);
                 return new Concatenation(left, right);
             }
             return left;
         }
 
-        private static IAstNode? ParseUnary(Tokenizer tokenizer)
+        private static IAstNode ParseUnary(Tokenizer tokenizer)
         {
-            IAstNode? child = ParseMatch(tokenizer);
-            if (tokenizer.Next is null || child is null)
+            IAstNode child = ParseMatch(tokenizer);
+            if (tokenizer.Next is null)
             {
                 return child;
             }
@@ -128,11 +132,11 @@ namespace TimedRegex.Parsing
         }
 
         // TODO: Might require further development to support "matchAny".
-        private static IAstNode? ParseMatch(Tokenizer tokenizer)
+        private static IAstNode ParseMatch(Tokenizer tokenizer)
         {
             if (tokenizer.Next is null)
             {
-                return null;
+                throw new Exception("Tried Parsing match but was null");
             }
             if (tokenizer.Next.Type == TokenType.Match)
             {
@@ -141,7 +145,7 @@ namespace TimedRegex.Parsing
             if (tokenizer.Next.Type == TokenType.ParenthesisStart)
             {
                 Token token = tokenizer.GetNext();
-                IAstNode? block = ParseRename(tokenizer);
+                IAstNode block = ParseRename(tokenizer);
                 if (block is null)
                 {
                     throw new Exception("Recieved no content in parenthesis " + token.ToString());
@@ -155,10 +159,10 @@ namespace TimedRegex.Parsing
             throw new Exception("Invalid token " + tokenizer.Next.ToString());
         }
 
-        private static IAstNode? ParseInterval(Tokenizer tokenizer)
+        private static IAstNode ParseInterval(Tokenizer tokenizer)
         {
-            IAstNode? child = ParseUnary(tokenizer);
-            if ((tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose) || child is null)
+            IAstNode child = ParseUnary(tokenizer);
+            if ((tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose))
             {
                 return child;
             }
