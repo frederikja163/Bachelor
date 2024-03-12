@@ -12,13 +12,13 @@ public sealed class TimedAutomatonTest
         Clock clock1 = timedAutomaton.AddClock();
         Clock clock2 = timedAutomaton.AddClock();
 
-        State final1 = timedAutomaton.AddLocation(true);
-        State final2 = timedAutomaton.AddLocation(true);
+        State final1 = timedAutomaton.AddState(true);
+        State final2 = timedAutomaton.AddState(true);
 
-        State loc1 = timedAutomaton.AddLocation();
-        State loc2 = timedAutomaton.AddLocation();
+        State loc1 = timedAutomaton.AddState();
+        State loc2 = timedAutomaton.AddState();
         
-        State init = timedAutomaton.AddLocation(newInitial: true);
+        State init = timedAutomaton.AddState(newInitial: true);
 
         Edge recognizeEdge1 = timedAutomaton.AddEdge(loc1, final1, 'A');
         recognizeEdge1.AddClockRange(clock1, new Range(1, 5));
@@ -39,7 +39,7 @@ public sealed class TimedAutomatonTest
         TimedAutomaton automaton = CreateAutomaton();
         
         Assert.That(automaton.GetEdges().ToHashSet().Count(), Is.EqualTo(4));
-        Assert.That(automaton.GetLocations().ToHashSet().Count(), Is.EqualTo(5));
+        Assert.That(automaton.GetStates().ToHashSet().Count(), Is.EqualTo(5));
     }
     
     [Test]

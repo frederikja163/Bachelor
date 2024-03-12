@@ -11,7 +11,7 @@ public sealed class VisitorTests
     [Test]
     public void InvalidInterval([Range(0, 5, 1)] int start, [Range(0, 5, 1)] int end)
     {
-        Interval interval = AutomatonGeneratorTest.Interval('a', start, end);
+        Interval interval = AutomatonGeneratorVisitorTest.Interval('a', start, end);
         ValidIntervalVisitor visitor = new ValidIntervalVisitor();
         // Since we generate the intervals as inclusive-exclusive start should be strictly less than end.
         if (start < end)
@@ -28,8 +28,8 @@ public sealed class VisitorTests
     public void GenerateIteratorAstTest()
     {
         IteratorVisitor visitor = new IteratorVisitor();
-        Match match = AutomatonGeneratorTest.Match('a');
-        Iterator iterator = new Iterator(match, AutomatonGeneratorTest.Token(TokenType.Iterator, '*'));
+        Match match = AutomatonGeneratorVisitorTest.Match('a');
+        Iterator iterator = new Iterator(match, AutomatonGeneratorVisitorTest.Token(TokenType.Iterator, '*'));
         iterator.Accept(visitor);
         
         IAstNode node = visitor.GetNode();
@@ -48,8 +48,8 @@ public sealed class VisitorTests
     public void GenerateAbsorbedIteratorAstTest()
     {
         IteratorVisitor visitor = new IteratorVisitor();
-        Match match = AutomatonGeneratorTest.Match('a');
-        AbsorbedIterator iterator = new AbsorbedIterator(match, AutomatonGeneratorTest.Token(TokenType.Iterator, '*'));
+        Match match = AutomatonGeneratorVisitorTest.Match('a');
+        AbsorbedIterator iterator = new AbsorbedIterator(match, AutomatonGeneratorVisitorTest.Token(TokenType.Iterator, '*'));
         iterator.Accept(visitor);
         
         IAstNode node = visitor.GetNode();
