@@ -14,4 +14,10 @@ internal sealed class Match :IAstNode
     {
         visitor.Visit(this);
     }
+
+    public string ToString(bool forceParenthesis = false)
+    {
+        return forceParenthesis ? $"({Token.Match})" :
+                Token.Match.ToString();
+    }
 }

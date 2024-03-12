@@ -26,4 +26,11 @@ internal sealed class Interval : IUnary
         Child.Accept(visitor);
         visitor.Visit(this);
     }
+
+    public string ToString(bool forceParenthesis = false)
+    {
+        return forceParenthesis
+            ? $"({Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')})"
+            : $"{Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')}";
+    }
 }

@@ -18,4 +18,9 @@ internal sealed class AbsorbedIterator : IUnary
         Child.Accept(visitor);
         visitor.Visit(this);
     }
+
+    public string ToString(bool forceParenthesis = false)
+    {
+        return forceParenthesis ? $"({Child.ToString()}*')" : $"{Child.ToString()}*'";
+    }
 }

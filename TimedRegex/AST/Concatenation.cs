@@ -20,4 +20,10 @@ internal sealed class Concatenation : IBinary
         RightNode.Accept(visitor);
         visitor.Visit(this);
     }
+
+    public string ToString(bool forceParenthesis = false)
+    {
+        return forceParenthesis ? $"({LeftNode.ToString()}{RightNode.ToString()})"
+            : $"{LeftNode.ToString()}{RightNode.ToString()}";
+    }
 }
