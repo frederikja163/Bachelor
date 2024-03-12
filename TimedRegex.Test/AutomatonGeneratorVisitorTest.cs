@@ -8,6 +8,11 @@ namespace TimedRegex.Test;
 
 public sealed class AutomatonGeneratorVisitorTest
 {
+    internal static Token EmptyToken()
+    {
+        return new Token(0, 'Ɛ', TokenType.None);
+    }
+    
     internal static Token Token(TokenType type, char c)
     {
         return new Token(0, c, type);
@@ -209,5 +214,13 @@ public sealed class AutomatonGeneratorVisitorTest
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(1));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(2));
         Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new char[]{'a', 'b'}));
+    }
+
+    [Test]
+    public void UsesCorrectLeftAndRightEdgeInIntersectionTest()
+    {
+        Intersection intersection = new Intersection(Match('a'), new Union(Match('b'), Match('c'), EmptyToken()), EmptyToken());
+        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Assert.DoesNotThrow(() => intersection.Accept(visitor));
     }
 }
