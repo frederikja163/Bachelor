@@ -85,16 +85,16 @@ internal sealed class XmlGenerator : IGenerator
     internal Location GenerateLocation(State state)
     {
         string id = $"id{state.Id}";
-        string name = $"{(_locationIdIsName ? "id" : "loc")}{state.Id}";
+        string name = $"{(_locationIdIsName ? "" : "loc")}{state.Id}";
 
         return new Location(id, name, new List<Label>());
     }
-
+    
     internal Transition GenerateTransition(Edge edge)
     {
         string id = $"id{edge.Id}";
-        string source = $"{(_locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id)}";
-        string target = $"{(_locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id)}";
+        string source = $"id{edge.From.Id}";
+        string target = $"id{edge.To.Id}";
 
         List<Label> labels = [];
 
@@ -141,7 +141,7 @@ internal sealed class XmlGenerator : IGenerator
             yield return $"c{clock.Id} = 0";
         }
     }
-
+    
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)
     {
         xmlWriter.WriteStartElement("nta");
