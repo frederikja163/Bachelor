@@ -245,7 +245,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge edge in ta.GetEdges())
         {
             char? symbol = edge.Symbol;
-            if (symbol is not null && replaceList.TryGetValue(symbol.Value, out char newSymbol))
+            if (replaceList.TryGetValue(symbol.Value, out char newSymbol))
             {
                 edge.Symbol = newSymbol;
             }
