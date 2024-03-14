@@ -49,7 +49,7 @@ internal sealed class XmlGenerator : IGenerator
 
     private Declaration GenerateDeclaration(TimedAutomaton automaton)
     {
-        IEnumerable<string> clocks = automaton.GetClocks().Select(clocks => "c" + clocks.Id).ToList();
+        IEnumerable<string> clocks = automaton.GetClocks().Select(clocks => $"c{clocks.Id}").ToList();
         IEnumerable<string> channels = automaton.GetAlphabet()
             .Where(x => x != '\0')
             .Select(s => s.ToString())
@@ -84,17 +84,17 @@ internal sealed class XmlGenerator : IGenerator
 
     internal Location GenerateLocation(State state)
     {
-        string id = "id" + state.Id;
-        string name = _locationIdIsName ? id : "loc" + state.Id;
+        string id = $"id{state.Id}";
+        string name = $"{(_locationIdIsName ? "id" : "loc")}{state.Id}";
 
         return new Location(id, name, new List<Label>());
     }
 
     internal Transition GenerateTransition(Edge edge)
     {
-        string id = "id" + edge.Id;
-        string source = _locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id;
-        string target = _locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id;
+        string id = $"id{edge.Id}";
+        string source = $"{(_locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id)}";
+        string target = $"{(_locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id)}";
 
         List<Label> labels = [];
 
@@ -154,7 +154,7 @@ internal sealed class XmlGenerator : IGenerator
         }
 
         xmlWriter.WriteStartElement("system");
-        xmlWriter.WriteValue("system " + nta.System + ";");
+        xmlWriter.WriteValue($"system {nta.System};");
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteEndElement();
@@ -170,12 +170,12 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteStartElement("declaration");
         if (declaration.GetClocks().Any())
         {
-            xmlWriter.WriteValue("clock " + string.Join(", ", declaration.GetClocks()) + ";");
+            xmlWriter.WriteValue($"clock {string.Join(", ", declaration.GetClocks())};");
         }
 
         if (declaration.GetChannels().Any())
         {
-            xmlWriter.WriteValue("chan " + string.Join(", ", declaration.GetChannels()) + ";");
+            xmlWriter.WriteValue($"chan {string.Join(", ", declaration.GetChannels())};");
         }
 
         xmlWriter.WriteEndElement();
