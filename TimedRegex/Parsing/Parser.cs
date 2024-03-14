@@ -123,11 +123,11 @@ namespace TimedRegex.Parsing
         {
             if (tokenizer.Next.Type == TokenType.ParenthesisStart)
             {
-                tokenizer.GetNext();
+                tokenizer.Skip();
                 IAstNode block = ParseRename(tokenizer);
 
                 tokenizer.Expect(TimedRegexErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
-                tokenizer.GetNext();
+                tokenizer.Skip();
                 return block;
             }
             tokenizer.Expect(TimedRegexErrorType.ExpectedMatch, TokenType.Match);
@@ -145,7 +145,7 @@ namespace TimedRegex.Parsing
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
             tokenizer.Expect(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalSeparator);
-            tokenizer.GetNext();
+            tokenizer.Skip();
             int endInterval = ParseNumber(tokenizer);
             tokenizer.ExpectOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose);
             bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
