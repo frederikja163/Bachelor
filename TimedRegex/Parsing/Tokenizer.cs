@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using TimedRegex.Scanner;
 
-namespace TimedRegex.Scanner;
+namespace TimedRegex.Parsing;
 
 internal sealed class Tokenizer
 {
