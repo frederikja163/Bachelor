@@ -4,12 +4,21 @@ namespace TimedRegex;
 
 internal enum TimeRegErrorType
 {
-    ExpectedEndOfInput = 0100,
-    RenameImproperFormat = 0101,
-    ParenthesisImproperFormat = 0102,
-    ExpectedMatch = 0103,
-    IntervalImproperFormat = 0104,
-    DigitImproperFormat = 0105,
+    // 0000-0099 - Reserved
+    
+    // 0100-0199 - Tokenizer
+    UnexpectedToken = 0100,
+    
+    // 0200-0299 - Parser
+    ExpectedEndOfInput = 0200,
+    RenameImproperFormat = 0201,
+    ParenthesisImproperFormat = 0202,
+    ExpectedMatch = 0203,
+    IntervalImproperFormat = 0204,
+    DigitImproperFormat = 0205,
+    
+    // 0300-0399 - Semantic validation
+    IntervalStartBiggerThanEnd = 0300,
 }
 
 internal sealed class TimeRegCompileException : Exception

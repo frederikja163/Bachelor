@@ -14,14 +14,8 @@ internal sealed class Tokenizer
         _lookAhead = new List<Token>();
     }
 
-    internal Token Next
-    {
-        get
-        {
-            return EnsureLookAhead(0) ? _lookAhead[0] : new Token(_head, '\0', TokenType.EndOfInput);
-        }
-    }
-    
+    internal Token Next => EnsureLookAhead(0) ? _lookAhead[0] : new Token(_head, '\0', TokenType.EndOfInput);
+
     internal bool TryPeek(int n, [NotNullWhen(true)] out Token? token)
     {
         if (!EnsureLookAhead(n))
@@ -38,7 +32,7 @@ internal sealed class Tokenizer
     {
         if (Next.Type != type1 && Next.Type != type2)
         {
-            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'");
+            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
         }
     }
 
@@ -46,7 +40,7 @@ internal sealed class Tokenizer
     {
         if (Next.Type != type)
         {
-            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'");
+            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
         }
     }
 
@@ -94,7 +88,7 @@ internal sealed class Tokenizer
                 '}' => new Token(_head, '}', TokenType.RenameEnd),
                 ',' => new Token(_head, ',', TokenType.RenameSeparator),
                 char c when char.IsDigit(c) => new Token(_head, c, TokenType.Digit),
-                _ => throw new Exception($"Unrecognized token at {_head}: '{_input[_head]}'")
+                _ => throw new TimeRegCompileException(TimeRegErrorType.UnexpectedToken, $"Unrecognized token at {_head} '{_input[_head]}'", new Token(_head, _input[_head], TokenType.Unrecognized))
             };
             _lookAhead.Add(token);
             _head += 1;
@@ -125,6 +119,7 @@ internal sealed class Tokenizer
             TokenType.Digit => "a number",
             TokenType.None => "none",
             TokenType.EndOfInput => "end of input",
+            TokenType.Unrecognized => "Unrecognized",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
