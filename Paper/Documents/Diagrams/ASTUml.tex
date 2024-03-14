@@ -1,11 +1,11 @@
 \scalebox{0.8}{\begin{tikzpicture}
     %interfaces
-    \umlclass[anchor=north,x=0,y=-3]{IAstNode}{}{}
+    \umlclass[anchor=north,x=0,y=-3]{IAstNode}{token: Token}{}
 
     %classes
-    \umlclass[anchor=north,x=0,y=-6]{Binary}{}{}
-    \umlclass[anchor=north,x=3,y=-6]{Unary}{}{}
-    \umlclass[anchor=north,x=6,y=-6]{match}{token: string}{}
+    \umlclass[anchor=north,x=0,y=-6]{IBinary}{left: IAstNode}{right: IAstNode}
+    \umlclass[anchor=north,x=3,y=-6]{IUnary}{child: IAstNode}{}
+    \umlclass[anchor=north,x=6,y=-6]{match}{}{}
     \umlclass[anchor=north,x=1,y=-9]{Interval}{startInterval: int\\endInterval: int\\startInclusive: bool\\endInclusive: bool}{}
     \umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols: symbolReplace[]}{}
 
