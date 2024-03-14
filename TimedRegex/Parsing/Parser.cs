@@ -19,7 +19,7 @@ namespace TimedRegex.Parsing
                 return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
             }
             IAstNode ast = ParseRename(tokenizer);
-            tokenizer.Expect(TokenType.EndOfInput);
+            tokenizer.Expect(TimeRegErrorType.ExpectedEndOfInput, TokenType.EndOfInput);
             return ast;
         }
         private static IAstNode ParseRename(Tokenizer tokenizer)
@@ -34,13 +34,13 @@ namespace TimedRegex.Parsing
             do
             {
                 tokenizer.Skip(); // Skips renameSeparator.
-                tokenizer.Expect(TokenType.Match);
+                tokenizer.Expect(TimeRegErrorType.RenameImproperFormat, TokenType.Match);
                 Token oldToken = tokenizer.GetNext();
-                tokenizer.Expect(TokenType.Match);
+                tokenizer.Expect(TimeRegErrorType.RenameImproperFormat, TokenType.Match);
                 Token newToken = tokenizer.GetNext();
                 replaceList.Add(new SymbolReplace(oldToken, newToken));
             } while (tokenizer.Next.Type == TokenType.RenameSeparator);
-            tokenizer.Expect(TokenType.RenameEnd);
+            tokenizer.Expect(TimeRegErrorType.RenameImproperFormat, TokenType.RenameEnd);
             tokenizer.Skip(); // Skips renameEnd.
             return new Rename(replaceList, child, token);
         }
@@ -126,11 +126,11 @@ namespace TimedRegex.Parsing
                 tokenizer.GetNext();
                 IAstNode block = ParseRename(tokenizer);
 
-                tokenizer.Expect(TokenType.ParenthesisEnd);
+                tokenizer.Expect(TimeRegErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
                 tokenizer.GetNext();
                 return block;
             }
-            tokenizer.Expect(TokenType.Match);
+            tokenizer.Expect(TimeRegErrorType.ExpectedMatch, TokenType.Match);
             return new Match(tokenizer.GetNext());
         }
 
@@ -144,17 +144,17 @@ namespace TimedRegex.Parsing
             Token token = tokenizer.GetNext();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
-            tokenizer.Expect(TokenType.IntervalSeparator);
+            tokenizer.Expect(TimeRegErrorType.IntervalImproperFormat, TokenType.IntervalSeparator);
             tokenizer.GetNext();
             int endInterval = ParseNumber(tokenizer);
-            tokenizer.ExpectOr(TokenType.IntervalOpen, TokenType.IntervalClose);
+            tokenizer.ExpectOr(TimeRegErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose);
             bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
             return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
         }
 
         private static int ParseNumber(Tokenizer tokenizer)
         {
-            tokenizer.Expect(TokenType.Digit);
+            tokenizer.Expect(TimeRegErrorType.DigitImproperFormat, TokenType.Digit);
             int number = 0;
             while (tokenizer.Next?.Type == TokenType.Digit)
             {

@@ -151,7 +151,7 @@ public sealed class ParserTests
     public void ParseInvalidBinary(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
@@ -173,14 +173,14 @@ public sealed class ParserTests
     public void ParseInvalidRenameNoRightBrace()
     {
         Tokenizer tokenizer = new Tokenizer("a{t,f");
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
     public void ParseInvalidRenameSingle()
     {
         Tokenizer tokenizer = new Tokenizer("a{a}");
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
@@ -199,7 +199,7 @@ public sealed class ParserTests
     public void ParseRenameSingleWrongFormat()
     {
         Tokenizer tokenizer = new Tokenizer("a{t,y}");
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [TestCase("a[2;8]")]
@@ -263,21 +263,21 @@ public sealed class ParserTests
     public void ParseIntervalInvalidFirstNumberSymbol()
     {
         Tokenizer tokenizer = new Tokenizer("a[a;123]");
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
     public void ParseIntervalInvalidSecondNumberSymbol()
     {
         Tokenizer tokenizer = new Tokenizer("a[1;a]");
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
     public void ParseInvalidEmptyInterval()
     {
         Tokenizer tokenizer = new Tokenizer("a[1;]");
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
@@ -362,6 +362,6 @@ public sealed class ParserTests
     public void ParseInvalid(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
-        Assert.Throws<Exception>(() => Parser.Parse(tokenizer));
+        Assert.Throws<TimeRegCompileException>(() => Parser.Parse(tokenizer));
     }
 }

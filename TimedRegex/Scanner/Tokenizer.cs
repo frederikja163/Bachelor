@@ -34,19 +34,19 @@ internal sealed class Tokenizer
         return true;
     }
 
-    internal void ExpectOr(TokenType type1, TokenType type2)
+    internal void ExpectOr(TimeRegErrorType errType, TokenType type1, TokenType type2)
     {
         if (Next.Type != type1 && Next.Type != type2)
         {
-            throw new Exception($"Expected {type1} or {type2} at {Next.CharacterIndex} but found {Next.Type}");
+            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'");
         }
     }
 
-    internal void Expect(TokenType type)
+    internal void Expect(TimeRegErrorType errType, TokenType type)
     {
         if (Next.Type != type)
         {
-            throw new Exception($"Expected {type} at {Next.CharacterIndex} but found {Next.Type}.");
+            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'");
         }
     }
 
@@ -101,5 +101,31 @@ internal sealed class Tokenizer
         }
 
         return true;
+    }
+
+    private static string TokenTypeToString(TokenType type)
+    {
+        return type switch
+        {
+            TokenType.Match => "a letter",
+            TokenType.MatchAny => ".",
+            TokenType.ParenthesisStart => "(",
+            TokenType.ParenthesisEnd => ")",
+            TokenType.Union => "|",
+            TokenType.Intersection => "&",
+            TokenType.Absorb => "'",
+            TokenType.Iterator => "*",
+            TokenType.GuaranteedIterator => "+",
+            TokenType.IntervalOpen => "[",
+            TokenType.IntervalClose => "]",
+            TokenType.IntervalSeparator => ";",
+            TokenType.RenameStart => "{",
+            TokenType.RenameEnd => "}",
+            TokenType.RenameSeparator => ",",
+            TokenType.Digit => "a number",
+            TokenType.None => "none",
+            TokenType.EndOfInput => "end of input",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
     }
 }
