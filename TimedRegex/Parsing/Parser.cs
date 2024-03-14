@@ -42,7 +42,7 @@ namespace TimedRegex.Parsing
             } while (tokenizer.Next.Type == TokenType.RenameSeparator);
             tokenizer.Expect(TimedRegexErrorType.RenameImproperFormat, TokenType.RenameEnd);
             tokenizer.Skip(); // Skips renameEnd.
-            return new Rename(replaceList, child, token);
+            return new Rename(child, token, replaceList);
         }
 
         private static IAstNode ParseIntersection(Tokenizer tokenizer)
@@ -149,7 +149,7 @@ namespace TimedRegex.Parsing
             int endInterval = ParseNumber(tokenizer);
             tokenizer.ExpectOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose);
             bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
-            return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
+            return new Interval(child, token, startInterval, endInterval, startInclusive, endInclusive);
         }
 
         private static int ParseNumber(Tokenizer tokenizer)

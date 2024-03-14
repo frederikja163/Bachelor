@@ -25,7 +25,7 @@ public sealed class AutomatonGeneratorVisitorTest
     
     internal static Interval Interval(char c, int start, int end)
     {
-        return new Interval(Match(c), start, end, true, false, Token(TokenType.IntervalOpen, '['));
+        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), start, end, true, false);
     }
 
     [Test]
@@ -184,8 +184,8 @@ public sealed class AutomatonGeneratorVisitorTest
     public void GenerateRenameTaTest()
     {
         Concatenation concatenation = new Concatenation(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
-        Rename rename = new Rename(new List<SymbolReplace>()
-            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new SymbolReplace(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) }, concatenation, Token(TokenType.RenameStart, '{'));
+        Rename rename = new Rename(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
+            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new SymbolReplace(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) });
         AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
         rename.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
@@ -203,8 +203,8 @@ public sealed class AutomatonGeneratorVisitorTest
     public void RenameSwapTest()
     {
         Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
-        Rename rename = new Rename(new List<SymbolReplace>()
-            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new SymbolReplace(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) }, concatenation, Token(TokenType.RenameStart, '{'));
+        Rename rename = new Rename(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
+            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new SymbolReplace(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) });
         AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
         rename.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();

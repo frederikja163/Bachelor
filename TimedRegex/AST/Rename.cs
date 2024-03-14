@@ -7,7 +7,7 @@ internal sealed class Rename : IUnary
 {
     private readonly SymbolReplace[] _replaceList;
 
-    internal Rename(IEnumerable<SymbolReplace> replaceList, IAstNode child, Token token)
+    internal Rename(IAstNode child, Token token, IEnumerable<SymbolReplace> replaceList)
     {
         _replaceList = replaceList.ToArray();
         Child = child;

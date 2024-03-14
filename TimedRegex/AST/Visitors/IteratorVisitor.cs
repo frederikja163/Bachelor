@@ -48,7 +48,7 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(Interval interval)
     {
-        _stack.Push(new Interval(_stack.Pop(), interval.StartInterval, interval.EndInterval, interval.StartInclusive, interval.EndInclusive, interval.Token));
+        _stack.Push(new Interval(_stack.Pop(), interval.Token, interval.StartInterval, interval.EndInterval, interval.StartInclusive, interval.EndInclusive));
     }
 
     public void Visit(Iterator iterator)
@@ -67,7 +67,7 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(Rename rename)
     {
-        _stack.Push(new Rename(rename.GetReplaceList(), _stack.Pop(), rename.Token));
+        _stack.Push(new Rename(_stack.Pop(), rename.Token, rename.GetReplaceList()));
     }
 
     public void Visit(Union union)

@@ -5,14 +5,14 @@ namespace TimedRegex.AST;
 
 internal sealed class Interval : IUnary
 {
-    internal Interval(IAstNode child, int startInterval, int endInterval, bool startInclusive, bool endInclusive, Token token)
+    internal Interval(IAstNode child, Token token, int startInterval, int endInterval, bool startInclusive, bool endInclusive)
     {
+        Child = child;
+        Token = token;
         StartInterval = startInterval;
         EndInterval = endInterval;
         StartInclusive = startInclusive;
         EndInclusive = endInclusive;
-        Token = token;
-        Child = child;
     }
 
     internal int StartInterval { get; }
