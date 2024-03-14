@@ -39,6 +39,14 @@ internal sealed class Tokenizer
         return TryPeek(1, out token);
     }
 
+    internal void Expect(TokenType type)
+    {
+        if (Next.Type != type)
+        {
+            throw new Exception($"Expected {type} at {Next.CharacterIndex} but found {Next.Type}.");
+        }
+    }
+
     internal Token GetNext(int n = 1)
     {
         if (!EnsureLookAhead(n-1))

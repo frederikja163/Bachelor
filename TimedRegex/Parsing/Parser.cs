@@ -19,10 +19,7 @@ namespace TimedRegex.Parsing
                 return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
             }
             IAstNode ast = ParseRename(tokenizer);
-            if (tokenizer.Next.Type != TokenType.EndOfInput)
-            {
-                throw new Exception("Improper syntax after parsing " + ast.ToString());
-            }
+            tokenizer.Expect(TokenType.EndOfInput);
             return ast;
         }
         private static IAstNode ParseRename(Tokenizer tokenizer)
@@ -43,10 +40,7 @@ namespace TimedRegex.Parsing
                 }
                 replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
             } while (tokenizer.Next.Type == TokenType.RenameSeparator);
-            if (tokenizer.Next.Type != TokenType.RenameEnd)
-            {
-                throw new Exception("Expected right curly brace after " + token.ToString());
-            }
+            tokenizer.Expect(TokenType.RenameEnd);
             tokenizer.Skip(); // Skips renameEnd.
             return new Rename(replaceList, child, token);
         }
@@ -155,10 +149,9 @@ namespace TimedRegex.Parsing
                 {
                     throw new Exception("Recieved no content in parenthesis " + token.ToString());
                 }
-                if (tokenizer.GetNext().Type != TokenType.ParenthesisEnd)
-                {
-                    throw new Exception("Expected parenthesis end but got " + tokenizer.Next.ToString());
-                }
+
+                tokenizer.Expect(TokenType.ParenthesisEnd);
+                tokenizer.GetNext();
                 return block;
             }
             throw new Exception("Invalid token " + tokenizer.Next.ToString());
@@ -174,10 +167,8 @@ namespace TimedRegex.Parsing
             Token token = tokenizer.GetNext();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
-            if (tokenizer.GetNext().Type != TokenType.IntervalSeparator)
-            {
-                throw new Exception("Expected interval separator after number in interval " + token.ToString());
-            }
+            tokenizer.Expect(TokenType.IntervalSeparator);
+            tokenizer.GetNext();
             int endInterval = ParseNumber(tokenizer);
             if (tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose)
             {
@@ -189,10 +180,7 @@ namespace TimedRegex.Parsing
 
         private static int ParseNumber(Tokenizer tokenizer)
         {
-            if (tokenizer.Next.Type != TokenType.Digit)
-            {
-                throw new Exception("Expected number in interval, but got " + tokenizer.Next.ToString());
-            }
+            tokenizer.Expect(TokenType.Digit);
             int number = 0;
             while (tokenizer.Next?.Type == TokenType.Digit)
             {
