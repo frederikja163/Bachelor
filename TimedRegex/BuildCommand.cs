@@ -21,18 +21,18 @@ internal sealed class BuildCommand
     [Value(0, Default = null, MetaName = "expression", HelpText = "The timed regular expression to run, defaults to stdin.")]
     public string? RegularExpression { get; set; } = null;
     
-    [Option('f', "format", Default = OutputFormat.Uppaal, HelpText = "The format to output in.")]
+    [Option('f', "format", Default = OutputFormat.Uppaal, HelpText = "The output format.")]
     public OutputFormat Format { get; set; }
     
     [Option('o', "output", Default = null, HelpText = "The output file, defaults to stdout.")]
     public string? Output { get; set; }
 
     [Option('q', "quiet", Default = false,
-        HelpText = "If set only the output file will be written to stdout.")]
+        HelpText = "If set, only the output file will be written to stdout.")]
     public bool Quiet { get; set; } = false;
     
     [Option("noopen", Default = false,
-        HelpText = "If set the output wont be opened in an editor after creation.")]
+        HelpText = "If set, the output wont be opened in an editor after creation.")]
     public bool NoOpen { get; set; } = false;
     
     internal int Run()
