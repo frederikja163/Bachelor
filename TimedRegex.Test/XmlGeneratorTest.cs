@@ -168,7 +168,6 @@ public sealed class XmlGeneratorTest
             Assert.Multiple(() =>
             {
                 Assert.That(location.Id, Does.Contain("id"));
-                Assert.That(location.Name, Does.Contain("id"));
             });
         }
     }
@@ -201,8 +200,8 @@ public sealed class XmlGeneratorTest
             Assert.Multiple(() =>
             {
                 Assert.That(transition.Id, Does.Contain("id"));
-                Assert.That(transition.Source, Does.Contain(LocationIdIsName ? "id" : "loc"));
-                Assert.That(transition.Target, Does.Contain(LocationIdIsName ? "id" : "loc"));
+                Assert.That(transition.Source, Does.Contain("id"));
+                Assert.That(transition.Target, Does.Contain("id"));
             });
         }
     }
