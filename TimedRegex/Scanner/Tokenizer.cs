@@ -33,10 +33,13 @@ internal sealed class Tokenizer
         token = _lookAhead[n];
         return true;
     }
-    
-    internal bool TryPeek([NotNullWhen(true)] out Token? token)
+
+    internal void ExpectOr(TokenType type1, TokenType type2)
     {
-        return TryPeek(1, out token);
+        if (Next.Type != type1 && Next.Type != type2)
+        {
+            throw new Exception($"Expected {type1} or {type2} at {Next.CharacterIndex} but found {Next.Type}");
+        }
     }
 
     internal void Expect(TokenType type)
