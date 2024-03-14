@@ -62,7 +62,7 @@ internal sealed class BuildCommand
 
         IGenerator generator = Format switch
         {
-            OutputFormat.Uppaal => new XmlGenerator(),
+            OutputFormat.Uppaal => new XmlGenerator(false),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))
         };
         
@@ -83,7 +83,7 @@ internal sealed class BuildCommand
             generator.GenerateFile(Output, timedAutomaton);
         }
 
-        if (NoOpen)
+        if (!NoOpen)
         {
             string? uppaalPath = Environment.GetEnvironmentVariable("Path")?.Split(";")
                 .FirstOrDefault(p => p.ToLower().Contains("uppaal"));

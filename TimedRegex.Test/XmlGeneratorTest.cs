@@ -17,7 +17,7 @@ public sealed class XmlGeneratorTest
 
         Nta nta = new();
 
-        xmlGenerator.UpdateNta(nta, automaton);
+        xmlGenerator.AddAutomatonToNta(nta, automaton);
 
         return nta;
     }
@@ -113,7 +113,7 @@ public sealed class XmlGeneratorTest
         XmlGenerator xmlGenerator = new();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
 
-        xmlGenerator.UpdateNta(nta, automaton);
+        xmlGenerator.AddAutomatonToNta(nta, automaton);
 
         Assert.Multiple(() =>
         {

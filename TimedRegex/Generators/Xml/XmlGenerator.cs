@@ -5,16 +5,16 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
-    private readonly bool _locationIdIsName;
+    private readonly bool _dontGenerateLocationName;
 
     internal XmlGenerator()
     {
-        _locationIdIsName = true;
+        _dontGenerateLocationName = true;
     }
 
-    internal XmlGenerator(bool locationIdIsName)
+    internal XmlGenerator(bool dontGenerateLocationName)
     {
-        _locationIdIsName = locationIdIsName;
+        _dontGenerateLocationName = dontGenerateLocationName;
     }
 
     internal static XmlWriterSettings XmlSettings { get; } = new()
@@ -34,14 +34,14 @@ internal sealed class XmlGenerator : IGenerator
     {
         Nta nta = new();
 
-        UpdateNta(nta, automaton);
+        AddAutomatonToNta(nta, automaton);
 
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
     }   
 
-    internal void UpdateNta(Nta nta, TimedAutomaton automaton)
+    internal void AddAutomatonToNta(Nta nta, TimedAutomaton automaton)
     {
         nta.AddTemplate(GenerateTemplate(automaton, nta.NewTemplateId()));
         nta.AddDeclaration(GenerateDeclaration(automaton));
@@ -49,52 +49,30 @@ internal sealed class XmlGenerator : IGenerator
 
     private Declaration GenerateDeclaration(TimedAutomaton automaton)
     {
-        IEnumerable<string> clocks = automaton.GetClocks().Select(clocks => $"c{clocks.Id}").ToList();
-        IEnumerable<string> channels = automaton.GetAlphabet()
-            .Where(x => x != '\0')
-            .Select(s => s.ToString())
-            .ToList();
-
-        return new Declaration(clocks, channels);
+        return new Declaration(automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
+            automaton.GetAlphabet()
+                    .Where(x => x != '\0')
+                    .Select(s => s.ToString()));
     }
 
     private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
-        Declaration declaration = new();
-        string name = $"ta{id}";
-        string init = $"{(_locationIdIsName ? "id" : "loc")}{automaton.InitialLocation!.Id}";
-
-        State[] automatonLocations = automaton.GetStates().ToArray();
-        Edge[] automatonEdges = automaton.GetEdges().ToArray();
-        Location[] templateLocations = new Location[automatonLocations.Length];
-        Transition[] transitions = new Transition[automatonEdges.Length];
-
-        for (int i = 0; i < automatonLocations.Length; i++)
-        {
-            templateLocations[i] = GenerateLocation(automatonLocations[i]);
-        }
-
-        for (int i = 0; i < automatonEdges.Length; i++)
-        {
-            transitions[i] = GenerateTransition(automatonEdges[i]);
-        }
-
-        return new Template(declaration, name, init, templateLocations, transitions);
+        return new Template(new(), $"ta{id}",
+            $"{(_dontGenerateLocationName ? "id" : "loc")}{automaton.InitialLocation!.Id}",
+            automaton.GetStates().Select(GenerateLocation),
+            automaton.GetEdges().Select(GenerateTransition));
     }
 
     internal Location GenerateLocation(State state)
     {
-        string id = $"id{state.Id}";
-        string name = $"{(_locationIdIsName ? "id" : "loc")}{state.Id}";
-
-        return new Location(id, name, new List<Label>());
+        return new Location($"id{state.Id}", _dontGenerateLocationName ? "" : $"loc{state.Id}{(state.IsFinal ? "Final" : "")}", new List<Label>());
     }
 
     internal Transition GenerateTransition(Edge edge)
     {
         string id = $"id{edge.Id}";
-        string source = $"{(_locationIdIsName ? "id" + edge.From.Id : "loc" + edge.From.Id)}";
-        string target = $"{(_locationIdIsName ? "id" + edge.To.Id : "loc" + edge.To.Id)}";
+        string source = $"{(_dontGenerateLocationName ? "id" + edge.From.Id : "loc" + edge.From.Id)}";
+        string target = $"{(_dontGenerateLocationName ? "id" + edge.To.Id : "loc" + edge.To.Id)}";
 
         List<Label> labels = [];
 
