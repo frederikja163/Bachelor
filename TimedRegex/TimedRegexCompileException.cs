@@ -2,7 +2,7 @@ using TimedRegex.Scanner;
 
 namespace TimedRegex;
 
-internal enum TimeRegErrorType
+internal enum TimedRegexErrorType
 {
     // 0000-0099 - Reserved
     
@@ -21,14 +21,14 @@ internal enum TimeRegErrorType
     IntervalStartBiggerThanEnd = 0300,
 }
 
-internal sealed class TimeRegCompileException : Exception
+internal sealed class TimedRegexCompileException : Exception
 {
-    internal TimeRegCompileException(TimeRegErrorType type, string? message, Token? token = null) : base(message)
+    internal TimedRegexCompileException(TimedRegexErrorType type, string? message, Token? token = null) : base(message)
     {
         Token = token;
         Type = type;
     }
     
     internal Token? Token { get; }
-    internal TimeRegErrorType Type { get; }
+    internal TimedRegexErrorType Type { get; }
 }

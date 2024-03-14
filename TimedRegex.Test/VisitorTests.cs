@@ -20,7 +20,7 @@ public sealed class VisitorTests
         }
         else
         {
-            Assert.Throws<Exception>(() => interval.Accept(visitor));
+            Assert.Throws<TimedRegexCompileException>(() => interval.Accept(visitor));
         }
     }
 

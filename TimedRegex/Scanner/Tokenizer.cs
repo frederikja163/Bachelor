@@ -28,19 +28,19 @@ internal sealed class Tokenizer
         return true;
     }
 
-    internal void ExpectOr(TimeRegErrorType errType, TokenType type1, TokenType type2)
+    internal void ExpectOr(TimedRegexErrorType errType, TokenType type1, TokenType type2)
     {
         if (Next.Type != type1 && Next.Type != type2)
         {
-            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
+            throw new TimedRegexCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
         }
     }
 
-    internal void Expect(TimeRegErrorType errType, TokenType type)
+    internal void Expect(TimedRegexErrorType errType, TokenType type)
     {
         if (Next.Type != type)
         {
-            throw new TimeRegCompileException(errType, $"Expected '{TokenTypeToString(type)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
+            throw new TimedRegexCompileException(errType, $"Expected '{TokenTypeToString(type)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
         }
     }
 
@@ -88,7 +88,7 @@ internal sealed class Tokenizer
                 '}' => new Token(_head, '}', TokenType.RenameEnd),
                 ',' => new Token(_head, ',', TokenType.RenameSeparator),
                 char c when char.IsDigit(c) => new Token(_head, c, TokenType.Digit),
-                _ => throw new TimeRegCompileException(TimeRegErrorType.UnexpectedToken, $"Unrecognized token at {_head} '{_input[_head]}'", new Token(_head, _input[_head], TokenType.Unrecognized))
+                _ => throw new TimedRegexCompileException(TimedRegexErrorType.UnexpectedToken, $"Unrecognized token at {_head} '{_input[_head]}'", new Token(_head, _input[_head], TokenType.Unrecognized))
             };
             _lookAhead.Add(token);
             _head += 1;

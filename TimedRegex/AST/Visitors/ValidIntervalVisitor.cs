@@ -32,7 +32,7 @@ internal sealed class ValidIntervalVisitor : IAstVisitor
         int endInclusive = interval.EndInterval + (interval.EndInclusive ? 0 : -1);
         if (startInclusive > endInclusive)
         {
-            throw new TimeRegCompileException(TimeRegErrorType.IntervalStartBiggerThanEnd, $"Interval start value {startInclusive} must be smaller than or equal to end value {endInclusive}.", interval.Token);
+            throw new TimedRegexCompileException(TimedRegexErrorType.IntervalStartBiggerThanEnd, $"Interval start value {startInclusive} must be smaller than or equal to end value {endInclusive}.", interval.Token);
         }
     }
 
