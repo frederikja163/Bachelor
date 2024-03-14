@@ -188,19 +188,19 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteValue(template.Name);
         xmlWriter.WriteEndElement();
 
-        foreach (var location in template.Locations)
+        foreach (var location in template.GetLocations())
         {
             WriteLocation(xmlWriter, location);
         }
 
-        if (template.Locations.Length != 0)
+        if (template.GetLocations().Any())
         {
             xmlWriter.WriteStartElement("init");
             xmlWriter.WriteAttributeString("ref", template.Init);
             xmlWriter.WriteEndElement();
         }
 
-        foreach (var transition in template.Transitions)
+        foreach (var transition in template.GetTransitions())
         {
             WriteTransition(xmlWriter, transition);
         }
@@ -235,7 +235,7 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteAttributeString("ref", transition.Target);
         xmlWriter.WriteEndElement();
 
-        foreach (var label in transition.Labels)
+        foreach (var label in transition.GetLabels())
         {
             WriteLabel(xmlWriter, label);
         }

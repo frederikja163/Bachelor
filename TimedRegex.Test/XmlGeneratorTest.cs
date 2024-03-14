@@ -158,8 +158,8 @@ public sealed class XmlGeneratorTest
         {
             Assert.That(template.Name, Is.EqualTo("ta0"));
             Assert.That(template.Init, Is.Not.EqualTo(""));
-            Assert.That(template.Locations, Has.Length.EqualTo(5));
-            Assert.That(template.Transitions, Has.Length.EqualTo(4));
+            Assert.That(template.GetLocations().Count(), Is.EqualTo(5));
+            Assert.That(template.GetTransitions().Count(), Is.EqualTo(4));
         });
     }
 
@@ -245,7 +245,7 @@ public sealed class XmlGeneratorTest
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
 
-        Assert.That(transition.Labels, Is.Not.Empty);
+        Assert.That(transition.GetLabels(), Is.Not.Empty);
     }
 
     [Test]
@@ -256,7 +256,7 @@ public sealed class XmlGeneratorTest
 
         Transition transition = xmlGenerator.GenerateTransition(edge);
 
-        Assert.That(transition.Labels, Is.Empty);
+        Assert.That(transition.GetLabels(), Is.Empty);
     }
 
     [Test]
@@ -415,7 +415,7 @@ public sealed class XmlGeneratorTest
     public void ContainsLocationsTest()
     {
         Nta nta = CreateTestNta();
-        Location[] locations = nta.GetTemplates().First().Locations;
+        Location[] locations = nta.GetTemplates().First().GetLocations().ToArray();
 
         Assert.That(locations, Has.Length.EqualTo(5));
         for (int i = 0; i < locations.Length; i++)
@@ -424,7 +424,7 @@ public sealed class XmlGeneratorTest
             {
                 Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
                 Assert.That(locations[i].Name, Is.EqualTo($"id{i}"));
-                Assert.That(locations[i].Labels, Is.Empty);
+                Assert.That(locations[i].GetLabels(), Is.Empty);
             });
         }
     }
@@ -434,9 +434,9 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = CreateTestNta();
         List<Template> templates = nta.GetTemplates().ToList();
-        Transition[] transitions = templates[0].Transitions;
+        Transition[] transitions = templates[0].GetTransitions().ToArray();
 
-        Assert.That(templates[0].Transitions, Has.Length.EqualTo(4));
+        Assert.That(transitions, Has.Length.EqualTo(4));
 
         for (int i = 0; i < transitions.Length; i++)
         {
@@ -452,11 +452,12 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = CreateTestNta();
         List<Template> templates = nta.GetTemplates().ToList();
+        List<Transition> transitions = templates[0].GetTransitions().ToList();
         
         Assert.Multiple(() =>
         {
-            Assert.That(templates[0].Transitions[transitionIndex].Source, Is.EqualTo(src));
-            Assert.That(templates[0].Transitions[transitionIndex].Target, Is.EqualTo(dst));
+            Assert.That(transitions[transitionIndex].Source, Is.EqualTo(src));
+            Assert.That(transitions[transitionIndex].Target, Is.EqualTo(dst));
         });
     }
 
@@ -466,7 +467,8 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = CreateTestNta();
         List<Template> templates = nta.GetTemplates().ToList();
+        List<Transition> transitions = templates[0].GetTransitions().ToList();
 
-        Assert.That(templates[0].Transitions[transitionIndex].Labels[0].LabelString, Is.EqualTo(guard));
+        Assert.That(transitions[transitionIndex].GetLabels().First().LabelString, Is.EqualTo(guard));
     }
 }

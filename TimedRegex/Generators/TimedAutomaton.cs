@@ -9,20 +9,14 @@ internal sealed class TimedAutomaton
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
-
-    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
+    
+    internal TimedAutomaton()
     {
-        _clocks = !excludeClocks
-            ? left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary()
-            : new Dictionary<int, Clock>();
-        _edges = !excludeEdges
-            ? left._edges.UnionBy(right._edges, kvp => kvp.Key).ToDictionary()
-            : new Dictionary<int, Edge>();
-        _states = !excludeLocations
-            ? left._states.UnionBy(right._states, kvp => kvp.Key).ToDictionary()
-            : new Dictionary<int, State>();
-        InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
-        _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
+        _clocks = new Dictionary<int, Clock>();
+        _edges = new Dictionary<int, Edge>();
+        _states = new Dictionary<int, State>();
+        InitialLocation = null;
+        _alphabet = new HashSet<char>();
     }
     
     internal TimedAutomaton(TimedAutomaton other, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
@@ -39,14 +33,20 @@ internal sealed class TimedAutomaton
         InitialLocation = !excludeLocations ? other.InitialLocation : null;
         _alphabet = other._alphabet.ToHashSet();
     }
-    
-    internal TimedAutomaton()
+
+    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
     {
-        _clocks = new Dictionary<int, Clock>();
-        _edges = new Dictionary<int, Edge>();
-        _states = new Dictionary<int, State>();
-        InitialLocation = null;
-        _alphabet = new HashSet<char>();
+        _clocks = !excludeClocks
+            ? left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, Clock>();
+        _edges = !excludeEdges
+            ? left._edges.UnionBy(right._edges, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, Edge>();
+        _states = !excludeLocations
+            ? left._states.UnionBy(right._states, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, State>();
+        InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
+        _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
     internal State? InitialLocation { get; set; }
