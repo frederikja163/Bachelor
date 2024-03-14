@@ -9,7 +9,7 @@ namespace TimedRegex.Test;
 public sealed class VisitorTests
 {
     [Test]
-    public void InvalidInterval([Range(0, 5, 1)] int start, [Range(0, 5, 1)] int end)
+    public void InvalidIntervalTest([Range(0, 5, 1)] int start, [Range(0, 5, 1)] int end)
     {
         Interval interval = AutomatonGeneratorVisitorTest.Interval('a', start, end);
         ValidIntervalVisitor visitor = new ValidIntervalVisitor();

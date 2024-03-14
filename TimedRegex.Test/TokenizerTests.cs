@@ -32,7 +32,7 @@ public sealed class TokenizerTests
     }
 
     [Test]
-    public void ParseEmptyString()
+    public void ParseEmptyStringTest()
     {
         Tokenizer tokenizer = new Tokenizer("");
         Assert.That(tokenizer.Next.Type, Is.EqualTo(TokenType.EndOfInput));
@@ -72,7 +72,7 @@ public sealed class TokenizerTests
     [TestCase(" ")]
     [TestCase("~")]
     [TestCase("@")]
-    public void CannotParseInvalidTokens(string str)
+    public void CannotParseInvalidTokensTest(string str)
     {
         Tokenizer tokenizer = new Tokenizer(str);
         Assert.Throws<TimedRegexCompileException>(() => tokenizer.GetNext());
@@ -119,7 +119,7 @@ public sealed class TokenizerTests
 
     [TestCase(1, "abcde")]
     [TestCase(3, "abcde")]
-    public void GetNextMany(int n, string inputString)
+    public void GetNextManyTest(int n, string inputString)
     {
         Tokenizer tokenizer = new Tokenizer(inputString);
         Token token = tokenizer.GetNext(n);
@@ -154,7 +154,7 @@ public sealed class TokenizerTests
     }
 
     [Test]
-    public void TokenToString()
+    public void TokenToStringTest()
     {
         Token token = new Token(2, 'a', TokenType.Match);
         Assert.That(token.ToString(), Is.EqualTo("2.a.Match"));

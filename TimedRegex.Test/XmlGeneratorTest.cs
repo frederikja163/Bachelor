@@ -64,7 +64,7 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
-    public void GenerateXmlFromNta()
+    public void GenerateXmlFromNtaTest()
     {
         Nta nta = GenerateTestNta();
         XmlGenerator xmlGenerator = new XmlGenerator();
@@ -89,7 +89,7 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
-    public void GenerateXmlFileFromNta()
+    public void GenerateXmlFileFromNtaTest()
     {
         string path = Path.GetTempFileName();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();

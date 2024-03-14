@@ -25,7 +25,7 @@ public sealed class LinqExtensionsTest
     }
 
     [Test]
-    public void PowerSet()
+    public void PowerSetTest()
     {
         List<List<int>> actual = Enumerable.Range(1, 5).PowerSet().Select(s => s.ToList()).ToList();
         

@@ -13,7 +13,7 @@ public sealed class ParserTests
     [TestCase("a")]
     [TestCase("b")]
     [TestCase("z")]
-    public void ParseMatchValid(string inputString)
+    public void ParseMatchValidTest(string inputString)
     {
         Tokenizer tokenizer = new Tokenizer(inputString);
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -25,7 +25,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseEmptyString()
+    public void ParseEmptyStringTest()
     {
         Tokenizer tokenizer = new Tokenizer("");
         IAstNode node = Parser.Parse(tokenizer);
@@ -33,7 +33,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseAbsorbedGuaranteedIterator()
+    public void ParseAbsorbedGuaranteedIteratorTest()
     {
         Tokenizer tokenizer = new Tokenizer("a+'");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -45,7 +45,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseAbsorbedIterator()
+    public void ParseAbsorbedIteratorTest()
     {
         Tokenizer tokenizer = new Tokenizer("a*'");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -57,7 +57,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseIterator()
+    public void ParseIteratorTest()
     {
         Tokenizer tokenizer = new Tokenizer("a*");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -69,7 +69,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseGuaranteedIterator()
+    public void ParseGuaranteedIteratorTest()
     {
         Tokenizer tokenizer = new Tokenizer("a+");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -81,7 +81,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseUnion() 
+    public void ParseUnionTest() 
     {
         Tokenizer tokenizer = new Tokenizer("a|b");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -95,7 +95,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseConcatenation()
+    public void ParseConcatenationTest()
     {
         Tokenizer tokenizer = new Tokenizer("ab");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -109,7 +109,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseAbsorbedConcatenation() 
+    public void ParseAbsorbedConcatenationTest() 
     {
         Tokenizer tokenizer = new Tokenizer("a'b");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -123,7 +123,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseIntersection() 
+    public void ParseIntersectionTest() 
     {
         Tokenizer tokenizer = new Tokenizer("a&b");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -141,21 +141,21 @@ public sealed class ParserTests
     [TestCase("a|bc")]
     [TestCase("a'bc")]
     [TestCase("a&b|cd")]
-    public void ParseBinaryMultiple(string input)
+    public void ParseBinaryMultipleTest(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         Assert.DoesNotThrow(() => Parser.Parse(tokenizer));
     }
 
     [TestCase("a|")]
-    public void ParseInvalidBinary(string input)
+    public void ParseInvalidBinaryTest(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
-    public void ParseRename() 
+    public void ParseRenameTest() 
     {
         Tokenizer tokenizer = new Tokenizer("a{tT,yY,uU}");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -170,21 +170,21 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseInvalidRenameNoRightBrace()
+    public void ParseInvalidRenameNoRightBraceTest()
     {
         Tokenizer tokenizer = new Tokenizer("a{t,f");
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
-    public void ParseInvalidRenameSingle()
+    public void ParseInvalidRenameSingleTest()
     {
         Tokenizer tokenizer = new Tokenizer("a{a}");
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
-    public void ParseRenameSingle()
+    public void ParseRenameSingleTest()
     {
         Tokenizer tokenizer = new Tokenizer("a{ty}");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -196,7 +196,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseRenameSingleWrongFormat()
+    public void ParseRenameSingleWrongFormatTest()
     {
         Tokenizer tokenizer = new Tokenizer("a{t,y}");
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
@@ -207,7 +207,7 @@ public sealed class ParserTests
     [TestCase("a[1;109]")]
     [TestCase("a[1099;1902]")]
 
-    public void ParseIntervalVariableNumberLength(string input)
+    public void ParseIntervalVariableNumberLengthTest(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -221,7 +221,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseInterval()
+    public void ParseIntervalTest()
     {
         Tokenizer tokenizer = new Tokenizer("m[12;345[");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -238,7 +238,7 @@ public sealed class ParserTests
     [TestCase("a[1;2[", true, false)]
     [TestCase("a]1;2]", false, true)]
     [TestCase("a]1;2[", false, false)]
-    public void ParseIntervalInclusiveExclusive(string input, bool startInclusive, bool endExclusive)
+    public void ParseIntervalInclusiveExclusiveTest(string input, bool startInclusive, bool endExclusive)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -250,7 +250,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseIntervalNumber()
+    public void ParseIntervalNumberTest()
     {
         Tokenizer tokenizer = new Tokenizer("a[6;789]");
         Interval node = (Interval)Parser.Parse(tokenizer)!;
@@ -260,28 +260,28 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseIntervalInvalidFirstNumberSymbol()
+    public void ParseIntervalInvalidFirstNumberSymbolTest()
     {
         Tokenizer tokenizer = new Tokenizer("a[a;123]");
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
-    public void ParseIntervalInvalidSecondNumberSymbol()
+    public void ParseIntervalInvalidSecondNumberSymbolTest()
     {
         Tokenizer tokenizer = new Tokenizer("a[1;a]");
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
-    public void ParseInvalidEmptyInterval()
+    public void ParseInvalidEmptyIntervalTest()
     {
         Tokenizer tokenizer = new Tokenizer("a[1;]");
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
     }
 
     [Test]
-    public void ParsePrecedenceMultipleConcat()
+    public void ParsePrecedenceMultipleConcatTest()
     {
         Tokenizer tokenizer = new Tokenizer("abcde");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -309,7 +309,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void ParseAbsorbedGuaranteedIteratorWithConcat()
+    public void ParseAbsorbedGuaranteedIteratorWithConcatTest()
     {
         Tokenizer tokenizer = new Tokenizer("a+'b");
         IAstNode astNode = Parser.Parse(tokenizer)!;
@@ -327,7 +327,7 @@ public sealed class ParserTests
     [TestCase("a&b|c", "((a)&((b)|(c)))")]
     [TestCase("a|(b&c)", "((a)|((b)&(c)))")]
     [TestCase("(ab)c", "(((a)(b))(c))")]
-    public void ToStringParsing(string input, string expected)
+    public void ToStringParsingTest(string input, string expected)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         IAstNode node = Parser.Parse(tokenizer)!;
@@ -340,7 +340,7 @@ public sealed class ParserTests
     [TestCase("(ab)c", typeof(Concatenation))]
     [TestCase("a|(bc*)", typeof(Union))]
     [TestCase("(a|b)c*", typeof(Concatenation))]
-    public void ParseParenthesis(string input, Type type)
+    public void ParseParenthesisTest(string input, Type type)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         IAstNode node = Parser.Parse(tokenizer)!;
@@ -359,7 +359,7 @@ public sealed class ParserTests
     [TestCase("a;")]
     [TestCase("a5")]
     [TestCase("a<")]
-    public void ParseInvalid(string input)
+    public void ParseInvalidTest(string input)
     {
         Tokenizer tokenizer = new Tokenizer(input);
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
