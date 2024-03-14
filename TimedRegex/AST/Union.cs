@@ -5,7 +5,7 @@ namespace TimedRegex.AST;
 
 internal sealed class Union : IBinary
 { 
-    public Union(IAstNode leftNode, IAstNode rightNode, Token token)
+    internal Union(IAstNode leftNode, IAstNode rightNode, Token token)
     {
         LeftNode = leftNode;
         RightNode = rightNode;

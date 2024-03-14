@@ -5,7 +5,7 @@ namespace TimedRegex.AST;
 
 internal sealed class AbsorbedGuaranteedIterator : IUnary
 {
-    public AbsorbedGuaranteedIterator(IAstNode child, Token token)
+    internal AbsorbedGuaranteedIterator(IAstNode child, Token token)
     {
         Child = child;
         Token = token;

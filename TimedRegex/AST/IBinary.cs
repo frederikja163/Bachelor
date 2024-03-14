@@ -2,6 +2,6 @@
 
 internal interface IBinary : IAstNode
 {
-    public IAstNode LeftNode { get;}
-    public IAstNode RightNode { get;}
+    internal IAstNode LeftNode { get;}
+    internal IAstNode RightNode { get;}
 }

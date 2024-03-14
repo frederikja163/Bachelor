@@ -5,7 +5,7 @@ namespace TimedRegex.AST;
 
 internal sealed class AbsorbedConcatenation : IBinary
 {
-    public AbsorbedConcatenation(IAstNode leftNode, IAstNode rightNode, Token token)
+    internal AbsorbedConcatenation(IAstNode leftNode, IAstNode rightNode, Token token)
     {
         LeftNode = leftNode;
         RightNode = rightNode;

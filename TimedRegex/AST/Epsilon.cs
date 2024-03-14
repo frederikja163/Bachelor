@@ -5,7 +5,7 @@ namespace TimedRegex.AST;
 
 internal sealed class Epsilon : IAstNode
 {
-    public Epsilon(Token token)
+    internal Epsilon(Token token)
     {
         Token = token;
     }

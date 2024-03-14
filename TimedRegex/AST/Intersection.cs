@@ -5,7 +5,7 @@ namespace TimedRegex.AST;
 
 internal sealed class Intersection : IBinary
 { 
-    public Intersection(IAstNode leftNode, IAstNode rightNode, Token token)
+    internal Intersection(IAstNode leftNode, IAstNode rightNode, Token token)
     {
         LeftNode = leftNode;
         RightNode = rightNode;

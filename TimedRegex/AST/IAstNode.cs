@@ -5,9 +5,9 @@ namespace TimedRegex.AST;
 
 internal interface IAstNode
 {
-    Token Token { get; }
+    internal Token Token { get; }
 
-    void Accept(IAstVisitor visitor);
+    internal void Accept(IAstVisitor visitor);
 
-    string ToString(bool forceParenthesis = false);
+    internal string ToString(bool forceParenthesis = false);
 }
