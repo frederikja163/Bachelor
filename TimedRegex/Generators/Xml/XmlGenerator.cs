@@ -85,16 +85,16 @@ internal sealed class XmlGenerator : IGenerator
     internal Location GenerateLocation(State state)
     {
         string id = $"id{state.Id}";
-        string name = $"{(_locationIdIsName ? "id" : "loc")}{state.Id}";
+        string name = $"{(_locationIdIsName ? "" : "loc")}{state.Id}";
 
         return new Location(id, name, new List<Label>());
     }
     
     internal Transition GenerateTransition(Edge edge)
     {
-        string id = "id" + edge.Id;
-        string source = "id" + edge.From.Id;
-        string target = "id" + edge.To.Id;
+        string id = $"id{edge.Id}";
+        string source = $"id{edge.From.Id}";
+        string target = $"id{edge.To.Id}";
 
         List<Label> labels = [];
 
