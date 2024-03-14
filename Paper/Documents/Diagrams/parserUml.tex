@@ -1,0 +1,43 @@
+\scalebox{0.8}{\begin{tikzpicture}
+    %interfaces
+    \umlclass[x=0,y=-3]{IAstNode}{token: Token}{}
+
+    %classes
+    \umlclass[x=0,y=-6]{IBinary}{left: IAstNode}{right: IAstNode}
+    \umlclass[x=3.5,y=-6]{IUnary}{child: IAstNode}{}
+    \umlclass[x=6.5,y=-6]{Match}{}{}
+    %\umlclass[anchor=north,x=1,y=-9]{Interval}{startInterval: int\\endInterval: int\\startInclusive: bool\\endInclusive: bool}{}
+    %\umlclass[anchor=north,x=6,y=-9]{Rename}{renameSymbols: symbolReplace[]}{}
+    \umlclass[x=9,y=-6]{Epsilon}{}{}
+    \umlsimpleclass[x=3.5,y=-8,draw=none,fill=none,alias=unarydots,scale=2]{...}
+    \umlsimpleclass[x=3.5,y=-8,fill=none,draw=none,alias=phantomunary]{ }
+    \umlsimpleclass[x=0,y=-8,fill=none,draw=none,scale=2]{...}
+    \umlsimpleclass[x=0,y=-8,fill=none,draw=none,alias=phantombinary]{ }
+
+    % \umlclass[anchor=north,x=9,y=-12]{AbsorbedConcatenation}{}{}
+    % \umlclass[anchor=north,x=12,y=-12]{AbsorbedGuaranteedIterator}{}{}
+    % \umlclass[anchor=north,x=15,y=-12]{AbsorbedIterator}{}{}
+    % \umlclass[anchor=north,x=18,y=-12]{Concatenation}{}{}
+    % \umlclass[anchor=north,x=21,y=-12]{GuaranteedIterator}{}{}
+    % \umlclass[anchor=north,x=27,y=-12]{Intersection}{}{}
+    % \umlclass[anchor=north,x=6,y=-12]{Interval}{}{}
+    % \umlclass[anchor=north,x=3,y=-12]{Iterator}{}{}
+    % \umlclass[anchor=north,x=0,y=-12]{Union}{}{}
+    
+
+    %transitions
+    \umlVHVinherit[arm1=1.5cm]{IUnary}{IAstNode}
+    \umlVHVinherit[]{IBinary}{IAstNode}
+    \umlVHVinherit[arm1=1.5cm]{Match}{IAstNode}
+    \umlVHVinherit[arm1=1.5cm]{Epsilon}{IAstNode}
+    \umlVHVinherit[arm1=0.5cm]{phantomunary}{IUnary}
+    \umlVHVinherit[arm1=0.5cm]{phantombinary}{IBinary}
+
+    % \umlaggreg[attr1=1|,attr2=2|]{IBinary}{IAstNode}
+
+    % \umlVHVinherit[]{Interval}{IUnary}
+    % \umlVHVinherit[]{Rename}{IUnary}
+
+    %\draw [tikzuml aggregation style] (IUnary.-120)-- ++(0cm,-1cm)node[pos=0.2, left]{1} -- ++(-4.5cm,0cm) |- (IAstNode.west)node[pos=0.8, below]{1};
+
+\end{tikzpicture}}
