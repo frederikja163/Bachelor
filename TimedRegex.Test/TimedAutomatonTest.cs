@@ -7,7 +7,7 @@ public sealed class TimedAutomatonTest
 {
     internal static TimedAutomaton CreateAutomaton()
     {
-        TimedAutomaton timedAutomaton = new TimedAutomaton();
+        TimedAutomaton timedAutomaton = new();
 
         Clock clock1 = timedAutomaton.AddClock();
         Clock clock2 = timedAutomaton.AddClock();

@@ -76,7 +76,7 @@ internal sealed class TimedAutomaton
 
     internal Clock AddClock()
     {
-        Clock clock = new Clock(CreateClockId());
+        Clock clock = new(CreateClockId());
 
         _clocks.Add(clock.Id, clock);
         
@@ -85,7 +85,7 @@ internal sealed class TimedAutomaton
 
     internal State AddState(bool final = false, bool newInitial = false)
     {
-        State state = new State(CreateId(), final);
+        State state = new(CreateId(), final);
         
         if (newInitial)
         {
@@ -99,7 +99,7 @@ internal sealed class TimedAutomaton
 
     internal Edge AddEdge(State from, State to, char symbol)
     {
-        Edge edge = new Edge(CreateId(), from, to, symbol);
+        Edge edge = new(CreateId(), from, to, symbol);
         
         _edges.Add(edge.Id, edge);
         _alphabet.Add(symbol);

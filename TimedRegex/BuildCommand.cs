@@ -46,17 +46,17 @@ internal sealed class BuildCommand
             }
             RegularExpression = Console.ReadLine();
         }
-        Tokenizer tokenizer = new Tokenizer(RegularExpression);
+        Tokenizer tokenizer = new(RegularExpression);
         IAstNode root = Parser.Parse(tokenizer);
 
-        ValidIntervalVisitor validIntervalVisitor = new ValidIntervalVisitor();
+        ValidIntervalVisitor validIntervalVisitor = new();
         root.Accept(validIntervalVisitor);
 
-        IteratorVisitor iteratorVisitor = new IteratorVisitor();
+        IteratorVisitor iteratorVisitor = new();
         root.Accept(iteratorVisitor);
         root = iteratorVisitor.GetNode();
 
-        AutomatonGeneratorVisitor automatonGeneratorVisitor = new AutomatonGeneratorVisitor();
+        AutomatonGeneratorVisitor automatonGeneratorVisitor = new();
         root.Accept(automatonGeneratorVisitor);
         TimedAutomaton timedAutomaton = automatonGeneratorVisitor.GetAutomaton();
 
@@ -68,10 +68,10 @@ internal sealed class BuildCommand
         
         if (Output is null && NoOpen)
         {
-            using MemoryStream stream = new MemoryStream();
+            using MemoryStream stream = new();
             generator.GenerateFile(stream, timedAutomaton);
             stream.Seek(0, SeekOrigin.Begin);
-            using StreamReader sr = new StreamReader(stream);
+            using StreamReader sr = new(stream);
             Console.WriteLine(sr.ReadToEnd());
         }
         else

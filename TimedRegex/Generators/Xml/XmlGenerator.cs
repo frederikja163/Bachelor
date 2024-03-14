@@ -32,7 +32,7 @@ internal sealed class XmlGenerator : IGenerator
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
-        Nta nta = new Nta();
+        Nta nta = new();
 
         UpdateNta(nta, automaton);
 
@@ -60,7 +60,7 @@ internal sealed class XmlGenerator : IGenerator
 
     private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
-        Declaration declaration = new Declaration();
+        Declaration declaration = new();
         string name = $"ta{id}";
         string init = $"{(_locationIdIsName ? "id" : "loc")}{automaton.InitialLocation!.Id}";
 

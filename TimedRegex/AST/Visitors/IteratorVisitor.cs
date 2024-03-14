@@ -17,9 +17,9 @@ internal sealed class IteratorVisitor : IAstVisitor
     public void Visit(AbsorbedIterator absorbedIterator)
     {
         IAstNode child = _stack.Pop();
-        Epsilon epsilon = new Epsilon(absorbedIterator.Token);
-        AbsorbedGuaranteedIterator guaranteedIterator = new AbsorbedGuaranteedIterator(child, absorbedIterator.Token);
-        Union union = new Union(guaranteedIterator, epsilon, absorbedIterator.Token);
+        Epsilon epsilon = new(absorbedIterator.Token);
+        AbsorbedGuaranteedIterator guaranteedIterator = new(child, absorbedIterator.Token);
+        Union union = new(guaranteedIterator, epsilon, absorbedIterator.Token);
         _stack.Push(union);
     }
 
@@ -54,9 +54,9 @@ internal sealed class IteratorVisitor : IAstVisitor
     public void Visit(Iterator iterator)
     {
         IAstNode child = _stack.Pop();
-        Epsilon epsilon = new Epsilon(iterator.Token);
-        GuaranteedIterator guaranteedIterator = new GuaranteedIterator(child, iterator.Token);
-        Union union = new Union(guaranteedIterator, epsilon, iterator.Token);
+        Epsilon epsilon = new(iterator.Token);
+        GuaranteedIterator guaranteedIterator = new(child, iterator.Token);
+        Union union = new(guaranteedIterator, epsilon, iterator.Token);
         _stack.Push(union);
     }
 

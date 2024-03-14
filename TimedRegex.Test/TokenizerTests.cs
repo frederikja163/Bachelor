@@ -26,7 +26,7 @@ public sealed class TokenizerTests
     [TestCase("9", TokenType.Digit)]
     public void ParseTokenTypeTest(string str, int type)
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new(str);
         Assert.IsNotNull(tokenizer.Next);
         Assert.That(tokenizer.Next.Type, Is.EqualTo((TokenType)type));
     }
@@ -34,7 +34,7 @@ public sealed class TokenizerTests
     [Test]
     public void ParseEmptyStringTest()
     {
-        Tokenizer tokenizer = new Tokenizer("");
+        Tokenizer tokenizer = new("");
         Assert.That(tokenizer.Next.Type, Is.EqualTo(TokenType.EndOfInput));
     }
 
@@ -43,7 +43,7 @@ public sealed class TokenizerTests
     {
         string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new(str);
 
         for (int i = 0; i < str.Length; i++)
         {
@@ -56,7 +56,7 @@ public sealed class TokenizerTests
     {
         string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new(str);
 
         for (int i = 0; i < str.Length; i++)
         {
@@ -74,14 +74,14 @@ public sealed class TokenizerTests
     [TestCase("@")]
     public void CannotParseInvalidTokensTest(string str)
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new(str);
         Assert.Throws<TimedRegexCompileException>(() => tokenizer.GetNext());
     }
     
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]
     public void PeekTest(string str, params int[] tokenTypes)
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new(str);
         for (int i = 0; i < tokenTypes.Length; i++)
         {
             Assert.True(tokenizer.TryPeek(i, out Token? token));
@@ -94,7 +94,7 @@ public sealed class TokenizerTests
     [Test]
     public void PeekRunOutOfInputTest()
     {
-        Tokenizer tokenizer = new Tokenizer("aaa");
+        Tokenizer tokenizer = new("aaa");
         Assert.IsTrue(tokenizer.TryPeek(0, out _));
         Assert.IsTrue(tokenizer.TryPeek(1, out _));
         Assert.IsTrue(tokenizer.TryPeek(2, out _));
@@ -107,7 +107,7 @@ public sealed class TokenizerTests
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]
     public void GetNextTest(string str, params int[] tokenTypes)
     {
-        Tokenizer tokenizer = new Tokenizer(str);
+        Tokenizer tokenizer = new(str);
         for (int i = 0; i < tokenTypes.Length; i++)
         {
             Token token = tokenizer.GetNext();
@@ -121,7 +121,7 @@ public sealed class TokenizerTests
     [TestCase(3, "abcde")]
     public void GetNextManyTest(int n, string inputString)
     {
-        Tokenizer tokenizer = new Tokenizer(inputString);
+        Tokenizer tokenizer = new(inputString);
         Token token = tokenizer.GetNext(n);
         Assert.IsNotNull(tokenizer.Next);
         Assert.That(token.Match, Is.EqualTo('a'));
@@ -133,7 +133,7 @@ public sealed class TokenizerTests
     [Test]
     public void GetNextRunOutOfInputTest()
     {
-        Tokenizer tokenizer = new Tokenizer("aaa");
+        Tokenizer tokenizer = new("aaa");
         Assert.That(tokenizer.GetNext().Type, Is.Not.EqualTo(TokenType.EndOfInput));
         Assert.That(tokenizer.GetNext().Type, Is.Not.EqualTo(TokenType.EndOfInput));
         Assert.That(tokenizer.GetNext().Type, Is.Not.EqualTo(TokenType.EndOfInput));
@@ -144,7 +144,7 @@ public sealed class TokenizerTests
     [Test]
     public void SkipTest()
     {
-        Tokenizer tokenizer = new Tokenizer("0123456789");
+        Tokenizer tokenizer = new("0123456789");
         
         Assert.That(tokenizer.GetNext().Match, Is.EqualTo('0'));
         tokenizer.Skip();
@@ -156,7 +156,7 @@ public sealed class TokenizerTests
     [Test]
     public void TokenToStringTest()
     {
-        Token token = new Token(2, 'a', TokenType.Match);
+        Token token = new(2, 'a', TokenType.Match);
         Assert.That(token.ToString(), Is.EqualTo("2.a.Match"));
     }
 }

@@ -31,7 +31,7 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateMatchTaTest()
     {
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        AutomatonGeneratorVisitor visitor = new();
         Match('a').Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
@@ -45,8 +45,8 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateEpsilonTaTest()
     {
-        Epsilon epsilon = new Epsilon(Token(TokenType.Match, '\0'));
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Epsilon epsilon = new(Token(TokenType.Match, '\0'));
+        AutomatonGeneratorVisitor visitor = new();
         epsilon.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
@@ -61,8 +61,8 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateGuaranteedIteratorTaTest()
     {
-        GuaranteedIterator iterator = new GuaranteedIterator(Interval('a', 0, 5), Token(TokenType.Iterator, '+'));
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        GuaranteedIterator iterator = new(Interval('a', 0, 5), Token(TokenType.Iterator, '+'));
+        AutomatonGeneratorVisitor visitor = new();
         iterator.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -80,8 +80,8 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateConcatenationTaTest()
     {
-        Concatenation concatenation = new Concatenation(Interval('a', 0, 3), Interval('b', 0, 3));
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Concatenation concatenation = new(Interval('a', 0, 3), Interval('b', 0, 3));
+        AutomatonGeneratorVisitor visitor = new();
         concatenation.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
 
@@ -97,9 +97,9 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateAbsorbedGuaranteedIteratorTaTest()
     {
-        Union union = new Union(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
-        AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new AbsorbedGuaranteedIterator(union, Token(TokenType.Iterator, '+'));
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Union union = new(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
+        AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, '+'));
+        AutomatonGeneratorVisitor visitor = new();
         absorbedGuaranteedIterator.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -119,8 +119,8 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateIntersectionTaTest()
     {
-        Intersection intersection = new Intersection(Interval('a', 1, 3), Interval('a', 2, 5), Token(TokenType.Intersection, '&'));
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Intersection intersection = new(Interval('a', 1, 3), Interval('a', 2, 5), Token(TokenType.Intersection, '&'));
+        AutomatonGeneratorVisitor visitor = new();
         intersection.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -137,8 +137,8 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void SimpleConcatenationTest()
     {
-        Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Concatenation concatenation = new(Match('a'), Match('b'));
+        AutomatonGeneratorVisitor visitor = new();
         concatenation.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -152,8 +152,8 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateUnionTaTest()
     {
-        Union union = new Union(Match('a'), Match('b'), Token(TokenType.Union, '|'));
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Union union = new(Match('a'), Match('b'), Token(TokenType.Union, '|'));
+        AutomatonGeneratorVisitor visitor = new();
         union.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -167,7 +167,7 @@ public sealed class AutomatonGeneratorVisitorTest
     public void GenerateIntervalTaTest()
     {
         Interval interval = Interval('a', 2, 4);
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        AutomatonGeneratorVisitor visitor = new();
         interval.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -183,10 +183,10 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateRenameTaTest()
     {
-        Concatenation concatenation = new Concatenation(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
-        Rename rename = new Rename(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
-            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new SymbolReplace(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) });
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Concatenation concatenation = new(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
+        Rename rename = new(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
+            { new(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) });
+        AutomatonGeneratorVisitor visitor = new();
         rename.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -202,10 +202,10 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void RenameSwapTest()
     {
-        Concatenation concatenation = new Concatenation(Match('a'), Match('b'));
-        Rename rename = new Rename(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
-            { new SymbolReplace(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new SymbolReplace(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) });
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Concatenation concatenation = new(Match('a'), Match('b'));
+        Rename rename = new(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
+            { new(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) });
+        AutomatonGeneratorVisitor visitor = new();
         rename.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();
         
@@ -219,8 +219,8 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void UsesCorrectLeftAndRightEdgeInIntersectionTest()
     {
-        Intersection intersection = new Intersection(Match('a'), new Union(Match('b'), Match('c'), EmptyToken()), EmptyToken());
-        AutomatonGeneratorVisitor visitor = new AutomatonGeneratorVisitor();
+        Intersection intersection = new(Match('a'), new Union(Match('b'), Match('c'), EmptyToken()), EmptyToken());
+        AutomatonGeneratorVisitor visitor = new();
         Assert.DoesNotThrow(() => intersection.Accept(visitor));
     }
 }
