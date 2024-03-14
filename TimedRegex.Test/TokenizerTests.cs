@@ -74,7 +74,7 @@ public sealed class TokenizerTests
     public void CannotParseInvalidTokens(string str)
     {
         Tokenizer tokenizer = new Tokenizer(str);
-        Assert.Throws<Exception>(() => tokenizer.GetNext());
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.GetNext());
     }
     
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]

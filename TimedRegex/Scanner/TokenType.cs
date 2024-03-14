@@ -2,6 +2,9 @@ namespace TimedRegex.Scanner;
 
 internal enum TokenType
 {
+    None,
+    Unrecognized,
+    EndOfInput,
     Match,
     MatchAny,
     ParenthesisStart,
@@ -18,6 +21,4 @@ internal enum TokenType
     RenameEnd,
     RenameSeparator,
     Digit,
-    None,
-    EndOfInput,
 }

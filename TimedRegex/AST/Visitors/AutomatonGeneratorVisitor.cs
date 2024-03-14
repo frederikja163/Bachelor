@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using TimedRegex.Extensions;
 using TimedRegex.Generators;
 
@@ -24,7 +25,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     }
 
     public void Visit(AbsorbedIterator absorbedIterator){
-        throw new Exception("Iterator is turned off, but was still used.");
+        throw new UnreachableException("Iterator is turned off, but was still used.");
     }
 
     public void Visit(Concatenation concatenation)
@@ -219,7 +220,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
     public void Visit(Iterator iterator)
     {
-        throw new Exception("Iterator is turned off, but was still used.");
+        throw new UnreachableException("Iterator is turned off, but was still used.");
     }
 
     public void Visit(Match match)

@@ -14,14 +14,8 @@ internal sealed class Tokenizer
         _lookAhead = new List<Token>();
     }
 
-    internal Token Next
-    {
-        get
-        {
-            return EnsureLookAhead(0) ? _lookAhead[0] : new Token(_head, '\0', TokenType.EndOfInput);
-        }
-    }
-    
+    internal Token Next => EnsureLookAhead(0) ? _lookAhead[0] : new Token(_head, '\0', TokenType.EndOfInput);
+
     internal bool TryPeek(int n, [NotNullWhen(true)] out Token? token)
     {
         if (!EnsureLookAhead(n))
@@ -33,10 +27,21 @@ internal sealed class Tokenizer
         token = _lookAhead[n];
         return true;
     }
-    
-    internal bool TryPeek([NotNullWhen(true)] out Token? token)
+
+    internal void ExpectOr(TimedRegexErrorType errType, TokenType type1, TokenType type2)
     {
-        return TryPeek(1, out token);
+        if (Next.Type != type1 && Next.Type != type2)
+        {
+            throw new TimedRegexCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
+        }
+    }
+
+    internal void Expect(TimedRegexErrorType errType, TokenType type)
+    {
+        if (Next.Type != type)
+        {
+            throw new TimedRegexCompileException(errType, $"Expected '{TokenTypeToString(type)}' at {Next.CharacterIndex} but found '{TokenTypeToString(Next.Type)}'", Next);
+        }
     }
 
     internal Token GetNext(int n = 1)
@@ -83,12 +88,39 @@ internal sealed class Tokenizer
                 '}' => new Token(_head, '}', TokenType.RenameEnd),
                 ',' => new Token(_head, ',', TokenType.RenameSeparator),
                 char c when char.IsDigit(c) => new Token(_head, c, TokenType.Digit),
-                _ => throw new Exception($"Unrecognized token at {_head}: '{_input[_head]}'")
+                _ => throw new TimedRegexCompileException(TimedRegexErrorType.UnexpectedToken, $"Unrecognized token at {_head} '{_input[_head]}'", new Token(_head, _input[_head], TokenType.Unrecognized))
             };
             _lookAhead.Add(token);
             _head += 1;
         }
 
         return true;
+    }
+
+    private static string TokenTypeToString(TokenType type)
+    {
+        return type switch
+        {
+            TokenType.Match => "a letter",
+            TokenType.MatchAny => ".",
+            TokenType.ParenthesisStart => "(",
+            TokenType.ParenthesisEnd => ")",
+            TokenType.Union => "|",
+            TokenType.Intersection => "&",
+            TokenType.Absorb => "'",
+            TokenType.Iterator => "*",
+            TokenType.GuaranteedIterator => "+",
+            TokenType.IntervalOpen => "[",
+            TokenType.IntervalClose => "]",
+            TokenType.IntervalSeparator => ";",
+            TokenType.RenameStart => "{",
+            TokenType.RenameEnd => "}",
+            TokenType.RenameSeparator => ",",
+            TokenType.Digit => "a number",
+            TokenType.None => "none",
+            TokenType.EndOfInput => "end of input",
+            TokenType.Unrecognized => "Unrecognized",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
     }
 }

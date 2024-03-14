@@ -1,9 +1,14 @@
-﻿namespace TimedRegex;
+﻿using CommandLine;
+
+namespace TimedRegex;
 
 internal static class Program
 {
-    internal static void Main(string[] args)
+    internal static int Main(string[] args)
     {
-        Config config = new Config(args);
+        return Parser.Default.ParseArguments<BuildCommand, object>(args)
+            .MapResult(
+                (BuildCommand command) => command.Run(),
+        errors => 1);
     }
 }

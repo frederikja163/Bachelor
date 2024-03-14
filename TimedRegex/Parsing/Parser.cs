@@ -19,10 +19,7 @@ namespace TimedRegex.Parsing
                 return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
             }
             IAstNode ast = ParseRename(tokenizer);
-            if (tokenizer.Next.Type != TokenType.EndOfInput)
-            {
-                throw new Exception("Improper syntax after parsing " + ast.ToString());
-            }
+            tokenizer.Expect(TimedRegexErrorType.ExpectedEndOfInput, TokenType.EndOfInput);
             return ast;
         }
         private static IAstNode ParseRename(Tokenizer tokenizer)
@@ -37,16 +34,13 @@ namespace TimedRegex.Parsing
             do
             {
                 tokenizer.Skip(); // Skips renameSeparator.
-                if (!(tokenizer.Next.Type == TokenType.Match && tokenizer.TryPeek(out Token? t) && t.Type == TokenType.Match))
-                {
-                    throw new Exception("Invalid rename symbol format after rename token " + token.ToString());
-                }
-                replaceList.Add(new SymbolReplace(tokenizer.GetNext(), tokenizer.GetNext()));
+                tokenizer.Expect(TimedRegexErrorType.RenameImproperFormat, TokenType.Match);
+                Token oldToken = tokenizer.GetNext();
+                tokenizer.Expect(TimedRegexErrorType.RenameImproperFormat, TokenType.Match);
+                Token newToken = tokenizer.GetNext();
+                replaceList.Add(new SymbolReplace(oldToken, newToken));
             } while (tokenizer.Next.Type == TokenType.RenameSeparator);
-            if (tokenizer.Next.Type != TokenType.RenameEnd)
-            {
-                throw new Exception("Expected right curly brace after " + token.ToString());
-            }
+            tokenizer.Expect(TimedRegexErrorType.RenameImproperFormat, TokenType.RenameEnd);
             tokenizer.Skip(); // Skips renameEnd.
             return new Rename(replaceList, child, token);
         }
@@ -59,10 +53,6 @@ namespace TimedRegex.Parsing
                 return left;
             }
             Token token = tokenizer.GetNext();
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
-            {
-                throw new Exception("No token after " + token.ToString());
-            }
             IAstNode right = ParseIntersection(tokenizer);
             return new Intersection(left, right, token);
         }
@@ -76,10 +66,6 @@ namespace TimedRegex.Parsing
                 return left;
             }
             Token token = tokenizer.GetNext();
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
-            {
-                throw new Exception("No token after " + token.ToString());
-            }
             IAstNode right = ParseUnion(tokenizer);
             return new Union(left, right, token);
         }
@@ -94,10 +80,6 @@ namespace TimedRegex.Parsing
             if (tokenizer.Next.Type == TokenType.Absorb)
             {
                 Token token = tokenizer.GetNext();
-                if (tokenizer.Next.Type == TokenType.EndOfInput)
-                {
-                    throw new Exception("No token after " + token.ToString());
-                }
                 IAstNode? r = ParseConcatenation(tokenizer);
                 return new AbsorbedConcatenation(left, r, token);
             }
@@ -139,29 +121,17 @@ namespace TimedRegex.Parsing
         // TODO: Might require further development to support "matchAny".
         private static IAstNode ParseMatch(Tokenizer tokenizer)
         {
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
-            {
-                throw new Exception("Tried Parsing match but was EndOfInput");
-            }
-            if (tokenizer.Next.Type == TokenType.Match)
-            {
-                return new Match(tokenizer.GetNext());
-            }
             if (tokenizer.Next.Type == TokenType.ParenthesisStart)
             {
-                Token token = tokenizer.GetNext();
+                tokenizer.Skip();
                 IAstNode block = ParseRename(tokenizer);
-                if (block is null)
-                {
-                    throw new Exception("Recieved no content in parenthesis " + token.ToString());
-                }
-                if (tokenizer.GetNext().Type != TokenType.ParenthesisEnd)
-                {
-                    throw new Exception("Expected parenthesis end but got " + tokenizer.Next.ToString());
-                }
+
+                tokenizer.Expect(TimedRegexErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
+                tokenizer.Skip();
                 return block;
             }
-            throw new Exception("Invalid token " + tokenizer.Next.ToString());
+            tokenizer.Expect(TimedRegexErrorType.ExpectedMatch, TokenType.Match);
+            return new Match(tokenizer.GetNext());
         }
 
         private static IAstNode ParseInterval(Tokenizer tokenizer)
@@ -174,25 +144,17 @@ namespace TimedRegex.Parsing
             Token token = tokenizer.GetNext();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
-            if (tokenizer.GetNext().Type != TokenType.IntervalSeparator)
-            {
-                throw new Exception("Expected interval separator after number in interval " + token.ToString());
-            }
+            tokenizer.Expect(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalSeparator);
+            tokenizer.Skip();
             int endInterval = ParseNumber(tokenizer);
-            if (tokenizer.Next?.Type != TokenType.IntervalOpen && tokenizer.Next?.Type != TokenType.IntervalClose)
-            {
-                throw new Exception("Invalid interval syntax after " + token.ToString());
-            }
+            tokenizer.ExpectOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose);
             bool endInclusive = tokenizer.GetNext().Type == TokenType.IntervalClose;
             return new Interval(child, startInterval, endInterval, startInclusive, endInclusive, token);
         }
 
         private static int ParseNumber(Tokenizer tokenizer)
         {
-            if (tokenizer.Next.Type != TokenType.Digit)
-            {
-                throw new Exception("Expected number in interval, but got " + tokenizer.Next.ToString());
-            }
+            tokenizer.Expect(TimedRegexErrorType.DigitImproperFormat, TokenType.Digit);
             int number = 0;
             while (tokenizer.Next?.Type == TokenType.Digit)
             {
