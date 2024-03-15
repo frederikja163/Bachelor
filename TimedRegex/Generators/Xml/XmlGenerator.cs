@@ -62,7 +62,7 @@ internal sealed class XmlGenerator : IGenerator
     {
         Declaration declaration = new Declaration();
         string name = $"ta{id}";
-        string init = $"{(_locationIdIsName ? "id" : "loc")}{automaton.InitialLocation!.Id}";
+        string init = $"id{automaton.InitialLocation!.Id}";
 
         State[] automatonLocations = automaton.GetStates().ToArray();
         Edge[] automatonEdges = automaton.GetEdges().ToArray();
@@ -85,7 +85,7 @@ internal sealed class XmlGenerator : IGenerator
     internal Location GenerateLocation(State state)
     {
         string id = $"id{state.Id}";
-        string name = $"{(_locationIdIsName ? "" : "loc")}{state.Id}";
+        string name = $"{(_locationIdIsName ? "" : $"loc{state.Id}")}{(state.IsFinal ? "Final" : "")}";
 
         return new Location(id, name, new List<Label>());
     }

@@ -182,7 +182,7 @@ public sealed class XmlGeneratorTest
             Assert.Multiple(() =>
             {
                 Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
-                Assert.That(locations[i].Name, Is.EqualTo($"{(locationIdIsName ? "" : "loc")}{i}"));
+                Assert.That(locations[i].Name, Is.EqualTo(locationIdIsName ? String.Empty : $"loc{i}"));
             });
         }
     }
