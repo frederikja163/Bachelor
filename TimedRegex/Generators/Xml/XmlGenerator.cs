@@ -5,18 +5,6 @@ namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
-    private readonly bool _dontGenerateLocationName;
-
-    internal XmlGenerator()
-    {
-        _dontGenerateLocationName = true;
-    }
-
-    internal XmlGenerator(bool dontGenerateLocationName)
-    {
-        _dontGenerateLocationName = dontGenerateLocationName;
-    }
-
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
         Indent = true,
@@ -58,29 +46,25 @@ internal sealed class XmlGenerator : IGenerator
     private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
         return new Template(new(), $"ta{id}",
-            $"{(_dontGenerateLocationName ? "id" : "loc")}{automaton.InitialLocation!.Id}",
+            $"loc{automaton.InitialLocation!.Id}",
             automaton.GetStates().Select(GenerateLocation),
             automaton.GetEdges().Select(GenerateTransition));
     }
 
     internal Location GenerateLocation(State state)
     {
-        return new Location($"id{state.Id}", _dontGenerateLocationName ? "" : $"loc{state.Id}{(state.IsFinal ? "Final" : "")}", new List<Label>());
+        return new Location($"id{state.Id}", $"loc{state.Id}{(state.IsFinal ? "Final" : "")}", new List<Label>());
     }
-
+    
     internal Transition GenerateTransition(Edge edge)
     {
-        string id = $"id{edge.Id}";
-        string source = $"{(_dontGenerateLocationName ? "id" + edge.From.Id : "loc" + edge.From.Id)}";
-        string target = $"{(_dontGenerateLocationName ? "id" + edge.To.Id : "loc" + edge.To.Id)}";
-
         List<Label> labels = [];
 
         if (edge.GetClockRanges().Any()) labels.Add(GenerateLabel(edge, "guard"));
         if (edge.GetClockResets().Any()) labels.Add(GenerateLabel(edge, "assignment"));
         if (edge.Symbol != '\0') labels.Add(GenerateLabel(edge, "synchronisation"));
 
-        return new Transition(id, source, target, labels);
+        return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
     }
 
     internal Label GenerateLabel(Edge edge, string kind)
@@ -119,7 +103,7 @@ internal sealed class XmlGenerator : IGenerator
             yield return $"c{clock.Id} = 0";
         }
     }
-
+    
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)
     {
         xmlWriter.WriteStartElement("nta");
