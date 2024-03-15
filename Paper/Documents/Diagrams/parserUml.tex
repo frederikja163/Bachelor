@@ -33,6 +33,10 @@
     \umlVHVinherit[arm1=0.5cm]{phantomunary}{IUnary}
     \umlVHVinherit[arm1=0.5cm]{phantombinary}{IBinary}
 
+    \umlcompo[anchor1=120,anchor2=east,arg1=1,arg2=1,geometry=|-]{IUnary}{IAstNode}
+    \umlcompo[arg1=2,arg2=1]{IBinary}{IAstNode}
+    \umlCNassoc{IAstNode}{-3,3}{-3,0}
+
     % \umlaggreg[attr1=1|,attr2=2|]{IBinary}{IAstNode}
 
     % \umlVHVinherit[]{Interval}{IUnary}
