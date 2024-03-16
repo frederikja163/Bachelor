@@ -26,7 +26,7 @@ public sealed class TokenizerTests
     public void ParseTokenTypeTest(string str, int type)
     {
         Tokenizer tokenizer = new(str);
-        Assert.IsNotNull(tokenizer.Peek());
+        Assert.That(tokenizer.Peek(), Is.Not.Null);
         Assert.That(tokenizer.Peek().Type, Is.EqualTo((TokenType)type));
     }
 
@@ -40,20 +40,20 @@ public sealed class TokenizerTests
     [Test]
     public void ParseMatchTest()
     {
-        string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
+        const string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new(str);
 
-        for (int i = 0; i < str.Length; i++)
+        foreach (char c in str)
         {
-            Assert.That(tokenizer.Advance().Match, Is.EqualTo(str[i]));
+            Assert.That(tokenizer.Advance().Match, Is.EqualTo(c));
         }
     }
     
     [Test]
     public void ParseIndexTest()
     {
-        string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
+        const string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new(str);
 
@@ -84,9 +84,12 @@ public sealed class TokenizerTests
         for (int i = 0; i < tokenTypes.Length; i++)
         {
             Token token = tokenizer.Peek(i);
-            Assert.That(token.Match, Is.EqualTo(str[i]));
-            Assert.That(token.CharacterIndex, Is.EqualTo(i));
-            Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(token.Match, Is.EqualTo(str[i]));
+                Assert.That(token.CharacterIndex, Is.EqualTo(i));
+                Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
+            });
         }
     }
 
@@ -94,15 +97,17 @@ public sealed class TokenizerTests
     public void PeekRunOutOfInputTest()
     {
         Tokenizer tokenizer = new("aaa");
-        Assert.That(tokenizer.Peek(0).Type, Is.Not.EqualTo(TokenType.EndOfInput));
-        Assert.That(tokenizer.Peek(1).Type, Is.Not.EqualTo(TokenType.EndOfInput));
-        Assert.That(tokenizer.Peek(2).Type, Is.Not.EqualTo(TokenType.EndOfInput));
-        Assert.That(tokenizer.Peek(3).Type, Is.EqualTo(TokenType.EndOfInput));
-        Assert.That(tokenizer.Peek(1000).Type, Is.EqualTo(TokenType.EndOfInput));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tokenizer.Peek().Type, Is.Not.EqualTo(TokenType.EndOfInput));
+            Assert.That(tokenizer.Peek(1).Type, Is.Not.EqualTo(TokenType.EndOfInput));
+            Assert.That(tokenizer.Peek(2).Type, Is.Not.EqualTo(TokenType.EndOfInput));
+            Assert.That(tokenizer.Peek(3).Type, Is.EqualTo(TokenType.EndOfInput));
+            Assert.That(tokenizer.Peek(1000).Type, Is.EqualTo(TokenType.EndOfInput));
+        });
         Assert.Throws<ArgumentOutOfRangeException>(() => tokenizer.Peek(-1));
     }
-    
-    
+
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]
     public void GetNextTest(string str, params int[] tokenTypes)
     {
@@ -110,9 +115,12 @@ public sealed class TokenizerTests
         for (int i = 0; i < tokenTypes.Length; i++)
         {
             Token token = tokenizer.Advance();
-            Assert.That(token.Match, Is.EqualTo(str[i]));
-            Assert.That(token.CharacterIndex, Is.EqualTo(i));
-            Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
+            Assert.Multiple(() =>
+            {
+                Assert.That(token.Match, Is.EqualTo(str[i]));
+                Assert.That(token.CharacterIndex, Is.EqualTo(i));
+                Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
+            });
         }
     }
 
@@ -122,13 +130,19 @@ public sealed class TokenizerTests
     {
         Tokenizer tokenizer = new(inputString);
         Token token = tokenizer.Advance(n);
-        Assert.IsNotNull(tokenizer.Peek());
-        Assert.That(token.Match, Is.EqualTo('a'));
-        Assert.That(token.CharacterIndex, Is.EqualTo(0));
-        Assert.That(tokenizer.Peek().Match, Is.EqualTo(inputString[n]));
-        Assert.That(tokenizer.Peek().CharacterIndex, Is.EqualTo(n));
+        Assert.Multiple(() =>
+        {
+            Assert.That(token.Match, Is.EqualTo('a'));
+            Assert.That(token.CharacterIndex, Is.EqualTo(0));
+            Assert.That(tokenizer.Peek(), Is.Not.Null);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(tokenizer.Peek().Match, Is.EqualTo(inputString[n]));
+            Assert.That(tokenizer.Peek().CharacterIndex, Is.EqualTo(n));
+        });
     }
-    
+
     [Test]
     public void GetNextRunOutOfInputTest()
     {

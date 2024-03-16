@@ -10,7 +10,7 @@ namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
-    private static Nta GenerateTestNta(bool locationIdIsName = true)
+    private static Nta GenerateTestNta()
     {
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
         XmlGenerator xmlGenerator = new();
@@ -139,13 +139,13 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = GenerateTestNta();
 
-        IEnumerable<string> clocks = nta.Declaration.GetClocks();
-        IEnumerable<string> channels = nta.Declaration.GetChannels();
-
-        Assert.That(clocks.Count(), Is.EqualTo(2));
-        Assert.That(channels.Count(), Is.EqualTo(2));
-        Assert.That(channels, Contains.Item("A"));
-        Assert.That(channels, Contains.Item("A"));
+        List<string> channels = nta.Declaration.GetChannels().ToList();
+        Assert.Multiple(() =>
+        {
+            Assert.That(nta.Declaration.GetClocks().Count(), Is.EqualTo(2));
+            Assert.That(channels.Count(), Is.EqualTo(2));
+            Assert.That(channels, Contains.Item("A"));
+        });
     }
 
     [Test]
