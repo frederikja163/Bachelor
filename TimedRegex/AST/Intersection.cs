@@ -15,6 +15,7 @@ internal sealed class Intersection : IBinary
     public IAstNode LeftNode { get; }
     public IAstNode RightNode { get; }
     public Token Token { get; }
+    
     public void Accept(IAstVisitor visitor)
     {
         LeftNode.Accept(visitor);

@@ -73,7 +73,7 @@ namespace TimedRegex.Parsing
             if (tokenizer.Peek().Type == TokenType.Absorb)
             {
                 Token token = tokenizer.Advance();
-                IAstNode? r = ParseConcatenation(tokenizer);
+                IAstNode r = ParseConcatenation(tokenizer);
                 return new AbsorbedConcatenation(left, r, token);
             }
             // This if statement needs to be updated with every possible first-token after a concatenation.

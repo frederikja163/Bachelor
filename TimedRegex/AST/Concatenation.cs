@@ -14,6 +14,7 @@ internal sealed class Concatenation : IBinary
     public IAstNode LeftNode { get; }
     public IAstNode RightNode { get; }
     public Token Token => LeftNode.Token;
+    
     public void Accept(IAstVisitor visitor)
     {
         LeftNode.Accept(visitor);

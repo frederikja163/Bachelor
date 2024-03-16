@@ -1,10 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace TimedRegex.Parsing;
 
 internal sealed class Tokenizer
 {
-    private int _head = 0;
+    private int _head;
     private readonly string _input;
     private readonly List<Token> _lookAhead;
     
@@ -61,7 +59,7 @@ internal sealed class Tokenizer
         }
     }
 
-    private bool EnsureLookAhead(int lookAhead)
+    private void EnsureLookAhead(int lookAhead)
     {
         while (lookAhead >= _lookAhead.Count)
         {
@@ -90,8 +88,6 @@ internal sealed class Tokenizer
             _lookAhead.Add(token);
             _head += 1;
         }
-
-        return true;
     }
 
     private static string TokenTypeToString(TokenType type)

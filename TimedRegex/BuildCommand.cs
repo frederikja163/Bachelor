@@ -18,7 +18,7 @@ internal enum OutputFormat
 internal sealed class BuildCommand
 {
     [Value(0, Default = null, MetaName = "expression", HelpText = "The timed regular expression to run, defaults to stdin.")]
-    public string? RegularExpression { get; set; } = null;
+    public string? RegularExpression { get; set; }
     
     [Option('f', "format", Default = OutputFormat.Uppaal, HelpText = "The output format.")]
     public OutputFormat Format { get; set; }
@@ -74,10 +74,7 @@ internal sealed class BuildCommand
         }
         else
         {
-            if (Output is null)
-            {
-                Output = Path.GetTempFileName();
-            }
+            Output ??= Path.GetTempFileName();
             generator.GenerateFile(Output, timedAutomaton);
         }
 
