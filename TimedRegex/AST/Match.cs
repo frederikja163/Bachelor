@@ -1,5 +1,6 @@
 ﻿using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
+
 namespace TimedRegex.AST;
 
 internal sealed class Match :IAstNode

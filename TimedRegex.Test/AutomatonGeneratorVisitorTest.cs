@@ -2,7 +2,7 @@ using NUnit.Framework;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.Test;
 

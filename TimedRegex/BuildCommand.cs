@@ -1,12 +1,10 @@
 using System.Diagnostics;
 using CommandLine;
-using CommandLine.Text;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
 using TimedRegex.Generators.Xml;
 using TimedRegex.Parsing;
-using TimedRegex.Scanner;
 using Parser = TimedRegex.Parsing.Parser;
 
 namespace TimedRegex;

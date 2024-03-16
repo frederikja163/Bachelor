@@ -1,9 +1,9 @@
-namespace TimedRegex.Scanner;
+namespace TimedRegex.Parsing;
 
 internal sealed class Token
 {
 
-    public Token(int characterIndex, char match, TokenType type)
+    internal Token(int characterIndex, char match, TokenType type)
     {
         CharacterIndex = characterIndex;
         Match = match;

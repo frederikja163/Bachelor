@@ -1,5 +1,5 @@
 ﻿using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.AST;
 

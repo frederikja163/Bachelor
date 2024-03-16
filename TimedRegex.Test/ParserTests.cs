@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using TimedRegex.Scanner;
 using TimedRegex.Parsing;
 using TimedRegex.AST;
 

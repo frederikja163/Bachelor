@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using TimedRegex.Scanner;
 
 namespace TimedRegex.Parsing;
 

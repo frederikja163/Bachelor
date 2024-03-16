@@ -1,7 +1,4 @@
-﻿using System.Net.NetworkInformation;
-using System.Xml.Linq;
-using TimedRegex.AST;
-using TimedRegex.Scanner;
+﻿using TimedRegex.AST;
 
 namespace TimedRegex.Parsing
 {

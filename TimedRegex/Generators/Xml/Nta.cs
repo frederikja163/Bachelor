@@ -1,5 +1,3 @@
-using System.Text;
-
 namespace TimedRegex.Generators.Xml;
 
 internal sealed class Nta
