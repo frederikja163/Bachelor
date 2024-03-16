@@ -158,4 +158,38 @@ public sealed class TokenizerTests
         Token token = new(2, 'a', TokenType.Match);
         Assert.That(token.ToString(), Is.EqualTo("2.a.Match"));
     }
+
+    [Test]
+    public void ExpectThrowsTest()
+    {
+        Tokenizer tokenizer = new("ab");
+        Assert.DoesNotThrow(() => tokenizer.Expect(TimedRegexErrorType.UnexpectedToken, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Intersection, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Intersection));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Expect(TimedRegexErrorType.UnexpectedToken, TokenType.Digit));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.MatchAny, TokenType.Iterator));
+    }
+    
+    [Test]
+    public void AcceptThrowsTest()
+    {
+        Tokenizer tokenizer = new("abcdefghijkl");
+        Assert.DoesNotThrow(() => tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Intersection, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Intersection));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Digit));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.MatchAny, TokenType.Iterator));
+    }
+
+    [Test]
+    public void AcceptAdvances()
+    {
+        Tokenizer tokenizer = new("|+*");
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Union).Type, Is.EqualTo(TokenType.Union));
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.GuaranteedIterator).Type, Is.EqualTo(TokenType.GuaranteedIterator));
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Iterator).Type, Is.EqualTo(TokenType.Iterator));
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.EndOfInput).Type, Is.EqualTo(TokenType.EndOfInput));
+    }
 }

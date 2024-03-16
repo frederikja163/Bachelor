@@ -33,12 +33,16 @@ internal sealed class Tokenizer
         _lookAhead.RemoveRange(0, n);
     }
 
-    internal void ExpectOr(TimedRegexErrorType errType, TokenType type1, TokenType type2)
+    internal Token Accept(TimedRegexErrorType errType, TokenType type)
     {
-        if (Peek().Type != type1 && Peek().Type != type2)
-        {
-            throw new TimedRegexCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Peek().CharacterIndex} but found '{TokenTypeToString(Peek().Type)}'", Peek());
-        }
+        Expect(errType, type);
+        return Advance();
+    }
+    
+    internal Token AcceptOr(TimedRegexErrorType errType, TokenType type1, TokenType type2)
+    {
+        ExpectOr(errType, type1, type2);
+        return Advance();
     }
 
     internal void Expect(TimedRegexErrorType errType, TokenType type)
@@ -46,6 +50,14 @@ internal sealed class Tokenizer
         if (Peek().Type != type)
         {
             throw new TimedRegexCompileException(errType, $"Expected '{TokenTypeToString(type)}' at {Peek().CharacterIndex} but found '{TokenTypeToString(Peek().Type)}'", Peek());
+        }
+    }
+
+    internal void ExpectOr(TimedRegexErrorType errType, TokenType type1, TokenType type2)
+    {
+        if (Peek().Type != type1 && Peek().Type != type2)
+        {
+            throw new TimedRegexCompileException(errType, $"Expected '{TokenTypeToString(type1)}' or '{TokenTypeToString(type2)}' at {Peek().CharacterIndex} but found '{TokenTypeToString(Peek().Type)}'", Peek());
         }
     }
 

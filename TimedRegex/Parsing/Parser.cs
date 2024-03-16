@@ -31,15 +31,14 @@ namespace TimedRegex.Parsing
             List<SymbolReplace> replaceList = new List<SymbolReplace>();
             do
             {
-                tokenizer.Skip(); // Skips renameSeparator.
-                tokenizer.Expect(TimedRegexErrorType.RenameImproperFormat, TokenType.Match);
-                Token oldToken = tokenizer.Advance();
-                tokenizer.Expect(TimedRegexErrorType.RenameImproperFormat, TokenType.Match);
-                Token newToken = tokenizer.Advance();
+                // Skip renameSeparator
+                tokenizer.Skip(); 
+                Token oldToken = tokenizer.Accept(TimedRegexErrorType.RenameImproperFormat, TokenType.Match);
+                Token newToken = tokenizer.Accept(TimedRegexErrorType.RenameImproperFormat, TokenType.Match);
                 replaceList.Add(new SymbolReplace(oldToken, newToken));
             } while (tokenizer.Peek().Type == TokenType.RenameSeparator);
-            tokenizer.Expect(TimedRegexErrorType.RenameImproperFormat, TokenType.RenameEnd);
-            tokenizer.Skip(); // Skips renameEnd.
+            // Skip renameEnd.
+            tokenizer.Accept(TimedRegexErrorType.RenameImproperFormat, TokenType.RenameEnd);
             return new Rename(child, token, replaceList);
         }
 
@@ -97,11 +96,10 @@ namespace TimedRegex.Parsing
             Token token = tokenizer.Advance();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
             int startInterval = ParseNumber(tokenizer);
-            tokenizer.Expect(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalSeparator);
-            tokenizer.Skip();
+            tokenizer.Accept(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalSeparator);
             int endInterval = ParseNumber(tokenizer);
-            tokenizer.ExpectOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose);
-            bool endInclusive = tokenizer.Advance().Type == TokenType.IntervalClose;
+            bool endInclusive = tokenizer.AcceptOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose)
+                .Type == TokenType.IntervalClose;
             return new Interval(child, token, startInterval, endInterval, startInclusive, endInclusive);
         }
 
@@ -149,8 +147,7 @@ namespace TimedRegex.Parsing
                 tokenizer.Skip();
                 IAstNode block = ParseRename(tokenizer);
 
-                tokenizer.Expect(TimedRegexErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
-                tokenizer.Skip();
+                tokenizer.Accept(TimedRegexErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
                 return block;
             }
             tokenizer.Expect(TimedRegexErrorType.ExpectedMatch, TokenType.Match);
