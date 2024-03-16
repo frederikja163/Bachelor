@@ -58,34 +58,37 @@ internal sealed class XmlGenerator : IGenerator
     
     internal Transition GenerateTransition(Edge edge)
     {
-        List<Label> labels = [];
+        List<Label> labels = new();
 
-        if (edge.GetClockRanges().Any()) labels.Add(GenerateLabel(edge, "guard"));
-        if (edge.GetClockResets().Any()) labels.Add(GenerateLabel(edge, "assignment"));
-        if (edge.Symbol != '\0') labels.Add(GenerateLabel(edge, "synchronisation"));
+        if (edge.GetClockRanges().Any())
+        {
+            labels.Add(GenerateGuardLabel(edge));
+        }
+        if (edge.GetClockResets().Any())
+        {
+            labels.Add(GenerateAssignmentLabel(edge));
+        }
+        if (edge.Symbol != '\0')
+        {
+            labels.Add(GenerateSynchronizationLabel(edge));
+        }
 
         return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
     }
 
-    internal Label GenerateLabel(Edge edge, string kind)
+    internal Label GenerateGuardLabel(Edge edge)
     {
-        StringBuilder sb = new();
+        return new Label(LabelKind.Guard, string.Join(" && ", GenerateGuard(edge)));
+    }
 
-        switch (kind)
-        {
-            case "guard":
-                sb.AppendJoin(" && ", GenerateGuard(edge));
-                break;
-            case "synchronisation":
-                sb.Append($"{edge.Symbol}?");
-                break;
-            case "assignment":
-                sb.AppendJoin(", ", GenerateAssignment(edge));
-                // if edge.To.IsFinal, add 
-                break;
-        }
-        
-        return new Label(kind, sb.ToString());
+    internal Label GenerateSynchronizationLabel(Edge edge)
+    {
+        return new Label(LabelKind.Synchronisation, $"{edge.Symbol}?");
+    }
+
+    internal Label GenerateAssignmentLabel(Edge edge)
+    {
+        return new Label(LabelKind.Synchronisation, string.Join(", ", GenerateAssignment(edge)));
     }
 
     private IEnumerable<string> GenerateGuard(Edge edge)
@@ -208,7 +211,7 @@ internal sealed class XmlGenerator : IGenerator
     internal void WriteLabel(XmlWriter xmlWriter, Label label)
     {
         xmlWriter.WriteStartElement("label");
-        xmlWriter.WriteAttributeString("kind", label.Kind);
+        xmlWriter.WriteAttributeString("kind", label.Kind.ToString().ToLower());
         xmlWriter.WriteValue(label.LabelString);
         xmlWriter.WriteEndElement();
     }

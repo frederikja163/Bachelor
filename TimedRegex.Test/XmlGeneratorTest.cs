@@ -34,8 +34,8 @@ public sealed class XmlGeneratorTest
 
         Transition id5 = new("id5", "id0", "id1", Enumerable.Empty<Label>());
         Transition id6 = new("id6", "id0", "id2", Enumerable.Empty<Label>());
-        Transition id7 = new("id7", "id1", "id3", new[] { new Label("guard", "1 <= c1 < 5") });
-        Transition id8 = new("id8", "id2", "id4", new[] { new Label("guard", "1 <= c2 < 3") });
+        Transition id7 = new("id7", "id1", "id3", new[] { new Label(LabelKind.Guard, "1 <= c1 < 5") });
+        Transition id8 = new("id8", "id2", "id4", new[] { new Label(LabelKind.Guard, "1 <= c2 < 3") });
 
         Template ta1 = new(new Declaration(new List<string>(),
                 new List<string>()),
@@ -230,9 +230,9 @@ public sealed class XmlGeneratorTest
 
         List<Label> labels =
         [
-            xmlGenerator.GenerateLabel(edge, "guard"),
-            xmlGenerator.GenerateLabel(edge, "assignment"),
-            xmlGenerator.GenerateLabel(edge, "synchronisation")
+            xmlGenerator.GenerateGuardLabel(edge),
+            xmlGenerator.GenerateAssignmentLabel(edge),
+            xmlGenerator.GenerateSynchronizationLabel(edge)
         ];
 
         Transition transition = xmlGenerator.GenerateTransition(edge);
@@ -361,7 +361,7 @@ public sealed class XmlGeneratorTest
     public void WriteLabelTest()
     {
         XmlGenerator xmlGenerator = new();
-        Label label = new("guard", "0<a<=10");
+        Label label = new(LabelKind.Guard, "0<a<=10");
 
         const string expected = "<label kind=\"guard\">0&lt;a&lt;=10</label>";
         StringBuilder sb = new();
