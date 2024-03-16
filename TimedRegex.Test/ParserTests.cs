@@ -107,6 +107,15 @@ public sealed class ParserTests
         Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(1));
     }
 
+    [TestCase("A(B)")]
+    [TestCase("AB")]
+    public void ParseConcatenationRightSideTest(string input)
+    {
+        Tokenizer tokenizer = new(input);
+        IAstNode astNode = Parser.Parse(tokenizer);
+        Assert.IsInstanceOf<Concatenation>(astNode);
+    }
+
     [Test]
     public void ParseAbsorbedConcatenationTest() 
     {

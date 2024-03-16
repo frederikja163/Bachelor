@@ -70,65 +70,20 @@ namespace TimedRegex.Parsing
         private static IAstNode ParseConcatenation(Tokenizer tokenizer)
         {
             IAstNode left = ParseInterval(tokenizer);
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
-            {
-                return left;
-            }
             if (tokenizer.Next.Type == TokenType.Absorb)
             {
                 Token token = tokenizer.GetNext();
                 IAstNode? r = ParseConcatenation(tokenizer);
                 return new AbsorbedConcatenation(left, r, token);
             }
-            if (tokenizer.Next.Type == TokenType.Match)
+            // This if statement needs to be updated with every possible first-token after a concatenation.
+            // Could there possibly be a better way to do this?
+            if (tokenizer.Next.Type == TokenType.Match || tokenizer.Next.Type == TokenType.ParenthesisStart)
             {
                 IAstNode right = ParseConcatenation(tokenizer);
                 return new Concatenation(left, right);
             }
             return left;
-        }
-
-        private static IAstNode ParseUnary(Tokenizer tokenizer)
-        {
-            IAstNode child = ParseMatch(tokenizer);
-            if (tokenizer.Next.Type == TokenType.EndOfInput)
-            {
-                return child;
-            }
-            TokenType? peek = tokenizer.TryPeek(1, out Token? token) ? token.Type : null;
-            switch (tokenizer.Next.Type, peek)
-            {
-                case (TokenType.Iterator, not TokenType.Absorb):
-                    return new Iterator(child, tokenizer.GetNext());
-
-                case (TokenType.GuaranteedIterator, not TokenType.Absorb):
-                    return new GuaranteedIterator(child, tokenizer.GetNext());
-
-                case (TokenType.Iterator, TokenType.Absorb):
-                    return new AbsorbedIterator(child, tokenizer.GetNext(2));
-
-                case (TokenType.GuaranteedIterator, TokenType.Absorb):
-                    return new AbsorbedGuaranteedIterator(child, tokenizer.GetNext(2));
-
-                default:
-                    return child;
-            }
-        }
-
-        // TODO: Might require further development to support "matchAny".
-        private static IAstNode ParseMatch(Tokenizer tokenizer)
-        {
-            if (tokenizer.Next.Type == TokenType.ParenthesisStart)
-            {
-                tokenizer.Skip();
-                IAstNode block = ParseRename(tokenizer);
-
-                tokenizer.Expect(TimedRegexErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
-                tokenizer.Skip();
-                return block;
-            }
-            tokenizer.Expect(TimedRegexErrorType.ExpectedMatch, TokenType.Match);
-            return new Match(tokenizer.GetNext());
         }
 
         private static IAstNode ParseInterval(Tokenizer tokenizer)
@@ -158,6 +113,48 @@ namespace TimedRegex.Parsing
                 number = (number * 10) + (tokenizer.GetNext().Match - '0');
             }
             return number;
+        }
+
+        private static IAstNode ParseUnary(Tokenizer tokenizer)
+        {
+            IAstNode child = ParseMatch(tokenizer);
+            if (tokenizer.Next.Type == TokenType.EndOfInput)
+            {
+                return child;
+            }
+            TokenType? peek = tokenizer.TryPeek(1, out Token? token) ? token.Type : null;
+            switch (tokenizer.Next.Type, peek)
+            {
+                case (TokenType.Iterator, not TokenType.Absorb):
+                    return new Iterator(child, tokenizer.GetNext());
+
+                case (TokenType.GuaranteedIterator, not TokenType.Absorb):
+                    return new GuaranteedIterator(child, tokenizer.GetNext());
+
+                case (TokenType.Iterator, TokenType.Absorb):
+                    return new AbsorbedIterator(child, tokenizer.GetNext(2));
+
+                case (TokenType.GuaranteedIterator, TokenType.Absorb):
+                    return new AbsorbedGuaranteedIterator(child, tokenizer.GetNext(2));
+
+                default:
+                    return child;
+            }
+        }
+
+        private static IAstNode ParseMatch(Tokenizer tokenizer)
+        {
+            if (tokenizer.Next.Type == TokenType.ParenthesisStart)
+            {
+                tokenizer.Skip();
+                IAstNode block = ParseRename(tokenizer);
+
+                tokenizer.Expect(TimedRegexErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
+                tokenizer.Skip();
+                return block;
+            }
+            tokenizer.Expect(TimedRegexErrorType.ExpectedMatch, TokenType.Match);
+            return new Match(tokenizer.GetNext());
         }
     }
 }
