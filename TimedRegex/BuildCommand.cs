@@ -60,7 +60,7 @@ internal sealed class BuildCommand
 
         IGenerator generator = Format switch
         {
-            OutputFormat.Uppaal => new XmlGenerator(),
+            OutputFormat.Uppaal => new XmlGenerator(false),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))
         };
         
