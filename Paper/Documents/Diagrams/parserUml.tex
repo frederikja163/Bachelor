@@ -1,0 +1,28 @@
+\scalebox{0.8}{\begin{tikzpicture}
+    %interfaces
+    \umlclass[x=0,y=-3]{IAstNode}{token: Token}{}
+
+    %classes
+    \umlclass[x=0,y=-6]{IBinary}{left: IAstNode}{right: IAstNode}
+    \umlclass[x=3.5,y=-6]{IUnary}{child: IAstNode}{}
+    \umlclass[x=6.5,y=-6]{Match}{}{}
+    \umlclass[x=9,y=-6]{Epsilon}{}{}
+    \umlsimpleclass[x=3.5,y=-8,draw=none,fill=none,alias=unarydots,scale=2]{...}
+    \umlsimpleclass[x=3.5,y=-8,fill=none,draw=none,alias=phantomunary]{ }
+    \umlsimpleclass[x=0,y=-8,fill=none,draw=none,scale=2]{...}
+    \umlsimpleclass[x=0,y=-8,fill=none,draw=none,alias=phantombinary]{ }
+
+    %transitions
+    \umlVHVinherit[arm1=1.5cm]{IUnary}{IAstNode}
+    \umlVHVinherit[]{IBinary}{IAstNode}
+    \umlVHVinherit[arm1=1.5cm]{Match}{IAstNode}
+    \umlVHVinherit[arm1=1.5cm]{Epsilon}{IAstNode}
+    \umlVHVinherit[arm1=0.5cm]{phantomunary}{IUnary}
+    \umlVHVinherit[arm1=0.5cm]{phantombinary}{IBinary}
+
+    \umlcompo[anchor1=120,anchor2=east,arg1=1,arg2=1,geometry=|-,pos2=1.8]{IUnary}{IAstNode}
+
+    \umlCNassoc[arg1=2]{IAstNode}{-3,-3}{-3,-6}
+    \umlCNcompo[arg1=1]{IBinary}{-3,-6}{-3,-6}
+
+\end{tikzpicture}}
