@@ -1,0 +1,33 @@
+$\bracket[\varphi_1\vee\varphi_2]=\left\{\begin{array}{ll}
+    \bracket[(\epsilon\cdot\varphi_1)\cup\varphi_2] & (q_1,\phi_1,p_1,a,s_1)\in\Delta_1 \\
+    \bracket[\varphi_1\cup(\epsilon\cdot\varphi_2)] & (q_2,\phi_2,p_2,a,s_2)\in\Delta_2 \\
+    (Q,C_1\cup C_2,\Delta,\Sigma,s,F) & otherwise \\
+    \end{array}\right.
+    $
+    
+    Where
+    
+    $\forall q_1\in Q_1 \wedge q_1\neq s_1\exists q_1\in Q$
+    
+    $\forall q_2\in Q_2 \wedge q_2\neq s_2\exists q_2\in Q$
+    
+    $\exists s \in Q$
+    %$Q=\{q|(q\in Q_1\vee q\in Q_2)\wedge q\neq s_1\wedge q\neq s_2\}\cup\{s\}$
+    
+    and
+    
+    $\forall (q_1,\phi_1,p_1,a,q_1')\in\Delta_1\wedge q_1\neq s_1\exists(q_1,\phi_1,p_1,a,q_1')\in\Delta$
+    
+    $\forall (q_2,\phi_2,p_2,a,q_2')\in\Delta_2\wedge q_2\neq s_2\exists(q_2,\phi_2,p_2,a,q_2')\in\Delta$
+    
+    $\forall (s_1,\phi_1,p_1,a,q_1')\in\Delta_1\exists(s,\phi_1,p_1,a,q_1')\in\Delta$
+    
+    $\forall (s_2,\phi_2,p_2,a,q_2')\in\Delta_2\exists(s,\phi_2,p_2,a,q_2')\in\Delta$
+    
+    and
+    
+    $\forall f_1\in F_1 \wedge f_1\neq s_1\exists f_1\in F$
+    
+    $\forall f_2\in F_2 \wedge f_2\neq s_2\exists f_2\in F$
+    
+    $f_1=s_1\vee f_2=s_2 \implies s \in F$
