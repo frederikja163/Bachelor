@@ -34,15 +34,6 @@ internal sealed class UppaalGenerator : IGenerator
     internal void AddAutomatonToNta(Nta nta, TimedAutomaton automaton)
     {
         nta.AddTemplate(GenerateTemplate(automaton, nta.NewTemplateId()));
-        nta.AddDeclaration(GenerateDeclaration(automaton));
-    }
-
-    private Declaration GenerateDeclaration(TimedAutomaton automaton)
-    {
-        return new Declaration(automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
-            automaton.GetAlphabet()
-                    .Where(x => x != '\0')
-                    .Select(s => s.ToString()));
     }
 
     private Template GenerateTemplate(TimedAutomaton automaton, int id)

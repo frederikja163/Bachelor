@@ -57,8 +57,8 @@ public sealed class UppaalGeneratorTest
                 id8
             });
 
-        nta.AddTemplate(ta1);
-        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<string>()));
+        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
+        nta = new Nta(ta1, declaration);
 
         return nta;
     }
@@ -95,7 +95,8 @@ public sealed class UppaalGeneratorTest
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
         UppaalGenerator uppaalGenerator = new();
 
-        uppaalGenerator.GenerateFile(path, automaton);
+        uppaalGenerator.AddAutomaton(automaton);
+        uppaalGenerator.GenerateFile(path);
 
         Assert.Multiple(() =>
         {
@@ -280,10 +281,9 @@ public sealed class UppaalGeneratorTest
     public void WriteNtaTest()
     {
         UppaalGenerator uppaalGenerator = new();
-        Nta nta = new();
         Template template = new(new Declaration(), "ta1", "", new List<Location>(), new List<Transition>());
-        nta.AddTemplate(template);
-        nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<string>()));
+        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
+        Nta nta = new(template, declaration);
 
         const string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new();

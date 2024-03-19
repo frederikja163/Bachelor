@@ -33,13 +33,13 @@ internal sealed class Declaration
         }
     }
 
-    internal void AddClock(string clock)
+    internal void AddClocks(IEnumerable<string> clock)
     {
-        _clocks.Add(clock);
+        _clocks.AddRange(clock);
     }
 
-    internal void AddChannel(string channel)
+    internal void AddChannels(IEnumerable<string> channel)
     {
-        _channels.Add(channel);
+        _channels.AddRange(channel);
     }
 }

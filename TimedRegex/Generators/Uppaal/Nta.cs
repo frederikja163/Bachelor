@@ -4,11 +4,17 @@ internal sealed class Nta
 {
     private int _templateId;
     private readonly List<Template> _templates;
+
+    internal Nta(Template template, Declaration declaration)
+    {
+        _templates = new List<Template>() { template };
+        Declaration = declaration;
+    }
     
     internal Nta()
     {
-        Declaration = new Declaration(new List<string>(), new List<string>());
         _templates = new List<Template>();
+        Declaration = new Declaration(new List<string>(), new List<string>());
     }
 
     internal IEnumerable<Template> GetTemplates()
@@ -24,23 +30,12 @@ internal sealed class Nta
         _templates.Add(template);
     }
 
-    internal void AddDeclaration(Declaration declaration)
+    internal void AddAutomaton(TimedAutomaton automaton)
     {
-        foreach (var clock in declaration.GetClocks())
-        {
-            if (!Declaration.GetClocks().Contains(clock))
-            {
-                Declaration.AddClock(clock);
-            }
-        }
-
-        foreach (var channel in declaration.GetChannels())
-        {
-            if (!Declaration.GetChannels().Contains(channel))
-            {
-                Declaration.AddChannel(channel);
-            }
-        }
+        Declaration.AddClocks(automaton.GetClocks().Select(clocks => $"c{clocks.Id}"));
+        Declaration.AddChannels(automaton.GetAlphabet()
+            .Where(x => x != '\0')
+            .Select(s => s.ToString()));
     }
 
     internal int NewTemplateId()
