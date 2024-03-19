@@ -231,9 +231,9 @@ public sealed class UppaalGeneratorTest
 
         List<Label> labels =
         [
-            uppaalGenerator.GenerateGuardLabel(edge),
-            uppaalGenerator.GenerateAssignmentLabel(edge),
-            uppaalGenerator.GenerateSynchronizationLabel(edge)
+            Label.CreateAssignment(edge),
+            Label.CreateGuard(edge),
+            Label.CreateSynchronization(edge)
         ];
 
         Transition transition = uppaalGenerator.GenerateTransition(edge);

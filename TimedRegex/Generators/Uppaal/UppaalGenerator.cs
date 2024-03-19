@@ -55,49 +55,18 @@ internal sealed class UppaalGenerator : IGenerator
 
         if (edge.GetClockRanges().Any())
         {
-            labels.Add(GenerateGuardLabel(edge));
+            labels.Add(Label.CreateGuard(edge));
         }
         if (edge.GetClockResets().Any())
         {
-            labels.Add(GenerateAssignmentLabel(edge));
+            labels.Add(Label.CreateAssignment(edge));
         }
         if (edge.Symbol != '\0')
         {
-            labels.Add(GenerateSynchronizationLabel(edge));
+            labels.Add(Label.CreateSynchronization(edge));
         }
 
         return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
-    }
-
-    internal Label GenerateGuardLabel(Edge edge)
-    {
-        return new Label(LabelKind.Guard, string.Join(" && ", GenerateGuard(edge)));
-    }
-
-    internal Label GenerateSynchronizationLabel(Edge edge)
-    {
-        return new Label(LabelKind.Synchronisation, $"{edge.Symbol}?");
-    }
-
-    internal Label GenerateAssignmentLabel(Edge edge)
-    {
-        return new Label(LabelKind.Synchronisation, string.Join(", ", GenerateAssignment(edge)));
-    }
-
-    private IEnumerable<string> GenerateGuard(Edge edge)
-    {
-        foreach ((Clock clock, Range range) in edge.GetClockRanges())
-        {
-            yield return $"(c{clock.Id} >= {range.Start} && c{clock.Id} < {range.End})";
-        }
-    }
-
-    private IEnumerable<string> GenerateAssignment(Edge edge)
-    {
-        foreach (Clock clock in edge.GetClockResets())
-        {
-            yield return $"c{clock.Id} = 0";
-        }
     }
     
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)
