@@ -40,33 +40,8 @@ internal sealed class UppaalGenerator : IGenerator
     {
         return new Template(new(), $"ta{id}",
             $"loc{automaton.InitialLocation!.Id}",
-            automaton.GetStates().Select(GenerateLocation),
-            automaton.GetEdges().Select(GenerateTransition));
-    }
-
-    internal Location GenerateLocation(State state)
-    {
-        return new Location($"id{state.Id}", $"loc{state.Id}{(state.IsFinal ? "Final" : "")}", new List<Label>());
-    }
-    
-    internal Transition GenerateTransition(Edge edge)
-    {
-        List<Label> labels = new();
-
-        if (edge.GetClockRanges().Any())
-        {
-            labels.Add(Label.CreateGuard(edge));
-        }
-        if (edge.GetClockResets().Any())
-        {
-            labels.Add(Label.CreateAssignment(edge));
-        }
-        if (edge.Symbol != '\0')
-        {
-            labels.Add(Label.CreateSynchronization(edge));
-        }
-
-        return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
+            automaton.GetStates().Select(s => new Location(s)),
+            automaton.GetEdges().Select(e => new Transition(e)));
     }
     
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)

@@ -24,8 +24,6 @@ public sealed class UppaalGeneratorTest
 
     private static Nta CreateTestNta()
     {
-        Nta nta = new();
-
         Location id0 = new("id0", "id0", Enumerable.Empty<Label>());
         Location id1 = new("id1", "id1", Enumerable.Empty<Label>());
         Location id2 = new("id2", "id2", Enumerable.Empty<Label>());
@@ -58,7 +56,7 @@ public sealed class UppaalGeneratorTest
             });
 
         Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
-        nta = new Nta(ta1, declaration);
+        Nta nta = new(ta1, declaration);
 
         return nta;
     }
@@ -167,13 +165,11 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void GenerateLocationTest()
     {
-        UppaalGenerator uppaalGenerator = new();
-
         List<Location> locations =
         [
-            uppaalGenerator.GenerateLocation(new State(0, false)),
-            uppaalGenerator.GenerateLocation(new State(1, false)),
-            uppaalGenerator.GenerateLocation(new State(2, false))
+          new Location(new State(0, false)),
+          new Location(new State(1, false)),
+          new Location(new State(2, false))
         ];
 
         Assert.That(locations, Has.Count.EqualTo(3));
@@ -195,13 +191,11 @@ public sealed class UppaalGeneratorTest
     [TestCase(true, 2, 3)]
     public void GenerateTransitionTest(bool locationIdIsName, int from, int to)
     {
-        UppaalGenerator uppaalGenerator = new();
-
         List<Transition> transitions =
         [
-            uppaalGenerator.GenerateTransition(new Edge(0, new State(from, false), new State(to, false), 'A')),
-            uppaalGenerator.GenerateTransition(new Edge(1, new State(from, false), new State(to, false), 'B')),
-            uppaalGenerator.GenerateTransition(new Edge(2, new State(from, false), new State(to, false), '\0'))
+            new Transition(new Edge(0, new State(from, false), new State(to, false), 'A')),
+            new Transition(new Edge(1, new State(from, false), new State(to, false), 'B')),
+            new Transition(new Edge(2, new State(from, false), new State(to, false), '\0'))
         ];
 
         Assert.That(transitions, Has.Count.EqualTo(3));
@@ -219,7 +213,6 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void GenerateLabelTest()
     {
-        UppaalGenerator uppaalGenerator = new();
         Clock clock1 = new(0);
         Clock clock2 = new(1);
         Edge edge = new(2, new State(0, false), new State(1, false), 'a');
@@ -236,7 +229,7 @@ public sealed class UppaalGeneratorTest
             Label.CreateSynchronization(edge)
         ];
 
-        Transition transition = uppaalGenerator.GenerateTransition(edge);
+        Transition transition = new Transition(edge);
 
         Assert.Multiple(() =>
         {
@@ -251,10 +244,9 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void GenerateEmptyLabelTest()
     {
-        UppaalGenerator uppaalGenerator = new();
         Edge edge = new(2, new State(0, false), new State(1, false), '\0');
 
-        Transition transition = uppaalGenerator.GenerateTransition(edge);
+        Transition transition = new Transition(edge);
 
         Assert.That(transition.GetLabels(), Is.Empty);
     }

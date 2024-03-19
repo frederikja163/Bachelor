@@ -33,4 +33,24 @@ internal sealed class Template
             yield return transition;
         }
     }
+    
+    internal Transition GenerateTransition(Edge edge)
+    {
+        List<Label> labels = new();
+
+        if (edge.GetClockRanges().Any())
+        {
+            labels.Add(Label.CreateGuard(edge));
+        }
+        if (edge.GetClockResets().Any())
+        {
+            labels.Add(Label.CreateAssignment(edge));
+        }
+        if (edge.Symbol != '\0')
+        {
+            labels.Add(Label.CreateSynchronization(edge));
+        }
+
+        return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
+    }
 }
