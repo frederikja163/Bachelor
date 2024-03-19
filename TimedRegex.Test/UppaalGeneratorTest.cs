@@ -2,22 +2,22 @@ using System.Text;
 using System.Xml;
 using NUnit.Framework;
 using TimedRegex.Generators;
-using TimedRegex.Generators.Xml;
+using TimedRegex.Generators.Uppaal;
 using Contains = NUnit.Framework.Contains;
-using Location = TimedRegex.Generators.Xml.Location;
+using Location = TimedRegex.Generators.Uppaal.Location;
 
 namespace TimedRegex.Test;
 
-public sealed class XmlGeneratorTest
+public sealed class UppaalGeneratorTest
 {
     private static Nta GenerateTestNta()
     {
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
 
         Nta nta = new();
 
-        xmlGenerator.AddAutomatonToNta(nta, automaton);
+        uppaalGenerator.AddAutomatonToNta(nta, automaton);
 
         return nta;
     }
@@ -67,13 +67,13 @@ public sealed class XmlGeneratorTest
     public void GenerateXmlFromNtaTest()
     {
         Nta nta = GenerateTestNta();
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
 
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteNta(xmlWriter, nta);
+            uppaalGenerator.WriteNta(xmlWriter, nta);
         }
 
         Assert.That(sb.ToString(), Is.Not.Empty);
@@ -93,9 +93,9 @@ public sealed class XmlGeneratorTest
     {
         string path = Path.GetTempFileName();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
 
-        xmlGenerator.GenerateFile(path, automaton);
+        uppaalGenerator.GenerateFile(path, automaton);
 
         Assert.Multiple(() =>
         {
@@ -110,10 +110,10 @@ public sealed class XmlGeneratorTest
     public void UpdateNtaTest()
     {
         Nta nta = GenerateTestNta();
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
 
-        xmlGenerator.AddAutomatonToNta(nta, automaton);
+        uppaalGenerator.AddAutomatonToNta(nta, automaton);
 
         Assert.Multiple(() =>
         {
@@ -166,13 +166,13 @@ public sealed class XmlGeneratorTest
     [Test]
     public void GenerateLocationTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
 
         List<Location> locations =
         [
-            xmlGenerator.GenerateLocation(new State(0, false)),
-            xmlGenerator.GenerateLocation(new State(1, false)),
-            xmlGenerator.GenerateLocation(new State(2, false))
+            uppaalGenerator.GenerateLocation(new State(0, false)),
+            uppaalGenerator.GenerateLocation(new State(1, false)),
+            uppaalGenerator.GenerateLocation(new State(2, false))
         ];
 
         Assert.That(locations, Has.Count.EqualTo(3));
@@ -194,13 +194,13 @@ public sealed class XmlGeneratorTest
     [TestCase(true, 2, 3)]
     public void GenerateTransitionTest(bool locationIdIsName, int from, int to)
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
 
         List<Transition> transitions =
         [
-            xmlGenerator.GenerateTransition(new Edge(0, new State(from, false), new State(to, false), 'A')),
-            xmlGenerator.GenerateTransition(new Edge(1, new State(from, false), new State(to, false), 'B')),
-            xmlGenerator.GenerateTransition(new Edge(2, new State(from, false), new State(to, false), '\0'))
+            uppaalGenerator.GenerateTransition(new Edge(0, new State(from, false), new State(to, false), 'A')),
+            uppaalGenerator.GenerateTransition(new Edge(1, new State(from, false), new State(to, false), 'B')),
+            uppaalGenerator.GenerateTransition(new Edge(2, new State(from, false), new State(to, false), '\0'))
         ];
 
         Assert.That(transitions, Has.Count.EqualTo(3));
@@ -218,7 +218,7 @@ public sealed class XmlGeneratorTest
     [Test]
     public void GenerateLabelTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Clock clock1 = new(0);
         Clock clock2 = new(1);
         Edge edge = new(2, new State(0, false), new State(1, false), 'a');
@@ -230,12 +230,12 @@ public sealed class XmlGeneratorTest
 
         List<Label> labels =
         [
-            xmlGenerator.GenerateGuardLabel(edge),
-            xmlGenerator.GenerateAssignmentLabel(edge),
-            xmlGenerator.GenerateSynchronizationLabel(edge)
+            uppaalGenerator.GenerateGuardLabel(edge),
+            uppaalGenerator.GenerateAssignmentLabel(edge),
+            uppaalGenerator.GenerateSynchronizationLabel(edge)
         ];
 
-        Transition transition = xmlGenerator.GenerateTransition(edge);
+        Transition transition = uppaalGenerator.GenerateTransition(edge);
 
         Assert.Multiple(() =>
         {
@@ -250,10 +250,10 @@ public sealed class XmlGeneratorTest
     [Test]
     public void GenerateEmptyLabelTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Edge edge = new(2, new State(0, false), new State(1, false), '\0');
 
-        Transition transition = xmlGenerator.GenerateTransition(edge);
+        Transition transition = uppaalGenerator.GenerateTransition(edge);
 
         Assert.That(transition.GetLabels(), Is.Empty);
     }
@@ -261,15 +261,15 @@ public sealed class XmlGeneratorTest
     [Test]
     public void GenerateXmlTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Nta nta = CreateTestNta();
         const string expected =
             "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition ref=\"id5\">\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition ref=\"id6\">\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition ref=\"id7\">\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition ref=\"id8\">\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteNta(xmlWriter, nta);
+            uppaalGenerator.WriteNta(xmlWriter, nta);
         }
 
         Assert.That(sb.ToString(), Is.Not.EqualTo(""));
@@ -279,7 +279,7 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteNtaTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Nta nta = new();
         Template template = new(new Declaration(), "ta1", "", new List<Location>(), new List<Transition>());
         nta.AddTemplate(template);
@@ -288,9 +288,9 @@ public sealed class XmlGeneratorTest
         const string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteNta(xmlWriter, nta);
+            uppaalGenerator.WriteNta(xmlWriter, nta);
         }
 
         Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -299,7 +299,7 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteTemplateTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Template template = new(
             new Declaration(new List<string>(), new List<string>()),
             "ta1",
@@ -315,9 +315,9 @@ public sealed class XmlGeneratorTest
         const string expected = "<template>\n  <name>ta1</name>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteTemplate(xmlWriter, template);
+            uppaalGenerator.WriteTemplate(xmlWriter, template);
         }
 
         Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -326,15 +326,15 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteLocationTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Location location = new("id0", "loc1", new List<Label>());
 
         const string expected = "<location id=\"id0\">\n  <name>loc1</name>\n</location>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteLocation(xmlWriter, location);
+            uppaalGenerator.WriteLocation(xmlWriter, location);
         }
 
         Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -343,15 +343,15 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteTransitionTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Transition transition = new("id2", "id1", "id2", new List<Label>());
 
         const string expected = "<transition ref=\"id2\">\n  <source ref=\"id1\" />\n  <target ref=\"id2\" />\n</transition>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteTransition(xmlWriter, transition);
+            uppaalGenerator.WriteTransition(xmlWriter, transition);
         }
 
         Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -360,15 +360,15 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteLabelTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Label label = new(LabelKind.Guard, "0<a<=10");
 
         const string expected = "<label kind=\"guard\">0&lt;a&lt;=10</label>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteLabel(xmlWriter, label);
+            uppaalGenerator.WriteLabel(xmlWriter, label);
         }
 
         Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -377,15 +377,15 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteDeclarationTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Declaration declaration = new(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
 
         const string expected = "<declaration>clock c1, c2;chan x, y;</declaration>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteDeclaration(xmlWriter, declaration);
+            uppaalGenerator.WriteDeclaration(xmlWriter, declaration);
         }
 
         Assert.That(sb.ToString(), Is.EqualTo(expected));
@@ -394,16 +394,16 @@ public sealed class XmlGeneratorTest
     [Test]
     public void LineEndingsTest()
     {
-        XmlGenerator xmlGenerator = new();
+        UppaalGenerator uppaalGenerator = new();
         Location location = new("id0", "loc1", new List<Label>());
 
         const string crlf = "<location id=\"id0\">\r\n  <name>loc1</name>\r\n</location>";
         const string lf = "<location id=\"id0\">\n  <name>loc1</name>\n</location>";
         StringBuilder sb = new();
 
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
-            xmlGenerator.WriteLocation(xmlWriter, location);
+            uppaalGenerator.WriteLocation(xmlWriter, location);
         }
 
         Assert.That(sb.ToString(), Is.Not.EqualTo(crlf));

@@ -1,4 +1,4 @@
-namespace TimedRegex.Generators.Xml;
+namespace TimedRegex.Generators.Uppaal;
 
 internal sealed class Template
 {

@@ -1,9 +1,11 @@
 using System.Xml;
 
-namespace TimedRegex.Generators.Xml;
+namespace TimedRegex.Generators.Uppaal;
 
-internal sealed class XmlGenerator : IGenerator
+internal sealed class UppaalGenerator : IGenerator
 {
+    private readonly Nta _nta = new Nta();
+    
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
         Indent = true,
@@ -11,21 +13,22 @@ internal sealed class XmlGenerator : IGenerator
         NewLineChars = "\n"
     };
 
-    public void GenerateFile(string filePath, TimedAutomaton automaton)
+    public void AddAutomaton(TimedAutomaton automaton)
     {
-        using FileStream fs = File.Open(filePath, FileMode.Append);
-        GenerateFile(fs, automaton);
+        AddAutomatonToNta(_nta, automaton);
     }
 
-    public void GenerateFile(Stream stream, TimedAutomaton automaton)
+    public void GenerateFile(string filePath)
     {
-        Nta nta = new();
+        using FileStream fs = File.Open(filePath, FileMode.Append);
+        GenerateFile(fs);
+    }
 
-        AddAutomatonToNta(nta, automaton);
-
+    public void GenerateFile(Stream stream)
+    {
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
-        WriteNta(xmlWriter, nta);
+        WriteNta(xmlWriter, _nta);
     }   
 
     internal void AddAutomatonToNta(Nta nta, TimedAutomaton automaton)

@@ -2,6 +2,8 @@ namespace TimedRegex.Generators;
 
 internal interface IGenerator
 {
-    internal void GenerateFile(string fileName, TimedAutomaton automaton);
-    internal void GenerateFile(Stream stream, TimedAutomaton automaton);
+    internal void AddAutomaton(TimedAutomaton automaton);
+    
+    internal void GenerateFile(string fileName);
+    internal void GenerateFile(Stream stream);
 }
