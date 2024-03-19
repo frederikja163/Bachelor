@@ -30,7 +30,7 @@ internal sealed class Label
 
     internal static Label CreateAssignment(Edge edge)
     {
-        return new Label(LabelKind.Synchronisation, string.Join(", ", GenerateAssignment(edge)));
+        return new Label(LabelKind.Assignment, string.Join(", ", GenerateAssignment(edge)));
     }
 
     private static IEnumerable<string> GenerateGuard(Edge edge)

@@ -13,11 +13,9 @@ public sealed class UppaalGeneratorTest
     private static Nta GenerateTestNta()
     {
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
-        UppaalGenerator uppaalGenerator = new();
-
         Nta nta = new();
 
-        uppaalGenerator.AddAutomatonToNta(nta, automaton);
+        nta.AddAutomaton(automaton);
 
         return nta;
     }
@@ -109,10 +107,9 @@ public sealed class UppaalGeneratorTest
     public void UpdateNtaTest()
     {
         Nta nta = GenerateTestNta();
-        UppaalGenerator uppaalGenerator = new();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
 
-        uppaalGenerator.AddAutomatonToNta(nta, automaton);
+        nta.AddAutomaton(automaton);
 
         Assert.Multiple(() =>
         {
@@ -224,8 +221,8 @@ public sealed class UppaalGeneratorTest
 
         List<Label> labels =
         [
-            Label.CreateAssignment(edge),
             Label.CreateGuard(edge),
+            Label.CreateAssignment(edge),
             Label.CreateSynchronization(edge)
         ];
 

@@ -15,7 +15,7 @@ internal sealed class UppaalGenerator : IGenerator
 
     public void AddAutomaton(TimedAutomaton automaton)
     {
-        AddAutomatonToNta(_nta, automaton);
+        _nta.AddAutomaton(automaton);
     }
 
     public void GenerateFile(string filePath)
@@ -29,19 +29,6 @@ internal sealed class UppaalGenerator : IGenerator
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, _nta);
-    }   
-
-    internal void AddAutomatonToNta(Nta nta, TimedAutomaton automaton)
-    {
-        nta.AddTemplate(GenerateTemplate(automaton, nta.NewTemplateId()));
-    }
-
-    private Template GenerateTemplate(TimedAutomaton automaton, int id)
-    {
-        return new Template(new(), $"ta{id}",
-            $"loc{automaton.InitialLocation!.Id}",
-            automaton.GetStates().Select(s => new Location(s)),
-            automaton.GetEdges().Select(e => new Transition(e)));
     }
     
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)

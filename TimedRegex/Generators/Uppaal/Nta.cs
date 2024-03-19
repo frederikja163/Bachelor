@@ -36,9 +36,15 @@ internal sealed class Nta
         Declaration.AddChannels(automaton.GetAlphabet()
             .Where(x => x != '\0')
             .Select(s => s.ToString()));
+        
+        
+        _templates.Add(new (new(), $"ta{NewTemplateId()}",
+            $"loc{automaton.InitialLocation!.Id}",
+            automaton.GetStates().Select(s => new Location(s)),
+            automaton.GetEdges().Select(e => new Transition(e))));
     }
 
-    internal int NewTemplateId()
+    private int NewTemplateId()
     {
         return _templateId++;
     }
