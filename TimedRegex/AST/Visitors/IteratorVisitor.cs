@@ -17,9 +17,9 @@ internal sealed class IteratorVisitor : IAstVisitor
     public void Visit(AbsorbedIterator absorbedIterator)
     {
         IAstNode child = _stack.Pop();
-        Epsilon epsilon = new Epsilon(absorbedIterator.Token);
-        AbsorbedGuaranteedIterator guaranteedIterator = new AbsorbedGuaranteedIterator(child, absorbedIterator.Token);
-        Union union = new Union(guaranteedIterator, epsilon, absorbedIterator.Token);
+        Epsilon epsilon = new(absorbedIterator.Token);
+        AbsorbedGuaranteedIterator guaranteedIterator = new(child, absorbedIterator.Token);
+        Union union = new(guaranteedIterator, epsilon, absorbedIterator.Token);
         _stack.Push(union);
     }
 
@@ -48,15 +48,15 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(Interval interval)
     {
-        _stack.Push(new Interval(_stack.Pop(), interval.StartInterval, interval.EndInterval, interval.StartInclusive, interval.EndInclusive, interval.Token));
+        _stack.Push(new Interval(_stack.Pop(), interval.Token, interval.StartInterval, interval.EndInterval, interval.StartInclusive, interval.EndInclusive));
     }
 
     public void Visit(Iterator iterator)
     {
         IAstNode child = _stack.Pop();
-        Epsilon epsilon = new Epsilon(iterator.Token);
-        GuaranteedIterator guaranteedIterator = new GuaranteedIterator(child, iterator.Token);
-        Union union = new Union(guaranteedIterator, epsilon, iterator.Token);
+        Epsilon epsilon = new(iterator.Token);
+        GuaranteedIterator guaranteedIterator = new(child, iterator.Token);
+        Union union = new(guaranteedIterator, epsilon, iterator.Token);
         _stack.Push(union);
     }
 
@@ -67,7 +67,7 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(Rename rename)
     {
-        _stack.Push(new Rename(rename.GetReplaceList(), _stack.Pop(), rename.Token));
+        _stack.Push(new Rename(_stack.Pop(), rename.Token, rename.GetReplaceList()));
     }
 
     public void Visit(Union union)

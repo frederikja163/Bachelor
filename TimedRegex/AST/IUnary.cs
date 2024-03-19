@@ -2,5 +2,5 @@
 
 internal interface IUnary : IAstNode
 {
-    public IAstNode Child { get; }
+    internal IAstNode Child { get; }
 }

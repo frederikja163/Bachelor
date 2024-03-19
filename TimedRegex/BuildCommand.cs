@@ -1,11 +1,10 @@
 using System.Diagnostics;
 using CommandLine;
-using CommandLine.Text;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
 using TimedRegex.Generators.Xml;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 using Parser = TimedRegex.Parsing.Parser;
 
 namespace TimedRegex;
@@ -19,7 +18,7 @@ internal enum OutputFormat
 internal sealed class BuildCommand
 {
     [Value(0, Default = null, MetaName = "expression", HelpText = "The timed regular expression to run, defaults to stdin.")]
-    public string? RegularExpression { get; set; } = null;
+    public string? RegularExpression { get; set; }
     
     [Option('f', "format", Default = OutputFormat.Uppaal, HelpText = "The output format.")]
     public OutputFormat Format { get; set; }
@@ -45,40 +44,37 @@ internal sealed class BuildCommand
             }
             RegularExpression = Console.ReadLine();
         }
-        Tokenizer tokenizer = new Tokenizer(RegularExpression);
+        Tokenizer tokenizer = new(RegularExpression);
         IAstNode root = Parser.Parse(tokenizer);
 
-        ValidIntervalVisitor validIntervalVisitor = new ValidIntervalVisitor();
+        ValidIntervalVisitor validIntervalVisitor = new();
         root.Accept(validIntervalVisitor);
 
-        IteratorVisitor iteratorVisitor = new IteratorVisitor();
+        IteratorVisitor iteratorVisitor = new();
         root.Accept(iteratorVisitor);
         root = iteratorVisitor.GetNode();
 
-        AutomatonGeneratorVisitor automatonGeneratorVisitor = new AutomatonGeneratorVisitor();
+        AutomatonGeneratorVisitor automatonGeneratorVisitor = new();
         root.Accept(automatonGeneratorVisitor);
         TimedAutomaton timedAutomaton = automatonGeneratorVisitor.GetAutomaton();
 
         IGenerator generator = Format switch
         {
-            OutputFormat.Uppaal => new XmlGenerator(false),
+            OutputFormat.Uppaal => new XmlGenerator(),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))
         };
         
         if (Output is null && NoOpen)
         {
-            using MemoryStream stream = new MemoryStream();
+            using MemoryStream stream = new();
             generator.GenerateFile(stream, timedAutomaton);
             stream.Seek(0, SeekOrigin.Begin);
-            using StreamReader sr = new StreamReader(stream);
+            using StreamReader sr = new(stream);
             Console.WriteLine(sr.ReadToEnd());
         }
         else
         {
-            if (Output is null)
-            {
-                Output = Path.GetTempFileName();
-            }
+            Output ??= Path.GetTempFileName();
             generator.GenerateFile(Output, timedAutomaton);
         }
 

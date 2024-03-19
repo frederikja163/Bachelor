@@ -1,11 +1,11 @@
 ﻿using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.AST;
 
 internal sealed class AbsorbedIterator : IUnary
 {
-    public AbsorbedIterator(IAstNode child, Token token)
+    internal AbsorbedIterator(IAstNode child, Token token)
     {
         Child = child;
         Token = token;
@@ -13,6 +13,7 @@ internal sealed class AbsorbedIterator : IUnary
 
     public IAstNode Child { get; }
     public Token Token { get; }
+    
     public void Accept(IAstVisitor visitor)
     {
         Child.Accept(visitor);

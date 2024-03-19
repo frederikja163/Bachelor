@@ -1,22 +1,9 @@
-using System.Text;
 using System.Xml;
 
 namespace TimedRegex.Generators.Xml;
 
 internal sealed class XmlGenerator : IGenerator
 {
-    private readonly bool _locationIdIsName;
-
-    internal XmlGenerator()
-    {
-        _locationIdIsName = true;
-    }
-
-    internal XmlGenerator(bool locationIdIsName)
-    {
-        _locationIdIsName = locationIdIsName;
-    }
-
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
         Indent = true,
@@ -32,16 +19,16 @@ internal sealed class XmlGenerator : IGenerator
 
     public void GenerateFile(Stream stream, TimedAutomaton automaton)
     {
-        Nta nta = new Nta();
+        Nta nta = new();
 
-        UpdateNta(nta, automaton);
+        AddAutomatonToNta(nta, automaton);
 
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
         WriteNta(xmlWriter, nta);
     }   
 
-    internal void UpdateNta(Nta nta, TimedAutomaton automaton)
+    internal void AddAutomatonToNta(Nta nta, TimedAutomaton automaton)
     {
         nta.AddTemplate(GenerateTemplate(automaton, nta.NewTemplateId()));
         nta.AddDeclaration(GenerateDeclaration(automaton));
@@ -49,81 +36,58 @@ internal sealed class XmlGenerator : IGenerator
 
     private Declaration GenerateDeclaration(TimedAutomaton automaton)
     {
-        IEnumerable<string> clocks = automaton.GetClocks().Select(clocks => $"c{clocks.Id}").ToList();
-        IEnumerable<string> channels = automaton.GetAlphabet()
-            .Where(x => x != '\0')
-            .Select(s => s.ToString())
-            .ToList();
-
-        return new Declaration(clocks, channels);
+        return new Declaration(automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
+            automaton.GetAlphabet()
+                    .Where(x => x != '\0')
+                    .Select(s => s.ToString()));
     }
 
     private Template GenerateTemplate(TimedAutomaton automaton, int id)
     {
-        Declaration declaration = new Declaration();
-        string name = $"ta{id}";
-        string init = $"id{automaton.InitialLocation!.Id}";
-
-        State[] automatonLocations = automaton.GetStates().ToArray();
-        Edge[] automatonEdges = automaton.GetEdges().ToArray();
-        Location[] templateLocations = new Location[automatonLocations.Length];
-        Transition[] transitions = new Transition[automatonEdges.Length];
-
-        for (int i = 0; i < automatonLocations.Length; i++)
-        {
-            templateLocations[i] = GenerateLocation(automatonLocations[i]);
-        }
-
-        for (int i = 0; i < automatonEdges.Length; i++)
-        {
-            transitions[i] = GenerateTransition(automatonEdges[i]);
-        }
-
-        return new Template(declaration, name, init, templateLocations, transitions);
+        return new Template(new(), $"ta{id}",
+            $"loc{automaton.InitialLocation!.Id}",
+            automaton.GetStates().Select(GenerateLocation),
+            automaton.GetEdges().Select(GenerateTransition));
     }
 
     internal Location GenerateLocation(State state)
     {
-        string id = $"id{state.Id}";
-        string name = $"{(_locationIdIsName ? "" : $"loc{state.Id}")}{(state.IsFinal ? "Final" : "")}";
-
-        return new Location(id, name, new List<Label>());
+        return new Location($"id{state.Id}", $"loc{state.Id}{(state.IsFinal ? "Final" : "")}", new List<Label>());
     }
     
     internal Transition GenerateTransition(Edge edge)
     {
-        string id = $"id{edge.Id}";
-        string source = $"id{edge.From.Id}";
-        string target = $"id{edge.To.Id}";
+        List<Label> labels = new();
 
-        List<Label> labels = [];
+        if (edge.GetClockRanges().Any())
+        {
+            labels.Add(GenerateGuardLabel(edge));
+        }
+        if (edge.GetClockResets().Any())
+        {
+            labels.Add(GenerateAssignmentLabel(edge));
+        }
+        if (edge.Symbol != '\0')
+        {
+            labels.Add(GenerateSynchronizationLabel(edge));
+        }
 
-        if (edge.GetClockRanges().Any()) labels.Add(GenerateLabel(edge, "guard"));
-        if (edge.GetClockResets().Any()) labels.Add(GenerateLabel(edge, "assignment"));
-        if (edge.Symbol != '\0') labels.Add(GenerateLabel(edge, "synchronisation"));
-
-        return new Transition(id, source, target, labels);
+        return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
     }
 
-    internal Label GenerateLabel(Edge edge, string kind)
+    internal Label GenerateGuardLabel(Edge edge)
     {
-        StringBuilder sb = new();
+        return new Label(LabelKind.Guard, string.Join(" && ", GenerateGuard(edge)));
+    }
 
-        switch (kind)
-        {
-            case "guard":
-                sb.AppendJoin(" && ", GenerateGuard(edge));
-                break;
-            case "synchronisation":
-                sb.Append($"{edge.Symbol}?");
-                break;
-            case "assignment":
-                sb.AppendJoin(", ", GenerateAssignment(edge));
-                // if edge.To.IsFinal, add 
-                break;
-        }
-        
-        return new Label(kind, sb.ToString());
+    internal Label GenerateSynchronizationLabel(Edge edge)
+    {
+        return new Label(LabelKind.Synchronisation, $"{edge.Symbol}?");
+    }
+
+    internal Label GenerateAssignmentLabel(Edge edge)
+    {
+        return new Label(LabelKind.Synchronisation, string.Join(", ", GenerateAssignment(edge)));
     }
 
     private IEnumerable<string> GenerateGuard(Edge edge)
@@ -188,19 +152,19 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteValue(template.Name);
         xmlWriter.WriteEndElement();
 
-        foreach (var location in template.Locations)
+        foreach (var location in template.GetLocations())
         {
             WriteLocation(xmlWriter, location);
         }
 
-        if (template.Locations.Length != 0)
+        if (template.GetLocations().Any())
         {
             xmlWriter.WriteStartElement("init");
             xmlWriter.WriteAttributeString("ref", template.Init);
             xmlWriter.WriteEndElement();
         }
 
-        foreach (var transition in template.Transitions)
+        foreach (var transition in template.GetTransitions())
         {
             WriteTransition(xmlWriter, transition);
         }
@@ -235,7 +199,7 @@ internal sealed class XmlGenerator : IGenerator
         xmlWriter.WriteAttributeString("ref", transition.Target);
         xmlWriter.WriteEndElement();
 
-        foreach (var label in transition.Labels)
+        foreach (var label in transition.GetLabels())
         {
             WriteLabel(xmlWriter, label);
         }
@@ -246,7 +210,7 @@ internal sealed class XmlGenerator : IGenerator
     internal void WriteLabel(XmlWriter xmlWriter, Label label)
     {
         xmlWriter.WriteStartElement("label");
-        xmlWriter.WriteAttributeString("kind", label.Kind);
+        xmlWriter.WriteAttributeString("kind", label.Kind.ToString().ToLower());
         xmlWriter.WriteValue(label.LabelString);
         xmlWriter.WriteEndElement();
     }

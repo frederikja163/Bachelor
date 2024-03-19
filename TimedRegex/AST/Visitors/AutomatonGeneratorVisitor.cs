@@ -15,7 +15,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     
     public void Visit(Epsilon epsilon)
     {
-        TimedAutomaton ta = new TimedAutomaton();
+        TimedAutomaton ta = new();
         State initial = ta.AddState(false, true);
         State final = ta.AddState(true);
         Clock clock = ta.AddClock();
@@ -32,7 +32,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 
-        TimedAutomaton ta = new TimedAutomaton(left, right);
+        TimedAutomaton ta = new(left, right);
         foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
@@ -66,7 +66,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 
-        TimedAutomaton ta = new TimedAutomaton(left, right);
+        TimedAutomaton ta = new(left, right);
         foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
@@ -84,9 +84,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     public void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
     {
         TimedAutomaton child = _stack.Pop();
-        TimedAutomaton ta = new TimedAutomaton(child, excludeLocations: true, excludeEdges: true);
+        TimedAutomaton ta = new(child, excludeLocations: true, excludeEdges: true);
         
-        SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new SortedSetEqualityComparer<Clock>();
+        SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new();
         List<SortedSet<Clock>> clockPowerSet = child.GetClocks().PowerSet().Select(s => s.ToSortedSet()).ToList();
         Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = child.GetStates()
             .ToDictionary(l => l,
@@ -124,9 +124,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     public void Visit(Intersection intersection)
     {
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
-        TimedAutomaton ta = new TimedAutomaton(left, right, excludeLocations: true, excludeEdges: true);
+        TimedAutomaton ta = new(left, right, excludeLocations: true, excludeEdges: true);
 
-        Dictionary<(State, State), State> newLocs = new Dictionary<(State, State), State>();
+        Dictionary<(State, State), State> newLocs = new();
         foreach (State lState in left.GetStates())
         {
             foreach (State rState in right.GetStates())
@@ -199,7 +199,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        Range range = new Range(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval + (interval.EndInclusive ? 1 : 0));
+        Range range = new(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval + (interval.EndInclusive ? 1 : 0));
         State newFinal = ta.AddState(true);
         Clock clock = ta.AddClock();
 
@@ -225,7 +225,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
     public void Visit(Match match)
     {
-        TimedAutomaton ta = new TimedAutomaton();
+        TimedAutomaton ta = new();
         
         State initial = ta.AddState(newInitial: true);
         State final = ta.AddState(true);
@@ -245,7 +245,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge edge in ta.GetEdges())
         {
             char? symbol = edge.Symbol;
-            if (symbol is not null && replaceList.TryGetValue(symbol.Value, out char newSymbol))
+            if (replaceList.TryGetValue(symbol.Value, out char newSymbol))
             {
                 edge.Symbol = newSymbol;
             }
@@ -257,7 +257,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     public void Visit(Union union)
     {
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
-        TimedAutomaton ta = new TimedAutomaton(left, right);
+        TimedAutomaton ta = new(left, right);
 
         Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
         

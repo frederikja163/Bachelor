@@ -10,34 +10,34 @@ namespace TimedRegex.Test;
 
 public sealed class XmlGeneratorTest
 {
-    private static Nta GenerateTestNta(bool locationIdIsName = true)
+    private static Nta GenerateTestNta()
     {
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
-        XmlGenerator xmlGenerator = new XmlGenerator(locationIdIsName);
+        XmlGenerator xmlGenerator = new();
 
-        Nta nta = new Nta();
+        Nta nta = new();
 
-        xmlGenerator.UpdateNta(nta, automaton);
+        xmlGenerator.AddAutomatonToNta(nta, automaton);
 
         return nta;
     }
 
     private static Nta CreateTestNta()
     {
-        Nta nta = new Nta();
+        Nta nta = new();
 
-        Location id0 = new Location("id0", "id0", Enumerable.Empty<Label>());
-        Location id1 = new Location("id1", "id1", Enumerable.Empty<Label>());
-        Location id2 = new Location("id2", "id2", Enumerable.Empty<Label>());
-        Location id3 = new Location("id3", "id3", Enumerable.Empty<Label>());
-        Location id4 = new Location("id4", "id4", Enumerable.Empty<Label>());
+        Location id0 = new("id0", "id0", Enumerable.Empty<Label>());
+        Location id1 = new("id1", "id1", Enumerable.Empty<Label>());
+        Location id2 = new("id2", "id2", Enumerable.Empty<Label>());
+        Location id3 = new("id3", "id3", Enumerable.Empty<Label>());
+        Location id4 = new("id4", "id4", Enumerable.Empty<Label>());
 
-        Transition id5 = new Transition("id5", "id0", "id1", Enumerable.Empty<Label>());
-        Transition id6 = new Transition("id6", "id0", "id2", Enumerable.Empty<Label>());
-        Transition id7 = new Transition("id7", "id1", "id3", new[] { new Label("guard", "1 <= c1 < 5") });
-        Transition id8 = new Transition("id8", "id2", "id4", new[] { new Label("guard", "1 <= c2 < 3") });
+        Transition id5 = new("id5", "id0", "id1", Enumerable.Empty<Label>());
+        Transition id6 = new("id6", "id0", "id2", Enumerable.Empty<Label>());
+        Transition id7 = new("id7", "id1", "id3", new[] { new Label(LabelKind.Guard, "1 <= c1 < 5") });
+        Transition id8 = new("id8", "id2", "id4", new[] { new Label(LabelKind.Guard, "1 <= c2 < 3") });
 
-        Template ta1 = new Template(new Declaration(new List<string>(),
+        Template ta1 = new(new Declaration(new List<string>(),
                 new List<string>()),
             "ta1",
             "id0",
@@ -64,10 +64,10 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
-    public void GenerateXmlFromNta()
+    public void GenerateXmlFromNtaTest()
     {
         Nta nta = GenerateTestNta();
-        XmlGenerator xmlGenerator = new XmlGenerator();
+        XmlGenerator xmlGenerator = new();
 
         StringBuilder sb = new();
 
@@ -89,11 +89,11 @@ public sealed class XmlGeneratorTest
     }
 
     [Test]
-    public void GenerateXmlFileFromNta()
+    public void GenerateXmlFileFromNtaTest()
     {
         string path = Path.GetTempFileName();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
-        XmlGenerator xmlGenerator = new XmlGenerator();
+        XmlGenerator xmlGenerator = new();
 
         xmlGenerator.GenerateFile(path, automaton);
 
@@ -110,10 +110,10 @@ public sealed class XmlGeneratorTest
     public void UpdateNtaTest()
     {
         Nta nta = GenerateTestNta();
-        XmlGenerator xmlGenerator = new XmlGenerator();
+        XmlGenerator xmlGenerator = new();
         TimedAutomaton automaton = TimedAutomatonTest.CreateAutomaton();
 
-        xmlGenerator.UpdateNta(nta, automaton);
+        xmlGenerator.AddAutomatonToNta(nta, automaton);
 
         Assert.Multiple(() =>
         {
@@ -139,13 +139,13 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = GenerateTestNta();
 
-        IEnumerable<string> clocks = nta.Declaration.GetClocks();
-        IEnumerable<string> channels = nta.Declaration.GetChannels();
-
-        Assert.That(clocks.Count(), Is.EqualTo(2));
-        Assert.That(channels.Count(), Is.EqualTo(2));
-        Assert.That(channels, Contains.Item("A"));
-        Assert.That(channels, Contains.Item("A"));
+        List<string> channels = nta.Declaration.GetChannels().ToList();
+        Assert.Multiple(() =>
+        {
+            Assert.That(nta.Declaration.GetClocks().Count(), Is.EqualTo(2));
+            Assert.That(channels.Count(), Is.EqualTo(2));
+            Assert.That(channels, Contains.Item("A"));
+        });
     }
 
     [Test]
@@ -158,16 +158,15 @@ public sealed class XmlGeneratorTest
         {
             Assert.That(template.Name, Is.EqualTo("ta0"));
             Assert.That(template.Init, Is.Not.EqualTo(""));
-            Assert.That(template.Locations, Has.Length.EqualTo(5));
-            Assert.That(template.Transitions, Has.Length.EqualTo(4));
+            Assert.That(template.GetLocations().Count(), Is.EqualTo(5));
+            Assert.That(template.GetTransitions().Count(), Is.EqualTo(4));
         });
     }
 
-    [TestCase(false)]
-    [TestCase(true)]
-    public void GenerateLocationTest(bool locationIdIsName)
+    [Test]
+    public void GenerateLocationTest()
     {
-        XmlGenerator xmlGenerator = new(locationIdIsName);
+        XmlGenerator xmlGenerator = new();
 
         List<Location> locations =
         [
@@ -182,7 +181,7 @@ public sealed class XmlGeneratorTest
             Assert.Multiple(() =>
             {
                 Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
-                Assert.That(locations[i].Name, Is.EqualTo(locationIdIsName ? String.Empty : $"loc{i}"));
+                Assert.That(locations[i].Name, Is.EqualTo($"loc{i}"));
             });
         }
     }
@@ -195,7 +194,7 @@ public sealed class XmlGeneratorTest
     [TestCase(true, 2, 3)]
     public void GenerateTransitionTest(bool locationIdIsName, int from, int to)
     {
-        XmlGenerator xmlGenerator = new(locationIdIsName);
+        XmlGenerator xmlGenerator = new();
 
         List<Transition> transitions =
         [
@@ -220,8 +219,8 @@ public sealed class XmlGeneratorTest
     public void GenerateLabelTest()
     {
         XmlGenerator xmlGenerator = new();
-        Clock clock1 = new Clock(0);
-        Clock clock2 = new Clock(1);
+        Clock clock1 = new(0);
+        Clock clock2 = new(1);
         Edge edge = new(2, new State(0, false), new State(1, false), 'a');
 
         edge.AddClockRange(clock1, new Range(1, 5));
@@ -231,9 +230,9 @@ public sealed class XmlGeneratorTest
 
         List<Label> labels =
         [
-            xmlGenerator.GenerateLabel(edge, "guard"),
-            xmlGenerator.GenerateLabel(edge, "assignment"),
-            xmlGenerator.GenerateLabel(edge, "synchronisation")
+            xmlGenerator.GenerateGuardLabel(edge),
+            xmlGenerator.GenerateAssignmentLabel(edge),
+            xmlGenerator.GenerateSynchronizationLabel(edge)
         ];
 
         Transition transition = xmlGenerator.GenerateTransition(edge);
@@ -245,7 +244,7 @@ public sealed class XmlGeneratorTest
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
 
-        Assert.That(transition.Labels, Is.Not.Empty);
+        Assert.That(transition.GetLabels(), Is.Not.Empty);
     }
 
     [Test]
@@ -256,17 +255,17 @@ public sealed class XmlGeneratorTest
 
         Transition transition = xmlGenerator.GenerateTransition(edge);
 
-        Assert.That(transition.Labels, Is.Empty);
+        Assert.That(transition.GetLabels(), Is.Empty);
     }
 
     [Test]
     public void GenerateXmlTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
+        XmlGenerator xmlGenerator = new();
         Nta nta = CreateTestNta();
         const string expected =
             "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition ref=\"id5\">\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition ref=\"id6\">\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition ref=\"id7\">\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition ref=\"id8\">\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -280,14 +279,14 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteNtaTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
-        Nta nta = new Nta();
-        Template template = new Template(new Declaration(), "ta1", "", new List<Location>(), new List<Transition>());
+        XmlGenerator xmlGenerator = new();
+        Nta nta = new();
+        Template template = new(new Declaration(), "ta1", "", new List<Location>(), new List<Transition>());
         nta.AddTemplate(template);
         nta.AddDeclaration(new Declaration(new List<string> { "c1", "c2" }, new List<string>()));
 
         const string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -300,21 +299,21 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteTemplateTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
-        Template template = new Template(
+        XmlGenerator xmlGenerator = new();
+        Template template = new(
             new Declaration(new List<string>(), new List<string>()),
             "ta1",
             "id0",
             new List<Location>
             {
-                new Location("id0",
+                new("id0",
                     "id0",
                     new List<Label>())
             },
             new List<Transition>());
 
         const string expected = "<template>\n  <name>ta1</name>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -327,11 +326,11 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteLocationTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
-        Location location = new Location("id0", "loc1", new List<Label>());
+        XmlGenerator xmlGenerator = new();
+        Location location = new("id0", "loc1", new List<Label>());
 
         const string expected = "<location id=\"id0\">\n  <name>loc1</name>\n</location>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -344,11 +343,11 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteTransitionTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
-        Transition transition = new Transition("id2", "id1", "id2", new List<Label>());
+        XmlGenerator xmlGenerator = new();
+        Transition transition = new("id2", "id1", "id2", new List<Label>());
 
         const string expected = "<transition ref=\"id2\">\n  <source ref=\"id1\" />\n  <target ref=\"id2\" />\n</transition>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -361,11 +360,11 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteLabelTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
-        Label label = new Label("guard", "0<a<=10");
+        XmlGenerator xmlGenerator = new();
+        Label label = new(LabelKind.Guard, "0<a<=10");
 
         const string expected = "<label kind=\"guard\">0&lt;a&lt;=10</label>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -378,11 +377,11 @@ public sealed class XmlGeneratorTest
     [Test]
     public void WriteDeclarationTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
-        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
+        XmlGenerator xmlGenerator = new();
+        Declaration declaration = new(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
 
         const string expected = "<declaration>clock c1, c2;chan x, y;</declaration>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -395,12 +394,12 @@ public sealed class XmlGeneratorTest
     [Test]
     public void LineEndingsTest()
     {
-        XmlGenerator xmlGenerator = new XmlGenerator();
-        Location location = new Location("id0", "loc1", new List<Label>());
+        XmlGenerator xmlGenerator = new();
+        Location location = new("id0", "loc1", new List<Label>());
 
         const string crlf = "<location id=\"id0\">\r\n  <name>loc1</name>\r\n</location>";
         const string lf = "<location id=\"id0\">\n  <name>loc1</name>\n</location>";
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, XmlGenerator.XmlSettings))
         {
@@ -415,7 +414,7 @@ public sealed class XmlGeneratorTest
     public void ContainsLocationsTest()
     {
         Nta nta = CreateTestNta();
-        Location[] locations = nta.GetTemplates().First().Locations;
+        Location[] locations = nta.GetTemplates().First().GetLocations().ToArray();
 
         Assert.That(locations, Has.Length.EqualTo(5));
         for (int i = 0; i < locations.Length; i++)
@@ -424,7 +423,7 @@ public sealed class XmlGeneratorTest
             {
                 Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
                 Assert.That(locations[i].Name, Is.EqualTo($"id{i}"));
-                Assert.That(locations[i].Labels, Is.Empty);
+                Assert.That(locations[i].GetLabels(), Is.Empty);
             });
         }
     }
@@ -434,9 +433,9 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = CreateTestNta();
         List<Template> templates = nta.GetTemplates().ToList();
-        Transition[] transitions = templates[0].Transitions;
+        Transition[] transitions = templates[0].GetTransitions().ToArray();
 
-        Assert.That(templates[0].Transitions, Has.Length.EqualTo(4));
+        Assert.That(transitions, Has.Length.EqualTo(4));
 
         for (int i = 0; i < transitions.Length; i++)
         {
@@ -452,11 +451,12 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = CreateTestNta();
         List<Template> templates = nta.GetTemplates().ToList();
+        List<Transition> transitions = templates[0].GetTransitions().ToList();
         
         Assert.Multiple(() =>
         {
-            Assert.That(templates[0].Transitions[transitionIndex].Source, Is.EqualTo(src));
-            Assert.That(templates[0].Transitions[transitionIndex].Target, Is.EqualTo(dst));
+            Assert.That(transitions[transitionIndex].Source, Is.EqualTo(src));
+            Assert.That(transitions[transitionIndex].Target, Is.EqualTo(dst));
         });
     }
 
@@ -466,7 +466,8 @@ public sealed class XmlGeneratorTest
     {
         Nta nta = CreateTestNta();
         List<Template> templates = nta.GetTemplates().ToList();
+        List<Transition> transitions = templates[0].GetTransitions().ToList();
 
-        Assert.That(templates[0].Transitions[transitionIndex].Labels[0].LabelString, Is.EqualTo(guard));
+        Assert.That(transitions[transitionIndex].GetLabels().First().LabelString, Is.EqualTo(guard));
     }
 }

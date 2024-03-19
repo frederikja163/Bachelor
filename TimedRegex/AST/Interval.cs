@@ -1,18 +1,18 @@
 ﻿using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.AST;
 
 internal sealed class Interval : IUnary
 {
-    public Interval(IAstNode child, int startInterval, int endInterval, bool startInclusive, bool endInclusive, Token token)
+    internal Interval(IAstNode child, Token token, int startInterval, int endInterval, bool startInclusive, bool endInclusive)
     {
+        Child = child;
+        Token = token;
         StartInterval = startInterval;
         EndInterval = endInterval;
         StartInclusive = startInclusive;
         EndInclusive = endInclusive;
-        Token = token;
-        Child = child;
     }
 
     internal int StartInterval { get; }
@@ -21,6 +21,7 @@ internal sealed class Interval : IUnary
     internal bool EndInclusive { get; }
     public IAstNode Child { get; }
     public Token Token { get; }
+    
     public void Accept(IAstVisitor visitor)
     {
         Child.Accept(visitor);
