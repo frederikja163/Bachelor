@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using TimedRegex.Generators;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 

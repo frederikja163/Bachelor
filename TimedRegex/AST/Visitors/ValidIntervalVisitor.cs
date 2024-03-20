@@ -28,8 +28,8 @@ internal sealed class ValidIntervalVisitor : IAstVisitor
 
     public void Visit(Interval interval)
     {
-        int startInclusive = interval.StartInterval + (interval.StartInclusive ? 0 : 1);
-        int endInclusive = interval.EndInterval + (interval.EndInclusive ? 0 : -1);
+        float startInclusive = interval.Range.StartInterval + (interval.Range.StartInclusive ? 0 : 1);
+        float endInclusive = interval.Range.EndInterval + (interval.Range.EndInclusive ? 0 : -1);
         if (startInclusive > endInclusive)
         {
             throw new TimedRegexCompileException(TimedRegexErrorType.IntervalStartBiggerThanEnd, $"Interval start value {startInclusive} must be smaller than or equal to end value {endInclusive}.", interval.Token);

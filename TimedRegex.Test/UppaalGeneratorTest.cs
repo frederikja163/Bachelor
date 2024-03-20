@@ -214,8 +214,8 @@ public sealed class UppaalGeneratorTest
         Clock clock2 = new(1);
         Edge edge = new(2, new State(0, false), new State(1, false), 'a');
 
-        edge.AddClockRange(clock1, new Range(1, 5));
-        edge.AddClockRange(clock2, new Range(2, 3));
+        edge.AddClockRange(clock1, new Generators.Range(1, 5));
+        edge.AddClockRange(clock2, new Generators.Range(2, 3));
         edge.AddClockReset(clock1);
         edge.AddClockReset(clock2);
 
@@ -231,6 +231,35 @@ public sealed class UppaalGeneratorTest
         Assert.Multiple(() =>
         {
             Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 < 5) && (c1 >= 2 && c1 < 3)"));
+            Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
+            Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
+        });
+
+        Assert.That(transition.GetLabels(), Is.Not.Empty);
+    }
+
+    [Test]
+    public void GenerateLabelExclusiveInclusiveTest()
+    {
+        Clock clock1 = new(0);
+        Clock clock2 = new(1);
+        Edge edge = new(0, new State(1, false), new State(2, true), 'a');
+
+        edge.AddClockRange(clock1, new Generators.Range(2, 7, false, false));
+        edge.AddClockRange(clock2, new Generators.Range(1.15f, 7.12f, true, false));
+
+        List<Label> labels =
+        [
+            Label.CreateGuard(edge),
+            Label.CreateAssignment(edge),
+            Label.CreateSynchronization(edge)
+        ];
+
+        Transition transition = new Transition(edge);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2 && c0 < 7) && (c1 >= 1.15 && c1 < 7.12)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });

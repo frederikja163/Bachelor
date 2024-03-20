@@ -95,23 +95,26 @@ namespace TimedRegex.Parsing
             }
             Token token = tokenizer.Advance();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
-            int startInterval = ParseNumber(tokenizer);
+            float startInterval = ParseNumber(tokenizer);
             tokenizer.Accept(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalSeparator);
-            int endInterval = ParseNumber(tokenizer);
+            float endInterval = ParseNumber(tokenizer);
             bool endInclusive = tokenizer.AcceptOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose)
                 .Type == TokenType.IntervalClose;
-            return new Interval(child, token, startInterval, endInterval, startInclusive, endInclusive);
+            return new Interval(child, token, new Generators.Range(startInterval, endInterval, startInclusive, endInclusive));
         }
 
-        private static int ParseNumber(Tokenizer tokenizer)
+        private static float ParseNumber(Tokenizer tokenizer)
         {
-            tokenizer.Expect(TimedRegexErrorType.DigitImproperFormat, TokenType.Digit);
-            int number = 0;
-            while (tokenizer.Peek().Type == TokenType.Digit)
+            string str = "";
+            while (tokenizer.Peek().Type != TokenType.IntervalClose || tokenizer.Peek().Type != TokenType.IntervalSeparator)
             {
-                number = (number * 10) + (tokenizer.Advance().Match - '0');
+                str.Append(tokenizer.Advance().Match);
             }
-            return number;
+            if (float.TryParse(str, out float value))
+            {
+                return value;
+            }
+            throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval number was improper format.", tokenizer.Peek());
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)

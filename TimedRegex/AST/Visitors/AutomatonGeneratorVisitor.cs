@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using TimedRegex.Extensions;
 using TimedRegex.Generators;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.AST.Visitors;
 
@@ -20,7 +21,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         State final = ta.AddState(true);
         Clock clock = ta.AddClock();
         Edge edge = ta.AddEdge(initial, final, '\0');
-        edge.AddClockRange(clock, 0..1);
+        edge.AddClockRange(clock, new Range(0, 1));
         _stack.Push(ta);
     }
 
@@ -199,7 +200,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        Range range = new(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval + (interval.EndInclusive ? 1 : 0));
+        Range range = new(interval.Range.StartInterval + (interval.Range.StartInclusive ? 0 : 1), interval.Range.EndInterval + (interval.Range.EndInclusive ? 1 : 0));
         State newFinal = ta.AddState(true);
         Clock clock = ta.AddClock();
 
@@ -263,9 +264,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         
         ta.AddState(newInitial: true);
         Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, '\0');
-        lEdge.AddClockRange(clock, 0..1);
+        lEdge.AddClockRange(clock, new Range(0,1));
         Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, '\0');
-        rEdge.AddClockRange(clock, 0..1);
+        rEdge.AddClockRange(clock, new Range(0, 1));
         
         _stack.Push(ta);
     }

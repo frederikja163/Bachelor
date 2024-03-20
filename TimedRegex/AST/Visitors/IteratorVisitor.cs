@@ -48,7 +48,7 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(Interval interval)
     {
-        _stack.Push(new Interval(_stack.Pop(), interval.Token, interval.StartInterval, interval.EndInterval, interval.StartInclusive, interval.EndInclusive));
+        _stack.Push(new Interval(_stack.Pop(), interval.Token, new Generators.Range(interval.Range.StartInterval, interval.Range.EndInterval, interval.Range.StartInclusive, interval.Range.EndInclusive)));
     }
 
     public void Visit(Iterator iterator)

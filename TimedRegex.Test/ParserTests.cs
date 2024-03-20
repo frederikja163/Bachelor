@@ -269,8 +269,8 @@ public sealed class ParserTests
         {
             Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
             Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
-            Assert.That(node.StartInclusive, Is.True);
-            Assert.That(node.EndInclusive, Is.True);
+            Assert.That(node.Range.StartInclusive, Is.True);
+            Assert.That(node.Range.EndInclusive, Is.True);
         });
     }
 
@@ -285,8 +285,8 @@ public sealed class ParserTests
         {
             Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
             Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
-            Assert.That(node.StartInclusive, Is.True);
-            Assert.That(node.EndInclusive, Is.False);
+            Assert.That(node.Range.StartInclusive, Is.True);
+            Assert.That(node.Range.EndInclusive, Is.False);
         });
     }
 
@@ -302,8 +302,8 @@ public sealed class ParserTests
         Interval node = (Interval)astNode;
         Assert.Multiple(() =>
         {
-            Assert.That(node.StartInclusive, Is.EqualTo(startInclusive));
-            Assert.That(node.EndInclusive, Is.EqualTo(endExclusive));
+            Assert.That(node.Range.StartInclusive, Is.EqualTo(startInclusive));
+            Assert.That(node.Range.EndInclusive, Is.EqualTo(endExclusive));
         });
     }
 
@@ -314,8 +314,8 @@ public sealed class ParserTests
         Interval node = (Interval)Parser.Parse(tokenizer);
         Assert.Multiple(() =>
         {
-            Assert.That(node.StartInterval, Is.EqualTo(6));
-            Assert.That(node.EndInterval, Is.EqualTo(789));
+            Assert.That(node.Range.StartInterval, Is.EqualTo(6));
+            Assert.That(node.Range.EndInterval, Is.EqualTo(789));
         });
     }
 

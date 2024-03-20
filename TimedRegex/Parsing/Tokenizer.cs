@@ -108,7 +108,6 @@ internal sealed class Tokenizer
             TokenType.RenameStart => "{",
             TokenType.RenameEnd => "}",
             TokenType.RenameSeparator => ",",
-            TokenType.Digit => "a number",
             TokenType.None => "none",
             TokenType.EndOfInput => "end of input",
             TokenType.Unrecognized => "Unrecognized",
