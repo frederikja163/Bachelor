@@ -3,7 +3,7 @@ using CommandLine;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
-using TimedRegex.Generators.Xml;
+using TimedRegex.Generators.Uppaal;
 using TimedRegex.Parsing;
 using Parser = TimedRegex.Parsing.Parser;
 
@@ -60,14 +60,16 @@ internal sealed class BuildCommand
 
         IGenerator generator = Format switch
         {
-            OutputFormat.Uppaal => new XmlGenerator(),
+            OutputFormat.Uppaal => new UppaalGenerator(),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))
         };
+        
+        generator.AddAutomaton(timedAutomaton);
         
         if (Output is null && NoOpen)
         {
             using MemoryStream stream = new();
-            generator.GenerateFile(stream, timedAutomaton);
+            generator.GenerateFile(stream);
             stream.Seek(0, SeekOrigin.Begin);
             using StreamReader sr = new(stream);
             Console.WriteLine(sr.ReadToEnd());
@@ -75,7 +77,7 @@ internal sealed class BuildCommand
         else
         {
             Output ??= Path.GetTempFileName();
-            generator.GenerateFile(Output, timedAutomaton);
+            generator.GenerateFile(Output);
         }
 
         if (!NoOpen)

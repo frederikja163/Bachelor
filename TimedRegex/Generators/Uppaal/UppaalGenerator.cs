@@ -1,9 +1,11 @@
 using System.Xml;
 
-namespace TimedRegex.Generators.Xml;
+namespace TimedRegex.Generators.Uppaal;
 
-internal sealed class XmlGenerator : IGenerator
+internal sealed class UppaalGenerator : IGenerator
 {
+    private readonly Nta _nta = new Nta();
+    
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
         Indent = true,
@@ -11,99 +13,22 @@ internal sealed class XmlGenerator : IGenerator
         NewLineChars = "\n"
     };
 
-    public void GenerateFile(string filePath, TimedAutomaton automaton)
+    public void AddAutomaton(TimedAutomaton automaton)
+    {
+        _nta.AddAutomaton(automaton);
+    }
+
+    public void GenerateFile(string filePath)
     {
         using FileStream fs = File.Open(filePath, FileMode.Append);
-        GenerateFile(fs, automaton);
+        GenerateFile(fs);
     }
 
-    public void GenerateFile(Stream stream, TimedAutomaton automaton)
+    public void GenerateFile(Stream stream)
     {
-        Nta nta = new();
-
-        AddAutomatonToNta(nta, automaton);
-
         using XmlWriter xmlWriter = XmlWriter.Create(stream, XmlSettings);
         xmlWriter.WriteStartDocument();
-        WriteNta(xmlWriter, nta);
-    }   
-
-    internal void AddAutomatonToNta(Nta nta, TimedAutomaton automaton)
-    {
-        nta.AddTemplate(GenerateTemplate(automaton, nta.NewTemplateId()));
-        nta.AddDeclaration(GenerateDeclaration(automaton));
-    }
-
-    private Declaration GenerateDeclaration(TimedAutomaton automaton)
-    {
-        return new Declaration(automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
-            automaton.GetAlphabet()
-                    .Where(x => x != '\0')
-                    .Select(s => s.ToString()));
-    }
-
-    private Template GenerateTemplate(TimedAutomaton automaton, int id)
-    {
-        return new Template(new(), $"ta{id}",
-            $"loc{automaton.InitialLocation!.Id}",
-            automaton.GetStates().Select(GenerateLocation),
-            automaton.GetEdges().Select(GenerateTransition));
-    }
-
-    internal Location GenerateLocation(State state)
-    {
-        return new Location($"id{state.Id}", $"loc{state.Id}{(state.IsFinal ? "Final" : "")}", new List<Label>());
-    }
-    
-    internal Transition GenerateTransition(Edge edge)
-    {
-        List<Label> labels = new();
-
-        if (edge.GetClockRanges().Any())
-        {
-            labels.Add(GenerateGuardLabel(edge));
-        }
-        if (edge.GetClockResets().Any())
-        {
-            labels.Add(GenerateAssignmentLabel(edge));
-        }
-        if (edge.Symbol != '\0')
-        {
-            labels.Add(GenerateSynchronizationLabel(edge));
-        }
-
-        return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
-    }
-
-    internal Label GenerateGuardLabel(Edge edge)
-    {
-        return new Label(LabelKind.Guard, string.Join(" && ", GenerateGuard(edge)));
-    }
-
-    internal Label GenerateSynchronizationLabel(Edge edge)
-    {
-        return new Label(LabelKind.Synchronisation, $"{edge.Symbol}?");
-    }
-
-    internal Label GenerateAssignmentLabel(Edge edge)
-    {
-        return new Label(LabelKind.Synchronisation, string.Join(", ", GenerateAssignment(edge)));
-    }
-
-    private IEnumerable<string> GenerateGuard(Edge edge)
-    {
-        foreach ((Clock clock, Range range) in edge.GetClockRanges())
-        {
-            yield return $"(c{clock.Id} >= {range.Start} && c{clock.Id} < {range.End})";
-        }
-    }
-
-    private IEnumerable<string> GenerateAssignment(Edge edge)
-    {
-        foreach (Clock clock in edge.GetClockResets())
-        {
-            yield return $"c{clock.Id} = 0";
-        }
+        WriteNta(xmlWriter, _nta);
     }
     
     internal void WriteNta(XmlWriter xmlWriter, Nta nta)
