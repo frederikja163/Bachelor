@@ -56,8 +56,8 @@ internal sealed class BuildCommand
 
         AutomatonGeneratorVisitor automatonGeneratorVisitor = new();
         root.Accept(automatonGeneratorVisitor);
-        TimedAutomaton timedAutomaton = automatonGeneratorVisitor.GetAutomaton();
-
+        ITimedAutomaton timedAutomaton = automatonGeneratorVisitor.GetAutomaton();
+        
         IGenerator generator = Format switch
         {
             OutputFormat.Uppaal => new UppaalGenerator(),

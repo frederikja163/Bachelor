@@ -17,10 +17,17 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         
         _alphabet = automaton.GetAlphabet().ToHashSet();
         InitialLocation = automaton.InitialLocation is null ? null : newStates[automaton.InitialLocation.Id];
-        _edges = automaton.GetEdges().ToDictionary(_ => edgeId,
-            e => new Edge(edgeId++, newStates[e.From.Id], newStates[e.To.Id], e.Symbol));
+        _edges = automaton.GetEdges().ToDictionary(_ => edgeId, CopyEdge);
         _states = newStates.ToDictionary(kvp => kvp.Value.Id, kvp => kvp.Value);
         _clocks = newClocks.ToDictionary(kvp => kvp.Value.Id, kvp => kvp.Value);
+        
+        Edge CopyEdge(Edge e)
+        {
+            Edge edge = new(edgeId++, newStates[e.From.Id], newStates[e.To.Id], e.Symbol);
+            edge.AddClockResets(e.GetClockResets().Select(c => newClocks[c.Id]));
+            edge.AddClockRanges(e.GetClockRanges().Select(t => (newClocks[t.Item1.Id], t.Item2)));
+            return edge;
+        }
     }
 
     public State? InitialLocation { get; set; }

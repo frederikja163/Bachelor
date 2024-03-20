@@ -13,7 +13,7 @@ internal sealed class UppaalGenerator : IGenerator
         NewLineChars = "\n"
     };
 
-    public void AddAutomaton(TimedAutomaton automaton)
+    public void AddAutomaton(ITimedAutomaton automaton)
     {
         _nta.AddAutomaton(automaton);
     }
