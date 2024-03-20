@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+    \umlclass{TA}{clockCount: int\\edges/locations}{}
+    
+    \umlclass[x=-4, y=-4]{Location}{id: int\\initial: bool\\}{}
+    \umlcompo[geometry=|-|,attr1=0..*|,attr2=1|,pos1=1.8,pos2=0.2]{TA}{Location}
+    
+    \umlclass[y=-4]{Edge}{id: int\\ranges\\resetClocks}{}
+    \umlcompo[geometry=|-|,attr1=|0..*,attr2=1|,pos1=1.8,pos2=0.2]{TA}{Edge}
+    \umlassoc{Edge}{Location}
+
+    \umlclass[x=4,y=-4]{Clock}{id: int}{}
+    \umlcompo[geometry=|-|,attr1=|0..*,attr2=1|,pos1=1.8,pos2=0.2]{TA}{Edge}
+    \umlassoc{Edge}{Clock}
+    
+\end{tikzpicture}
