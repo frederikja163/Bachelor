@@ -1,0 +1,24 @@
+$\bracket[\varphi_1|\varphi_2]=
+\left\{\begin{array}{ll}
+\bracket[(\epsilon\cdot\varphi_1)\cup\varphi_2] & if (q_1,\phi_1,p_1,a,s_1)\in\Delta_1 \\
+\bracket[\varphi_1\cup(\epsilon\cdot\varphi_2)] & if (q_2,\phi_2,p_2,a,s_2)\in\Delta_2 \\
+(Q,C,\Delta,\Sigma,s,F) & otherwise \\
+\end{array}\right.
+$
+
+Where
+
+$f(q,\phi,p,a,q')=
+\left\{\begin{array}{ll}
+(s,\phi,p,a,q') & if q\in{s_1,s_2} \\
+(q,\phi,p,a,q') & otherwise \\
+\end{array}\right.
+$
+
+$Q=Q_1\cup Q_2 \cup {s}\backslash\{s_1,s_2\}$
+
+$C=C_1\cup C_2$
+
+$\Delta=f(\Delta_1\cup\Delta_2)$
+
+$F=F_1\cup F_2\backslash\{s_1,s_2\}$
