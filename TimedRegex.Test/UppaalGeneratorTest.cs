@@ -175,7 +175,7 @@ public sealed class UppaalGeneratorTest
         {
             Assert.Multiple(() =>
             {
-                Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
+                Assert.That(locations[i].Id, Is.EqualTo($"l{i}"));
                 Assert.That(locations[i].Name, Is.EqualTo($"loc{i}"));
             });
         }
@@ -201,9 +201,9 @@ public sealed class UppaalGeneratorTest
         {
             Assert.Multiple(() =>
             {
-                Assert.That(transitions[i].Id, Is.EqualTo($"id{i}"));
-                Assert.That(transitions[i].Source, Is.EqualTo($"id{from}"));
-                Assert.That(transitions[i].Target, Is.EqualTo($"id{to}"));
+                Assert.That(transitions[i].Id, Is.EqualTo($"e{i}"));
+                Assert.That(transitions[i].Source, Is.EqualTo($"l{from}"));
+                Assert.That(transitions[i].Target, Is.EqualTo($"l{to}"));
             });
         }
     }
