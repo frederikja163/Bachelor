@@ -1,8 +1,9 @@
 namespace TimedRegex.Generators;
 
-internal sealed class TimedAutomaton
+internal sealed class TimedAutomaton : ITimedAutomaton
 {
-    private static int _idCount;
+    private static int _locationCount;
+    private static int _edgeCount;
     private static int _clockCount;
 
     private readonly HashSet<char> _alphabet;
@@ -49,24 +50,24 @@ internal sealed class TimedAutomaton
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
-    internal State? InitialLocation { get; set; }
+    public State? InitialLocation { get; internal set; }
 
-    internal IEnumerable<Clock> GetClocks()
+    public IEnumerable<Clock> GetClocks()
     {
         return _clocks.Values;
     }
 
-    internal IEnumerable<Edge> GetEdges()
+    public IEnumerable<Edge> GetEdges()
     {
         return _edges.Values;
     }
 
-    internal IEnumerable<State> GetStates()
+    public IEnumerable<State> GetStates()
     {
         return _states.Values;
     }
-    
-    internal IEnumerable<char> GetAlphabet()
+
+    public IEnumerable<char> GetAlphabet()
     {
         foreach (char c in _alphabet)
         {
@@ -85,7 +86,7 @@ internal sealed class TimedAutomaton
 
     internal State AddState(bool final = false, bool newInitial = false)
     {
-        State state = new(CreateId(), final);
+        State state = new(CreateLocationId(), final);
         
         if (newInitial)
         {
@@ -99,7 +100,7 @@ internal sealed class TimedAutomaton
 
     internal Edge AddEdge(State from, State to, char symbol)
     {
-        Edge edge = new(CreateId(), from, to, symbol);
+        Edge edge = new(CreateEdgeId(), from, to, symbol);
         
         _edges.Add(edge.Id, edge);
         _alphabet.Add(symbol);
@@ -117,9 +118,14 @@ internal sealed class TimedAutomaton
         }
     }
     
-    private static int CreateId()
+    private static int CreateLocationId()
     {
-        return _idCount++;
+        return _locationCount++;
+    }
+
+    private static int CreateEdgeId()
+    {
+        return _edgeCount++;
     }
 
     private static int CreateClockId()
