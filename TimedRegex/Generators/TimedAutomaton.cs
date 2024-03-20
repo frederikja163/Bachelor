@@ -1,6 +1,6 @@
 namespace TimedRegex.Generators;
 
-internal sealed class TimedAutomaton
+internal sealed class TimedAutomaton : ITimedAutomaton
 {
     private static int _locationCount;
     private static int _edgeCount;
@@ -49,30 +49,25 @@ internal sealed class TimedAutomaton
         InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
-
-    internal void CompressIds()
-    {
-        
-    }
     
-    internal State? InitialLocation { get; set; }
+    public State? InitialLocation { get; internal set; }
 
-    internal IEnumerable<Clock> GetClocks()
+    public IEnumerable<Clock> GetClocks()
     {
         return _clocks.Values;
     }
 
-    internal IEnumerable<Edge> GetEdges()
+    public IEnumerable<Edge> GetEdges()
     {
         return _edges.Values;
     }
 
-    internal IEnumerable<State> GetStates()
+    public IEnumerable<State> GetStates()
     {
         return _states.Values;
     }
-    
-    internal IEnumerable<char> GetAlphabet()
+
+    public IEnumerable<char> GetAlphabet()
     {
         foreach (char c in _alphabet)
         {
