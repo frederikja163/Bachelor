@@ -33,7 +33,7 @@ public sealed class AutomatonGeneratorVisitorTest
     {
         AutomatonGeneratorVisitor visitor = new();
         Match('a').Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
@@ -51,7 +51,7 @@ public sealed class AutomatonGeneratorVisitorTest
         Epsilon epsilon = new(Token(TokenType.Match, '\0'));
         AutomatonGeneratorVisitor visitor = new();
         epsilon.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
@@ -70,7 +70,7 @@ public sealed class AutomatonGeneratorVisitorTest
         GuaranteedIterator iterator = new(Interval('a', 0, 5), Token(TokenType.Iterator, '+'));
         AutomatonGeneratorVisitor visitor = new();
         iterator.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(3));
@@ -91,7 +91,7 @@ public sealed class AutomatonGeneratorVisitorTest
         Concatenation concatenation = new(Interval('a', 0, 3), Interval('b', 0, 3));
         AutomatonGeneratorVisitor visitor = new();
         concatenation.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(6));
@@ -112,7 +112,7 @@ public sealed class AutomatonGeneratorVisitorTest
         AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, '+'));
         AutomatonGeneratorVisitor visitor = new();
         absorbedGuaranteedIterator.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(28));
@@ -135,7 +135,7 @@ public sealed class AutomatonGeneratorVisitorTest
         Intersection intersection = new(Interval('a', 1, 3), Interval('a', 2, 5), Token(TokenType.Intersection, '&'));
         AutomatonGeneratorVisitor visitor = new();
         intersection.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(10));
@@ -154,7 +154,7 @@ public sealed class AutomatonGeneratorVisitorTest
         Concatenation concatenation = new(Match('a'), Match('b'));
         AutomatonGeneratorVisitor visitor = new();
         concatenation.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
@@ -171,7 +171,7 @@ public sealed class AutomatonGeneratorVisitorTest
         Union union = new(Match('a'), Match('b'), Token(TokenType.Union, '|'));
         AutomatonGeneratorVisitor visitor = new();
         union.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(5));
@@ -187,7 +187,7 @@ public sealed class AutomatonGeneratorVisitorTest
         Interval interval = Interval('a', 2, 4);
         AutomatonGeneratorVisitor visitor = new();
         interval.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(3));
@@ -208,7 +208,7 @@ public sealed class AutomatonGeneratorVisitorTest
             { new(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) });
         AutomatonGeneratorVisitor visitor = new();
         rename.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(7));
@@ -229,7 +229,7 @@ public sealed class AutomatonGeneratorVisitorTest
             { new(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) });
         AutomatonGeneratorVisitor visitor = new();
         rename.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        ITimedAutomaton ta = visitor.GetAutomaton();
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
         Assert.That(ta.GetStates().Count(), Is.EqualTo(4));
