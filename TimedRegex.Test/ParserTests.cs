@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using TimedRegex.Parsing;
 using TimedRegex.AST;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 
@@ -425,5 +426,28 @@ public sealed class ParserTests
     {
         Tokenizer tokenizer = new(input);
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
+    }
+
+    [TestCase("[1.23;20]", 1.23f, 20, true, true)]
+    [TestCase("]1;1[", 1, 1, false, false)]
+    [TestCase("[1;192.122[", 1, 192.122f, true, false)]
+    public void RangeToStringTest(string expected, float startInterval, float endInterval, bool startInclusive, bool endInclusive)
+    {
+        Range range = new(startInterval, endInterval, startInclusive, endInclusive);
+        Assert.That(range.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void IntervalParseNumberWithPeriod()
+    {
+        Tokenizer tokenizer = new("a[1.45;43.6]");
+        IAstNode astNode = Parser.Parse(tokenizer);
+        Assert.That(astNode, Is.TypeOf<Interval>());
+        Interval node = (Interval)astNode;
+
+        Assert.That(node.Range.StartInclusive, Is.True);
+        Assert.That(node.Range.EndInclusive, Is.True);
+        Assert.That(node.Range.StartInterval, Is.EqualTo(1.45f));
+        Assert.That(node.Range.EndInterval, Is.EqualTo(43.6f));
     }
 }

@@ -230,7 +230,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 < 5) && (c1 >= 2 && c1 < 3)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 <= 5) && (c1 >= 2 && c1 <= 3)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
@@ -251,7 +251,6 @@ public sealed class UppaalGeneratorTest
         List<Label> labels =
         [
             Label.CreateGuard(edge),
-            Label.CreateAssignment(edge),
             Label.CreateSynchronization(edge)
         ];
 
@@ -260,8 +259,7 @@ public sealed class UppaalGeneratorTest
         Assert.Multiple(() =>
         {
             Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2 && c0 < 7) && (c1 >= 1.15 && c1 < 7.12)"));
-            Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
-            Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
+            Assert.That(labels[1].LabelString, Is.EqualTo("a?"));
         });
 
         Assert.That(transition.GetLabels(), Is.Not.Empty);

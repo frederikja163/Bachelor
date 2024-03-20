@@ -1,4 +1,5 @@
-﻿using TimedRegex.AST;
+﻿using System.Text;
+using TimedRegex.AST;
 
 namespace TimedRegex.Parsing
 {
@@ -105,16 +106,20 @@ namespace TimedRegex.Parsing
 
         private static float ParseNumber(Tokenizer tokenizer)
         {
-            string str = "";
-            while (tokenizer.Peek().Type != TokenType.IntervalClose || tokenizer.Peek().Type != TokenType.IntervalSeparator)
+            StringBuilder sb = new();
+            while (!(tokenizer.Peek().Type == TokenType.IntervalClose || tokenizer.Peek().Type == TokenType.IntervalSeparator || tokenizer.Peek().Type == TokenType.IntervalOpen))
             {
-                str.Append(tokenizer.Advance().Match);
+                sb.Append(tokenizer.Advance().Match);
+                if (tokenizer.Peek().Type == TokenType.EndOfInput)
+                {
+                    throw new TimedRegexCompileException(TimedRegexErrorType.IntervalImproperFormat, "Reached end of input before finishing parsing of interval.");
+                }
             }
-            if (float.TryParse(str, out float value))
+            if (float.TryParse(sb.ToString(), out float value))
             {
                 return value;
             }
-            throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval number was improper format.", tokenizer.Peek());
+            throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", tokenizer.Peek());
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
