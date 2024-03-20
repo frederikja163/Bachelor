@@ -2,7 +2,8 @@ namespace TimedRegex.Generators;
 
 internal sealed class TimedAutomaton
 {
-    private static int _idCount;
+    private static int _locationCount;
+    private static int _edgeCount;
     private static int _clockCount;
 
     private readonly HashSet<char> _alphabet;
@@ -48,6 +49,11 @@ internal sealed class TimedAutomaton
         InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
+
+    internal void CompressIds()
+    {
+        
+    }
     
     internal State? InitialLocation { get; set; }
 
@@ -85,7 +91,7 @@ internal sealed class TimedAutomaton
 
     internal State AddState(bool final = false, bool newInitial = false)
     {
-        State state = new(CreateId(), final);
+        State state = new(CreateLocationId(), final);
         
         if (newInitial)
         {
@@ -99,7 +105,7 @@ internal sealed class TimedAutomaton
 
     internal Edge AddEdge(State from, State to, char symbol)
     {
-        Edge edge = new(CreateId(), from, to, symbol);
+        Edge edge = new(CreateEdgeId(), from, to, symbol);
         
         _edges.Add(edge.Id, edge);
         _alphabet.Add(symbol);
@@ -117,9 +123,14 @@ internal sealed class TimedAutomaton
         }
     }
     
-    private static int CreateId()
+    private static int CreateLocationId()
     {
-        return _idCount++;
+        return _locationCount++;
+    }
+
+    private static int CreateEdgeId()
+    {
+        return _edgeCount++;
     }
 
     private static int CreateClockId()
