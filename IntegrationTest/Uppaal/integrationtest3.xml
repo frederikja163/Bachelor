@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>clock c0; chan A, B;</declaration>
+	<template>
+		<name x="5" y="5">ta0</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id0" x="-8" y="-127">
+		</location>
+		<location id="id1" x="153" y="-128">
+		</location>
+		<location id="id2" x="272" y="-127">
+		</location>
+		<location id="id3" x="408" y="-127">
+		</location>
+		<location id="id4" x="535" y="-136">
+		</location>
+		<location id="id5" x="68" y="187">
+		</location>
+		<location id="id6" x="161" y="187">
+		</location>
+		<location id="id7" x="357" y="187">
+		</location>
+		<location id="id8" x="425" y="187">
+		</location>
+		<location id="id9" x="-17" y="187">
+		</location>
+		<location id="id10" x="552" y="187">
+			<name x="542" y="153">loc0Final</name>
+		</location>
+		<location id="id11" x="-34" y="-68">
+		</location>
+		<init ref="id0"/>
+		<transition id="id12">
+			<source ref="id3"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="442" y="-110">A?</label>
+		</transition>
+		<transition id="id13">
+			<source ref="id3"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="382" y="-93">A?</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id0"/>
+			<target ref="id7"/>
+			<label kind="guard" x="68" y="-68">c0 &gt;= 1 &amp;&amp; c0 &lt; 6</label>
+			<label kind="synchronisation" x="68" y="-85">A?</label>
+		</transition>
+		<transition id="id15">
+			<source ref="id0"/>
+			<target ref="id9"/>
+			<label kind="guard" x="-178" y="0">c0 &gt;= 1 &amp;&amp; c0 &lt; 6</label>
+			<label kind="synchronisation" x="-42" y="-17">A?</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id0"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="17" y="-51">A?</label>
+		</transition>
+	</template>
+	<system>system ta0;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>
