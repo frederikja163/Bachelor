@@ -6,7 +6,7 @@ internal static class LinqExtensions
         this IEnumerable<TSource> source, Func<TSource, TKey> keySelector, Func<TSource, TValue> valueSelector)
         where TKey : notnull
     {
-        Dictionary<TKey, List<TValue>> dict = new Dictionary<TKey, List<TValue>>();
+        Dictionary<TKey, List<TValue>> dict = new();
         foreach (TSource s in source)
         {
             TKey key = keySelector(s);
@@ -34,7 +34,7 @@ internal static class LinqExtensions
     internal static IEnumerable<IEnumerable<TSource>> PowerSet<TSource>(this IEnumerable<TSource> source)
     {
         TSource[] set = source.ToArray();
-        List<TSource> rest = new List<TSource>();
+        List<TSource> rest = new();
         return PowerSetRec(set, rest, set.Length);
         
         static IEnumerable<IEnumerable<TSource>> PowerSetRec(TSource[] set, List<TSource> rest, int n)

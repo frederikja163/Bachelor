@@ -12,7 +12,7 @@ public sealed class LinqExtensionsTest
         foreach ((int i, List<int> values) in listDict)
         {
             int expected = i * 5 + 3;
-            Assert.That(values.All(i => i == expected), Is.True);
+            Assert.That(values.All(v => v == expected), Is.True);
         }
     }
 
@@ -20,12 +20,12 @@ public sealed class LinqExtensionsTest
     public void ToSortedListTest()
     {
         SortedSet<int> actual = Enumerable.Range(1, 10).ToSortedSet();
-        SortedSet<int> expected = new SortedSet<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        SortedSet<int> expected = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         Assert.That(actual, Is.EquivalentTo(expected));
     }
 
     [Test]
-    public void PowerSet()
+    public void PowerSetTest()
     {
         List<List<int>> actual = Enumerable.Range(1, 5).PowerSet().Select(s => s.ToList()).ToList();
         

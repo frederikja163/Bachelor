@@ -1,28 +1,23 @@
 namespace TimedRegex.Generators;
 
-internal sealed class TimedAutomaton
+internal sealed class TimedAutomaton : ITimedAutomaton
 {
-    private static int _idCount;
+    private static int _locationCount;
+    private static int _edgeCount;
     private static int _clockCount;
 
     private readonly HashSet<char> _alphabet;
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
-
-    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
+    
+    internal TimedAutomaton()
     {
-        _clocks = !excludeClocks
-            ? left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary()
-            : new Dictionary<int, Clock>();
-        _edges = !excludeEdges
-            ? left._edges.UnionBy(right._edges, kvp => kvp.Key).ToDictionary()
-            : new Dictionary<int, Edge>();
-        _states = !excludeLocations
-            ? left._states.UnionBy(right._states, kvp => kvp.Key).ToDictionary()
-            : new Dictionary<int, State>();
-        InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
-        _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
+        _clocks = new Dictionary<int, Clock>();
+        _edges = new Dictionary<int, Edge>();
+        _states = new Dictionary<int, State>();
+        InitialLocation = null;
+        _alphabet = new HashSet<char>();
     }
     
     internal TimedAutomaton(TimedAutomaton other, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
@@ -39,34 +34,40 @@ internal sealed class TimedAutomaton
         InitialLocation = !excludeLocations ? other.InitialLocation : null;
         _alphabet = other._alphabet.ToHashSet();
     }
-    
-    internal TimedAutomaton()
+
+    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
     {
-        _clocks = new Dictionary<int, Clock>();
-        _edges = new Dictionary<int, Edge>();
-        _states = new Dictionary<int, State>();
-        InitialLocation = null;
-        _alphabet = new HashSet<char>();
+        _clocks = !excludeClocks
+            ? left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, Clock>();
+        _edges = !excludeEdges
+            ? left._edges.UnionBy(right._edges, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, Edge>();
+        _states = !excludeLocations
+            ? left._states.UnionBy(right._states, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, State>();
+        InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
+        _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
-    internal State? InitialLocation { get; set; }
+    public State? InitialLocation { get; internal set; }
 
-    internal IEnumerable<Clock> GetClocks()
+    public IEnumerable<Clock> GetClocks()
     {
         return _clocks.Values;
     }
 
-    internal IEnumerable<Edge> GetEdges()
+    public IEnumerable<Edge> GetEdges()
     {
         return _edges.Values;
     }
 
-    internal IEnumerable<State> GetStates()
+    public IEnumerable<State> GetStates()
     {
         return _states.Values;
     }
-    
-    internal IEnumerable<char> GetAlphabet()
+
+    public IEnumerable<char> GetAlphabet()
     {
         foreach (char c in _alphabet)
         {
@@ -76,7 +77,7 @@ internal sealed class TimedAutomaton
 
     internal Clock AddClock()
     {
-        Clock clock = new Clock(CreateClockId());
+        Clock clock = new(CreateClockId());
 
         _clocks.Add(clock.Id, clock);
         
@@ -85,7 +86,7 @@ internal sealed class TimedAutomaton
 
     internal State AddState(bool final = false, bool newInitial = false)
     {
-        State state = new State(CreateId(), final);
+        State state = new(CreateLocationId(), final);
         
         if (newInitial)
         {
@@ -99,7 +100,7 @@ internal sealed class TimedAutomaton
 
     internal Edge AddEdge(State from, State to, char symbol)
     {
-        Edge edge = new Edge(CreateId(), from, to, symbol);
+        Edge edge = new(CreateEdgeId(), from, to, symbol);
         
         _edges.Add(edge.Id, edge);
         _alphabet.Add(symbol);
@@ -117,9 +118,14 @@ internal sealed class TimedAutomaton
         }
     }
     
-    private static int CreateId()
+    private static int CreateLocationId()
     {
-        return _idCount++;
+        return _locationCount++;
+    }
+
+    private static int CreateEdgeId()
+    {
+        return _edgeCount++;
     }
 
     private static int CreateClockId()

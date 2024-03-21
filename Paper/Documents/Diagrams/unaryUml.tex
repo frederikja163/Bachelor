@@ -1,0 +1,16 @@
+\scalebox{0.8}{\begin{tikzpicture}
+    \umlclass[]{IUnary}{child: IAstNode}{}
+
+    \umlclass[anchor=north,x=12,y=-3]{AbsorbedGuaranteedIterator}{}{}
+    \umlclass[anchor=north,x=7,y=-3]{AbsorbedIterator}{}{}
+    \umlclass[anchor=north,x=5,y=-3]{GuaranteedIterator}{}{}
+    \umlclass[anchor=north,x=0,y=-3]{Interval}{}{}
+    \umlclass[anchor=north,x=-3,y=-3]{Iterator}{}{}
+
+    \umlVHVinherit{AbsorbedGuaranteedIterator}{IUnary}
+    \umlVHVinherit{AbsorbedIterator}{IUnary}
+    \umlVHVinherit{GuaranteedIterator}{IUnary}
+    \umlVHVinherit{Interval}{IUnary}
+    \umlVHVinherit{Iterator}{IUnary}
+
+\end{tikzpicture}}

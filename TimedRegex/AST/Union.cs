@@ -1,11 +1,11 @@
 ﻿using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.AST;
 
 internal sealed class Union : IBinary
 { 
-    public Union(IAstNode leftNode, IAstNode rightNode, Token token)
+    internal Union(IAstNode leftNode, IAstNode rightNode, Token token)
     {
         LeftNode = leftNode;
         RightNode = rightNode;
@@ -15,6 +15,7 @@ internal sealed class Union : IBinary
     public IAstNode LeftNode { get; }
     public IAstNode RightNode { get; }
     public Token Token { get; }
+    
     public void Accept(IAstVisitor visitor)
     {
         LeftNode.Accept(visitor);

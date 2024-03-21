@@ -1,11 +1,11 @@
 ﻿using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.AST;
 
 internal sealed class Concatenation : IBinary
 {
-    public Concatenation(IAstNode leftNode, IAstNode rightNode)
+    internal Concatenation(IAstNode leftNode, IAstNode rightNode)
     {
         LeftNode = leftNode;
         RightNode = rightNode;
@@ -14,6 +14,7 @@ internal sealed class Concatenation : IBinary
     public IAstNode LeftNode { get; }
     public IAstNode RightNode { get; }
     public Token Token => LeftNode.Token;
+    
     public void Accept(IAstVisitor visitor)
     {
         LeftNode.Accept(visitor);

@@ -7,7 +7,7 @@ public sealed class TimedAutomatonTest
 {
     internal static TimedAutomaton CreateAutomaton()
     {
-        TimedAutomaton timedAutomaton = new TimedAutomaton();
+        TimedAutomaton timedAutomaton = new();
 
         Clock clock1 = timedAutomaton.AddClock();
         Clock clock2 = timedAutomaton.AddClock();
@@ -32,14 +32,32 @@ public sealed class TimedAutomatonTest
 
         return timedAutomaton;
     }
+    
+    [Test]
+    public void CreatedCompressedIdsTest()
+    {
+        CompressedTimedAutomaton cta = new(CreateAutomaton());
+
+        Edge[] edges = cta.GetEdges().OrderBy(e => e.Id).ToArray();
+        Assert.That(edges[^1].Id, Is.EqualTo(edges.Length - 1));
+        Assert.That(edges.Length, Is.EqualTo(4));
+        
+        State[] states = cta.GetStates().OrderBy(s => s.Id).ToArray();
+        Assert.That(states[^1].Id, Is.EqualTo(states.Length - 1));
+        Assert.That(states.Length, Is.EqualTo(5));
+        
+        Clock[] clocks = cta.GetClocks().OrderBy(c => c.Id).ToArray();
+        Assert.That(clocks[^1].Id, Is.EqualTo(clocks.Length - 1));
+        Assert.That(clocks.Length, Is.EqualTo(2));
+    }
 
     [Test]
     public void CreatedIdsTest()
     {
         TimedAutomaton automaton = CreateAutomaton();
         
-        Assert.That(automaton.GetEdges().ToHashSet().Count(), Is.EqualTo(4));
-        Assert.That(automaton.GetStates().ToHashSet().Count(), Is.EqualTo(5));
+        Assert.That(automaton.GetEdges().Count(), Is.EqualTo(4));
+        Assert.That(automaton.GetStates().Count(), Is.EqualTo(5));
     }
     
     [Test]
@@ -47,7 +65,7 @@ public sealed class TimedAutomatonTest
     {
         TimedAutomaton automaton = CreateAutomaton();
         
-        Assert.That(automaton.GetClocks().ToHashSet().Count(), Is.EqualTo(2));
+        Assert.That(automaton.GetClocks().Count(), Is.EqualTo(2));
     }
 
     [Test]
