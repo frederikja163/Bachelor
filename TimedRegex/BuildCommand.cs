@@ -82,19 +82,31 @@ internal sealed class BuildCommand
 
         if (!NoOpen)
         {
-            string? uppaalPath = Environment.GetEnvironmentVariable("Path")?.Split(";")
-                .FirstOrDefault(p => p.ToLower().Contains("uppaal"));
-            if (uppaalPath is null)
+            // On windows paths are relative to the uppaal installation.
+            // This means we need to look for uppaal in the path use the relative path.
+            // https://github.com/frederikja163/Bachelor/issues/241
+            // https://github.com/UPPAALModelChecker/UPPAAL-Meta/issues/252
+            // 21/03/2021
+            if (OperatingSystem.IsWindows())
             {
-                if (!Quiet)
+                string? uppaalPath = Environment.GetEnvironmentVariable("Path")?.Split(";")
+                    .FirstOrDefault(p => p.ToLower().Contains("uppaal"));
+                if (uppaalPath is null)
                 {
-                    Console.WriteLine("Couldn't find path of uppaal in environment path.");
+                    if (!Quiet)
+                    {
+                        Console.WriteLine("Couldn't find path of uppaal in environment path.");
+                    }
+                    return 0;
                 }
-                return 0;
-            }
 
-            string path = Path.GetRelativePath(uppaalPath, Output!);
-            Process.Start("uppaal", path);
+                string path = Path.GetRelativePath(uppaalPath, Output!);
+                Process.Start("uppaal", path);
+            }
+            else
+            {
+                Process.Start("uppaal", Output!);
+            }
         }
         
         return 0;
