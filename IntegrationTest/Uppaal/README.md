@@ -1,5 +1,5 @@
 # Integration Tests
-The XML files linked below do not entirely correspond to the output of our program. These XML files are formatted to look readable, and they use Uppaal notation for location ids, which is different from our notation. 
+The XML files linked below do not entirely correspond to the output of our program, since these XML files are formatted to look readable when opened in Uppaal. Furthermore, they use Uppaal notation for location ids (`id0`), which is different from our notation (`l0`). 
 
 It is, however, still possible to check for many things between the output of running the commands for each test, and the expected result:
 
