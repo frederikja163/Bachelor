@@ -106,20 +106,21 @@ namespace TimedRegex.Parsing
 
         private static float ParseNumber(Tokenizer tokenizer)
         {
+            Token token = tokenizer.Peek();
             StringBuilder sb = new();
             while (!(tokenizer.Peek().Type == TokenType.IntervalClose || tokenizer.Peek().Type == TokenType.IntervalSeparator || tokenizer.Peek().Type == TokenType.IntervalOpen))
             {
                 sb.Append(tokenizer.Advance().Match);
                 if (tokenizer.Peek().Type == TokenType.EndOfInput)
                 {
-                    throw new TimedRegexCompileException(TimedRegexErrorType.IntervalImproperFormat, "Reached end of input before finishing parsing of interval.");
+                    throw new TimedRegexCompileException(TimedRegexErrorType.IntervalImproperFormat, "Reached end of input before finishing parsing of interval.", token);
                 }
             }
             if (float.TryParse(sb.ToString(), out float value))
             {
                 return value;
             }
-            throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", tokenizer.Peek());
+            throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", token);
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
