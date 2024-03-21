@@ -1,7 +1,8 @@
 # Integration Tests
-The xml files linked below do not entirely correspond to the output of our program. These xml files are formatted to look readable and they use Uppaal notation for location and transition ids.
+The XML files linked below do not entirely correspond to the output of our program. These XML files are formatted to look readable, and they use Uppaal notation for location ids, which is different from our notation. 
 
 It is, however, still possible to check for many things between the output of running the commands for each test, and the expected result:
+
 1. \# of locations
 2. \# of transitions
 3. Initial state
