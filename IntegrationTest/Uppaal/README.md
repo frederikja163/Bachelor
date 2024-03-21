@@ -1,21 +1,33 @@
 # Integration Tests
+The xml files linked below do not entirely correspond to the output of our program. These xml files are formatted to look readable and they use Uppaal notation for location and transition ids.
+
+It is, however, still possible to check for many things between the output of running the commands for each test, and the expected result:
+1. \# of locations
+2. \# of transitions
+3. Initial state
+4. Final States
+5. Transition sources and targets
+6. Labels
+   1. Intervals in guards
+   2. Symbol in synchronisation
+   3. Clock reset in assignment
 
 ## Test 1
 command: `.\TimedRegex.exe "(((AB)[0;1]C)&(A(BC)[1;20]))"`
 
-result: [integrationtest1.xml](integrationtest1.xml)
+expected: [integrationtest1.xml](integrationtest1.xml)
 
 ## Test 2
 command: `.\TimedRegex.exe "A[1;3]|B[4;5]C[3;6]"`
 
-result: [integrationtest2.xml](integrationtest2.xml)
+expected: [integrationtest2.xml](integrationtest2.xml)
 
 ## Test 3
 command: `.\TimedRegex.exe "A&(A[1;5]B{BA})"`
 
-result: [integrationtest3.xml](integrationtest3.xml)
+expected: [integrationtest3.xml](integrationtest3.xml)
 
 ## Test 4
 command: `.\TimedRegex.exe "(A[1;5])+'"`
 
-result: [integrationtest4.xml](integrationtest4.xml)
+expected: [integrationtest4.xml](integrationtest4.xml)
