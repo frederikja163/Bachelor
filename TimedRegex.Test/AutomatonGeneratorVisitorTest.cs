@@ -3,6 +3,7 @@ using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
 using TimedRegex.Parsing;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 

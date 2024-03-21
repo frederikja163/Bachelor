@@ -110,4 +110,37 @@ public sealed class TimedAutomatonTest
 
         Assert.That(edge.GetClockRanges().First().Item2, Is.EqualTo(new Range(3.4f, 7.55f, false, false)));
     }
+
+    [TestCase(1, 2, true, true, false)]
+    [TestCase(2.5f, 7.5f, true, true, true)]
+    [TestCase(11, 12, true, true, false)]
+    [TestCase(0, 5, true, true, true)]
+    [TestCase(0, 5, true, false, false)]
+    [TestCase(10, 11, true, false, true)]
+    [TestCase(10, 11, false, false, false)]
+    [TestCase(1, 20, true, true, true)]
+    [TestCase(6, 8, false, false, true)]
+    public void RangeIntersectionValidInvalid(float s, float e, bool sI, bool eI, bool expected)
+    {
+        Range range = new(s, e, sI, eI);
+        Range stdRange = new(5.00f, 10.00f, true, true);
+        Range? result = Range.Intersection(range, stdRange);
+        if (expected)
+        {
+            Assert.IsNotNull(result);
+        }
+        else
+        {
+            Assert.IsNull(result);
+        }
+        Range? result2 = Range.Intersection(stdRange, range);
+        if (expected)
+        {
+            Assert.IsNotNull(result2);
+        }
+        else
+        {
+            Assert.IsNull(result2);
+        }
+    }
 }
