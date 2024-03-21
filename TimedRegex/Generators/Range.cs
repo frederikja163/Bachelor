@@ -2,20 +2,12 @@
 
 internal sealed class Range : IEquatable<Range>
 {
-    internal Range(float startInterval, float endInterval, bool startInclusive, bool endInclusive)
+    internal Range(float startInterval, float endInterval, bool startInclusive = true, bool endInclusive = false)
     {
         StartInterval = startInterval;
         EndInterval = endInterval;
         StartInclusive = startInclusive;
         EndInclusive = endInclusive;
-    }
-
-    internal Range(float startInterval, float endInterval)
-    {
-        StartInterval = startInterval;
-        EndInterval = endInterval;
-        StartInclusive = true;
-        EndInclusive = true;
     }
 
     internal float StartInterval { get; }

@@ -230,7 +230,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 <= 5) && (c1 >= 2 && c1 <= 3)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 < 5) && (c1 >= 2 && c1 < 3)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
