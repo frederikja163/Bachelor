@@ -86,7 +86,7 @@ internal sealed class BuildCommand
             // This means we need to look for uppaal in the path use the relative path.
             // https://github.com/frederikja163/Bachelor/issues/241
             // https://github.com/UPPAALModelChecker/UPPAAL-Meta/issues/252
-            // 21/03/2021
+            // 21/03/2024
             if (OperatingSystem.IsWindows())
             {
                 string? uppaalPath = Environment.GetEnvironmentVariable("Path")?.Split(";")
