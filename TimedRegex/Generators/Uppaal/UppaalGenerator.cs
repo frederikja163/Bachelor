@@ -20,7 +20,7 @@ internal sealed class UppaalGenerator : IGenerator
 
     public void GenerateFile(string filePath)
     {
-        using FileStream fs = File.Open(filePath, FileMode.Append);
+        using FileStream fs = File.Open(filePath, FileMode.Create);
         GenerateFile(fs);
     }
 
