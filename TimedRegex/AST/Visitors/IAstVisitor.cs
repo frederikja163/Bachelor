@@ -2,16 +2,16 @@ namespace TimedRegex.AST.Visitors;
 
 internal interface IAstVisitor
 {
-    void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator);
-    void Visit(AbsorbedIterator absorbedIterator);
-    void Visit(Concatenation concatenation);
-    void Visit(GuaranteedIterator guaranteedIterator);
-    void Visit(AbsorbedConcatenation absorbedConcatenation);
-    void Visit(Intersection intersection);
-    void Visit(Interval interval);
-    void Visit(Iterator iterator);
-    void Visit(Match match);
-    void Visit(Rename rename);
-    void Visit(Union union);
-    void Visit(Epsilon epsilon);
+    internal void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator);
+    internal void Visit(AbsorbedIterator absorbedIterator);
+    internal void Visit(Concatenation concatenation);
+    internal void Visit(GuaranteedIterator guaranteedIterator);
+    internal void Visit(AbsorbedConcatenation absorbedConcatenation);
+    internal void Visit(Intersection intersection);
+    internal void Visit(Interval interval);
+    internal void Visit(Iterator iterator);
+    internal void Visit(Match match);
+    internal void Visit(Rename rename);
+    internal void Visit(Union union);
+    internal void Visit(Epsilon epsilon);
 }

@@ -1,5 +1,5 @@
 ﻿using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.AST;
 
@@ -7,7 +7,7 @@ internal sealed class Rename : IUnary
 {
     private readonly SymbolReplace[] _replaceList;
 
-    internal Rename(IEnumerable<SymbolReplace> replaceList, IAstNode child, Token token)
+    internal Rename(IAstNode child, Token token, IEnumerable<SymbolReplace> replaceList)
     {
         _replaceList = replaceList.ToArray();
         Child = child;
@@ -16,6 +16,7 @@ internal sealed class Rename : IUnary
 
     public IAstNode Child { get; }
     public Token Token { get; }
+    
     public void Accept(IAstVisitor visitor)
     {
         Child.Accept(visitor);

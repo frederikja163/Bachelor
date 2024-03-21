@@ -9,6 +9,6 @@ internal static class Program
         return Parser.Default.ParseArguments<BuildCommand, object>(args)
             .MapResult(
                 (BuildCommand command) => command.Run(),
-        errors => 1);
+        _ => 1);
     }
 }

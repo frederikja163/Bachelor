@@ -1,16 +1,17 @@
 using TimedRegex.AST.Visitors;
-using TimedRegex.Scanner;
+using TimedRegex.Parsing;
 
 namespace TimedRegex.AST;
 
 internal sealed class Epsilon : IAstNode
 {
-    public Epsilon(Token token)
+    internal Epsilon(Token token)
     {
         Token = token;
     }
 
     public Token Token { get; }
+    
     public void Accept(IAstVisitor visitor)
     {
         visitor.Visit(this);
