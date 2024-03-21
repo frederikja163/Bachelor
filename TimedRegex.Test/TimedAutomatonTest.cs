@@ -96,4 +96,18 @@ public sealed class TimedAutomatonTest
         automaton.Rename(renameList);
         Assert.That(automaton.GetAlphabet(), Is.EquivalentTo(expected));
     }
+    [Test]
+    public void RangeIntersectionTest()
+    {
+        TimedAutomaton automaton = CreateAutomaton();
+        Clock clock = new(0);
+        State s1 = new(0, false);
+        State s2 = new(1, false);
+        Edge edge = new(0, s1, s2, 'a');
+
+        edge.AddClockRange(clock, new Range(1.00f, 7.55f, true, false));
+        edge.AddClockRange(clock, new Range(3.4f, 10.04f, false, true));
+
+        Assert.That(edge.GetClockRanges().First().Item2, Is.EqualTo(new Range(3.4f, 7.55f, false, false)));
+    }
 }
