@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using TimedRegex.AST;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Parsing
 {
@@ -101,7 +102,7 @@ namespace TimedRegex.Parsing
             float endInterval = ParseNumber(tokenizer);
             bool endInclusive = tokenizer.AcceptOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose)
                 .Type == TokenType.IntervalClose;
-            return new Interval(child, token, new Generators.Range(startInterval, endInterval, startInclusive, endInclusive));
+            return new Interval(child, token, new Range(startInterval, endInterval, startInclusive, endInclusive));
         }
 
         private static float ParseNumber(Tokenizer tokenizer)

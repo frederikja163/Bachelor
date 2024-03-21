@@ -28,11 +28,11 @@ internal sealed class ValidIntervalVisitor : IAstVisitor
 
     public void Visit(Interval interval)
     {
-        float startInclusive = interval.Range.StartInterval + (interval.Range.StartInclusive ? 0 : 1);
-        float endInclusive = interval.Range.EndInterval + (interval.Range.EndInclusive ? 0 : -1);
-        if (startInclusive > endInclusive)
+        if (interval.Range.StartInterval > interval.Range.EndInterval ||
+            (interval.Range.StartInterval == interval.Range.EndInterval &&
+            !(interval.Range.StartInclusive && interval.Range.EndInclusive)))
         {
-            throw new TimedRegexCompileException(TimedRegexErrorType.IntervalStartBiggerThanEnd, $"Interval start value {startInclusive} must be smaller than or equal to end value {endInclusive}.", interval.Token);
+            throw new TimedRegexCompileException(TimedRegexErrorType.IntervalStartBiggerThanEnd, $"Interval start value {interval.Range.StartInterval} must be smaller than or equal to end value {interval.Range.EndInterval}, whilst considering inclusion and exclusion.", interval.Token);
         }
     }
 
