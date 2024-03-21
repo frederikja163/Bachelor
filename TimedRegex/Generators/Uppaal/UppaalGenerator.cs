@@ -114,7 +114,6 @@ internal sealed class UppaalGenerator : IGenerator
     internal void WriteTransition(XmlWriter xmlWriter, Transition transition)
     {
         xmlWriter.WriteStartElement("transition");
-        xmlWriter.WriteAttributeString("ref", transition.Id);
 
         xmlWriter.WriteStartElement("source");
         xmlWriter.WriteAttributeString("ref", transition.Source);
