@@ -1,0 +1,14 @@
+Pruning dead edges means pruning all edges that can never be taken because they are overconstrained.
+
+We do this by first taking the intersection of all edges with multiple ranges.
+If this intersection has no possible values we know the edge cannot possibly be taken.
+Since it cannot be taken we can remove it.
+
+Mathematically this can be described as a function ($\mathbb{E}$) taking in an automaton and returning a new automaton with the dead edges being pruned.
+
+\sembox{
+    $\deadedge(A_1)=\automaton[][Q_1][C_1][\Delta][\Sigma][s_1][F_1]$
+ 
+    $\Delta=\{\transition|\transition\in\Delta_1\wedge\emptyset\neq\cap_{i=1}^n\Phi_i\}$
+
+}
