@@ -200,7 +200,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        Range range = new(interval.Range.StartInterval + (interval.Range.StartInclusive ? 0 : 1), interval.Range.EndInterval + (interval.Range.EndInclusive ? 1 : 0));
+        Range range = interval.Range;
         State newFinal = ta.AddState(true);
         Clock clock = ta.AddClock();
 
