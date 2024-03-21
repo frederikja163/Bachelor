@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>clock c0, c1;chan A;</declaration>
+	<template>
+		<name x="5" y="5">ta0</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id0" x="-237" y="-17">
+		</location>
+		<location id="id1" x="-59" y="-17">
+		</location>
+		<location id="id2" x="-170" y="85">
+			<name x="-180" y="51">loc1Final</name>
+		</location>
+		<location id="id3" x="187" y="-25">
+		</location>
+		<location id="id4" x="247" y="68">
+			<name x="237" y="34">loc2Final</name>
+		</location>
+		<location id="id5" x="357" y="-25">
+		</location>
+		<init ref="id0"/>
+		<transition id="id6">
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-186" y="-136">c0 &gt;= 1 &amp;&amp; c0 &lt;= 5</label>
+			<label kind="synchronisation" x="-186" y="-119">A?</label>
+			<nail x="136" y="-102"/>
+			<nail x="-195" y="-102"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="212" y="-42">A?</label>
+		</transition>
+		<transition id="id8">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="217" y="-9">c0 &gt;= 1 &amp;&amp; c0 &lt;= 5</label>
+			<label kind="synchronisation" x="217" y="8">A?</label>
+		</transition>
+		<transition id="id9">
+			<source ref="id0"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-467" y="-42">c1 &gt;= 1 &amp;&amp; c1 &lt;= 5</label>
+			<label kind="synchronisation" x="-323" y="-25">A?</label>
+			<nail x="-298" y="-42"/>
+			<nail x="-297" y="0"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id0"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-271" y="34">c1 &gt;= 1 &amp;&amp; c1 &lt;= 5</label>
+			<label kind="synchronisation" x="-219" y="17">A?</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-212" y="-42">A?</label>
+		</transition>
+	</template>
+	<system>system ta0;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>
