@@ -21,7 +21,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         State final = ta.AddState(true);
         Clock clock = ta.AddClock();
         Edge edge = ta.AddEdge(initial, final, '\0');
-        edge.AddClockRange(clock, new Range(0, 1));
+        edge.AddClockRange(clock, new Range(0.00f, 0.00f));
         _stack.Push(ta);
     }
 
@@ -264,9 +264,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         
         ta.AddState(newInitial: true);
         Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, '\0');
-        lEdge.AddClockRange(clock, new Range(0,1));
+        lEdge.AddClockRange(clock, new Range(0.00f, 0.00f));
         Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, '\0');
-        rEdge.AddClockRange(clock, new Range(0, 1));
+        rEdge.AddClockRange(clock, new Range(0.00f, 0.00f));
         
         _stack.Push(ta);
     }
