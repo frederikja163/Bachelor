@@ -2,6 +2,7 @@
 \usepackage[backend=biber,style=nature,bibencoding=utf8]{biblatex}
 \usepackage{xargs}
 \usepackage{listings}
+\usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{tikz-uml}
 \usepackage{graphics}
@@ -27,4 +28,7 @@
 }
 \newcommandx{\transition}[6][1=, 2=q, 3=q', 4=\phi, 5=p, 6=a]{
     (#2#1, #4#1, #5#1, #6, #3#1)
+}
+\newcommandx{\deadedge}[0]{
+    \mathbb{E}
 }
