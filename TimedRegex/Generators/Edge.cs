@@ -13,12 +13,14 @@ internal sealed class Edge : IEquatable<Edge>
         Symbol = symbol;
         _clockRanges = new Dictionary<Clock, Range>();
         _clockResets = new HashSet<Clock>();
+        IsDead = false;
     }
     
     internal int Id { get; }
     internal State From { get; }
     internal State To { get; }
     internal char Symbol { get; set; }
+    internal bool IsDead { get; set; }
 
     internal void AddClockReset(Clock clock)
     {
@@ -43,6 +45,25 @@ internal sealed class Edge : IEquatable<Edge>
 
     internal void AddClockRange(Clock clock, Range range)
     {
+        if (_clockRanges.TryGetValue(clock, out Range? r))
+        {
+            if (r is null)
+            {
+                throw new NullReferenceException("TryGetValue retrieved a null value from the clockRanges dictionary.");
+            }
+            Range? newRange = Range.Intersection(r, range);
+            if (newRange != null)
+            {
+                _clockRanges.Remove(clock);
+                _clockRanges.Add(clock, newRange);
+                return;
+            }
+            else
+            {
+                this.IsDead = true;
+                return;
+            }
+        }
         _clockRanges.Add(clock, range);
     }
     

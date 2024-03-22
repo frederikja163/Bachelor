@@ -246,7 +246,7 @@ public sealed class UppaalGeneratorTest
         Edge edge = new(0, new State(1, false), new State(2, true), 'a');
 
         edge.AddClockRange(clock1, new Generators.Range(2, 7, false, false));
-        edge.AddClockRange(clock2, new Generators.Range(1.15f, 7.12f, true, false));
+        edge.AddClockRange(clock2, new Generators.Range(1, 7, true, false));
 
         List<Label> labels =
         [
@@ -258,7 +258,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2 && c0 < 7) && (c1 >= 1.15 && c1 < 7.12)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2 && c0 < 7) && (c1 >= 1 && c1 < 7)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("a?"));
         });
 

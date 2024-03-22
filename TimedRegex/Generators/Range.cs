@@ -73,7 +73,8 @@ internal sealed class Range : IEquatable<Range>
             end = r1.EndInterval;
             eInclusive = r1.EndInclusive;
         }
-        if (end <= start && (!sInclusive || !eInclusive))
+        if (end < start ||
+            ((end == start) && !(sInclusive && eInclusive)))
         {
             return null;
         }

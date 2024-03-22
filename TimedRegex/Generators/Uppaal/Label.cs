@@ -33,13 +33,13 @@ internal sealed class Label
         return new Label(LabelKind.Assignment, string.Join(", ", GenerateAssignment(edge)));
     }
 
-    private static IEnumerable<string> GenerateGuard(Edge edge)
+    private static IEnumerable<string> GenerateGuard(Edge edge) // This function is temporarily modified to change ranges to integer values.
     {
         foreach ((Clock clock, Range range) in edge.GetClockRanges())
         {
             yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
-                $"{range.StartInterval} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
-                $"{range.EndInterval})";
+                $"{(int)Math.Round(range.StartInterval)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{(int)Math.Round(range.EndInterval)})";
 
         }
     }
