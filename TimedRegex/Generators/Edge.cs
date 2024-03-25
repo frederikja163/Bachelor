@@ -58,11 +58,9 @@ internal sealed class Edge : IEquatable<Edge>
                 _clockRanges.Add(clock, newRange);
                 return;
             }
-            else
-            {
-                this.IsDead = true;
-                return;
-            }
+            
+            IsDead = true;
+            return;
         }
         _clockRanges.Add(clock, range);
     }
