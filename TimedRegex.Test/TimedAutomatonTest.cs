@@ -120,9 +120,9 @@ public sealed class TimedAutomatonTest
     [TestCase(10, 11, false, false, false)]
     [TestCase(1, 20, true, true, true)]
     [TestCase(6, 8, false, false, true)]
-    public void RangeIntersectionValidInvalid(float s, float e, bool sI, bool eI, bool expected)
+    public void RangeIntersectionValidInvalid(float startInterval, float endInterval, bool startInclusive, bool endInclusive, bool expected)
     {
-        Range range = new(s, e, sI, eI);
+        Range range = new(startInterval, endInterval, startInclusive, endInclusive);
         Range stdRange = new(5.00f, 10.00f, true, true);
         Range? result = Range.Intersection(range, stdRange);
         if (expected)
