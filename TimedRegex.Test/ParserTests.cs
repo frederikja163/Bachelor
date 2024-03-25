@@ -445,9 +445,12 @@ public sealed class ParserTests
         Assert.That(astNode, Is.TypeOf<Interval>());
         Interval node = (Interval)astNode;
 
-        Assert.That(node.Range.StartInclusive, Is.True);
-        Assert.That(node.Range.EndInclusive, Is.True);
-        Assert.That(node.Range.StartInterval, Is.EqualTo(1.45f));
-        Assert.That(node.Range.EndInterval, Is.EqualTo(43.6f));
+        Assert.Multiple(() =>
+        {
+            Assert.That(node.Range.StartInclusive, Is.True);
+            Assert.That(node.Range.EndInclusive, Is.True);
+            Assert.That(node.Range.StartInterval, Is.EqualTo(1.45f));
+            Assert.That(node.Range.EndInterval, Is.EqualTo(43.6f));
+        });
     }
 }
