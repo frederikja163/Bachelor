@@ -2,6 +2,7 @@
 using TimedRegex.Parsing;
 using TimedRegex.AST;
 using Range = TimedRegex.Generators.Range;
+using System.Globalization;
 
 namespace TimedRegex.Test;
 
@@ -433,6 +434,7 @@ public sealed class ParserTests
     [TestCase("[1;192.122[", 1, 192.122f, true, false)]
     public void RangeToStringTest(string expected, float startInterval, float endInterval, bool startInclusive, bool endInclusive)
     {
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         Range range = new(startInterval, endInterval, startInclusive, endInclusive);
         Assert.That(range.ToString(), Is.EqualTo(expected));
     }
@@ -440,6 +442,7 @@ public sealed class ParserTests
     [Test]
     public void IntervalParseNumberWithPeriod()
     {
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         Tokenizer tokenizer = new("a[1.45;43.6]");
         IAstNode astNode = Parser.Parse(tokenizer);
         Assert.That(astNode, Is.TypeOf<Interval>());
