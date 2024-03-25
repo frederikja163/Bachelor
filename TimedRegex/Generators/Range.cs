@@ -33,8 +33,8 @@ internal sealed class Range : IEquatable<Range>
     {
         float start;
         float end;
-        bool sInclusive;
-        bool eInclusive;
+        bool startInclusive;
+        bool endInclusive;
 
         
         //     i1 | TTFF
@@ -48,12 +48,12 @@ internal sealed class Range : IEquatable<Range>
             r1.StartInclusive && !r2.StartInclusive))
         {
             start = r2.StartInterval;
-            sInclusive = r2.StartInclusive;
+            startInclusive = r2.StartInclusive;
         }
         else 
         {
             start = r1.StartInterval;
-            sInclusive = r1.StartInclusive;
+            startInclusive = r1.StartInclusive;
         }
         //     i1 | TTFF
         //     i2 | TFTF
@@ -66,18 +66,18 @@ internal sealed class Range : IEquatable<Range>
             r1.EndInclusive && !r2.EndInclusive))
         {
             end = r2.EndInterval;
-            eInclusive = r2.EndInclusive;
+            endInclusive = r2.EndInclusive;
         }
         else
         {
             end = r1.EndInterval;
-            eInclusive = r1.EndInclusive;
+            endInclusive = r1.EndInclusive;
         }
         if (end < start ||
-            ((end == start) && !(sInclusive && eInclusive)))
+            ((end == start) && !(startInclusive && endInclusive)))
         {
             return null;
         }
-        return new Range(start, end, sInclusive, eInclusive);
+        return new Range(start, end, startInclusive, endInclusive);
     }
 }
