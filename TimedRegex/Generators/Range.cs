@@ -1,5 +1,3 @@
-﻿using System.Globalization;
-
 namespace TimedRegex.Generators;
 
 internal sealed class Range : IEquatable<Range>
