@@ -117,11 +117,11 @@ namespace TimedRegex.Parsing
                     throw new TimedRegexCompileException(TimedRegexErrorType.IntervalImproperFormat, "Reached end of input before finishing parsing of interval.", token);
                 }
             }
-            if (float.TryParse(sb.ToString(), out float value))
+            if (!float.TryParse(sb.ToString(), out float value))
             {
-                return value;
+                throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", token);
             }
-            throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", token);
+            return value;
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
