@@ -26,7 +26,7 @@ public sealed class AutomatonGeneratorVisitorTest
     
     internal static Interval Interval(char c, int start, int end)
     {
-        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), new Generators.Range(start, end, true, false));
+        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), new Range(start, end, true, false));
     }
 
     [Test]
@@ -101,7 +101,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(3));
             
             Edge final = ta.GetEdges().First(e => e.GetClockResets().Any());
-            Assert.That(final.GetClockRanges().First().Item2, Is.EqualTo(new Generators.Range(0, 3)));
+            Assert.That(final.GetClockRanges().First().Item2, Is.EqualTo(new Range(0, 3, true, false)));
             Assert.That(final.GetClockResets().Count(), Is.EqualTo(1));
         });
     }
@@ -197,7 +197,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Edge e = ta.GetEdges().First(e => e.To.IsFinal);
             Assert.That(e.Symbol, Is.EqualTo('a'));
             Assert.That(e.GetClockRanges().Count(), Is.EqualTo(1));
-            Assert.That(e.GetClockRanges().First().Item2, Is.EqualTo(new Generators.Range(2,4)));
+            Assert.That(e.GetClockRanges().First().Item2, Is.EqualTo(new Range(2,4)));
         });
     }
 

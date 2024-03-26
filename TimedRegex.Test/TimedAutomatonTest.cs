@@ -99,7 +99,6 @@ public sealed class TimedAutomatonTest
     [Test]
     public void RangeIntersectionTest()
     {
-        TimedAutomaton automaton = CreateAutomaton();
         Clock clock = new(0);
         State s1 = new(0, false);
         State s2 = new(1, false);
