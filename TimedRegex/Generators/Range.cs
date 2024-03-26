@@ -1,3 +1,5 @@
+using TimedRegex.AST;
+
 namespace TimedRegex.Generators;
 
 internal sealed class Range : IEquatable<Range>
@@ -36,7 +38,7 @@ internal sealed class Range : IEquatable<Range>
         bool startInclusive;
         bool endInclusive;
 
-        
+
         //     i1 | TTFF
         //     i2 | TFTF
         //---- - +----
@@ -50,7 +52,7 @@ internal sealed class Range : IEquatable<Range>
             start = r2.StartInterval;
             startInclusive = r2.StartInclusive;
         }
-        else 
+        else
         {
             start = r1.StartInterval;
             startInclusive = r1.StartInclusive;
@@ -73,11 +75,32 @@ internal sealed class Range : IEquatable<Range>
             end = r1.EndInterval;
             endInclusive = r1.EndInclusive;
         }
-        if (end < start ||
-            ((end == start) && !(startInclusive && endInclusive)))
+        if (ValidInterval(start, end, startInclusive, endInclusive))
         {
-            return null;
+            return new Range(start, end, startInclusive, endInclusive);
         }
-        return new Range(start, end, startInclusive, endInclusive);
+        return null;
+    }
+
+    public bool ValidInterval()
+    {
+        if (StartInterval > EndInterval ||
+        (StartInterval == EndInterval &&
+            !(StartInclusive && EndInclusive)))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public static bool ValidInterval(float StartInterval, float EndInterval, bool StartInclusive, bool EndInclusive) 
+    {
+        if (StartInterval > EndInterval ||
+        (StartInterval == EndInterval &&
+            !(StartInclusive && EndInclusive)))
+        {
+            return false;
+        }
+        return true;
     }
 }
