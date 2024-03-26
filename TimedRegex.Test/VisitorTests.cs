@@ -2,6 +2,7 @@ using NUnit.Framework;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Parsing;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 
@@ -15,7 +16,7 @@ public sealed class VisitorTests
     {
         Interval interval = new(new Match(new Token(0, 'a', TokenType.Match)), 
             new Token(1, (startInclusive ? '[' : ']'), (startInclusive ? TokenType.IntervalOpen : TokenType.IntervalClose)), 
-            new Generators.Range(1.00f, 1.00f, startInclusive, endInclusive));
+            new Range(1.00f, 1.00f, startInclusive, endInclusive));
         ValidIntervalVisitor visitor = new();
 
         if (expected)

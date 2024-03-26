@@ -5,6 +5,7 @@ using TimedRegex.Generators;
 using TimedRegex.Generators.Uppaal;
 using Contains = NUnit.Framework.Contains;
 using Location = TimedRegex.Generators.Uppaal.Location;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 
@@ -214,8 +215,8 @@ public sealed class UppaalGeneratorTest
         Clock clock2 = new(1);
         Edge edge = new(2, new State(0, false), new State(1, false), 'a');
 
-        edge.AddClockRange(clock1, new Generators.Range(1, 5));
-        edge.AddClockRange(clock2, new Generators.Range(2, 3));
+        edge.AddClockRange(clock1, new Range(1, 5));
+        edge.AddClockRange(clock2, new Range(2, 3));
         edge.AddClockReset(clock1);
         edge.AddClockReset(clock2);
 
@@ -245,8 +246,8 @@ public sealed class UppaalGeneratorTest
         Clock clock2 = new(1);
         Edge edge = new(0, new State(1, false), new State(2, true), 'a');
 
-        edge.AddClockRange(clock1, new Generators.Range(2, 7, false, false));
-        edge.AddClockRange(clock2, new Generators.Range(1, 7, true, false));
+        edge.AddClockRange(clock1, new Range(2, 7, false, false));
+        edge.AddClockRange(clock2, new Range(1, 7, true, false));
 
         List<Label> labels =
         [
