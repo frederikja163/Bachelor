@@ -3,7 +3,7 @@ These states are pruned by removing all states that have no edges away from them
 
 \sembox{
     $\deadstate(A_1)=\left\{\begin{array}{ll}
-        A_1 & if \forall q_1\in Q_1:q_1\notin F_1 \transition[_1]\in\Delta_1 \\
+        A_1 & if \forall q_1\in Q_1:q_1\notin F_1\wedge\transition[_1]\in\Delta_1 \\
         \deadstate(\automaton[][Q][C_1][\Delta][\Sigma_1][s_1][F_1]) & otherwise \\
     \end{array}\right.
     $
