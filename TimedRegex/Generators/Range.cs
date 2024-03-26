@@ -38,13 +38,13 @@ internal sealed class Range : IEquatable<Range>
         bool startInclusive;
         bool endInclusive;
 
-
-        //     i1 | TTFF
-        //     i2 | TFTF
-        //---- - +----
-        //s1 < s2 | 2222
-        //s1 > s2 | 1111
-        //s1 = s2 | -21-
+        
+        //      i1 | TTFF
+        //      i2 | TFTF
+        // --------+----
+        // s1 < s2 | 2222
+        // s1 > s2 | 1111
+        // s1 = s2 | -21-
         if (r1.StartInterval < r2.StartInterval ||
             (r1.StartInterval == r2.StartInterval &&
             r1.StartInclusive && !r2.StartInclusive))
@@ -57,12 +57,12 @@ internal sealed class Range : IEquatable<Range>
             start = r1.StartInterval;
             startInclusive = r1.StartInclusive;
         }
-        //     i1 | TTFF
-        //     i2 | TFTF
-        //---- - +----
-        //e1 < e2 | 1111
-        //e1 > e2 | 2222
-        //e1 = e2 | -21-
+        //      i1 | TTFF
+        //      i2 | TFTF
+        // --------+----
+        // e1 < e2 | 1111
+        // e1 > e2 | 2222
+        // e1 = e2 | -21-
         if (r1.EndInterval > r2.EndInterval ||
             (r1.EndInterval == r2.EndInterval &&
             r1.EndInclusive && !r2.EndInclusive))

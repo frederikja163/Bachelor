@@ -231,7 +231,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 100000 && c0 < 500000) && (c1 >= 200000 && c1 < 300000)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1000 && c0 < 5000) && (c1 >= 2000 && c1 < 3000)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
@@ -259,7 +259,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 200000 && c0 < 700000) && (c1 >= 100000 && c1 < 700000)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2000 && c0 < 7000) && (c1 >= 1000 && c1 < 7000)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("a?"));
         });
 

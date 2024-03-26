@@ -38,8 +38,8 @@ internal sealed class Label
         foreach ((Clock clock, Range range) in edge.GetClockRanges())
         {
             yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
-                $"{(int)(range.StartInterval * 100000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
-                $"{(int)(range.EndInterval * 100000)})";
+                $"{(int)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{(int)(range.EndInterval * 1000)})";
 
         }
     }
