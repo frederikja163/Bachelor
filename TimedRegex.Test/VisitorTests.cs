@@ -12,14 +12,14 @@ public sealed class VisitorTests
     [TestCase(false,false,false)]
     [TestCase(true,false,false)]
     [TestCase(false,true,false)]
-    public void IntervalInclusiveExclusiveValidationTest(bool startInclusive, bool endInclusive, bool expected)
+    public void IntervalInclusiveExclusiveValidationTest(bool startInclusive, bool endInclusive, bool expectPass)
     {
         Interval interval = new(new Match(new Token(0, 'a', TokenType.Match)), 
             new Token(1, (startInclusive ? '[' : ']'), (startInclusive ? TokenType.IntervalOpen : TokenType.IntervalClose)), 
             new Range(1.00f, 1.00f, startInclusive, endInclusive));
         ValidIntervalVisitor visitor = new();
 
-        if (expected)
+        if (expectPass)
         {
             Assert.DoesNotThrow(() => interval.Accept(visitor));
         }
