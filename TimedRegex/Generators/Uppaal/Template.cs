@@ -51,6 +51,6 @@ internal sealed class Template
             labels.Add(Label.CreateSynchronization(edge));
         }
 
-        return new Transition($"id{edge.Id}", $"id{edge.From.Id}", $"id{edge.To.Id}", labels);
+        return new Transition(edge);
     }
 }
