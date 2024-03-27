@@ -2,7 +2,7 @@ namespace TimedRegex.Generators;
 
 internal sealed class Edge : IEquatable<Edge>
 {
-    private readonly Dictionary<Clock, Range> _clockRanges;
+    private readonly Dictionary<Clock, Range?> _clockRanges;
     private readonly HashSet<Clock> _clockResets;
 
     internal Edge(int id, State from, State to, char symbol)
@@ -11,7 +11,7 @@ internal sealed class Edge : IEquatable<Edge>
         From = from;
         To = to;
         Symbol = symbol;
-        _clockRanges = new Dictionary<Clock, Range>();
+        _clockRanges = new Dictionary<Clock, Range?>();
         _clockResets = new HashSet<Clock>();
         IsDead = false;
     }
@@ -45,7 +45,7 @@ internal sealed class Edge : IEquatable<Edge>
 
     internal void AddClockRange(Clock clock, Range range)
     {
-        if (_clockRanges.TryGetValue(clock, out Range r))
+        if (_clockRanges.TryGetValue(clock, out Range? r))
         {
             Range? newRange = Range.Intersection(r, range);
             if (newRange is null)
@@ -66,11 +66,14 @@ internal sealed class Edge : IEquatable<Edge>
         }
     }
 
-    internal IEnumerable<(Clock, Range)> GetClockRanges()
+    internal IEnumerable<(Clock, Range)> GetValidClockRanges()
     {
-        foreach ((Clock clock, Range range) in _clockRanges)
+        foreach ((Clock clock, Range? range) in _clockRanges)
         {
-            yield return (clock, range);
+            if (range is not null)
+            {
+                yield return (clock, range);
+            }
         }
     }
 

@@ -38,7 +38,7 @@ internal sealed class Template
     {
         List<Label> labels = new();
 
-        if (edge.GetClockRanges().Any())
+        if (edge.GetValidClockRanges().Any())
         {
             labels.Add(Label.CreateGuard(edge));
         }
