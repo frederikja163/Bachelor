@@ -90,7 +90,8 @@ internal sealed class Range : IEquatable<Range>
     {
         if (StartInterval > EndInterval ||
         (StartInterval == EndInterval &&
-            !(StartInclusive && EndInclusive))) // If the two numbers are the same, they must both be inclusive so as to not include the only aaccepted number.
+             // If the two numbers are the same, they must both be inclusive so as to not exclude the only accepted number.
+            !(StartInclusive && EndInclusive)))
         {
             return false;
         }
