@@ -8,18 +8,18 @@ namespace TimedRegex.Test;
 
 public sealed class VisitorTests
 {
-    [TestCase(true,true,true)]
-    [TestCase(false,false,false)]
-    [TestCase(true,false,false)]
-    [TestCase(false,true,false)]
-    public void IntervalInclusiveExclusiveValidationTest(bool startInclusive, bool endInclusive, bool expectPass)
+    [TestCase(true,true,false)]
+    [TestCase(false,false,true)]
+    [TestCase(true,false,true)]
+    [TestCase(false,true,true)]
+    public void IntervalInclusiveExclusiveValidationTest(bool startInclusive, bool endInclusive, bool expectThrow)
     {
         Interval interval = new(new Match(new Token(0, 'a', TokenType.Match)), 
             new Token(1, (startInclusive ? '[' : ']'), (startInclusive ? TokenType.IntervalOpen : TokenType.IntervalClose)), 
             new Range(1.00f, 1.00f, startInclusive, endInclusive));
         ValidIntervalVisitor visitor = new();
 
-        if (expectPass)
+        if (!expectThrow)
         {
             Assert.DoesNotThrow(() => interval.Accept(visitor));
         }

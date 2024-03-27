@@ -454,7 +454,7 @@ public sealed class ParserTests
     }
 
     [Test]
-    public void IntervalParseNumberWithPeriod()
+    public void IntervalParseNumberWithPeriodTest()
     {
         Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
         Tokenizer tokenizer = new("a[1.45;43.6]");

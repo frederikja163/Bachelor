@@ -26,7 +26,7 @@ public sealed class AutomatonGeneratorVisitorTest
     
     internal static Interval Interval(char c, int start, int end)
     {
-        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), new Generators.Range(start, end, true, false));
+        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), new Range(start, end, true, false));
     }
 
     [Test]

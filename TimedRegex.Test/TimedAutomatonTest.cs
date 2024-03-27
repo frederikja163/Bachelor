@@ -117,10 +117,11 @@ public sealed class TimedAutomatonTest
     [Test]
     public void RangeIntersectionTest()
     {
-        Clock clock = new(0);
-        State s1 = new(0, false);
-        State s2 = new(1, false);
-        Edge edge = new(0, s1, s2, 'a');
+        TimedAutomaton automaton = new();
+        Clock clock = automaton.AddClock();
+        State s1 = automaton.AddState();
+        State s2 = automaton.AddState();
+        Edge edge = automaton.AddEdge(s1, s2, '\0');
 
         edge.AddClockRange(clock, new Range(1.00f, 7.55f, true, false));
         edge.AddClockRange(clock, new Range(3.4f, 10.04f, false, true));
@@ -137,7 +138,7 @@ public sealed class TimedAutomatonTest
     [TestCase(10, 11, false, false, false)]
     [TestCase(1, 20, true, true, true)]
     [TestCase(6, 8, false, false, true)]
-    public void RangeIntersectionValidInvalid(float startInterval, float endInterval, bool startInclusive, bool endInclusive, bool expectNull)
+    public void RangeIntersectionValidInvalidTest(float startInterval, float endInterval, bool startInclusive, bool endInclusive, bool expectNull)
     {
         Range range = new(startInterval, endInterval, startInclusive, endInclusive);
         Range stdRange = new(5.00f, 10.00f, true, true);
