@@ -95,12 +95,8 @@ internal sealed class Range : IEquatable<Range>
 
     public static bool ValidInterval(float StartInterval, float EndInterval, bool StartInclusive, bool EndInclusive) 
     {
-        if (StartInterval > EndInterval ||
+        return (StartInterval > EndInterval ||
         (StartInterval == EndInterval &&
-            !(StartInclusive && EndInclusive)))
-        {
-            return false;
-        }
-        return true;
+            !(StartInclusive && EndInclusive)));
     }
 }
