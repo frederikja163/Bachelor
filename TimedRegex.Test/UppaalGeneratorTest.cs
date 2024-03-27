@@ -210,10 +210,11 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void GenerateLabelTest()
     {
+        TimedAutomaton automaton = new();
+        Edge edge = automaton.AddEdge(new(0, false), new(1,false), 'a');
+
         Clock clock1 = new(0);
         Clock clock2 = new(1);
-        Edge edge = new(2, new State(0, false), new State(1, false), 'a');
-        
         edge.AddClockRange(clock1, new Range(1, 5, true, false));
         edge.AddClockRange(clock2, new Range(2, 3, true, false));
         edge.AddClockReset(clock1);
