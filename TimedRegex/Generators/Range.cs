@@ -88,14 +88,14 @@ internal sealed class Range : IEquatable<Range>
 
     public bool ValidInterval() 
     {
-        return (StartInterval > EndInterval ||
+        return !(StartInterval > EndInterval ||
         (StartInterval == EndInterval &&
             !(StartInclusive && EndInclusive))); // If the two numbers are the same, they must both be inclusive so as to not exclude the only accepted number.
     }
 
     public static bool ValidInterval(float StartInterval, float EndInterval, bool StartInclusive, bool EndInclusive) 
     {
-        return (StartInterval > EndInterval ||
+        return !(StartInterval > EndInterval ||
         (StartInterval == EndInterval &&
             !(StartInclusive && EndInclusive)));
     }
