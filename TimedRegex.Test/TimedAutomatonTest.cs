@@ -161,4 +161,18 @@ public sealed class TimedAutomatonTest
             Assert.IsNull(result2);
         }
     }
+    [Test]
+    public void RangeIntersectionNullTest()
+    {
+        Range r1 = new(1, 2, true, true);
+        Range? rNull = null;
+
+        Assert.Multiple(() => 
+        {
+            Assert.That(Range.Intersection(r1, rNull), Is.Null);
+            Assert.That(Range.Intersection(rNull, r1), Is.Null);
+            Assert.That(Range.Intersection(rNull, rNull), Is.Null);
+            Assert.That(Range.Intersection(r1, r1), Is.Not.Null);
+        });
+    }
 }

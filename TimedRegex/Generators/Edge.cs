@@ -45,19 +45,19 @@ internal sealed class Edge : IEquatable<Edge>
 
     internal void AddClockRange(Clock clock, Range range)
     {
-        if (_clockRanges.TryGetValue(clock, out Range? r))
+        if (!_clockRanges.TryGetValue(clock, out Range? r))
         {
-            Range? newRange = Range.Intersection(r, range);
-            if (newRange is null)
-            {
-                IsDead = true;
-            }
-            _clockRanges[clock] = newRange;
+            _clockRanges.Add(clock, range);
             return;
         }
-        _clockRanges.Add(clock, range);
+        Range? newRange = Range.Intersection(r, range);
+        if (newRange is null)
+        {
+            IsDead = true;
+        }
+        _clockRanges[clock] = newRange;
     }
-    
+
     internal void AddClockRanges(IEnumerable<(Clock clock, Range range)> ranges)
     {
         foreach ((Clock clock, Range range) in ranges)

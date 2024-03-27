@@ -31,8 +31,12 @@ internal sealed class Range : IEquatable<Range>
             other.EndInclusive == EndInclusive;
     }
 
-    public static Range? Intersection(Range r1, Range r2)
+    public static Range? Intersection(Range? r1, Range? r2)
     {
+        if ((r1 is null) || (r2 is null))
+        {
+            return null;
+        }
         float start;
         float end;
         bool startInclusive;
