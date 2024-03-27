@@ -214,9 +214,9 @@ public sealed class UppaalGeneratorTest
         Clock clock1 = new(0);
         Clock clock2 = new(1);
         Edge edge = new(2, new State(0, false), new State(1, false), 'a');
-
-        edge.AddClockRange(clock1, new Range(1, 5));
-        edge.AddClockRange(clock2, new Range(2, 3));
+        
+        edge.AddClockRange(clock1, new Range(1, 5, true, false));
+        edge.AddClockRange(clock2, new Range(2, 3, true, false));
         edge.AddClockReset(clock1);
         edge.AddClockReset(clock2);
 

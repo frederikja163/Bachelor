@@ -101,7 +101,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetEdges().Count(e => e.GetValidClockRanges().Any()), Is.EqualTo(3));
             
             Edge final = ta.GetEdges().First(e => e.GetClockResets().Any());
-            Assert.That(final.GetValidClockRanges().First().Item2, Is.EqualTo(new Generators.Range(0, 3)));
+            Assert.That(final.GetValidClockRanges().First().Item2, Is.EqualTo(new Range(0, 3, true, false)));
             Assert.That(final.GetClockResets().Count(), Is.EqualTo(1));
         });
     }
@@ -197,7 +197,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Edge e = ta.GetEdges().First(e => e.To.IsFinal);
             Assert.That(e.Symbol, Is.EqualTo('a'));
             Assert.That(e.GetValidClockRanges().Count(), Is.EqualTo(1));
-            Assert.That(e.GetValidClockRanges().First().Item2, Is.EqualTo(new Generators.Range(2,4)));
+            Assert.That(e.GetValidClockRanges().First().Item2, Is.EqualTo(new Range(2, 4, true, false)));
         });
     }
 

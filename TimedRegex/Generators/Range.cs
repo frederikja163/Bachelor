@@ -4,7 +4,7 @@ namespace TimedRegex.Generators;
 
 internal sealed class Range : IEquatable<Range>
 {
-    internal Range(float startInterval, float endInterval, bool startInclusive = true, bool endInclusive = false)
+    internal Range(float startInterval, float endInterval, bool startInclusive, bool endInclusive)
     {
         StartInterval = startInterval;
         EndInterval = endInterval;

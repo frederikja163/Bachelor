@@ -22,14 +22,14 @@ public sealed class TimedAutomatonTest
         State init = timedAutomaton.AddState(newInitial: true);
 
         Edge recognizeEdge1 = timedAutomaton.AddEdge(loc1, final1, 'A');
-        recognizeEdge1.AddClockRange(clock1, new Range(1, 5));
+        recognizeEdge1.AddClockRange(clock1, new Range(1, 5, true, false));
         Edge recognizeEdge2 = timedAutomaton.AddEdge(loc2, final2, 'B');
-        recognizeEdge2.AddClockRange(clock2, new Range(1, 3));
+        recognizeEdge2.AddClockRange(clock2, new Range(1, 3, true, false));
         
         Edge orEdge1 = timedAutomaton.AddEdge(init, loc1, '\0');
-        orEdge1.AddClockRange(clock1, new Range(0, 0));
+        orEdge1.AddClockRange(clock1, new Range(0, 0, true, true));
         Edge orEdge2 = timedAutomaton.AddEdge(init, loc2, '\0');
-        orEdge2.AddClockRange(clock2, new Range(0, 0));
+        orEdge2.AddClockRange(clock2, new Range(0, 0, true, true));
 
         return timedAutomaton;
     }
