@@ -86,16 +86,11 @@ internal sealed class Range : IEquatable<Range>
         return null;
     }
 
-    public bool ValidInterval()
+    public bool ValidInterval() 
     {
-        if (StartInterval > EndInterval ||
+        return (StartInterval > EndInterval ||
         (StartInterval == EndInterval &&
-             // If the two numbers are the same, they must both be inclusive so as to not exclude the only accepted number.
-            !(StartInclusive && EndInclusive)))
-        {
-            return false;
-        }
-        return true;
+            !(StartInclusive && EndInclusive))); // If the two numbers are the same, they must both be inclusive so as to not exclude the only accepted number.
     }
 
     public static bool ValidInterval(float StartInterval, float EndInterval, bool StartInclusive, bool EndInclusive) 
