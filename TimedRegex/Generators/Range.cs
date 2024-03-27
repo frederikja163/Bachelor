@@ -79,24 +79,18 @@ internal sealed class Range : IEquatable<Range>
             end = r1.EndInterval;
             endInclusive = r1.EndInclusive;
         }
-        if (ValidInterval(start, end, startInclusive, endInclusive))
+        Range newRange = new Range(start, end, startInclusive, endInclusive);
+        if (newRange.IsValidInterval())
         {
-            return new Range(start, end, startInclusive, endInclusive);
+            return newRange;
         }
         return null;
     }
 
-    public bool ValidInterval() 
+    public bool IsValidInterval() 
     {
         return !(StartInterval > EndInterval ||
         (StartInterval == EndInterval &&
             !(StartInclusive && EndInclusive))); // If the two numbers are the same, they must both be inclusive so as to not exclude the only accepted number.
-    }
-
-    public static bool ValidInterval(float StartInterval, float EndInterval, bool StartInclusive, bool EndInclusive) 
-    {
-        return !(StartInterval > EndInterval ||
-        (StartInterval == EndInterval &&
-            !(StartInclusive && EndInclusive)));
     }
 }
