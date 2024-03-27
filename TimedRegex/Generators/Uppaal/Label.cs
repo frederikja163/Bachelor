@@ -35,9 +35,12 @@ internal sealed class Label
 
     private static IEnumerable<string> GenerateGuard(Edge edge)
     {
-        foreach ((Clock clock, Range range) in edge.GetClockRanges())
+        foreach ((Clock clock, Range range) in edge.GetValidClockRanges())
         {
-            yield return $"(c{clock.Id} >= {range.Start} && c{clock.Id} < {range.End})";
+            yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
+                $"{(int)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{(int)(range.EndInterval * 1000)})";
+
         }
     }
 

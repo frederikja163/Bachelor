@@ -1,4 +1,6 @@
-﻿using TimedRegex.AST;
+﻿using System.Text;
+using TimedRegex.AST;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Parsing
 {
@@ -95,23 +97,28 @@ namespace TimedRegex.Parsing
             }
             Token token = tokenizer.Advance();
             bool startInclusive = token.Type == TokenType.IntervalOpen;
-            int startInterval = ParseNumber(tokenizer);
+            float startInterval = ParseNumber(tokenizer);
             tokenizer.Accept(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalSeparator);
-            int endInterval = ParseNumber(tokenizer);
+            float endInterval = ParseNumber(tokenizer);
             bool endInclusive = tokenizer.AcceptOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose)
                 .Type == TokenType.IntervalClose;
-            return new Interval(child, token, startInterval, endInterval, startInclusive, endInclusive);
+            return new Interval(child, token, new Range(startInterval, endInterval, startInclusive, endInclusive));
         }
 
-        private static int ParseNumber(Tokenizer tokenizer)
+        private static float ParseNumber(Tokenizer tokenizer)
         {
-            tokenizer.Expect(TimedRegexErrorType.DigitImproperFormat, TokenType.Digit);
-            int number = 0;
-            while (tokenizer.Peek().Type == TokenType.Digit)
+            Token token = tokenizer.Peek();
+            StringBuilder sb = new();
+            while (!(tokenizer.Peek().Type == TokenType.IntervalClose || tokenizer.Peek().Type == TokenType.IntervalSeparator || tokenizer.Peek().Type == TokenType.IntervalOpen))
             {
-                number = (number * 10) + (tokenizer.Advance().Match - '0');
+                sb.Append(tokenizer.Advance().Match);
+                tokenizer.DontExpect(TimedRegexErrorType.UnexpectedToken, TokenType.EndOfInput);
             }
-            return number;
+            if (!float.TryParse(sb.ToString(), out float value))
+            {
+                throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", token);
+            }
+            return value;
         }
 
         private static IAstNode ParseUnary(Tokenizer tokenizer)
