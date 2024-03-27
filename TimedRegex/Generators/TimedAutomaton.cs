@@ -2,10 +2,6 @@ namespace TimedRegex.Generators;
 
 internal sealed class TimedAutomaton : ITimedAutomaton
 {
-    private static int _locationCount;
-    private static int _edgeCount;
-    private static int _clockCount;
-
     private readonly HashSet<char> _alphabet;
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
@@ -50,6 +46,9 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
+    internal static int TotalStateCount { get; private set; }
+    internal static int TotalEdgeCount { get; private set; }
+    internal static int TotalClockCount { get; private set; }
     public State? InitialLocation { get; internal set; }
 
     public IEnumerable<Clock> GetClocks()
@@ -120,16 +119,16 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     
     private static int CreateLocationId()
     {
-        return _locationCount++;
+        return TotalStateCount++;
     }
 
     private static int CreateEdgeId()
     {
-        return _edgeCount++;
+        return TotalEdgeCount++;
     }
 
     private static int CreateClockId()
     {
-        return _clockCount++;
+        return TotalClockCount++;
     }
 }

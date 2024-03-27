@@ -11,6 +11,9 @@ internal sealed class Tokenizer
         _input = input;
         _lookAhead = new List<Token>();
     }
+
+    public int PeekedCharacters => _head;
+    
     internal Token Peek(int n = 0)
     {
         EnsureLookAhead(n);
