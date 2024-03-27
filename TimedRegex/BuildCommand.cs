@@ -28,7 +28,7 @@ internal sealed class BuildCommand
     public string? Output { get; set; }
 
     [Option('q', "quiet", Default = false,
-        HelpText = $"If set, only the output file will be written to stdout. Can't be used along with '{nameof(Quiet)}'.")]
+        HelpText = $"If set, only the output file will be written to stdout. Can't be used along with '{nameof(Verbose)}'.")]
     public bool Quiet { get; set; } = false;
     
     [Option("noopen", Default = false,
