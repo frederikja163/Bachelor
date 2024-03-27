@@ -1,12 +1,34 @@
 \usepackage{MnSymbol}
 \usepackage[backend=biber,style=nature,bibencoding=utf8]{biblatex}
+\usepackage{xargs}
 \usepackage{listings}
+\usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{tikz-uml}
 \usepackage{graphics}
 \usepackage[T1]{fontenc}
+\usepackage{multicol}
+\usepackage{lipsum}
+\usepackage[margin={2cm,2cm}]{geometry}
 
 \addbibresource{bibliography.bib}
 
 \newcounter{Definition}
 \newtheorem{definition}[Definition]{Definition}
+
+
+\newcommand{\semaut}[1]{[\![#1]\!]}
+\newcommand{\sembox}[1]{
+    \fbox{\begin{minipage}{0.9\textwidth}
+        #1
+    \end{minipage}}
+}
+\newcommandx{\automaton}[7][1=, 2=Q, 3=C, 4=\Delta, 5=\Sigma, 6=s, 7=F]{
+    (#2#1, #3#1, #4#1, #5, #6#1, #7#1)
+}
+\newcommandx{\transition}[6][1=, 2=q, 3=q', 4=\phi, 5=p, 6=a]{
+    (#2#1, #4#1, #5#1, #6, #3#1)
+}
+\newcommandx{\deadedge}[0]{
+    \mathbb{E}
+}

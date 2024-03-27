@@ -21,20 +21,17 @@ internal sealed class Transition
             _labels.Add(Label.CreateSynchronization(edge));
         }
 
-        Id = $"id{edge.Id}";
-        Source = $"id{edge.From.Id}";
-        Target = $"id{edge.To.Id}";
+        Source = $"l{edge.From.Id}";
+        Target = $"l{edge.To.Id}";
     }
     
-    internal Transition(string id, string source, string target, IEnumerable<Label> labels)
+    internal Transition(string source, string target, IEnumerable<Label> labels)
     {
-        Id = id;
         Source = source;
         Target = target;
         _labels = labels.ToList();
     }
     
-    internal string Id { get; }
     internal string Source { get; }
     internal string Target { get; }
 

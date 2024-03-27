@@ -29,10 +29,10 @@ public sealed class UppaalGeneratorTest
         Location id3 = new("id3", "id3", Enumerable.Empty<Label>());
         Location id4 = new("id4", "id4", Enumerable.Empty<Label>());
 
-        Transition id5 = new("id5", "id0", "id1", Enumerable.Empty<Label>());
-        Transition id6 = new("id6", "id0", "id2", Enumerable.Empty<Label>());
-        Transition id7 = new("id7", "id1", "id3", new[] { new Label(LabelKind.Guard, "1 <= c1 < 5") });
-        Transition id8 = new("id8", "id2", "id4", new[] { new Label(LabelKind.Guard, "1 <= c2 < 3") });
+        Transition id5 = new("id0", "id1", Enumerable.Empty<Label>());
+        Transition id6 = new("id0", "id2", Enumerable.Empty<Label>());
+        Transition id7 = new("id1", "id3", new[] { new Label(LabelKind.Guard, "1 <= c1 < 5") });
+        Transition id8 = new("id2", "id4", new[] { new Label(LabelKind.Guard, "1 <= c2 < 3") });
 
         Template ta1 = new(new Declaration(new List<string>(),
                 new List<string>()),
@@ -175,7 +175,7 @@ public sealed class UppaalGeneratorTest
         {
             Assert.Multiple(() =>
             {
-                Assert.That(locations[i].Id, Is.EqualTo($"id{i}"));
+                Assert.That(locations[i].Id, Is.EqualTo($"l{i}"));
                 Assert.That(locations[i].Name, Is.EqualTo($"loc{i}"));
             });
         }
@@ -201,9 +201,8 @@ public sealed class UppaalGeneratorTest
         {
             Assert.Multiple(() =>
             {
-                Assert.That(transitions[i].Id, Is.EqualTo($"id{i}"));
-                Assert.That(transitions[i].Source, Is.EqualTo($"id{from}"));
-                Assert.That(transitions[i].Target, Is.EqualTo($"id{to}"));
+                Assert.That(transitions[i].Source, Is.EqualTo($"l{from}"));
+                Assert.That(transitions[i].Target, Is.EqualTo($"l{to}"));
             });
         }
     }
@@ -282,7 +281,7 @@ public sealed class UppaalGeneratorTest
         UppaalGenerator uppaalGenerator = new();
         Nta nta = CreateTestNta();
         const string expected =
-            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition ref=\"id5\">\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition ref=\"id6\">\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition ref=\"id7\">\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition ref=\"id8\">\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
+            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition>\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition>\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -361,9 +360,9 @@ public sealed class UppaalGeneratorTest
     public void WriteTransitionTest()
     {
         UppaalGenerator uppaalGenerator = new();
-        Transition transition = new("id2", "id1", "id2", new List<Label>());
+        Transition transition = new("id1", "id2", new List<Label>());
 
-        const string expected = "<transition ref=\"id2\">\n  <source ref=\"id1\" />\n  <target ref=\"id2\" />\n</transition>";
+        const string expected = "<transition>\n  <source ref=\"id1\" />\n  <target ref=\"id2\" />\n</transition>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -453,11 +452,6 @@ public sealed class UppaalGeneratorTest
         Transition[] transitions = templates[0].GetTransitions().ToArray();
 
         Assert.That(transitions, Has.Length.EqualTo(4));
-
-        for (int i = 0; i < transitions.Length; i++)
-        {
-            Assert.That(transitions[i].Id, Is.EqualTo($"id{i + 5}"));
-        }
     }
 
     [TestCase(0, "id0", "id1")]

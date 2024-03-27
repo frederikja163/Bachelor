@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>clock c0, c1, c2;chan A, B, C;</declaration>
+	<template>
+		<name>ta0</name>
+		<declaration>clock x;</declaration>
+		<location id="id0" x="-17" y="-119">
+		</location>
+		<location id="id1" x="-246" y="-119">
+		</location>
+		<location id="id2" x="-17" y="-18">
+			<name x="-27" y="-52">loc1Final</name>
+		</location>
+		<location id="id3" x="-254" y="-416">
+		</location>
+		<location id="id4" x="-25" y="-315">
+		</location>
+		<location id="id5" x="-25" y="-416">
+		</location>
+		<location id="id6" x="179" y="-416">
+		</location>
+		<location id="id7" x="408" y="-315">
+			<name x="398" y="-349">loc0Final</name>
+		</location>
+		<location id="id8" x="408" y="-416">
+		</location>
+		<location id="id9" x="-467" y="-263">
+		</location>
+		<init ref="id9"/>
+		<transition id="id10">
+			<source ref="id9"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-399" y="-144">c0 &gt;= 0 &amp;&amp; c0 &lt; 1</label>
+			<nail x="-399" y="-119"/>
+		</transition>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-408" y="-442">c0 &gt;= 0 &amp;&amp; c0 &lt; 1</label>
+			<nail x="-399" y="-416"/>
+		</transition>
+		<transition id="id12">
+			<source ref="id3"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-187" y="-561">x &gt;= 4 &amp;&amp; x &lt; 6</label>
+			<label kind="synchronisation" x="-229" y="-467">B?</label>
+			<label kind="assignment" x="-187" y="-544">c2 = 0</label>
+			<nail x="-212" y="-518"/>
+			<nail x="144" y="-518"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="-195" y="-60">c0 &gt;= 1 &amp;&amp; c0 &lt; 4</label>
+			<label kind="synchronisation" x="-195" y="-43">A?</label>
+			<nail x="-203" y="-18"/>
+		</transition>
+		<transition id="id14">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="-212" y="-119">A?</label>
+		</transition>
+		<transition id="id15">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-203" y="-357">c1 &gt;= 4 &amp;&amp; c1 &lt; 6</label>
+			<label kind="synchronisation" x="-203" y="-340">B?</label>
+			<nail x="-211" y="-315"/>
+		</transition>
+		<transition id="id16">
+			<source ref="id3"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-221" y="-416">B?</label>
+		</transition>
+		<transition id="id17">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="guard" x="230" y="-357">c2 &gt;= 3 &amp;&amp; c2 &lt; 7</label>
+			<label kind="synchronisation" x="230" y="-340">C?</label>
+			<nail x="222" y="-315"/>
+		</transition>
+		<transition id="id18">
+			<source ref="id6"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="212" y="-416">C?</label>
+		</transition>
+	</template>
+	<system>system ta0;</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+	</queries>
+</nta>

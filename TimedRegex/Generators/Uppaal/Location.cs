@@ -6,7 +6,7 @@ internal sealed class Location
     
     internal Location(State state)
     {
-        Id = $"id{state.Id}";
+        Id = $"l{state.Id}";
         Name = $"loc{state.Id}{(state.IsFinal ? "Final" : "")}";
         _labels = new();
     }

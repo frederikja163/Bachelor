@@ -13,14 +13,14 @@ internal sealed class UppaalGenerator : IGenerator
         NewLineChars = "\n"
     };
 
-    public void AddAutomaton(TimedAutomaton automaton)
+    public void AddAutomaton(ITimedAutomaton automaton)
     {
         _nta.AddAutomaton(automaton);
     }
 
     public void GenerateFile(string filePath)
     {
-        using FileStream fs = File.Open(filePath, FileMode.Append);
+        using FileStream fs = File.Open(filePath, FileMode.Create);
         GenerateFile(fs);
     }
 
@@ -114,7 +114,6 @@ internal sealed class UppaalGenerator : IGenerator
     internal void WriteTransition(XmlWriter xmlWriter, Transition transition)
     {
         xmlWriter.WriteStartElement("transition");
-        xmlWriter.WriteAttributeString("ref", transition.Id);
 
         xmlWriter.WriteStartElement("source");
         xmlWriter.WriteAttributeString("ref", transition.Source);
