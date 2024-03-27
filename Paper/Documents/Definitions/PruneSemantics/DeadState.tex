@@ -1,5 +1,5 @@
 Dead states are all the states that have no way of reaching the final state.
-These states are pruned by removing all states that have no edges away from them unless they are final states, this is repeated untill no states satisfy this property.
+These states are pruned by removing all states that have no edges away from them unless they are final states, this is repeated until no states satisfy this property.
 
 \sembox{
     $\deadstate(A_1)=\left\{\begin{array}{ll}
@@ -8,7 +8,7 @@ These states are pruned by removing all states that have no edges away from them
     \end{array}\right.
     $
 
-    $Q=\{q_1\in Q_1|q_1\notin F_1\wedge\transition[_1]\in\Delta_1\}$
+    $Q=\{q_1\in Q_1\mid q_1\notin F_1\wedge\transition[_1]\in\Delta_1\}$
 
-    $\Delta=\{\transition[_1]\in\Delta_1|q_1\in Q\}$
+    $\Delta=\{\transition[_1]\in\Delta_1\mid q_1\in Q\}$
 }
