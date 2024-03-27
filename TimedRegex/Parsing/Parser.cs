@@ -112,10 +112,7 @@ namespace TimedRegex.Parsing
             while (!(tokenizer.Peek().Type == TokenType.IntervalClose || tokenizer.Peek().Type == TokenType.IntervalSeparator || tokenizer.Peek().Type == TokenType.IntervalOpen))
             {
                 sb.Append(tokenizer.Advance().Match);
-                if (tokenizer.Peek().Type == TokenType.EndOfInput)
-                {
-                    throw new TimedRegexCompileException(TimedRegexErrorType.IntervalImproperFormat, "Reached end of input before finishing parsing of interval.", token);
-                }
+                tokenizer.DontExpect(TimedRegexErrorType.UnexpectedToken, TokenType.EndOfInput);
             }
             if (!float.TryParse(sb.ToString(), out float value))
             {

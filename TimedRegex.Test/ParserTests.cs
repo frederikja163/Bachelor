@@ -343,6 +343,13 @@ public sealed class ParserTests
     }
 
     [Test]
+    public void ParseInvalidIntervalMultipleSeperatorsTest()
+    {
+        Tokenizer tokenizer = new("a[1;4;7]");
+        Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
+    }
+
+    [Test]
     public void ParsePrecedenceMultipleConcatTest()
     {
         Tokenizer tokenizer = new("abcde");

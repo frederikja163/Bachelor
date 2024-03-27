@@ -51,6 +51,14 @@ internal sealed class Tokenizer
         }
     }
 
+    internal void DontExpect(TimedRegexErrorType errType, TokenType type)
+    {
+        if (Peek().Type == type)
+        {
+            throw new TimedRegexCompileException(errType, $"Did not expect '{TokenTypeToString(type)}' at {Peek().CharacterIndex}.", Peek());
+        }
+    }
+
     internal void ExpectOr(TimedRegexErrorType errType, TokenType type1, TokenType type2)
     {
         if (Peek().Type != type1 && Peek().Type != type2)
