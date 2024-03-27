@@ -1,4 +1,5 @@
 namespace TimedRegex.AST.Visitors;
+using Range = Generators.Range;
 
 internal sealed class IteratorVisitor : IAstVisitor
 {
@@ -48,7 +49,7 @@ internal sealed class IteratorVisitor : IAstVisitor
 
     public void Visit(Interval interval)
     {
-        _stack.Push(new Interval(_stack.Pop(), interval.Token, interval.StartInterval, interval.EndInterval, interval.StartInclusive, interval.EndInclusive));
+        _stack.Push(new Interval(_stack.Pop(), interval.Token, interval.Range));
     }
 
     public void Visit(Iterator iterator)
