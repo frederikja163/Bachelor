@@ -31,7 +31,7 @@ internal sealed class Range : IEquatable<Range>
             other.EndInclusive == EndInclusive;
     }
 
-    public static Range? Intersection(Range? r1, Range? r2)
+    internal static Range? Intersection(Range? r1, Range? r2)
     {
         if ((r1 is null) || (r2 is null))
         {
@@ -87,7 +87,7 @@ internal sealed class Range : IEquatable<Range>
         return null;
     }
 
-    public bool IsValidInterval() 
+    internal bool IsValidInterval() 
     {
         return !(StartInterval > EndInterval ||
         (StartInterval == EndInterval &&
