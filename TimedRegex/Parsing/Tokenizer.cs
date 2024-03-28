@@ -54,6 +54,14 @@ internal sealed class Tokenizer
         }
     }
 
+    internal void DontExpect(TimedRegexErrorType errType, TokenType type)
+    {
+        if (Peek().Type == type)
+        {
+            throw new TimedRegexCompileException(errType, $"Did not expect '{TokenTypeToString(type)}' at {Peek().CharacterIndex}.", Peek());
+        }
+    }
+
     internal void ExpectOr(TimedRegexErrorType errType, TokenType type1, TokenType type2)
     {
         if (Peek().Type != type1 && Peek().Type != type2)
@@ -85,8 +93,7 @@ internal sealed class Tokenizer
                     '{' => new Token(_head, '{', TokenType.RenameStart),
                     '}' => new Token(_head, '}', TokenType.RenameEnd),
                     ',' => new Token(_head, ',', TokenType.RenameSeparator),
-                    char c when char.IsDigit(c) => new Token(_head, c, TokenType.Digit),
-                    _ => throw new TimedRegexCompileException(TimedRegexErrorType.UnexpectedToken, $"Unrecognized token at {_head} '{_input[_head]}'", new Token(_head, _input[_head], TokenType.Unrecognized))
+                    _ => new Token(_head, _input[_head], TokenType.Unrecognized)
                 };
             _lookAhead.Add(token);
             _head += 1;
@@ -112,7 +119,6 @@ internal sealed class Tokenizer
             TokenType.RenameStart => "{",
             TokenType.RenameEnd => "}",
             TokenType.RenameSeparator => ",",
-            TokenType.Digit => "a number",
             TokenType.None => "none",
             TokenType.EndOfInput => "end of input",
             TokenType.Unrecognized => "Unrecognized",

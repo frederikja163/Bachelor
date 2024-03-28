@@ -28,11 +28,9 @@ internal sealed class ValidIntervalVisitor : IAstVisitor
 
     public void Visit(Interval interval)
     {
-        int startInclusive = interval.StartInterval + (interval.StartInclusive ? 0 : 1);
-        int endInclusive = interval.EndInterval + (interval.EndInclusive ? 0 : -1);
-        if (startInclusive > endInclusive)
+        if (!interval.Range.IsValidInterval())
         {
-            throw new TimedRegexCompileException(TimedRegexErrorType.IntervalStartBiggerThanEnd, $"Interval start value {startInclusive} must be smaller than or equal to end value {endInclusive}.", interval.Token);
+            throw new TimedRegexCompileException(TimedRegexErrorType.IntervalStartBiggerThanEnd, $"Interval start value {interval.Range.StartInterval} must be smaller than or equal to end value {interval.Range.EndInterval}, whilst considering inclusion and exclusion.", interval.Token);
         }
     }
 

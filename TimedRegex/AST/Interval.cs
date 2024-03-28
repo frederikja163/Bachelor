@@ -1,24 +1,19 @@
 ﻿using TimedRegex.AST.Visitors;
 using TimedRegex.Parsing;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.AST;
 
 internal sealed class Interval : IUnary
 {
-    internal Interval(IAstNode child, Token token, int startInterval, int endInterval, bool startInclusive, bool endInclusive)
+    internal Interval(IAstNode child, Token token, Range range)
     {
         Child = child;
         Token = token;
-        StartInterval = startInterval;
-        EndInterval = endInterval;
-        StartInclusive = startInclusive;
-        EndInclusive = endInclusive;
+        Range = range;
     }
 
-    internal int StartInterval { get; }
-    internal int EndInterval { get; }
-    internal bool StartInclusive { get; }
-    internal bool EndInclusive { get; }
+    internal Range Range {  get; }
     public IAstNode Child { get; }
     public Token Token { get; }
     
@@ -31,7 +26,7 @@ internal sealed class Interval : IUnary
     public string ToString(bool forceParenthesis = false)
     {
         return forceParenthesis
-            ? $"({Child.ToString(forceParenthesis)}{Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')})"
-            : $"{Child.ToString(forceParenthesis)}{Token.Match}{StartInterval};{EndInterval}{(EndInclusive ? ']' : '[')}";
+            ? $"({Child.ToString(forceParenthesis)}{Token.Match}{Range.StartInterval};{Range.EndInterval}{(Range.EndInclusive ? ']' : '[')})"
+            : $"{Child.ToString(forceParenthesis)}{Token.Match}{Range.StartInterval};{Range.EndInterval}{(Range.EndInclusive ? ']' : '[')}";
     }
 }

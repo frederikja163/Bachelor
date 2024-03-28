@@ -27,7 +27,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         {
             Edge edge = new(edgeId++, newStates[e.From.Id], newStates[e.To.Id], e.Symbol);
             edge.AddClockResets(e.GetClockResets().Select(c => newClocks[c.Id]));
-            edge.AddClockRanges(e.GetClockRanges().Select(t => (newClocks[t.Item1.Id], t.Item2)));
+            edge.AddClockRanges(e.GetValidClockRanges().Select(t => (newClocks[t.Item1.Id], t.Item2)));
             return edge;
         }
     }

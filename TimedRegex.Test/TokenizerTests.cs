@@ -21,8 +21,6 @@ public sealed class TokenizerTests
     [TestCase("{", TokenType.RenameStart)]
     [TestCase("}", TokenType.RenameEnd)]
     [TestCase(",", TokenType.RenameSeparator)]
-    [TestCase("1", TokenType.Digit)]
-    [TestCase("9", TokenType.Digit)]
     public void ParseTokenTypeTest(string str, int type)
     {
         Tokenizer tokenizer = new(str);
@@ -74,7 +72,7 @@ public sealed class TokenizerTests
     public void CannotParseInvalidTokensTest(string str)
     {
         Tokenizer tokenizer = new(str);
-        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Advance());
+        Assert.That(tokenizer.Advance().Type, Is.EqualTo(TokenType.Unrecognized));
     }
     
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]
@@ -181,7 +179,7 @@ public sealed class TokenizerTests
         Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Match));
         Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Intersection, TokenType.Match));
         Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Intersection));
-        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Expect(TimedRegexErrorType.UnexpectedToken, TokenType.Digit));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Expect(TimedRegexErrorType.UnexpectedToken, TokenType.ParenthesisEnd));
         Assert.Throws<TimedRegexCompileException>(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.MatchAny, TokenType.Iterator));
     }
     
@@ -193,7 +191,7 @@ public sealed class TokenizerTests
         Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Match));
         Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Intersection, TokenType.Match));
         Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Intersection));
-        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Digit));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.ParenthesisEnd));
         Assert.Throws<TimedRegexCompileException>(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.MatchAny, TokenType.Iterator));
     }
 

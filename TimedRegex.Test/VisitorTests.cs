@@ -2,17 +2,39 @@ using NUnit.Framework;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Parsing;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 
 public sealed class VisitorTests
 {
+    [TestCase(true,true,false)]
+    [TestCase(false,false,true)]
+    [TestCase(true,false,true)]
+    [TestCase(false,true,true)]
+    public void IntervalInclusiveExclusiveValidationTest(bool startInclusive, bool endInclusive, bool expectThrow)
+    {
+        Interval interval = new(new Match(new Token(0, 'a', TokenType.Match)), 
+            new Token(1, (startInclusive ? '[' : ']'), (startInclusive ? TokenType.IntervalOpen : TokenType.IntervalClose)), 
+            new Range(1.00f, 1.00f, startInclusive, endInclusive));
+        ValidIntervalVisitor visitor = new();
+
+        if (!expectThrow)
+        {
+            Assert.DoesNotThrow(() => interval.Accept(visitor));
+        }
+        else
+        {
+            Assert.Throws<TimedRegexCompileException>(() => interval.Accept(visitor));
+        }
+    }
+
     [Test]
     public void InvalidIntervalTest([Range(0, 5, 1)] int start, [Range(0, 5, 1)] int end)
     {
         Interval interval = AutomatonGeneratorVisitorTest.Interval('a', start, end);
         ValidIntervalVisitor visitor = new();
-        // Since we generate the intervals as inclusive-exclusive start should be strictly less than end.
+        // Since we generate the intervals as inclusive-exclusive, start should be strictly less than end.
         if (start < end)
         {
             Assert.DoesNotThrow(() => interval.Accept(visitor));
