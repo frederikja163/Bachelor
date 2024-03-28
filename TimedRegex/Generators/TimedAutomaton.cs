@@ -61,9 +61,24 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         return _edges.Values;
     }
 
+    internal IEnumerable<Edge> GetEdgesFrom(IEnumerable<State> states)
+    {
+        return GetEdges().Where(e => states.Contains(e.From));
+    }
+    
+    internal IEnumerable<Edge> GetEdgesTo(IEnumerable<State> states)
+    {
+        return GetEdges().Where(e => states.Contains(e.To));
+    }
+
     public IEnumerable<State> GetStates()
     {
         return _states.Values;
+    }
+
+    internal IEnumerable<State> GetFinalStates()
+    {
+        return GetStates().Where(s => s.IsFinal);
     }
 
     public IEnumerable<char> GetAlphabet()

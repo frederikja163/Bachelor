@@ -40,7 +40,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             edge.AddClockResets(right.GetClocks());
         }
 
-        foreach (State location in left.GetStates().Where(l => l.IsFinal))
+        foreach (State location in left.GetFinalStates())
         {
             location.IsFinal = false;
         }
@@ -73,7 +73,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             edge.AddClockRanges(e.GetClockRanges());
         }
 
-        foreach (State location in left.GetStates().Where(l => l.IsFinal))
+        foreach (State location in left.GetFinalStates())
         {
             location.IsFinal = false;
         }
@@ -210,7 +210,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             edge.AddClockRanges(e.GetClockRanges());
         }
 
-        foreach (State location in ta.GetStates().Where(l => l.IsFinal && l.Id != newFinal.Id))
+        foreach (State location in ta.GetFinalStates().Where(l => l.Id != newFinal.Id))
         {
             location.IsFinal = false;
         }
