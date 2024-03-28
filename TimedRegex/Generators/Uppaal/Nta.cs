@@ -40,7 +40,7 @@ internal sealed class Nta
         
         _templates.Add(new (new(), $"ta{NewTemplateId()}",
             $"l{automaton.InitialLocation!.Id}",
-            automaton.GetStates().Select(s => new Location(s)),
+            automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
             automaton.GetEdges().Select(e => new Transition(e))));
     }
 

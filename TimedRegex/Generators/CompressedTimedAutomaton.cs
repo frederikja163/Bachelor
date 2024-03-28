@@ -6,6 +6,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
+    private readonly HashSet<State> _finalStates;
 
     internal CompressedTimedAutomaton(TimedAutomaton automaton)
     {
@@ -13,7 +14,8 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         Dictionary<int, Clock> newClocks =
             automaton.GetClocks().ToDictionary(c => c.Id, (_) => new Clock(clockId++));
         Dictionary<int, State> newStates =
-            automaton.GetStates().ToDictionary(s => s.Id, (s) => new State(stateId++, s.IsFinal));
+            automaton.GetStates().ToDictionary(s => s.Id, (s) => new State(stateId++));
+        _finalStates = automaton.GetFinalStates().Select(s => newStates[s.Id]).ToHashSet();
         
         _alphabet = automaton.GetAlphabet().ToHashSet();
         InitialLocation = automaton.InitialLocation is null ? null : newStates[automaton.InitialLocation.Id];
@@ -47,11 +49,21 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         return _states.Values;
     }
 
+    public IEnumerable<State> GetFinalStates()
+    {
+        return _finalStates;
+    }
+
     public IEnumerable<char> GetAlphabet()
     {
         foreach (char c in _alphabet)
         {
             yield return c;
         }
+    }
+
+    public bool IsFinal(State state)
+    {
+        return _finalStates.Contains(state);
     }
 }

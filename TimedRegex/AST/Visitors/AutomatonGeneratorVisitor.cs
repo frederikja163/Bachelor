@@ -42,7 +42,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         foreach (State location in left.GetFinalStates())
         {
-            location.IsFinal = false;
+            ta.MakeNotFinal(location);
         }
 
         _stack.Push(ta);
@@ -75,7 +75,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         foreach (State location in left.GetFinalStates())
         {
-            location.IsFinal = false;
+            left.MakeNotFinal(location);
         }
 
         _stack.Push(ta);
@@ -92,7 +92,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             .ToDictionary(l => l,
                 l => clockPowerSet
                     .ToDictionary(c => c.ToSortedSet(),
-                        c => ta.AddState(l.IsFinal, l.Equals(child.InitialLocation) && c.Count == 0), sortedSetEqualityComparer));
+                        c => ta.AddState(child.IsFinal(l), l.Equals(child.InitialLocation) && c.Count == 0), sortedSetEqualityComparer));
         Clock newClock = ta.AddClock();
 
         foreach (Edge childEdge in child.GetEdges())
@@ -109,7 +109,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                 edge.AddClockResets(childEdge.GetClockResets());
                 edge.AddClockRanges(ranges);
 
-                if (childEdge.To.IsFinal)
+                if (child.IsFinal(childEdge.To))
                 {
                     edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol);
                     edge.AddClockResets(childEdge.GetClockResets());
@@ -156,7 +156,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     edge.AddClockResets(lEdge.GetClockResets());
                     edge.AddClockResets(rEdge.GetClockResets());
 
-                    if (lEdge.To.IsFinal && rEdge.To.IsFinal)
+                    if (left.IsFinal(lEdge.To) && right.IsFinal(rEdge.To))
                     {
                         edge = ta.AddEdge(from, final, c);
                         edge.AddClockRanges(lEdge.GetClockRanges());
@@ -212,7 +212,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         foreach (State location in ta.GetFinalStates().Where(l => l.Id != newFinal.Id))
         {
-            location.IsFinal = false;
+            ta.MakeNotFinal(location);
         }
 
         _stack.Push(ta);

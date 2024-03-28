@@ -6,13 +6,14 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
-    private readonly List<State> _finalStates;
+    private readonly HashSet<State> _finalStates;
     
     internal TimedAutomaton()
     {
         _clocks = new Dictionary<int, Clock>();
         _edges = new Dictionary<int, Edge>();
         _states = new Dictionary<int, State>();
+        _finalStates = new HashSet<State>();
         InitialLocation = null;
         _alphabet = new HashSet<char>();
     }
@@ -28,6 +29,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _states = !excludeLocations
             ? other._states.ToDictionary()
             : new Dictionary<int, State>();
+        _finalStates = !excludeLocations ? other._finalStates : new HashSet<State>();
         InitialLocation = !excludeLocations ? other.InitialLocation : null;
         _alphabet = other._alphabet.ToHashSet();
     }
@@ -43,6 +45,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _states = !excludeLocations
             ? left._states.UnionBy(right._states, kvp => kvp.Key).ToDictionary()
             : new Dictionary<int, State>();
+        _finalStates = !excludeLocations ? left._finalStates.Union(right._finalStates).ToHashSet() : new HashSet<State>();
         InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
@@ -77,9 +80,24 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         return _states.Values;
     }
 
-    internal IEnumerable<State> GetFinalStates()
+    public IEnumerable<State> GetFinalStates()
     {
-        return GetStates().Where(s => s.IsFinal);
+        return _finalStates;
+    }
+
+    public bool IsFinal(State state)
+    {
+        return _finalStates.Contains(state);
+    }
+
+    internal void MakeFinal(State state)
+    {
+        _finalStates.Add(state);
+    }
+
+    internal void MakeNotFinal(State state)
+    {
+        _finalStates.Remove(state);
     }
 
     public IEnumerable<char> GetAlphabet()
@@ -101,11 +119,16 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
     internal State AddState(bool final = false, bool newInitial = false)
     {
-        State state = new(CreateLocationId(), final);
+        State state = new(CreateLocationId());
         
         if (newInitial)
         {
             InitialLocation = state;
+        }
+
+        if (final)
+        {
+            _finalStates.Add(state);
         }
         
         _states.Add(state.Id, state);

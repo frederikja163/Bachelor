@@ -4,10 +4,10 @@ internal sealed class Location
 {
     private readonly List<Label> _labels;
     
-    internal Location(State state)
+    internal Location(State state, bool isFinal)
     {
         Id = $"l{state.Id}";
-        Name = $"loc{state.Id}{(state.IsFinal ? "Final" : "")}";
+        Name = $"loc{state.Id}{(isFinal ? "Final" : "")}";
         _labels = new();
     }
     
