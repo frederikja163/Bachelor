@@ -1,3 +1,5 @@
+using TimedRegex.Extensions;
+
 namespace TimedRegex.Generators;
 
 internal sealed class TimedAutomaton : ITimedAutomaton
@@ -7,6 +9,8 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
     private readonly HashSet<State> _finalStates;
+    private readonly Dictionary<int, List<Edge>> _toEdges;
+    private readonly Dictionary<int, List<Edge>> _fromEdges;
     
     internal TimedAutomaton()
     {
@@ -15,6 +19,8 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _states = new Dictionary<int, State>();
         _finalStates = new HashSet<State>();
         InitialLocation = null;
+        _toEdges = new Dictionary<int, List<Edge>>();
+        _fromEdges = new Dictionary<int, List<Edge>>();
         _alphabet = new HashSet<char>();
     }
     
@@ -30,6 +36,8 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             ? other._states.ToDictionary()
             : new Dictionary<int, State>();
         _finalStates = !excludeLocations ? other._finalStates : new HashSet<State>();
+        _toEdges = !excludeEdges ? other._toEdges : new Dictionary<int, List<Edge>>();
+        _fromEdges = !excludeEdges ? other._fromEdges : new Dictionary<int, List<Edge>>();
         InitialLocation = !excludeLocations ? other.InitialLocation : null;
         _alphabet = other._alphabet.ToHashSet();
     }
@@ -46,6 +54,12 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             ? left._states.UnionBy(right._states, kvp => kvp.Key).ToDictionary()
             : new Dictionary<int, State>();
         _finalStates = !excludeLocations ? left._finalStates.Union(right._finalStates).ToHashSet() : new HashSet<State>();
+        _toEdges = !excludeEdges
+            ? left._toEdges.UnionBy(right._toEdges, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, List<Edge>>();
+        _fromEdges = !excludeEdges
+            ? left._fromEdges.UnionBy(right._fromEdges, kvp => kvp.Key).ToDictionary()
+            : new Dictionary<int, List<Edge>>();
         InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
@@ -67,12 +81,30 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
     internal IEnumerable<Edge> GetEdgesFrom(IEnumerable<State> states)
     {
-        return GetEdges().Where(e => states.Contains(e.From));
+        foreach (State state in states)
+        {
+            if (_fromEdges.TryGetValue(state.Id, out List<Edge>? edges))
+            {
+                foreach (Edge edge in edges)
+                {
+                    yield return edge;
+                }
+            }
+        }
     }
     
     internal IEnumerable<Edge> GetEdgesTo(IEnumerable<State> states)
     {
-        return GetEdges().Where(e => states.Contains(e.To));
+        foreach (State state in states)
+        {
+            if (_toEdges.TryGetValue(state.Id, out List<Edge>? edges))
+            {
+                foreach (Edge edge in edges)
+                {
+                    yield return edge;
+                }
+            }
+        }
     }
 
     public IEnumerable<State> GetStates()
@@ -88,11 +120,6 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     public bool IsFinal(State state)
     {
         return _finalStates.Contains(state);
-    }
-
-    internal void MakeFinal(State state)
-    {
-        _finalStates.Add(state);
     }
 
     internal void MakeNotFinal(State state)
@@ -142,6 +169,9 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         
         _edges.Add(edge.Id, edge);
         _alphabet.Add(symbol);
+        
+        _fromEdges.AddToList(from.Id, edge);
+        _toEdges.AddToList(to.Id, edge);
         
         return edge;
     }

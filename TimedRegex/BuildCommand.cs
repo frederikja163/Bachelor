@@ -121,7 +121,7 @@ internal sealed class BuildCommand
         Log.StopTime(totalSw, "Total time was {0}");
         if (!NoOpen)
         {
-            // return 0;
+            return 0;
             Log.WriteLineIf(Verbose, "Opening automaton in uppaal.");
             // On windows paths are relative to the uppaal installation.
             // This means we need to look for uppaal in the path use the relative path.
