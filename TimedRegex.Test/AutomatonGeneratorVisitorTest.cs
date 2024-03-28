@@ -139,7 +139,7 @@ public sealed class AutomatonGeneratorVisitorTest
         ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
-            Assert.That(ta.GetStates().Count(), Is.EqualTo(10));
+            Assert.That(ta.GetStates().Count(), Is.EqualTo(6));
             Assert.That(ta.GetStates().Count(l => ta.IsFinal(l)), Is.EqualTo(1));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
             Assert.That(ta.GetEdges().Count(e => ta.IsFinal(e.To)), Is.EqualTo(1));
