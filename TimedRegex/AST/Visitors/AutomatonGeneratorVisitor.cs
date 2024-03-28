@@ -89,19 +89,41 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         
         SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new();
         List<SortedSet<Clock>> clockPowerSet = child.GetClocks().PowerSet().Select(s => s.ToSortedSet()).ToList();
-        Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = child.GetStates()
-            .ToDictionary(l => l,
-                l => clockPowerSet
-                    .ToDictionary(c => c.ToSortedSet(),
-                        c => ta.AddState(child.IsFinal(l), l.Equals(child.InitialLocation) && c.Count == 0), sortedSetEqualityComparer));
+        Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = new Dictionary<State, Dictionary<SortedSet<Clock>, State>>();
+        newLocs[child.InitialLocation!] = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer)
+        {
+            { new SortedSet<Clock>(), ta.AddState(child.IsFinal(child.InitialLocation!), true) }
+        };
         Clock newClock = ta.AddClock();
 
         foreach (Edge childEdge in child.GetEdges())
         {
+            if (!newLocs.TryGetValue(childEdge.From, out Dictionary<SortedSet<Clock>, State>? newLocsFrom))
+            {
+                newLocsFrom = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer);
+                newLocs[childEdge.From] = newLocsFrom;
+            }
+
+            if (!newLocs.TryGetValue(childEdge.To, out Dictionary<SortedSet<Clock>, State>? newLocsTo))
+            {
+                newLocsTo = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer);
+                newLocs[childEdge.To] = newLocsTo;
+            }
             foreach (SortedSet<Clock> clockSet in clockPowerSet)
             {
-                State from = newLocs[childEdge.From][clockSet];
-                State to = newLocs[childEdge.To][clockSet.Union(childEdge.GetClockResets()).ToSortedSet()];
+                if (!newLocsFrom.TryGetValue(clockSet, out State? from))
+                {
+                    from = ta.AddState(child.IsFinal(childEdge.From));
+                    newLocsFrom[clockSet] = from;
+                }
+
+                SortedSet<Clock> resetClocks = clockSet.Union(childEdge.GetClockResets()).ToSortedSet();
+                if (!newLocsTo.TryGetValue(resetClocks, out State? to))
+                {
+                    to = ta.AddState(child.IsFinal(childEdge.To));
+                    newLocsTo[resetClocks] = to;
+                }
+                
                 List<(Clock, Range)> ranges = childEdge.GetValidClockRanges()
                     .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
                     .ToList();
