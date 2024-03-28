@@ -6,6 +6,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
+    private readonly List<State> _finalStates;
     
     internal TimedAutomaton()
     {

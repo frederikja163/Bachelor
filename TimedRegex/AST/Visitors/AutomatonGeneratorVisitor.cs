@@ -33,7 +33,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 
         TimedAutomaton ta = new(left, right);
-        foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
+        foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
             edge.AddClockRanges(e.GetClockRanges());
@@ -52,7 +52,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        foreach (Edge oldEdge in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
+        foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
             Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol);
             edge.AddClockRanges(oldEdge.GetClockRanges());
@@ -67,7 +67,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 
         TimedAutomaton ta = new(left, right);
-        foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
+        foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
             edge.AddClockRanges(e.GetClockRanges());
@@ -203,7 +203,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         State newFinal = ta.AddState(true);
         Clock clock = ta.AddClock();
 
-        foreach (Edge e in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
+        foreach (Edge e in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
             Edge edge = ta.AddEdge(e.From, newFinal, e.Symbol);
             edge.AddClockRange(clock, range);
