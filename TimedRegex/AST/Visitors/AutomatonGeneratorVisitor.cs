@@ -9,9 +9,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 {
     private readonly Stack<TimedAutomaton> _stack = new();
     
-    internal ITimedAutomaton GetAutomaton()
+    internal TimedAutomaton GetAutomaton()
     {
-        return new CompressedTimedAutomaton(_stack.Pop());
+        return _stack.Pop();
     }
     
     public void Visit(Epsilon epsilon)

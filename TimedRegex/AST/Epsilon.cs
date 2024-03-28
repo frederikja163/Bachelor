@@ -11,7 +11,8 @@ internal sealed class Epsilon : IAstNode
     }
 
     public Token Token { get; }
-    
+    public int ChildCount => 0;
+
     public void Accept(IAstVisitor visitor)
     {
         visitor.Visit(this);
