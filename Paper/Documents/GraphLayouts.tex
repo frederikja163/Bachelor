@@ -1,0 +1,57 @@
+\section{Graph Layout Research}
+
+% first compare the two algortihms, then go into detail with layered
+
+\subsection{Layered Graph Algorithm}
+Also called the Sugiyama Framework. The steps involved in this algorithm as described below, are discussed in detail, with accompanying pseudocode, in the paper "Visualisation of state machines using the Sugiyama framework" by Mazetti et al. \cite{Mazetti2012}.
+\noindent
+
+Steps:
+\begin{enumerate}
+    \item Temporarily make graph acyclic.
+          \begin{itemize}
+              \item This step is trivially solved, since we know when cycles are created, and during generation, we can mark edges to be reversed.
+              \item This can be done through DFS, or heuristics, two of which are described by Berger and Shor in their paper titled "Approximation algorithms for the maximum acyclic subgraph problem" \cite{Berger1990} and Eades et al. in the paper "A fast and effective heuristic for the feedback arc set problem" \cite{Eades1993}, respectively.
+              \item Temporarily reverse edges found from previous step.
+          \end{itemize}
+    \item Assign locations to layers.
+          \begin{itemize}
+              \item Longest path algorithm. Assign location to $i$-th layer, where $i$ is the length of the longest path to the location.
+              \item For edges that span multiple layers, create dummy location, equivalent to nails in Uppaal.
+          \end{itemize}
+    \item Order locations on each layer.
+          \begin{itemize}
+              \item Minimize edge crossings.
+              \item Can be done using either the Barycenter or Median function. The implementation is very similar, except for using the barycenter (average) or the median.
+                    \begin{enumerate}
+                        \item Sweep through the layers multiple times to ensure all locations are considered in the ordering.
+                        \item On each sweep, calculate the median value for each location by finding median of locations in previous layer connected to the current location.
+                        \item Sort the layer based on these medians.
+                        \item If sorted layout has fewer crossings than before, use this layout in the next sweep.
+                    \end{enumerate}
+          \end{itemize}
+    \item Assign positions to each location.
+          \begin{itemize}
+              \item Similar to location ordering.
+                    \begin{enumerate}
+                        \item Initialise location positions.
+                        \item For each layer
+                              \begin{enumerate}
+                                  \item calculate priority for all locations, based on connections to previous layer.
+                                  \item For each location in layer from highest to lowest priority, place location as close to barycenter of connected vertices in previous layer.
+                              \end{enumerate}
+                    \end{enumerate}
+              \item Remove temporary edge reversion.
+          \end{itemize}
+\end{enumerate}
+\noindent
+Complexity depends on the specific implementation, but a general complexity is around $O(LE)$, where $L$ and $E$ are the amount of locations and edges, respectively, in a given automaton.
+
+\subsection{Force-directed algorithm}
+
+Idea:
+\begin{itemize}
+    \item Locations act as repulsive entities.
+    \item Edges act as springs pulling connected locations together.
+    \item Calculate forces on Locations continuously until reaching stable layout.
+\end{itemize}
