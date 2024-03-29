@@ -165,9 +165,9 @@ public sealed class UppaalGeneratorTest
     {
         List<Location> locations =
         [
-          new Location(new State(0, false)),
-          new Location(new State(1, false)),
-          new Location(new State(2, false))
+          new Location(new State(0), false),
+          new Location(new State(1), false),
+          new Location(new State(2), false)
         ];
 
         Assert.That(locations, Has.Count.EqualTo(3));
@@ -191,9 +191,9 @@ public sealed class UppaalGeneratorTest
     {
         List<Transition> transitions =
         [
-            new Transition(new Edge(0, new State(from, false), new State(to, false), 'A')),
-            new Transition(new Edge(1, new State(from, false), new State(to, false), 'B')),
-            new Transition(new Edge(2, new State(from, false), new State(to, false), '\0'))
+            new Transition(new Edge(0, new State(from), new State(to), 'A')),
+            new Transition(new Edge(1, new State(from), new State(to), 'B')),
+            new Transition(new Edge(2, new State(from), new State(to), '\0'))
         ];
 
         Assert.That(transitions, Has.Count.EqualTo(3));
@@ -211,10 +211,11 @@ public sealed class UppaalGeneratorTest
     public void GenerateLabelTest()
     {
         TimedAutomaton automaton = new();
-        Edge edge = automaton.AddEdge(new(0, false), new(1,false), 'a');
 
         Clock clock1 = new(0);
         Clock clock2 = new(1);
+        Edge edge = new(2, new State(0), new State(1), 'a');
+
         edge.AddClockRange(clock1, new Range(1, 5, true, false));
         edge.AddClockRange(clock2, new Range(2, 3, true, false));
         edge.AddClockReset(clock1);
@@ -244,7 +245,7 @@ public sealed class UppaalGeneratorTest
     {
         Clock clock1 = new(0);
         Clock clock2 = new(1);
-        Edge edge = new(0, new State(1, false), new State(2, true), 'a');
+        Edge edge = new(0, new State(1), new State(2), 'a');
 
         edge.AddClockRange(clock1, new Range(2, 7, false, false));
         edge.AddClockRange(clock2, new Range(1, 7, true, false));
@@ -269,7 +270,7 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void GenerateEmptyLabelTest()
     {
-        Edge edge = new(2, new State(0, false), new State(1, false), '\0');
+        Edge edge = new(2, new State(0), new State(1), '\0');
 
         Transition transition = new Transition(edge);
 
