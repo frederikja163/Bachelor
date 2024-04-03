@@ -3,6 +3,7 @@ using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
 using TimedRegex.Parsing;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 
@@ -25,7 +26,7 @@ public sealed class AutomatonGeneratorVisitorTest
     
     internal static Interval Interval(char c, int start, int end)
     {
-        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), start, end, true, false);
+        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), new Range(start, end, true, false));
     }
 
     [Test]
@@ -59,7 +60,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
 
             Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo('\0'));
-            Assert.That(ta.GetEdges().First().GetClockRanges().Count(), Is.EqualTo(1));
+            Assert.That(ta.GetEdges().First().GetValidClockRanges().Count(), Is.EqualTo(1));
             Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new[] { '\0' }));
         });
     }
@@ -75,13 +76,13 @@ public sealed class AutomatonGeneratorVisitorTest
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(3));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
-            Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(1));
+            Assert.That(ta.GetEdges().Count(e => ta.IsFinal(e.To)), Is.EqualTo(1));
             Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
             
             Edge? edge = ta.GetEdges().FirstOrDefault(e => e.From.Id == e.To.Id);
             Assert.That(edge, Is.Not.Null);
             Assert.That(edge!.GetClockResets().Count(), Is.EqualTo(1));
-            Assert.That(edge.GetClockRanges().Count(), Is.EqualTo(1));
+            Assert.That(edge.GetValidClockRanges().Count(), Is.EqualTo(1));
         });
     }
 
@@ -97,10 +98,10 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetStates().Count(), Is.EqualTo(6));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
             Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(1));
-            Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(3));
+            Assert.That(ta.GetEdges().Count(e => e.GetValidClockRanges().Any()), Is.EqualTo(3));
             
             Edge final = ta.GetEdges().First(e => e.GetClockResets().Any());
-            Assert.That(final.GetClockRanges().First().Item2, Is.EqualTo(0..3));
+            Assert.That(final.GetValidClockRanges().First().Item2, Is.EqualTo(new Range(0, 3, true, false)));
             Assert.That(final.GetClockResets().Count(), Is.EqualTo(1));
         });
     }
@@ -117,13 +118,13 @@ public sealed class AutomatonGeneratorVisitorTest
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(28));
             Assert.That(ta.GetClocks().Count(), Is.EqualTo(3));
-            Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(8));
+            Assert.That(ta.GetStates().Count(l => ta.IsFinal(l)), Is.EqualTo(8));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(32));
             Assert.That(ta.GetEdges().Count(e => e.From.Equals(ta.InitialLocation)), Is.EqualTo(2));
             Assert.That(ta.GetEdges().Count(e => e.To.Equals(ta.InitialLocation)), Is.EqualTo(8));
             Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(0));
-            Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(24));
-            Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(8));
+            Assert.That(ta.GetEdges().Count(e => e.GetValidClockRanges().Any()), Is.EqualTo(24));
+            Assert.That(ta.GetEdges().Count(e => ta.IsFinal(e.To)), Is.EqualTo(8));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(12));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(12));
         });
@@ -138,11 +139,11 @@ public sealed class AutomatonGeneratorVisitorTest
         ITimedAutomaton ta = visitor.GetAutomaton();
         Assert.Multiple(() =>
         {
-            Assert.That(ta.GetStates().Count(), Is.EqualTo(10));
-            Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(1));
+            Assert.That(ta.GetStates().Count(), Is.EqualTo(6));
+            Assert.That(ta.GetStates().Count(l => ta.IsFinal(l)), Is.EqualTo(1));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
-            Assert.That(ta.GetEdges().Count(e => e.To.IsFinal), Is.EqualTo(1));
-            Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(4));
+            Assert.That(ta.GetEdges().Count(e => ta.IsFinal(e.To)), Is.EqualTo(1));
+            Assert.That(ta.GetEdges().Count(e => e.GetValidClockRanges().Any()), Is.EqualTo(4));
             Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(0));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(5));
         });
@@ -159,6 +160,7 @@ public sealed class AutomatonGeneratorVisitorTest
         {
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
             Assert.That(ta.GetStates().Count(), Is.EqualTo(4));
+            Assert.That(ta.GetFinalStates().Count(), Is.EqualTo(1));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(2));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(1));
             Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new[] { 'a', 'b' }));
@@ -175,7 +177,7 @@ public sealed class AutomatonGeneratorVisitorTest
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(5));
-            Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(2));
+            Assert.That(ta.GetStates().Count(l => ta.IsFinal(l)), Is.EqualTo(2));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(4));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == '\0'), Is.EqualTo(2));
         });
@@ -191,12 +193,12 @@ public sealed class AutomatonGeneratorVisitorTest
         Assert.Multiple(() =>
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(3));
-            Assert.That(ta.GetStates().Count(l => l.IsFinal), Is.EqualTo(1));
+            Assert.That(ta.GetStates().Count(l => ta.IsFinal(l)), Is.EqualTo(1));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(2));
-            Edge e = ta.GetEdges().First(e => e.To.IsFinal);
+            Edge e = ta.GetEdges().First(e => ta.IsFinal(e.To));
             Assert.That(e.Symbol, Is.EqualTo('a'));
-            Assert.That(e.GetClockRanges().Count(), Is.EqualTo(1));
-            Assert.That(e.GetClockRanges().First().Item2, Is.EqualTo(2..4));
+            Assert.That(e.GetValidClockRanges().Count(), Is.EqualTo(1));
+            Assert.That(e.GetValidClockRanges().First().Item2, Is.EqualTo(new Range(2, 4, true, false)));
         });
     }
 

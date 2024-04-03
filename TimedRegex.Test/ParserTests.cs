@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using TimedRegex.Parsing;
 using TimedRegex.AST;
+using Range = TimedRegex.Generators.Range;
+using System.Globalization;
 
 namespace TimedRegex.Test;
 
@@ -269,8 +271,8 @@ public sealed class ParserTests
         {
             Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
             Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
-            Assert.That(node.StartInclusive, Is.True);
-            Assert.That(node.EndInclusive, Is.True);
+            Assert.That(node.Range.StartInclusive, Is.True);
+            Assert.That(node.Range.EndInclusive, Is.True);
         });
     }
 
@@ -285,8 +287,8 @@ public sealed class ParserTests
         {
             Assert.That(node.Token.Type, Is.EqualTo(TokenType.IntervalOpen));
             Assert.That(node.Child.Token.Type, Is.EqualTo(TokenType.Match));
-            Assert.That(node.StartInclusive, Is.True);
-            Assert.That(node.EndInclusive, Is.False);
+            Assert.That(node.Range.StartInclusive, Is.True);
+            Assert.That(node.Range.EndInclusive, Is.False);
         });
     }
 
@@ -302,8 +304,8 @@ public sealed class ParserTests
         Interval node = (Interval)astNode;
         Assert.Multiple(() =>
         {
-            Assert.That(node.StartInclusive, Is.EqualTo(startInclusive));
-            Assert.That(node.EndInclusive, Is.EqualTo(endExclusive));
+            Assert.That(node.Range.StartInclusive, Is.EqualTo(startInclusive));
+            Assert.That(node.Range.EndInclusive, Is.EqualTo(endExclusive));
         });
     }
 
@@ -314,8 +316,8 @@ public sealed class ParserTests
         Interval node = (Interval)Parser.Parse(tokenizer);
         Assert.Multiple(() =>
         {
-            Assert.That(node.StartInterval, Is.EqualTo(6));
-            Assert.That(node.EndInterval, Is.EqualTo(789));
+            Assert.That(node.Range.StartInterval, Is.EqualTo(6));
+            Assert.That(node.Range.EndInterval, Is.EqualTo(789));
         });
     }
 
@@ -337,6 +339,13 @@ public sealed class ParserTests
     public void ParseInvalidEmptyIntervalTest()
     {
         Tokenizer tokenizer = new("a[1;]");
+        Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
+    }
+
+    [Test]
+    public void ParseInvalidIntervalMultipleSeperatorsTest()
+    {
+        Tokenizer tokenizer = new("a[1;4;7]");
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
     }
 
@@ -432,5 +441,33 @@ public sealed class ParserTests
     {
         Tokenizer tokenizer = new(input);
         Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
+    }
+
+    [TestCase("[1.23;20]", 1.23f, 20, true, true)]
+    [TestCase("]1;1[", 1, 1, false, false)]
+    [TestCase("[1;192.122[", 1, 192.122f, true, false)]
+    public void RangeToStringTest(string expected, float startInterval, float endInterval, bool startInclusive, bool endInclusive)
+    {
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        Range range = new(startInterval, endInterval, startInclusive, endInclusive);
+        Assert.That(range.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void IntervalParseNumberWithPeriodTest()
+    {
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        Tokenizer tokenizer = new("a[1.45;43.6]");
+        IAstNode astNode = Parser.Parse(tokenizer);
+        Assert.That(astNode, Is.TypeOf<Interval>());
+        Interval node = (Interval)astNode;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(node.Range.StartInclusive, Is.True);
+            Assert.That(node.Range.EndInclusive, Is.True);
+            Assert.That(node.Range.StartInterval, Is.EqualTo(1.45f));
+            Assert.That(node.Range.EndInterval, Is.EqualTo(43.6f));
+        });
     }
 }

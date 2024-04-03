@@ -15,7 +15,7 @@ internal enum TimedRegexErrorType
     ParenthesisImproperFormat = 0202,
     ExpectedMatch = 0203,
     IntervalImproperFormat = 0204,
-    DigitImproperFormat = 0205,
+    NumberImproperFormat = 0205,
     
     // 0300-0399 - Semantic validation
     IntervalStartBiggerThanEnd = 0300,

@@ -5,6 +5,7 @@ using TimedRegex.Generators;
 using TimedRegex.Generators.Uppaal;
 using Contains = NUnit.Framework.Contains;
 using Location = TimedRegex.Generators.Uppaal.Location;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 
@@ -164,9 +165,9 @@ public sealed class UppaalGeneratorTest
     {
         List<Location> locations =
         [
-          new Location(new State(0, false)),
-          new Location(new State(1, false)),
-          new Location(new State(2, false))
+          new Location(new State(0), false),
+          new Location(new State(1), false),
+          new Location(new State(2), false)
         ];
 
         Assert.That(locations, Has.Count.EqualTo(3));
@@ -190,9 +191,9 @@ public sealed class UppaalGeneratorTest
     {
         List<Transition> transitions =
         [
-            new Transition(new Edge(0, new State(from, false), new State(to, false), 'A')),
-            new Transition(new Edge(1, new State(from, false), new State(to, false), 'B')),
-            new Transition(new Edge(2, new State(from, false), new State(to, false), '\0'))
+            new Transition(new Edge(0, new State(from), new State(to), 'A')),
+            new Transition(new Edge(1, new State(from), new State(to), 'B')),
+            new Transition(new Edge(2, new State(from), new State(to), '\0'))
         ];
 
         Assert.That(transitions, Has.Count.EqualTo(3));
@@ -209,12 +210,14 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void GenerateLabelTest()
     {
+        TimedAutomaton automaton = new();
+
         Clock clock1 = new(0);
         Clock clock2 = new(1);
-        Edge edge = new(2, new State(0, false), new State(1, false), 'a');
+        Edge edge = new(2, new State(0), new State(1), 'a');
 
-        edge.AddClockRange(clock1, new Range(1, 5));
-        edge.AddClockRange(clock2, new Range(2, 3));
+        edge.AddClockRange(clock1, new Range(1, 5, true, false));
+        edge.AddClockRange(clock2, new Range(2, 3, true, false));
         edge.AddClockReset(clock1);
         edge.AddClockReset(clock2);
 
@@ -229,7 +232,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 < 5) && (c1 >= 2 && c1 < 3)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1000 && c0 < 5000) && (c1 >= 2000 && c1 < 3000)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
@@ -238,9 +241,36 @@ public sealed class UppaalGeneratorTest
     }
 
     [Test]
+    public void GenerateLabelExclusiveInclusiveTest()
+    {
+        Clock clock1 = new(0);
+        Clock clock2 = new(1);
+        Edge edge = new(0, new State(1), new State(2), 'a');
+
+        edge.AddClockRange(clock1, new Range(2, 7, false, false));
+        edge.AddClockRange(clock2, new Range(1, 7, true, false));
+
+        List<Label> labels =
+        [
+            Label.CreateGuard(edge),
+            Label.CreateSynchronization(edge)
+        ];
+
+        Transition transition = new Transition(edge);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2000 && c0 < 7000) && (c1 >= 1000 && c1 < 7000)"));
+            Assert.That(labels[1].LabelString, Is.EqualTo("a?"));
+        });
+
+        Assert.That(transition.GetLabels(), Is.Not.Empty);
+    }
+
+    [Test]
     public void GenerateEmptyLabelTest()
     {
-        Edge edge = new(2, new State(0, false), new State(1, false), '\0');
+        Edge edge = new(2, new State(0), new State(1), '\0');
 
         Transition transition = new Transition(edge);
 

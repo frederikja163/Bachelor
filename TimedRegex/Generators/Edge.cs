@@ -2,7 +2,7 @@ namespace TimedRegex.Generators;
 
 internal sealed class Edge : IEquatable<Edge>
 {
-    private readonly Dictionary<Clock, Range> _clockRanges;
+    private readonly Dictionary<Clock, Range?> _clockRanges;
     private readonly HashSet<Clock> _clockResets;
 
     internal Edge(int id, State from, State to, char symbol)
@@ -11,14 +11,16 @@ internal sealed class Edge : IEquatable<Edge>
         From = from;
         To = to;
         Symbol = symbol;
-        _clockRanges = new Dictionary<Clock, Range>();
+        _clockRanges = new Dictionary<Clock, Range?>();
         _clockResets = new HashSet<Clock>();
+        IsDead = false;
     }
     
     internal int Id { get; }
     internal State From { get; }
     internal State To { get; }
     internal char Symbol { get; set; }
+    internal bool IsDead { get; private set; }
 
     internal void AddClockReset(Clock clock)
     {
@@ -43,9 +45,19 @@ internal sealed class Edge : IEquatable<Edge>
 
     internal void AddClockRange(Clock clock, Range range)
     {
-        _clockRanges.Add(clock, range);
+        if (!_clockRanges.TryGetValue(clock, out Range? r))
+        {
+            _clockRanges.Add(clock, range);
+            return;
+        }
+        Range? newRange = Range.Intersection(r, range);
+        if (newRange is null)
+        {
+            IsDead = true;
+        }
+        _clockRanges[clock] = newRange;
     }
-    
+
     internal void AddClockRanges(IEnumerable<(Clock clock, Range range)> ranges)
     {
         foreach ((Clock clock, Range range) in ranges)
@@ -54,11 +66,14 @@ internal sealed class Edge : IEquatable<Edge>
         }
     }
 
-    internal IEnumerable<(Clock, Range)> GetClockRanges()
+    internal IEnumerable<(Clock, Range)> GetValidClockRanges()
     {
-        foreach ((Clock clock, Range range) in _clockRanges)
+        foreach ((Clock clock, Range? range) in _clockRanges)
         {
-            yield return (clock, range);
+            if (range is not null)
+            {
+                yield return (clock, range);
+            }
         }
     }
 

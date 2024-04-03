@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using TimedRegex.Extensions;
 using TimedRegex.Generators;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.AST.Visitors;
 
@@ -8,9 +9,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 {
     private readonly Stack<TimedAutomaton> _stack = new();
     
-    internal ITimedAutomaton GetAutomaton()
+    internal TimedAutomaton GetAutomaton()
     {
-        return new CompressedTimedAutomaton(_stack.Pop());
+        return _stack.Pop();
     }
     
     public void Visit(Epsilon epsilon)
@@ -20,7 +21,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         State final = ta.AddState(true);
         Clock clock = ta.AddClock();
         Edge edge = ta.AddEdge(initial, final, '\0');
-        edge.AddClockRange(clock, 0..1);
+        edge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
         _stack.Push(ta);
     }
 
@@ -33,16 +34,16 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 
         TimedAutomaton ta = new(left, right);
-        foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
+        foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
-            edge.AddClockRanges(e.GetClockRanges());
+            edge.AddClockRanges(e.GetValidClockRanges());
             edge.AddClockResets(right.GetClocks());
         }
 
-        foreach (State location in left.GetStates().Where(l => l.IsFinal))
+        foreach (State location in left.GetFinalStates())
         {
-            location.IsFinal = false;
+            ta.MakeNotFinal(location);
         }
 
         _stack.Push(ta);
@@ -52,10 +53,10 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        foreach (Edge oldEdge in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
+        foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
             Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol);
-            edge.AddClockRanges(oldEdge.GetClockRanges());
+            edge.AddClockRanges(oldEdge.GetValidClockRanges());
             edge.AddClockResets(ta.GetClocks());
         }
 
@@ -67,15 +68,15 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 
         TimedAutomaton ta = new(left, right);
-        foreach (Edge e in left.GetEdges().Where(e => e.To.IsFinal))
+        foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
-            edge.AddClockRanges(e.GetClockRanges());
+            edge.AddClockRanges(e.GetValidClockRanges());
         }
 
-        foreach (State location in left.GetStates().Where(l => l.IsFinal))
+        foreach (State location in left.GetFinalStates())
         {
-            location.IsFinal = false;
+            left.MakeNotFinal(location);
         }
 
         _stack.Push(ta);
@@ -88,20 +89,42 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         
         SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new();
         List<SortedSet<Clock>> clockPowerSet = child.GetClocks().PowerSet().Select(s => s.ToSortedSet()).ToList();
-        Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = child.GetStates()
-            .ToDictionary(l => l,
-                l => clockPowerSet
-                    .ToDictionary(c => c.ToSortedSet(),
-                        c => ta.AddState(l.IsFinal, l.Equals(child.InitialLocation) && c.Count == 0), sortedSetEqualityComparer));
+        Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = new Dictionary<State, Dictionary<SortedSet<Clock>, State>>();
+        newLocs[child.InitialLocation!] = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer)
+        {
+            { new SortedSet<Clock>(), ta.AddState(child.IsFinal(child.InitialLocation!), true) }
+        };
         Clock newClock = ta.AddClock();
 
         foreach (Edge childEdge in child.GetEdges())
         {
+            if (!newLocs.TryGetValue(childEdge.From, out Dictionary<SortedSet<Clock>, State>? newLocsFrom))
+            {
+                newLocsFrom = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer);
+                newLocs[childEdge.From] = newLocsFrom;
+            }
+
+            if (!newLocs.TryGetValue(childEdge.To, out Dictionary<SortedSet<Clock>, State>? newLocsTo))
+            {
+                newLocsTo = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer);
+                newLocs[childEdge.To] = newLocsTo;
+            }
             foreach (SortedSet<Clock> clockSet in clockPowerSet)
             {
-                State from = newLocs[childEdge.From][clockSet];
-                State to = newLocs[childEdge.To][clockSet.Union(childEdge.GetClockResets()).ToSortedSet()];
-                List<(Clock, Range)> ranges = childEdge.GetClockRanges()
+                if (!newLocsFrom.TryGetValue(clockSet, out State? from))
+                {
+                    from = ta.AddState(child.IsFinal(childEdge.From));
+                    newLocsFrom[clockSet] = from;
+                }
+
+                SortedSet<Clock> resetClocks = clockSet.Union(childEdge.GetClockResets()).ToSortedSet();
+                if (!newLocsTo.TryGetValue(resetClocks, out State? to))
+                {
+                    to = ta.AddState(child.IsFinal(childEdge.To));
+                    newLocsTo[resetClocks] = to;
+                }
+                
+                List<(Clock, Range)> ranges = childEdge.GetValidClockRanges()
                     .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
                     .ToList();
                 
@@ -109,7 +132,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                 edge.AddClockResets(childEdge.GetClockResets());
                 edge.AddClockRanges(ranges);
 
-                if (childEdge.To.IsFinal)
+                if (child.IsFinal(childEdge.To))
                 {
                     edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol);
                     edge.AddClockResets(childEdge.GetClockResets());
@@ -127,16 +150,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         TimedAutomaton ta = new(left, right, excludeLocations: true, excludeEdges: true);
 
         Dictionary<(State, State), State> newLocs = new();
-        foreach (State lState in left.GetStates())
-        {
-            foreach (State rState in right.GetStates())
-            {
-                newLocs.Add((lState, rState), ta.AddState());
-            }
-        }
 
         State final = ta.AddState(true);
-        ta.InitialLocation = newLocs[(left.InitialLocation!, right.InitialLocation!)];
+        ta.InitialLocation = GetNewEdge(left.InitialLocation!, right.InitialLocation!);
 
         Dictionary<char, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
         Dictionary<char, List<Edge>> rSymEdges = right.GetEdges().ToListDictionary(e => e.Symbol, e => e);
@@ -148,21 +164,17 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             {
                 foreach (Edge rEdge in rEdges)
                 {
-                    State from = newLocs[(lEdge.From, rEdge.From)];
-                    State to = newLocs[(lEdge.To, rEdge.To)];
+                    State from = GetNewEdge(lEdge.From, rEdge.From);
+                    State to = GetNewEdge(lEdge.To, rEdge.To);
                     Edge edge = ta.AddEdge(from, to, c);
-                    edge.AddClockRanges(lEdge.GetClockRanges());
-                    edge.AddClockRanges(rEdge.GetClockRanges());
-                    edge.AddClockResets(lEdge.GetClockResets());
-                    edge.AddClockResets(rEdge.GetClockResets());
+                    edge.AddClockRanges(lEdge.GetValidClockRanges().Concat(rEdge.GetValidClockRanges()));
+                    edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
 
-                    if (lEdge.To.IsFinal && rEdge.To.IsFinal)
+                    if (left.IsFinal(lEdge.To) && right.IsFinal(rEdge.To))
                     {
                         edge = ta.AddEdge(from, final, c);
-                        edge.AddClockRanges(lEdge.GetClockRanges());
-                        edge.AddClockRanges(rEdge.GetClockRanges());
-                        edge.AddClockResets(lEdge.GetClockResets());
-                        edge.AddClockResets(rEdge.GetClockResets());
+                        edge.AddClockRanges(lEdge.GetValidClockRanges().Concat(rEdge.GetValidClockRanges()));
+                        edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
                     }
                 }
             }
@@ -185,13 +197,24 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             {
                 foreach (Edge rEdge in rEdges)
                 {
-                    State from = newLocs[(lEdge.From, rEdge.From)];
-                    State to = newLocs[(lEdge.To, rEdge.To)];
+                    State from = GetNewEdge(lEdge.From, rEdge.From);
+                    State to = GetNewEdge(lEdge.To, rEdge.To);
                     Edge edge = ta.AddEdge(from, to, '\0');
-                    edge.AddClockRanges(lEdge.GetClockRanges());
+                    edge.AddClockRanges(lEdge.GetValidClockRanges());
                     edge.AddClockResets(lEdge.GetClockResets());
                 }
             }
+        }
+
+        State GetNewEdge(State lState, State rState)
+        {
+            if (!newLocs.TryGetValue((lState, rState), out State? state))
+            {
+                state = ta.AddState();
+                newLocs[(lState, rState)] = state;
+            }
+
+            return state;
         }
     }
 
@@ -199,20 +222,20 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        Range range = new(interval.StartInterval + (interval.StartInclusive ? 0 : 1), interval.EndInterval + (interval.EndInclusive ? 1 : 0));
+        Range range = interval.Range;
         State newFinal = ta.AddState(true);
         Clock clock = ta.AddClock();
 
-        foreach (Edge e in ta.GetEdges().Where(e => e.To.IsFinal).ToList())
+        foreach (Edge e in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
             Edge edge = ta.AddEdge(e.From, newFinal, e.Symbol);
             edge.AddClockRange(clock, range);
-            edge.AddClockRanges(e.GetClockRanges());
+            edge.AddClockRanges(e.GetValidClockRanges());
         }
 
-        foreach (State location in ta.GetStates().Where(l => l.IsFinal && l.Id != newFinal.Id))
+        foreach (State location in ta.GetFinalStates().Where(l => l.Id != newFinal.Id))
         {
-            location.IsFinal = false;
+            ta.MakeNotFinal(location);
         }
 
         _stack.Push(ta);
@@ -263,9 +286,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         
         ta.AddState(newInitial: true);
         Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, '\0');
-        lEdge.AddClockRange(clock, 0..1);
+        lEdge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
         Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, '\0');
-        rEdge.AddClockRange(clock, 0..1);
+        rEdge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
         
         _stack.Push(ta);
     }
