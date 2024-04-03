@@ -55,6 +55,15 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     internal static int TotalClockCount { get; private set; }
     public State? InitialLocation { get; internal set; }
 
+    internal void PruneEdges()
+    {
+        List<Edge> deadEdges = GetEdges().Where(e => e.IsDead).ToList();
+        foreach (Edge deadEdge in deadEdges)
+        {
+            _edges.Remove(deadEdge.Id);
+        }
+    }
+    
     public IEnumerable<Clock> GetClocks()
     {
         return _clocks.Values;

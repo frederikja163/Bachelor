@@ -8,6 +8,10 @@ namespace TimedRegex.AST.Visitors;
 internal class AutomatonGeneratorVisitor : IAstVisitor
 {
     private readonly Stack<TimedAutomaton> _stack = new();
+
+    public AutomatonGeneratorVisitor()
+    {
+    }
     
     internal TimedAutomaton GetAutomaton()
     {
