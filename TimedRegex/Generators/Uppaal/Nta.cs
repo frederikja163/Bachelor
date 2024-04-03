@@ -42,19 +42,8 @@ internal sealed class Nta
             $"l{automaton.InitialLocation!.Id}",
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
             automaton.GetEdges().Select(e => new Transition(e))));
-        
-        AddPositions();
     }
 
-    internal void AddPositions()
-    {
-        Graph graph = new(_templates.First());
-        
-        graph.Acyclic();
-        graph.AssignLayers();
-        graph.OrderLocations();
-        graph.AssignPositions();
-    }
 
     private int NewTemplateId()
     {

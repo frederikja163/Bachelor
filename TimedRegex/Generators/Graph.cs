@@ -4,13 +4,13 @@ namespace TimedRegex.Generators;
 
 internal sealed class Graph
 {
-    private IEnumerable<Location> _locations;
-    private IEnumerable<Transition> _transitions;
+    private IEnumerable<State> _states;
+    private IEnumerable<Edge> _edges;
 
-    internal Graph(Template template)
+    internal Graph(ITimedAutomaton automaton)
     {
-        _locations = template.GetLocations();
-        _transitions = template.GetTransitions();
+        _states = automaton.GetStates();
+        _edges = automaton.GetEdges();
     }
 
     internal void Acyclic()

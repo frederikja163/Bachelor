@@ -18,6 +18,16 @@ internal sealed class UppaalGenerator : IGenerator
         _nta.AddAutomaton(automaton);
     }
 
+    public void AddPositions(ITimedAutomaton automaton)
+    {
+        Graph graph = new(automaton);
+        
+        graph.Acyclic();
+        graph.AssignLayers();
+        graph.OrderLocations();
+        graph.AssignPositions();
+    }
+
     public void GenerateFile(string filePath)
     {
         using FileStream fs = File.Open(filePath, FileMode.Create);
