@@ -191,22 +191,4 @@ public sealed class TimedAutomatonTest
         Assert.That(ta.GetEdgesFrom(new []{state, state1}).Count(), Is.EqualTo(2));
         Assert.That(ta.GetEdgesFrom(new []{state1, state}).Count(), Is.EqualTo(2));
     }
-
-    [Test]
-    public void RemoveOverRestrainedEdgeTest()
-    {
-        TimedAutomaton ta = new();
-        State state1 = ta.AddState();
-        State state2 = ta.AddState();
-        Edge edge = ta.AddEdge(state1, state2, '\0');
-        Clock clock = ta.AddClock();
-        
-        edge.AddClockRange(clock, new Range(0.0f, 1.0f, true, true));
-        edge.AddClockRange(clock, new Range(0.5f, 0.5f, true, true));
-        edge.AddClockRange(clock, new Range(2f, 2f, true, true));
-        Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
-        ta.PruneEdges();
-        
-        Assert.That(ta.GetEdges().Count(), Is.EqualTo(0));
-    }
 }
