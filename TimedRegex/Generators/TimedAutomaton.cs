@@ -78,7 +78,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         HashSet<State> prunedStates = new();
         foreach ((int index, State state) in _states)
         {
-            if ((!_finalStates.Contains(state)) && (!origins.Contains(state)))
+            if ((!_finalStates.Contains(state)) && (!origins.Contains(state)) && !InitialLocation.Equals(state))
             {
                 result = true;
                 _states.Remove(index);
