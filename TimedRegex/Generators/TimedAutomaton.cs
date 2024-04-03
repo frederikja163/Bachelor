@@ -63,6 +63,45 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             _edges.Remove(deadEdge.Id);
         }
     }
+
+    private bool PruneDeadStatesSingle()
+    {
+        bool result = false;
+        HashSet<State> origins = new();
+        foreach ((_, Edge edge) in _edges)
+        {
+            if (!origins.Contains(edge.From))
+            {
+                origins.Add(edge.From);
+            }
+        }
+        HashSet<State> prunedStates = new();
+        foreach ((int index, State state) in _states)
+        {
+            if ((!_finalStates.Contains(state)) && (!origins.Contains(state)))
+            {
+                result = true;
+                _states.Remove(index);
+                if (!prunedStates.Contains(state))
+                {
+                    prunedStates.Add(state);
+                }
+            }
+        }
+        foreach ((int index, Edge edge) in _edges)
+        {
+            if (prunedStates.Contains(edge.To))
+            {
+                _edges.Remove(index);
+            }
+        }
+        return result;
+    }
+
+    internal void PruneDeadStates()
+    {
+        while (PruneDeadStatesSingle());
+    }
     
     public IEnumerable<Clock> GetClocks()
     {
