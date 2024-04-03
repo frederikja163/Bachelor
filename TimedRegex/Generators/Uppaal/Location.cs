@@ -21,6 +21,8 @@ internal sealed class Location
     internal string Id { get; }
     internal string Name { get; }
 
+    internal (int x, int y) Position { get; }
+
     internal IEnumerable<Label> GetLabels()
     {
         foreach (Label label in _labels)
