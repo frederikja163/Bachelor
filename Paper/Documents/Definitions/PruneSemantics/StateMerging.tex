@@ -1,0 +1,26 @@
+When two states are equivalent in all attributes we can merge them into one state.
+To consider if two states are equivalent, neither can be an initial state, and both have to either be a final state or neither can be a final state.
+Furthermore all edges need to have an equivalent edge between both states.
+Equivalent edges need to both go to the same state, have the same symbol, same clock reset and same clock intervals.
+
+If two states are equivalent in this manner, we can merge them by making all edges that go to either of the two states instead go to a new state.
+All edges from either one of the states now have to come from the new state aswell.
+
+\sembox{
+    $\mathbb{E}(\Delta, s, F, q_a, q_b)=(q_a\neq q_b)\wedge(q_a\in F=q_b\in F)\wedge (q_a\neq s\wedge q_b\neq s)\wedge\forall\transition[][q_a]\in\Delta:\exists\transition[][q_b]\in\Delta$
+
+    $\merge(A_1)=
+    \left\{\begin{array}{ll}
+        A_1 & if \exists q_a\in Q_1:\exists q_b\in Q_1:\mathbb{E}(\Delta_1,s_1,F_1,q_a,q_b)\\
+        \automaton & otherwise\\
+    \end{array}\right.
+    $
+
+    $Q_{unmerged}=\{q_a\in Q_a\mid\neg\exists q_b\in Q_1:\mathbb{E}(\Delta_1,s_1,F_1,q_a,q_b)\}$
+
+    $Q_{merged}=\{\{q_a,q_b\}\mid q_a\in Q_1\wedge q_b\in Q_1\wedge\mathbb{E}(\Delta_1,s_1,F_1,q_a,q_b)\}$
+
+    $Q=Q_{unmerged}\wedge Q_{merged}$
+
+
+}
