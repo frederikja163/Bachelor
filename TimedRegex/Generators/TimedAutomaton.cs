@@ -82,6 +82,10 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             if (!clocks.Contains(clock))
             {
                 _clocks.Remove(index);
+                foreach ((_, Edge edge) in _edges)
+                {
+                    edge.RemoveClockReset(clock);
+                }
             }
         }
     }
