@@ -175,4 +175,20 @@ public sealed class TimedAutomatonTest
             Assert.That(Range.Intersection(r1, r1), Is.Not.Null);
         });
     }
+
+    [Test]
+    public void StateOrderDoesNotMatterInGetEdgesTest()
+    {
+        TimedAutomaton ta = new TimedAutomaton();
+        State state = ta.AddState();
+        State state1 = ta.AddState();
+
+        ta.AddEdge(state, state1, '\0');
+        ta.AddEdge(state1, state, '\0');
+        
+        Assert.That(ta.GetEdgesTo(new []{state, state1}).Count(), Is.EqualTo(2));
+        Assert.That(ta.GetEdgesTo(new []{state1, state}).Count(), Is.EqualTo(2));
+        Assert.That(ta.GetEdgesFrom(new []{state, state1}).Count(), Is.EqualTo(2));
+        Assert.That(ta.GetEdgesFrom(new []{state1, state}).Count(), Is.EqualTo(2));
+    }
 }
