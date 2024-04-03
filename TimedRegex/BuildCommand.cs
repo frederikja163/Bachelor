@@ -92,6 +92,11 @@ internal sealed class BuildCommand
         ITimedAutomaton automaton = new CompressedTimedAutomaton(timedAutomaton);
         Log.StopTime(sw, "Compressed ids in {0}");
         
+        Log.WriteLineIf(Verbose, "Adding positions.");
+        Log.StartTimeIf(Verbose, out sw);
+        automaton.AddPositions();
+        Log.StopTime(sw, "Added positions in {0}");
+        
         IGenerator generator = Format switch
         {
             OutputFormat.Uppaal => new UppaalGenerator(),

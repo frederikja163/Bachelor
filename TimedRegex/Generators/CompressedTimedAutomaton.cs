@@ -33,7 +33,17 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
     }
 
     public State? InitialLocation { get; set; }
-
+    
+    public void AddPositions()
+    {
+        Graph graph = new Graph(this);
+        
+        graph.Acyclic();
+        graph.AssignLayers();
+        graph.OrderLocations();
+        graph.AssignPositions();
+    }
+    
     public IEnumerable<Clock> GetClocks()
     {
         return _clocks.Values;

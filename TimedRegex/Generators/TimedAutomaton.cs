@@ -55,6 +55,16 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     internal static int TotalClockCount { get; private set; }
     public State? InitialLocation { get; internal set; }
 
+    public void AddPositions()
+    {
+        Graph graph = new Graph(this);
+        
+        graph.Acyclic();
+        graph.AssignLayers();
+        graph.OrderLocations();
+        graph.AssignPositions();
+    }
+    
     public IEnumerable<Clock> GetClocks()
     {
         return _clocks.Values;
