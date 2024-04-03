@@ -63,6 +63,14 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         graph.AssignLayers();
         graph.OrderLocations();
         graph.AssignPositions();
+
+    internal void PruneEdges()
+    {
+        List<Edge> deadEdges = GetEdges().Where(e => e.IsDead).ToList();
+        foreach (Edge deadEdge in deadEdges)
+        {
+            _edges.Remove(deadEdge.Id);
+        }
     }
     
     public IEnumerable<Clock> GetClocks()

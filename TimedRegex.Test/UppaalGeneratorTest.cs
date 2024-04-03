@@ -241,6 +241,23 @@ public sealed class UppaalGeneratorTest
     }
 
     [Test]
+    public void GenerateLabelDeadEdgeTest()
+    {
+        State state1 = new State(0);
+        State state2 = new State(1);
+        Edge edge = new Edge(0, state1, state2, '\0');
+        Clock clock = new Clock(0);
+        
+        edge.AddClockRange(clock, new Range(0.0f, 1.0f, true, true));
+        edge.AddClockRange(clock, new Range(0.5f, 0.5f, true, true));
+        edge.AddClockRange(clock, new Range(2f, 2f, true, true));
+
+        Label label = Label.CreateGuard(edge);
+        
+        Assert.That(label.LabelString, Does.StartWith("false"));
+    }
+
+    [Test]
     public void GenerateLabelExclusiveInclusiveTest()
     {
         Clock clock1 = new(0);

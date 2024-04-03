@@ -5,6 +5,13 @@
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{tikz-uml}
+\usetikzlibrary{arrows}
+\usetikzlibrary {arrows.meta}
+
+\tikzset{
+    vertex/.style={circle,draw,minimum size=1.5em},
+    edge/.style={->, arrows = {-Latex[length=5pt 3 0]}}
+}
 \usepackage{graphics}
 \usepackage[T1]{fontenc}
 \usepackage{multicol}
