@@ -264,4 +264,52 @@ public sealed class TimedAutomatonTest
 
         Assert.That(ta.GetStates().Contains(state));
     }
+
+    [Test]
+    public void UnreachableStatePruningTest()
+    {
+        TimedAutomaton ta = new();
+        State state1 = ta.AddState();
+        State state2 = ta.AddState();
+        State state3 = ta.AddState();
+        State state4 = ta.AddState();
+        State state5 = ta.AddState();
+        State state6 = ta.AddState();
+        State state7 = ta.AddState();
+
+        ta.MakeFinal(state2);
+        ta.MakeFinal(state4);
+        ta.InitialLocation = state1;
+
+        Edge edge1 = ta.AddEdge(state1, state3, '\0');
+        Edge edge2 = ta.AddEdge(state2, state3, '\0');
+        Edge edge3 = ta.AddEdge(state2, state4, '\0');
+        Edge edge4 = ta.AddEdge(state1, state5, '\0');
+        Edge edge5 = ta.AddEdge(state5, state1, '\0');
+        Edge edge6 = ta.AddEdge(state1, state1, '\0');
+        Edge edge7 = ta.AddEdge(state6, state7, '\0');
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ta.GetEdges().Count(), Is.EqualTo(7));
+            Assert.That(ta.GetStates().Count(), Is.EqualTo(7));
+        });
+
+        ta.PruneUnreachableStates();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ta.GetStates().Contains(state2), Is.Not.True);
+            Assert.That(ta.GetEdges().Contains(edge2), Is.Not.True);
+            Assert.That(ta.GetEdges().Contains(edge3), Is.Not.True);
+            Assert.That(ta.GetStates().Contains(state6), Is.Not.True);
+            Assert.That(ta.GetStates().Contains(state7), Is.Not.True);
+            Assert.That(ta.GetEdges().Contains(edge7), Is.Not.True);
+            Assert.That(ta.GetStates().Contains(state4), Is.Not.True);
+            Assert.That(ta.GetFinalStates().Contains(state2), Is.Not.True);
+            Assert.That(ta.GetFinalStates().Contains(state4), Is.Not.True);
+            Assert.That(ta.GetEdges().Count(), Is.EqualTo(4));
+            Assert.That(ta.GetStates().Count(), Is.EqualTo(3));
+        });
+    }
 }

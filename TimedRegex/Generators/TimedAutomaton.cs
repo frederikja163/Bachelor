@@ -64,43 +64,81 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         }
     }
 
-    private bool PruneDeadStatesSingle()
+    private bool PruneStatesSingle(int mode)
     {
         bool result = false;
-        HashSet<State> origins = new();
+        HashSet<State> validStates = new();
         foreach ((_, Edge edge) in _edges)
         {
-            if (!origins.Contains(edge.From))
+            switch (mode)
             {
-                origins.Add(edge.From);
+                case 1:
+                    if (!validStates.Contains(edge.From))
+                    {
+                        validStates.Add(edge.From);
+                    }
+                    break;
+
+                case 2:
+                    if (!validStates.Contains(edge.To))
+                    {
+                        validStates.Add(edge.To);
+                    }
+                    break;
             }
         }
         HashSet<State> prunedStates = new();
         foreach ((int index, State state) in _states)
         {
-            if ((!_finalStates.Contains(state)) && (!origins.Contains(state)) && !InitialLocation.Equals(state))
+            if (mode == 1 && _finalStates.Contains(state))
+            {
+                continue;
+            }
+            if ((!validStates.Contains(state)) && !InitialLocation.Equals(state))
             {
                 result = true;
                 _states.Remove(index);
+                _finalStates.Remove(state);
                 if (!prunedStates.Contains(state))
                 {
                     prunedStates.Add(state);
                 }
             }
         }
-        foreach ((int index, Edge edge) in _edges)
+        switch (mode)
         {
-            if (prunedStates.Contains(edge.To))
-            {
-                _edges.Remove(index);
-            }
+            case 1:
+                foreach ((int index, Edge edge) in _edges)
+                {
+                    if (prunedStates.Contains(edge.To))
+                    {
+                        _edges.Remove(index);
+                    }
+                }
+                break;
+
+            case 2:
+                foreach((int index, Edge edge) in _edges)
+                {
+                    if (prunedStates.Contains(edge.From))
+                    {
+                        _edges.Remove(index);
+                    }
+                }
+                break;
         }
+        
         return result;
     }
 
     internal void PruneDeadStates()
     {
-        while (PruneDeadStatesSingle());
+        while (PruneStatesSingle(1));
+    }
+
+    internal void PruneUnreachableStates()
+    {
+        while (PruneStatesSingle(2));
     }
     
     public IEnumerable<Clock> GetClocks()
