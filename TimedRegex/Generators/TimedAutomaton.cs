@@ -71,10 +71,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         {
             foreach ((Clock clock, _) in edge.GetValidClockRanges())
             {
-                if (!clocks.Contains(clock))
-                {
-                    clocks.Add(clock);
-                }
+                clocks.Add(clock);
             }
         }
         foreach ((int index, Clock clock) in _clocks)
