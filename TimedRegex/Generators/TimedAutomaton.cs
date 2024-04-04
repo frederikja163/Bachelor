@@ -73,17 +73,11 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             switch (mode)
             {
                 case 1:
-                    if (!validStates.Contains(edge.From))
-                    {
-                        validStates.Add(edge.From);
-                    }
+                    validStates.Add(edge.From);
                     break;
 
                 case 2:
-                    if (!validStates.Contains(edge.To))
-                    {
-                        validStates.Add(edge.To);
-                    }
+                    validStates.Add(edge.To);
                     break;
             }
         }
@@ -99,10 +93,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
                 result = true;
                 _states.Remove(index);
                 _finalStates.Remove(state);
-                if (!prunedStates.Contains(state))
-                {
-                    prunedStates.Add(state);
-                }
+                prunedStates.Add(state);
             }
         }
         switch (mode)
