@@ -88,7 +88,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             {
                 continue;
             }
-            if ((!validStates.Contains(state)) && !InitialLocation.Equals(state))
+            if ((!validStates.Contains(state)) && !InitialLocation!.Equals(state))
             {
                 result = true;
                 _states.Remove(index);
