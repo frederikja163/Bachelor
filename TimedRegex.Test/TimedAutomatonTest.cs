@@ -214,17 +214,13 @@ public sealed class TimedAutomatonTest
     public void DeadStatePruningTest()
     {
         TimedAutomaton ta = new();
-        State state1 = ta.AddState();
-        State state2 = ta.AddState();
+        State state1 = ta.AddState(false, true);
+        State state2 = ta.AddState(true, false);
         State state3 = ta.AddState();
-        State state4 = ta.AddState();
+        State state4 = ta.AddState(true, false);
         State state5 = ta.AddState();
         State state6 = ta.AddState();
         State state7 = ta.AddState();
-
-        ta.MakeFinal(state2);
-        ta.MakeFinal(state4);
-        ta.InitialLocation = state1;
 
         Edge edge1 = ta.AddEdge(state1, state2, '\0');
         Edge edge2 = ta.AddEdge(state2, state3, '\0');
@@ -269,17 +265,13 @@ public sealed class TimedAutomatonTest
     public void UnreachableStatePruningTest()
     {
         TimedAutomaton ta = new();
-        State state1 = ta.AddState();
-        State state2 = ta.AddState();
+        State state1 = ta.AddState(false, true);
+        State state2 = ta.AddState(true, false);
         State state3 = ta.AddState();
-        State state4 = ta.AddState();
+        State state4 = ta.AddState(true, false);
         State state5 = ta.AddState();
         State state6 = ta.AddState();
         State state7 = ta.AddState();
-
-        ta.MakeFinal(state2);
-        ta.MakeFinal(state4);
-        ta.InitialLocation = state1;
 
         Edge edge1 = ta.AddEdge(state1, state3, '\0');
         Edge edge2 = ta.AddEdge(state2, state3, '\0');

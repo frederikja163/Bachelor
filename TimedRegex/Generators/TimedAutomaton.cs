@@ -64,7 +64,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         }
     }
 
-    private bool PruneStatesSingle(int mode)
+    private bool PruneStatesSingle(bool mode)
     {
         bool result = false;
         HashSet<State> validStates = new();
@@ -72,11 +72,11 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         {
             switch (mode)
             {
-                case 1:
+                case false:
                     validStates.Add(edge.From);
                     break;
 
-                case 2:
+                case true:
                     validStates.Add(edge.To);
                     break;
             }
@@ -84,7 +84,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         HashSet<State> prunedStates = new();
         foreach ((int index, State state) in _states)
         {
-            if (mode == 1 && _finalStates.Contains(state))
+            if (mode == false && _finalStates.Contains(state))
             {
                 continue;
             }
@@ -98,7 +98,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         }
         switch (mode)
         {
-            case 1:
+            case false:
                 foreach ((int index, Edge edge) in _edges)
                 {
                     if (prunedStates.Contains(edge.To))
@@ -108,7 +108,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
                 }
                 break;
 
-            case 2:
+            case true:
                 foreach((int index, Edge edge) in _edges)
                 {
                     if (prunedStates.Contains(edge.From))
@@ -124,12 +124,12 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
     internal void PruneDeadStates()
     {
-        while (PruneStatesSingle(1));
+        while (PruneStatesSingle(false));
     }
 
     internal void PruneUnreachableStates()
     {
-        while (PruneStatesSingle(2));
+        while (PruneStatesSingle(true));
     }
     
     public IEnumerable<Clock> GetClocks()
