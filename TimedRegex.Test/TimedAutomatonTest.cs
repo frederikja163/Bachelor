@@ -209,4 +209,35 @@ public sealed class TimedAutomatonTest
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(0));
     }
+
+    [Test]
+    public void PruneClocksTest()
+    {
+        TimedAutomaton ta = new();
+        State state1 = ta.AddState();
+        State state2 = ta.AddState();
+        Edge edge1 = ta.AddEdge(state1, state2, '\0');
+        Edge edge2 = ta.AddEdge(state1, state2, '\0');
+
+        Clock clock1 = ta.AddClock();
+        Clock clock2 = ta.AddClock();
+        Clock clock3 = ta.AddClock();
+        Clock clock4 = ta.AddClock();
+
+        edge1.AddClockRange(clock1, new Range(0f, 1f, true, true));
+        edge2.AddClockRange(clock2, new Range(0f, 1f, true, true));
+        edge2.AddClockRange(clock3, new Range(0f, 1f, true, true));
+        edge1.AddClockReset(clock1);
+        edge1.AddClockReset(clock4);
+
+        Assert.That(ta.GetClocks().Count(), Is.EqualTo(4));
+        Assert.That(ta.GetClocks().Contains<Clock>(clock4));
+
+        ta.PruneClocks();
+
+        Assert.That(ta.GetClocks().Count(), Is.EqualTo(3));
+        Assert.That(ta.GetClocks().Contains<Clock>(clock4), Is.Not.True);
+        Assert.That(edge1.GetClockResets().Contains(clock1));
+        Assert.That(edge1.GetClockResets().Contains(clock4), Is.Not.True);
+    }
 }

@@ -26,6 +26,11 @@ internal sealed class Edge : IEquatable<Edge>
     {
         _clockResets.Add(clock);
     }
+
+    internal void RemoveClockReset(Clock clock)
+    {
+        _clockResets.Remove(clock);
+    }
     
     internal void AddClockResets(IEnumerable<Clock> clocks)
     {
