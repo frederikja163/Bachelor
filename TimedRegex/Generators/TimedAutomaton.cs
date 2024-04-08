@@ -64,7 +64,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         }
     }
 
-    private bool PruneStatesSingle(bool pruneToState)
+    private bool TryPruneSates(bool pruneToState)
     {
         bool result = false;
         HashSet<State> validStates = new();
@@ -117,12 +117,12 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
     internal void PruneDeadStates()
     {
-        while (PruneStatesSingle(false));
+        while (TryPruneSates(false));
     }
 
     internal void PruneUnreachableStates()
     {
-        while (PruneStatesSingle(true));
+        while (TryPruneSates(true));
     }
     
 
