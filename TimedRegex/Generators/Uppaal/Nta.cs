@@ -44,6 +44,7 @@ internal sealed class Nta
             automaton.GetEdges().Select(e => new Transition(e))));
     }
 
+
     private int NewTemplateId()
     {
         return _templateId++;

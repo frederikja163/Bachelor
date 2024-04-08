@@ -86,10 +86,15 @@ internal sealed class BuildCommand
         Log.WriteLineIf(Verbose, $"Edges/TotalEdges: {timedAutomaton.GetEdges().Count()}/{TimedAutomaton.TotalEdgeCount}");
         Log.WriteLineIf(Verbose, $"Clock/TotalClocks: {timedAutomaton.GetClocks().Count()}/{TimedAutomaton.TotalClockCount}");
         
+        // make structure timedAutomaton -> graphAutomaton -> compressedAutomaton
+        // Log.WriteLineIf(Verbose, "Adding positions.");
+        // Log.StartTimeIf(Verbose, out sw);
+        // ITimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
+        // Log.StopTime(sw, "Added positions in {0}");
         
         Log.WriteLineIf(Verbose, "Compressing ids.");
         Log.StartTimeIf(Verbose, out sw);
-        ITimedAutomaton automaton = new CompressedTimedAutomaton(timedAutomaton);
+        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(timedAutomaton);
         Log.StopTime(sw, "Compressed ids in {0}");
         
         IGenerator generator = Format switch
@@ -101,7 +106,7 @@ internal sealed class BuildCommand
         
         Log.WriteLineIf(Verbose, $"Outputting automaton.");
         Log.StartTimeIf(Verbose, out sw);
-        generator.AddAutomaton(automaton);
+        generator.AddAutomaton(compressedAutomaton);
         
         if (Output is null && NoOpen)
         {

@@ -8,6 +8,10 @@ internal sealed class State : IEquatable<State>
     }
     
     internal int Id { get; }
+    
+    internal int X { get; }
+    
+    internal int Y { get; }
 
     public bool Equals(State? other)
     {
