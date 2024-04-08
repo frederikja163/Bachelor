@@ -99,6 +99,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
                 prunedStates.Add(state);
             }
         }
+        
         if (pruneToState)
         {
             foreach (Edge edge in GetEdgesFrom(prunedStates))
