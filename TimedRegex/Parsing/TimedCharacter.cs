@@ -1,6 +1,4 @@
-﻿using CommandLine;
-
-namespace TimedRegex.Parsing;
+﻿namespace TimedRegex.Parsing;
 
 internal sealed class TimedCharacter : IEquatable<TimedCharacter>
 {
