@@ -64,27 +64,25 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         }
     }
 
-    private bool PruneStatesSingle(bool mode)
+    private bool PruneStatesSingle(bool pruneToState)
     {
         bool result = false;
         HashSet<State> validStates = new();
         foreach ((_, Edge edge) in _edges)
         {
-            switch (mode)
+            if (pruneToState)
             {
-                case false:
-                    validStates.Add(edge.From);
-                    break;
-
-                case true:
-                    validStates.Add(edge.To);
-                    break;
+                validStates.Add(edge.To);
+            }
+            else 
+            {
+                validStates.Add(edge.From);
             }
         }
         HashSet<State> prunedStates = new();
         foreach ((int index, State state) in _states)
         {
-            if (mode == false && _finalStates.Contains(state))
+            if (!pruneToState && _finalStates.Contains(state))
             {
                 continue;
             }
@@ -96,29 +94,20 @@ internal sealed class TimedAutomaton : ITimedAutomaton
                 prunedStates.Add(state);
             }
         }
-        switch (mode)
+        if (pruneToState)
         {
-            case false:
-                foreach ((int index, Edge edge) in _edges)
-                {
-                    if (prunedStates.Contains(edge.To))
-                    {
-                        _edges.Remove(index);
-                    }
-                }
-                break;
-
-            case true:
-                foreach((int index, Edge edge) in _edges)
-                {
-                    if (prunedStates.Contains(edge.From))
-                    {
-                        _edges.Remove(index);
-                    }
-                }
-                break;
+            foreach (Edge edge in GetEdgesFrom(prunedStates))
+            {
+                _edges.Remove(edge.Id);
+            }
         }
-        
+        else
+        {
+            foreach (Edge edge in GetEdgesTo(prunedStates))
+            {
+                _edges.Remove(edge.Id);
+            }
+        }
         return result;
     }
 
