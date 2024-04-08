@@ -7,7 +7,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     private readonly List<Edge> _edges;
     private readonly List<State> _states;
     private readonly HashSet<State> _finalStates;
-    
+
     internal GraphTimedAutomaton(ITimedAutomaton automaton)
     {
         InitialLocation = automaton.InitialLocation;
@@ -16,31 +16,35 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         _edges = automaton.GetEdges().ToList();
         _states = automaton.GetStates().ToList();
         _finalStates = automaton.GetFinalStates().ToHashSet();
-        
-        MakeAcyclic();
+
+        ReverseEdges();
         AssignLayers();
         OrderLocations();
         AssignPositions();
     }
-    
-    internal void MakeAcyclic()
+
+    internal void ReverseEdges()
     {
-        
+        for (int i = 0; i < _edges.Count; i++)
+        {
+            if (!_edges[i].IsReversible) continue;
+            
+            Edge edge = _edges[i];
+            Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
+            _edges[i] = reverseEdge;
+        }
     }
 
     internal void AssignLayers()
     {
-        
     }
 
     internal void OrderLocations()
     {
-        
     }
 
     internal void AssignPositions()
     {
-        
     }
 
     public State? InitialLocation { get; }
