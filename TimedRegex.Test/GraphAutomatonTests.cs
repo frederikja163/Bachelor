@@ -3,27 +3,12 @@ using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
 using TimedRegex.Parsing;
-using Range = TimedRegex.Generators.Range;
+using static TimedRegex.Test.AutomatonGeneratorVisitorTest;
 
 namespace TimedRegex.Test;
 
 public class GraphAutomatonTests
 {
-    internal static Token Token(TokenType type, char c)
-    {
-        return new Token(0, c, type);
-    }
-
-    internal static Match Match(char c)
-    {
-        return new Match(Token(TokenType.Match, c));
-    }
-    
-    internal static Interval Interval(char c, int start, int end)
-    {
-        return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), new Range(start, end, true, false));
-    }
-    
     [Test]
     public void ReverseEdgesTest()
     {
