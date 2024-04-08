@@ -1,5 +1,3 @@
-using TimedRegex.Generators.Uppaal;
-
 namespace TimedRegex.Generators;
 
 internal sealed class GraphTimedAutomaton : ITimedAutomaton
@@ -12,6 +10,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     
     internal GraphTimedAutomaton(ITimedAutomaton automaton)
     {
+        InitialLocation = automaton.InitialLocation;
         _alphabet = automaton.GetAlphabet().ToHashSet();
         _clocks = automaton.GetClocks().ToList();
         _edges = automaton.GetEdges().ToList();
