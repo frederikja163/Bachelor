@@ -56,7 +56,6 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         return _edges;
     }
 
-
     public IEnumerable<State> GetStates()
     {
         return _states;
