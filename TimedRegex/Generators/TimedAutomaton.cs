@@ -1,5 +1,3 @@
-using TimedRegex.Generators.Uppaal;
-
 namespace TimedRegex.Generators;
 
 internal sealed class TimedAutomaton : ITimedAutomaton
