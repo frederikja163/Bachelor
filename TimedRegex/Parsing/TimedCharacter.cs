@@ -17,7 +17,7 @@ internal sealed class TimedCharacter : IEquatable<TimedCharacter>
             throw new FormatException("Length of time characters can not exceed 1 character.");
         }
         _char = strArr[0][0];
-        _time = float.parse(strArr[1]);
+        _time = float.Parse(strArr[1]);
     }
 
     public TimedCharacter(char symbol, float time)
