@@ -83,6 +83,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
                 validStates.Add(edge.From);
             }
         }
+        
         HashSet<State> prunedStates = new();
         foreach ((int index, State state) in _states)
         {
