@@ -5,9 +5,9 @@ internal sealed class TimedCharacter
     private readonly char _char;
     private readonly int _time;
 
-    public TimedCharacter(char @char, int time)
+    public TimedCharacter(char symbol, int time)
     {
-        _char = @char;
+        _char = symbol;
         _time = time;
     }
 
