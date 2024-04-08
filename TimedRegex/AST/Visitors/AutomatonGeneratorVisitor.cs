@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using TimedRegex.Extensions;
 using TimedRegex.Generators;
-using TimedRegex.Parsing;
 using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.AST.Visitors;
