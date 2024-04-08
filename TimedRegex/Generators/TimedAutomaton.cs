@@ -64,6 +64,70 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         }
     }
 
+    private bool TryPruneSates(bool pruneToState)
+    {
+        bool result = false;
+        HashSet<State> validStates = new();
+        if (pruneToState)
+        {
+            foreach ((_, Edge edge) in _edges)
+            {
+                validStates.Add(edge.To);
+            }
+
+        }
+        else
+        {
+            foreach ((_, Edge edge) in _edges)
+            {
+                validStates.Add(edge.From);
+            }
+        }
+        
+        HashSet<State> prunedStates = new();
+        foreach ((int index, State state) in _states)
+        {
+            if (!pruneToState && _finalStates.Contains(state))
+            {
+                continue;
+            }
+            if ((!validStates.Contains(state)) && !InitialLocation!.Equals(state))
+            {
+                result = true;
+                _states.Remove(index);
+                _finalStates.Remove(state);
+                prunedStates.Add(state);
+            }
+        }
+        
+        if (pruneToState)
+        {
+            foreach (Edge edge in GetEdgesFrom(prunedStates))
+            {
+                _edges.Remove(edge.Id);
+            }
+        }
+        else
+        {
+            foreach (Edge edge in GetEdgesTo(prunedStates))
+            {
+                _edges.Remove(edge.Id);
+            }
+        }
+        return result;
+    }
+
+    internal void PruneDeadStates()
+    {
+        while (TryPruneSates(false));
+    }
+
+    internal void PruneUnreachableStates()
+    {
+        while (TryPruneSates(true));
+    }
+    
+
     internal void PruneClocks()
     {
         HashSet<Clock> clocks = new();
