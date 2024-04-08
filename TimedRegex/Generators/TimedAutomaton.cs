@@ -130,17 +130,13 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
     internal void PruneClocks()
     {
-        HashSet<Clock> clocks = new();
-        foreach (Edge edge in _edges.Values)
-        {
-            foreach ((Clock clock, _) in edge.GetValidClockRanges())
-            {
-                clocks.Add(clock);
-            }
-        }
+        HashSet<Clock> usedClocks = _edges.Values
+            .SelectMany(e => e.GetValidClockRanges())
+            .Select(c => c.Item1).ToHashSet();
+        
         foreach ((int index, Clock clock) in _clocks)
         {
-            if (!clocks.Contains(clock))
+            if (!usedClocks.Contains(clock))
             {
                 _clocks.Remove(index);
                 foreach ((_, Edge edge) in _edges)
