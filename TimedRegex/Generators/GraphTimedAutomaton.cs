@@ -10,7 +10,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     private readonly List<State> _states;
     private readonly HashSet<State> _finalStates;
     
-    internal GraphTimedAutomaton(TimedAutomaton automaton)
+    internal GraphTimedAutomaton(ITimedAutomaton automaton)
     {
         _alphabet = automaton.GetAlphabet().ToHashSet();
         _clocks = automaton.GetClocks().ToList();
