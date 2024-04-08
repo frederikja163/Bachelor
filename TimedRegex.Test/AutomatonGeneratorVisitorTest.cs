@@ -202,6 +202,23 @@ public sealed class AutomatonGeneratorVisitorTest
     }
 
     [Test]
+    public void GenerateIteratorIntervalTest()
+    {
+        Iterator iterator = new (Interval('a', 2, 4), Token(TokenType.Iterator, '*'));
+        IteratorVisitor iteratorVisitor = new();
+        iterator.Accept(iteratorVisitor);
+        AutomatonGeneratorVisitor visitor = new();
+        iteratorVisitor.GetNode().Accept(visitor);
+        ITimedAutomaton ta = visitor.GetAutomaton();
+        Assert.Multiple(() =>
+        {
+            Assert.That(ta.GetStates().Count(), Is.EqualTo(5));
+            Assert.That(ta.GetStates().Count(l => ta.IsFinal(l)), Is.EqualTo(2));
+            Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
+        });
+    }
+
+    [Test]
     public void GenerateRenameTaTest()
     {
         Concatenation concatenation = new(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
