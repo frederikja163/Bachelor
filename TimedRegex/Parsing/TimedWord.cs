@@ -2,12 +2,20 @@
 
 internal sealed class TimedWord
 {
-    public TimedWord(char[] word, int[] times)
+    public TimedWord(IEnumerable<TimedCharacter> characters)
     {
-        Word = word;
-        Times = times;
+        List<Char> word = new();
+        List<int> times = new();
+        foreach (TimedCharacter character in characters)
+        {
+            word.Add(character.Char);
+            times.Add(character.Time);
+        }
+
+        Word = word.ToArray();
+        Times = times.ToArray();
     }
 
-    public Char[] Word;
-    public int[] Times;
+    private Char[] Word;
+    private int[] Times;
 }
