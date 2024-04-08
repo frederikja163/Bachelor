@@ -11,7 +11,6 @@ internal sealed class TimedCharacter
         _time = time;
     }
 
-    public int Time => _time;
-
     public char Char => _char;
+    public int Time => _time;
 }
