@@ -11,7 +11,7 @@ public sealed class TimedWordTests
     [Test]
     public void CanConstructTimedWordFromCsv()
     {
-        List<TimedCharacter> testWord = TimedWord.GetStringFromCSV(testPath + "SimpleTimedWord.csv");
+        List<TimedCharacter> testWord = TimedWord.GetStringFromCSV($"{testPath}SimpleTimedWord.csv");
         List<TimedCharacter> expected = [new TimedCharacter('a', 1f), 
             new TimedCharacter('b', 4f),
             new TimedCharacter('c', 7f),

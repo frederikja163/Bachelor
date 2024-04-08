@@ -10,17 +10,14 @@ internal sealed class TimedCharacter : IEquatable<TimedCharacter>
         string[] strArr = s.Split(',');
         if (strArr.Length != 2)
         {
-            throw new FormatException("Tried to create TimedCharacter from string array with invalid length.");
+            throw new FormatException("Too many elements in timed character, a timed character consists of only a character and a float for the time. Seperated by a comma.");
         }
         if (strArr[0].Length != 1)
         {
-            throw new FormatException("Time characters can not be more than 1 character long.");
+            throw new FormatException("Length of time characters can not exceed 1 character.");
         }
         _char = strArr[0][0];
-        if (!float.TryParse(strArr[1], out _time))
-        {
-            throw new FormatException("Could not parse float from " + strArr[1]);
-        }
+        _time = float.parse(strArr[1]);
     }
 
     public TimedCharacter(char symbol, float time)
