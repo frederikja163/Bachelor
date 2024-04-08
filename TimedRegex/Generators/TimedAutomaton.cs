@@ -68,13 +68,17 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     {
         bool result = false;
         HashSet<State> validStates = new();
-        foreach ((_, Edge edge) in _edges)
+        if (pruneToState)
         {
-            if (pruneToState)
+            foreach ((_, Edge edge) in _edges)
             {
                 validStates.Add(edge.To);
             }
-            else 
+
+        }
+        else
+        {
+            foreach ((_, Edge edge) in _edges)
             {
                 validStates.Add(edge.From);
             }
