@@ -2,7 +2,7 @@
 
 internal sealed class TimedCharacter : IEquatable<TimedCharacter>
 {
-    private readonly char _char;
+    private readonly char _symbol;
     private readonly float _time;
 
     public TimedCharacter(string s)
@@ -16,17 +16,17 @@ internal sealed class TimedCharacter : IEquatable<TimedCharacter>
         {
             throw new FormatException("Length of time characters can not exceed 1 character.");
         }
-        _char = strArr[0][0];
+        _symbol = strArr[0][0];
         _time = float.Parse(strArr[1]);
     }
 
     public TimedCharacter(char symbol, float time)
     {
-        _char = symbol;
+        _symbol = symbol;
         _time = time;
     }
 
-    public char Char => _char;
+    public char Symbol => _symbol;
     public float Time => _time;
 
     public bool Equals(TimedCharacter? other)
@@ -35,6 +35,6 @@ internal sealed class TimedCharacter : IEquatable<TimedCharacter>
         {
             return false;
         }
-        return (_char == other._char && _time == other._time);
+        return (_symbol== other._symbol && _time == other._time);
     }
 }
