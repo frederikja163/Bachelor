@@ -13,7 +13,7 @@ public sealed class AutomatonGeneratorVisitorTest
     {
         return new Token(0, 'Ɛ', TokenType.None);
     }
-    
+
     internal static Token Token(TokenType type, char c)
     {
         return new Token(0, c, type);
@@ -23,7 +23,7 @@ public sealed class AutomatonGeneratorVisitorTest
     {
         return new Match(Token(TokenType.Match, c));
     }
-    
+
     internal static Interval Interval(char c, int start, int end)
     {
         return new Interval(Match(c), Token(TokenType.IntervalOpen, '['), new Range(start, end, true, false));
@@ -78,7 +78,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
             Assert.That(ta.GetEdges().Count(e => ta.IsFinal(e.To)), Is.EqualTo(1));
             Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
-            
+
             Edge? edge = ta.GetEdges().FirstOrDefault(e => e.From.Id == e.To.Id);
             Assert.That(edge, Is.Not.Null);
             Assert.That(edge!.GetClockResets().Count(), Is.EqualTo(1));
@@ -99,7 +99,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
             Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(1));
             Assert.That(ta.GetEdges().Count(e => e.GetValidClockRanges().Any()), Is.EqualTo(3));
-            
+
             Edge final = ta.GetEdges().First(e => e.GetClockResets().Any());
             Assert.That(final.GetValidClockRanges().First().Item2, Is.EqualTo(new Range(0, 3, true, false)));
             Assert.That(final.GetClockResets().Count(), Is.EqualTo(1));
@@ -205,9 +205,13 @@ public sealed class AutomatonGeneratorVisitorTest
     [Test]
     public void GenerateRenameTaTest()
     {
-        Concatenation concatenation = new(new Concatenation(Match('a'), Match('b')), new Concatenation(Match('c'), Match('a')));
+        Concatenation concatenation = new(new Concatenation(Match('a'), Match('b')),
+            new Concatenation(Match('c'), Match('a')));
         Rename rename = new(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
-            { new(Token(TokenType.Match,'a'), Token(TokenType.Match, '0')), new(Token(TokenType.Match,'c'), Token(TokenType.Match, '1')) });
+        {
+            new(Token(TokenType.Match, 'a'), Token(TokenType.Match, '0')),
+            new(Token(TokenType.Match, 'c'), Token(TokenType.Match, '1'))
+        });
         AutomatonGeneratorVisitor visitor = new();
         rename.Accept(visitor);
         ITimedAutomaton ta = visitor.GetAutomaton();
@@ -228,16 +232,19 @@ public sealed class AutomatonGeneratorVisitorTest
     {
         Concatenation concatenation = new(Match('a'), Match('b'));
         Rename rename = new(concatenation, Token(TokenType.RenameStart, '{'), new List<SymbolReplace>()
-            { new(Token(TokenType.Match,'a'), Token(TokenType.Match,'b')), new(Token(TokenType.Match,'b'), Token(TokenType.Match,'a')) });
+        {
+            new(Token(TokenType.Match, 'a'), Token(TokenType.Match, 'b')),
+            new(Token(TokenType.Match, 'b'), Token(TokenType.Match, 'a'))
+        });
         AutomatonGeneratorVisitor visitor = new();
         rename.Accept(visitor);
         ITimedAutomaton ta = visitor.GetAutomaton();
-        
+
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(3));
         Assert.That(ta.GetStates().Count(), Is.EqualTo(4));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(1));
         Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(2));
-        Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new[]{'a', 'b'}));
+        Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new[] { 'a', 'b' }));
     }
 
     [Test]
@@ -246,5 +253,40 @@ public sealed class AutomatonGeneratorVisitorTest
         Intersection intersection = new(Match('a'), new Union(Match('b'), Match('c'), EmptyToken()), EmptyToken());
         AutomatonGeneratorVisitor visitor = new();
         Assert.DoesNotThrow(() => intersection.Accept(visitor));
+    }
+
+    [Test]
+    public void GuaranteedIteratorIsReversibleTest()
+    {
+        GuaranteedIterator iterator = new(Interval('a', 0, 5), Token(TokenType.Iterator, '+'));
+        AutomatonGeneratorVisitor visitor = new();
+        iterator.Accept(visitor);
+        ITimedAutomaton ta = visitor.GetAutomaton();
+
+        foreach (Edge edge in ta.GetEdges())
+        {
+            if (edge.IsReversible)
+            {
+                Assert.That(edge.To, Is.EqualTo(ta.InitialLocation));
+            }
+        }
+    }
+    
+    [Test]
+    public void AbsorbedGuaranteedIteratorIsReversibleTest()
+    {
+        Union union = new(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
+        AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, '+'));
+        AutomatonGeneratorVisitor visitor = new();
+        absorbedGuaranteedIterator.Accept(visitor);
+        ITimedAutomaton ta = visitor.GetAutomaton();
+
+        foreach (Edge edge in ta.GetEdges())
+        {
+            if (edge.IsReversible)
+            {
+                Assert.That(edge.To, Is.EqualTo(ta.InitialLocation));
+            }
+        }
     }
 }

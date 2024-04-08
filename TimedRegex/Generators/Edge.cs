@@ -4,8 +4,9 @@ internal sealed class Edge : IEquatable<Edge>
 {
     private readonly Dictionary<Clock, Range?> _clockRanges;
     private readonly HashSet<Clock> _clockResets;
+    private readonly bool _isReversible;
 
-    internal Edge(int id, State from, State to, char symbol)
+    internal Edge(int id, State from, State to, char symbol, bool isReversible = false)
     {
         Id = id;
         From = from;
@@ -14,6 +15,7 @@ internal sealed class Edge : IEquatable<Edge>
         _clockRanges = new Dictionary<Clock, Range?>();
         _clockResets = new HashSet<Clock>();
         IsDead = false;
+        _isReversible = isReversible;
     }
     
     internal int Id { get; }
@@ -21,6 +23,7 @@ internal sealed class Edge : IEquatable<Edge>
     internal State To { get; }
     internal char Symbol { get; set; }
     internal bool IsDead { get; private set; }
+    internal bool IsReversible => _isReversible;
 
     internal void AddClockReset(Clock clock)
     {
