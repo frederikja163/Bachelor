@@ -48,7 +48,7 @@ internal sealed class Edge : IEquatable<Edge>
         }
     }
 
-    internal void AddClockRange(Clock clock, Range range)
+    internal void AddClockRange(Clock clock, Range? range)
     {
         if (!_clockRanges.TryGetValue(clock, out Range? r))
         {
@@ -63,22 +63,19 @@ internal sealed class Edge : IEquatable<Edge>
         _clockRanges[clock] = newRange;
     }
 
-    internal void AddClockRanges(IEnumerable<(Clock clock, Range range)> ranges)
+    internal void AddClockRanges(IEnumerable<(Clock clock, Range? range)> ranges)
     {
-        foreach ((Clock clock, Range range) in ranges)
+        foreach ((Clock clock, Range? range) in ranges)
         {
-            _clockRanges.Add(clock, range);
+            AddClockRange(clock, range);
         }
     }
-
-    internal IEnumerable<(Clock, Range)> GetValidClockRanges()
+    
+    internal IEnumerable<(Clock, Range?)> GetClockRanges()
     {
         foreach ((Clock clock, Range? range) in _clockRanges)
         {
-            if (range is not null)
-            {
-                yield return (clock, range);
-            }
+            yield return (clock, range);
         }
     }
 
