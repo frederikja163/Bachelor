@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using TimedRegex.Extensions;
+using TimedRegex.Generators;
 using TimedRegex.Parsing;
+using Range = TimedRegex.Generators.Range;
 
 namespace TimedRegex.Test;
 
@@ -9,7 +11,7 @@ public sealed class TimedWordTests
     string testPath = "TestData/CSV/";
 
     [Test]
-    public void CanConstructTimedWordFromCsv()
+    public void CanConstructTimedWordFromCsvTest()
     {
         List<TimedCharacter> testWord = TimedWord.GetStringFromCSV($"{testPath}SimpleTimedWord.csv");
         List<TimedCharacter> expected = [new TimedCharacter('a', 1f), 
@@ -18,5 +20,27 @@ public sealed class TimedWordTests
             new TimedCharacter('d', 9f)];
 
         Assert.That(testWord, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void TimedWordAutomataConstructorTest()
+    {
+        List<TimedCharacter> testWord = TimedWord.GetStringFromCSV($"{testPath}SymbolsRepeatedLater.csv");
+        TimedWordAutomata a = new TimedWordAutomata(testWord);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(a.InitialLocation, Is.EqualTo(new State(0)));
+            Assert.That(a.GetFinalStates().Any(), Is.False);
+            Assert.That(a.GetClocks().First(), Is.EqualTo(new Clock(0)));
+            Assert.That(a.GetAlphabet().Count(), Is.EqualTo(3));
+            Edge e = a.GetEdges().FirstOrDefault(c => c.Symbol.Equals('A'));
+            Assert.That(e.GetClockRanges().Select(t => t.Item2).ToList(), 
+                Is.EqualTo(new List<(Range)>(
+                    new Range(4f, 4f, true, true), 
+                    new Range(11f, 11f, true, true),
+                    new Range(18f, 18f, true, true))));
+        });
+
     }
 }
