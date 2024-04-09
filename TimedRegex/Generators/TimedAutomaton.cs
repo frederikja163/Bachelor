@@ -50,6 +50,17 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
+    internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, Func<Edge, bool>  includedEdges, Func<State, bool> includedLocations)
+    {
+        _clocks = left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary();
+        _edges = left._edges.Values.Union(right._edges.Values).Where(includedEdges).ToDictionary(e => e.Id);
+        _states = left._states.Values.Union(right._states.Values).Where(includedLocations).ToDictionary(s => s.Id);
+        _finalStates = left._finalStates.Union(right._finalStates).Where(includedLocations).ToHashSet();
+        InitialLocation = includedLocations(left.InitialLocation!) ? left.InitialLocation :
+            includedLocations(right.InitialLocation!) ? right.InitialLocation : null;
+        _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
+    }
+    
     internal static int TotalStateCount { get; private set; }
     internal static int TotalEdgeCount { get; private set; }
     internal static int TotalClockCount { get; private set; }
@@ -163,9 +174,19 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         return _edges.Values;
     }
 
+    internal IEnumerable<Edge> GetEdgesFrom(State state)
+    {
+        return GetEdges().Where(e => state.Equals(e.From));
+    }
+    
     internal IEnumerable<Edge> GetEdgesFrom(IEnumerable<State> states)
     {
         return GetEdges().Where(e => states.Contains(e.From));
+    }
+    
+    internal IEnumerable<Edge> GetEdgesTo(State state)
+    {
+        return GetEdges().Where(e => state.Equals(e.To));
     }
     
     internal IEnumerable<Edge> GetEdgesTo(IEnumerable<State> states)

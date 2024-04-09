@@ -284,16 +284,36 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     public void Visit(Union union)
     {
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
-        TimedAutomaton ta = new(left, right);
+        EpsilonConcat(right);
+        EpsilonConcat(left);
+        TimedAutomaton ta = new(left, right, e => IsNotInitial(e.From), IsNotInitial);
 
-        Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
-        
-        ta.AddState(newInitial: true);
-        Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, '\0');
-        lEdge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
-        Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, '\0');
-        rEdge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
+        State initial = ta.AddState(newInitial: true);
+
+        foreach (Edge edges in left.GetEdgesFrom(left.InitialLocation!).Concat(right.GetEdgesFrom(right.InitialLocation!)))
+        {
+            Edge e = ta.AddEdge(initial, edges.To, edges.Symbol);
+            e.AddClockRanges(edges.GetValidClockRanges());
+            e.AddClockResets(edges.GetClockResets());
+        }
         
         _stack.Push(ta);
+
+        static void EpsilonConcat(TimedAutomaton ta)
+        {
+            if (ta.GetEdgesTo(ta.InitialLocation!).Any())
+            {
+                State oldInitial = ta.InitialLocation!;
+                State newInitial = ta.AddState(ta.IsFinal(oldInitial), true);
+                Edge edge = ta.AddEdge(newInitial, oldInitial, '\0');
+                Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
+                edge.AddClockRange(clock, new Range(0, 0, true, true));
+            }
+        }
+
+        bool IsNotInitial(State state)
+        {
+            return !left.InitialLocation!.Equals(state) && !right.InitialLocation!.Equals(state);
+        }
     }
 }
