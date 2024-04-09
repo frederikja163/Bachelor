@@ -11,11 +11,11 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     private readonly Clock _clock;
     private readonly State _initialState;
     private readonly State _returnState;
-    
-    public TimedWordAutomaton(List<TimedCharacter> timedWord)
+
+    public TimedWordAutomaton(IEnumerable<TimedCharacter> timedWord)
     {
         _clock = new Clock(0);
-        _word = timedWord;
+        _word = timedWord.ToList();
         _initialState = new State(0);
         _returnState = new State(1);
         _alphabet = new();
