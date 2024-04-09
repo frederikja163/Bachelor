@@ -26,7 +26,7 @@ public sealed class TimedWordTests
     public void TimedWordAutomataConstructorTest()
     {
         List<TimedCharacter> testWord = TimedWord.GetStringFromCSV($"{testPath}SymbolsRepeatedLater.csv");
-        TimedWordAutomata a = new TimedWordAutomata(testWord);
+        TimedWordAutomaton a = new TimedWordAutomaton(testWord);
 
         Assert.Multiple(() =>
         {

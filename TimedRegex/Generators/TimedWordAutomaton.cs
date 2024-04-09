@@ -3,7 +3,7 @@ using TimedRegex.Parsing;
 
 namespace TimedRegex.Generators;
 
-internal sealed class TimedWordAutomata : ITimedAutomaton
+internal sealed class TimedWordAutomaton : ITimedAutomaton
 {
     private readonly HashSet<char> _alphabet;
     private readonly List<Edge> _edges;
@@ -11,7 +11,7 @@ internal sealed class TimedWordAutomata : ITimedAutomaton
     private readonly Clock _clock;
     private readonly State _initialState;
     private readonly State _returnState;
-    public TimedWordAutomata(List<TimedCharacter> timedWord)
+    public TimedWordAutomaton(List<TimedCharacter> timedWord)
     {
         _clock = new Clock(0);
         _word = timedWord;
