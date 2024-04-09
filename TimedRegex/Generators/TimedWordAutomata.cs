@@ -34,21 +34,19 @@ internal sealed class TimedWordAutomata : ITimedAutomaton
         {
             if (_alphabet.Contains(character.Symbol))
             {
-                edges[character.Symbol].AddClockRange(_clock, new Range(character.Time, character.Time, true, true));
+                continue;
             }
             else
             {
                 _alphabet.Add(character.Symbol);
-                Edge newEdge = new Edge(edgeCounter, _states[0], _states[1], character.Symbol);
-                edgeCounter++;
-                newEdge.AddClockRange(_clock, new Range(character.Time, character.Time, true, true));
+                Edge newEdge = new Edge(edgeCounter++, _states[0], _states[1], character.Symbol);
                 edges.Add(character.Symbol, newEdge);
             }
         }
+        edgeCounter = 1;
         foreach (char symbol in _alphabet)
         {
-            int i = 1; 
-            _edges.Add(i++, edges[symbol]);
+            _edges.Add(edgeCounter++, edges[symbol]);
         }
     }
 

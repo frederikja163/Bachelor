@@ -35,11 +35,7 @@ public sealed class TimedWordTests
             Assert.That(a.GetClocks().First(), Is.EqualTo(new Clock(0)));
             Assert.That(a.GetAlphabet().Count(), Is.EqualTo(3));
             Assert.That(a.GetStates().Count(), Is.EqualTo(2));
-
-            Edge e = a.GetEdges().FirstOrDefault(c => c.Symbol.Equals('A'))!;
-            Assert.That(e.GetClockRanges().Select(t => t.Item2), Does.Contain(new Range(4f, 4f, true, true)));
-            Assert.That(e.GetClockRanges().Select(t => t.Item2), Does.Contain(new Range(11f, 11f, true, true)));
-            Assert.That(e.GetClockRanges().Select(t => t.Item2), Does.Contain(new Range(18f, 18f, true, true)));
+            Assert.That(a.GetEdges().Count(), Is.EqualTo(4));
         });
 
     }
