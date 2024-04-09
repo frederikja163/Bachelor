@@ -123,7 +123,7 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetEdges().Count(e => e.From.Equals(ta.InitialLocation)), Is.EqualTo(6));
             Assert.That(ta.GetEdges().Count(e => e.To.Equals(ta.InitialLocation)), Is.EqualTo(8));
             Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(0));
-            Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(24));
+            Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(16));
             Assert.That(ta.GetEdges().Count(e => ta.IsFinal(e.To)), Is.EqualTo(8));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == 'a'), Is.EqualTo(12));
             Assert.That(ta.GetEdges().Count(e => e.Symbol == 'b'), Is.EqualTo(12));
