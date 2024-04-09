@@ -293,7 +293,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge edges in left.GetEdgesFrom(left.InitialLocation!).Concat(right.GetEdgesFrom(right.InitialLocation!)))
         {
             Edge e = ta.AddEdge(initial, edges.To, edges.Symbol);
-            e.AddClockRanges(edges.GetValidClockRanges());
+            e.AddClockRanges(edges.GetClockRanges());
             e.AddClockResets(edges.GetClockResets());
         }
         
