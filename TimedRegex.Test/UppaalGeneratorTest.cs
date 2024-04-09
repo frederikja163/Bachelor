@@ -38,6 +38,12 @@ public sealed class UppaalGeneratorTest
                 new List<string>()),
             "ta1",
             "id0",
+            new []
+            {
+                "c0",
+                "c1",
+                "c2",
+            },
             new[]
             {
                 id0,
@@ -54,7 +60,7 @@ public sealed class UppaalGeneratorTest
                 id8
             });
 
-        Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
+        Declaration declaration = new Declaration(Array.Empty<string>(), Array.Empty<string>());
         Nta nta = new(ta1, declaration);
 
         return nta;
@@ -137,9 +143,11 @@ public sealed class UppaalGeneratorTest
         Nta nta = GenerateTestNta();
 
         List<string> channels = nta.Declaration.GetChannels().ToList();
+        Template template = nta.GetTemplates().First();
         Assert.Multiple(() =>
         {
-            Assert.That(nta.Declaration.GetClocks().Count(), Is.EqualTo(2));
+            Assert.That(nta.Declaration.GetClocks().Count(), Is.EqualTo(0));
+            Assert.That(template.Declaration.GetClocks().Count(), Is.EqualTo(2));
             Assert.That(channels.Count(), Is.EqualTo(2));
             Assert.That(channels, Contains.Item("A"));
         });
@@ -300,7 +308,7 @@ public sealed class UppaalGeneratorTest
         UppaalGenerator uppaalGenerator = new();
         Nta nta = CreateTestNta();
         const string expected =
-            "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition>\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition>\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
+            "<nta>\n  <template>\n    <name>ta1</name>\n    <declaration>clock c0, c1, c2;</declaration>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition>\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition>\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -316,7 +324,7 @@ public sealed class UppaalGeneratorTest
     public void WriteNtaTest()
     {
         UppaalGenerator uppaalGenerator = new();
-        Template template = new(new Declaration(), "ta1", "", new List<Location>(), new List<Transition>());
+        Template template = new(new Declaration(), "ta1", "", Array.Empty<string>(), Array.Empty<Location>(), Array.Empty<Transition>());
         Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
         Nta nta = new(template, declaration);
 
@@ -339,6 +347,10 @@ public sealed class UppaalGeneratorTest
             new Declaration(new List<string>(), new List<string>()),
             "ta1",
             "id0",
+            new []
+            {
+                "c0"
+            },
             new List<Location>
             {
                 new("id0",
@@ -347,7 +359,7 @@ public sealed class UppaalGeneratorTest
             },
             new List<Transition>());
 
-        const string expected = "<template>\n  <name>ta1</name>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
+        const string expected = "<template>\n  <name>ta1</name>\n  <declaration>clock c0;</declaration>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))

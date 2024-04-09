@@ -76,6 +76,8 @@ internal sealed class UppaalGenerator : IGenerator
         xmlWriter.WriteStartElement("name");
         xmlWriter.WriteValue(template.Name);
         xmlWriter.WriteEndElement();
+        
+        WriteDeclaration(xmlWriter, template.Declaration);
 
         foreach (var location in template.GetLocations())
         {

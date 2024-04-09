@@ -2,7 +2,6 @@ using System.Diagnostics;
 using CommandLine;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
-using TimedRegex.Extensions;
 using TimedRegex.Generators;
 using TimedRegex.Generators.Uppaal;
 using TimedRegex.Parsing;
@@ -18,8 +17,8 @@ internal enum OutputFormat
 [Verb("build", isDefault: true, HelpText = "Builds a given timed regular expression.")]
 internal sealed class BuildCommand
 {
-    [Value(0, Default = null, MetaName = "expression", HelpText = "The timed regular expression to run, defaults to stdin.")]
-    public string? RegularExpression { get; set; }
+    [Value(0, Default = null, MetaName = "expression", HelpText = "One or more timed regular expressions to run, defaults to stdin.")]
+    public IEnumerable<string>? RegularExpressions { get; set; }
     
     [Option('f', "format", Default = OutputFormat.Uppaal, HelpText = "The output format.")]
     public OutputFormat Format { get; set; }
@@ -55,19 +54,96 @@ internal sealed class BuildCommand
         {
             throw new Exception("Can't use verbose and quiet in the same command.");
         }
-        
-        while (RegularExpression is null)
+
+        if (RegularExpressions is null || !RegularExpressions.Any())
         {
-            if (!Quiet)
+            string? regularExpression = null;
+            while (regularExpression is null)
             {
-                Console.WriteLine("Please input the regular expression you want to build, followed by a new line: ");
+                if (!Quiet)
+                {
+                    Console.WriteLine("Please input the regular expression you want to build, followed by a new line: ");
+                }
+
+                regularExpression = Console.ReadLine();
             }
-            RegularExpression = Console.ReadLine();
+
+            RegularExpressions = new [] { regularExpression };
         }
         Log.StartTimeIf(Verbose, out Stopwatch? totalSw);
-        Log.WriteLineIf(Verbose, $"Parsing regex: '{RegularExpression}'");
+
+        
+        IGenerator generator = Format switch
+        {
+            OutputFormat.Uppaal => new UppaalGenerator(),
+            _ => throw new ArgumentOutOfRangeException(nameof(Format))
+        };
+
+        foreach (string regularExpression in RegularExpressions)
+        {
+            ITimedAutomaton ta = CompileRegex(regularExpression);
+            generator.AddAutomaton(ta);
+        }
+        
+        Log.WriteLineIf(Verbose, $"Outputting in {Format} format.");
+        
+        Log.WriteLineIf(Verbose, $"Outputting automaton.");
         Log.StartTimeIf(Verbose, out Stopwatch? sw);
-        Tokenizer tokenizer = new(RegularExpression);
+        
+        if (Output is null && NoOpen)
+        {
+            using MemoryStream stream = new();
+            generator.GenerateFile(stream);
+            stream.Seek(0, SeekOrigin.Begin);
+            using StreamReader sr = new(stream);
+            Console.WriteLine(sr.ReadToEnd());
+        }
+        else
+        {
+            Output ??= Path.GetTempFileName();
+            generator.GenerateFile(Output);
+        }
+        Log.StopTime(sw, "Automaton outputted in {0}");
+
+        Log.StopTime(totalSw, "Total time was {0}");
+        if (!NoOpen)
+        {
+            Log.WriteLineIf(Verbose, "Opening automaton in uppaal.");
+            // On windows paths are relative to the uppaal installation.
+            // This means we need to look for uppaal in the path use the relative path.
+            // https://github.com/frederikja163/Bachelor/issues/241
+            // https://github.com/UPPAALModelChecker/UPPAAL-Meta/issues/252
+            // 21/03/2024
+            if (OperatingSystem.IsWindows())
+            {
+                string? uppaalPath = Environment.GetEnvironmentVariable("Path")?.Split(";")
+                    .FirstOrDefault(p => p.ToLower().Contains("uppaal"));
+                if (uppaalPath is null)
+                {
+                    if (!Quiet)
+                    {
+                        Console.WriteLine("Couldn't find path of uppaal in environment path.");
+                    }
+                    return 0;
+                }
+
+                string path = Path.GetRelativePath(uppaalPath, Output!);
+                Process.Start("uppaal", path);
+            }
+            else
+            {
+                Process.Start("uppaal", Output!);
+            }
+        }
+        
+        return 0;
+    }
+
+    private ITimedAutomaton CompileRegex(string regularExpression)
+    {
+        Log.WriteLineIf(Verbose, $"Parsing regex: '{regularExpression}'");
+        Log.StartTimeIf(Verbose, out Stopwatch? sw);
+        Tokenizer tokenizer = new(regularExpression);
         IAstNode root = Parser.Parse(tokenizer);
         Log.StopTime(sw, "Parsing done in {0}");
         Log.WriteLineIf(Verbose, $"Token count: {tokenizer.PeekedCharacters}");
@@ -140,64 +216,6 @@ internal sealed class BuildCommand
         Log.StartTimeIf(Verbose, out sw);
         ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(timedAutomaton);
         Log.StopTime(sw, "Compressed ids in {0}");
-        
-        IGenerator generator = Format switch
-        {
-            OutputFormat.Uppaal => new UppaalGenerator(),
-            _ => throw new ArgumentOutOfRangeException(nameof(Format))
-        };
-        Log.WriteLineIf(Verbose, $"Outputting in {Format} format.");
-        
-        Log.WriteLineIf(Verbose, $"Outputting automaton.");
-        Log.StartTimeIf(Verbose, out sw);
-        generator.AddAutomaton(compressedAutomaton);
-        
-        if (Output is null && NoOpen)
-        {
-            using MemoryStream stream = new();
-            generator.GenerateFile(stream);
-            stream.Seek(0, SeekOrigin.Begin);
-            using StreamReader sr = new(stream);
-            Console.WriteLine(sr.ReadToEnd());
-        }
-        else
-        {
-            Output ??= Path.GetTempFileName();
-            generator.GenerateFile(Output);
-        }
-        Log.StopTime(sw, "Automaton outputted in {0}");
-
-        Log.StopTime(totalSw, "Total time was {0}");
-        if (!NoOpen)
-        {
-            Log.WriteLineIf(Verbose, "Opening automaton in uppaal.");
-            // On windows paths are relative to the uppaal installation.
-            // This means we need to look for uppaal in the path use the relative path.
-            // https://github.com/frederikja163/Bachelor/issues/241
-            // https://github.com/UPPAALModelChecker/UPPAAL-Meta/issues/252
-            // 21/03/2024
-            if (OperatingSystem.IsWindows())
-            {
-                string? uppaalPath = Environment.GetEnvironmentVariable("Path")?.Split(";")
-                    .FirstOrDefault(p => p.ToLower().Contains("uppaal"));
-                if (uppaalPath is null)
-                {
-                    if (!Quiet)
-                    {
-                        Console.WriteLine("Couldn't find path of uppaal in environment path.");
-                    }
-                    return 0;
-                }
-
-                string path = Path.GetRelativePath(uppaalPath, Output!);
-                Process.Start("uppaal", path);
-            }
-            else
-            {
-                Process.Start("uppaal", Output!);
-            }
-        }
-        
-        return 0;
+        return compressedAutomaton;
     }
 }
