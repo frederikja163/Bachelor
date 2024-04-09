@@ -8,7 +8,7 @@ internal sealed class Transition
     {
         _labels = new();
 
-        if (edge.GetValidClockRanges().Any())
+        if (edge.GetClockRanges().Any())
         {
             _labels.Add(Label.CreateGuard(edge));
         }

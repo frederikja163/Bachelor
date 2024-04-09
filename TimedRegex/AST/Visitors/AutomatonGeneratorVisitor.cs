@@ -41,7 +41,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
-            edge.AddClockRanges(e.GetValidClockRanges());
+            edge.AddClockRanges(e.GetClockRanges());
             edge.AddClockResets(right.GetClocks());
         }
 
@@ -60,7 +60,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
             Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol);
-            edge.AddClockRanges(oldEdge.GetValidClockRanges());
+            edge.AddClockRanges(oldEdge.GetClockRanges());
             edge.AddClockResets(ta.GetClocks());
         }
 
@@ -75,7 +75,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
-            edge.AddClockRanges(e.GetValidClockRanges());
+            edge.AddClockRanges(e.GetClockRanges());
         }
 
         foreach (State location in left.GetFinalStates())
@@ -128,7 +128,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     newLocsTo[resetClocks] = to;
                 }
                 
-                List<(Clock, Range)> ranges = childEdge.GetValidClockRanges()
+                List<(Clock, Range?)> ranges = childEdge.GetClockRanges()
                     .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
                     .ToList();
                 
@@ -171,13 +171,13 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     State from = GetNewEdge(lEdge.From, rEdge.From);
                     State to = GetNewEdge(lEdge.To, rEdge.To);
                     Edge edge = ta.AddEdge(from, to, c);
-                    edge.AddClockRanges(lEdge.GetValidClockRanges().Concat(rEdge.GetValidClockRanges()));
+                    edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
                     edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
 
                     if (left.IsFinal(lEdge.To) && right.IsFinal(rEdge.To))
                     {
                         edge = ta.AddEdge(from, final, c);
-                        edge.AddClockRanges(lEdge.GetValidClockRanges().Concat(rEdge.GetValidClockRanges()));
+                        edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
                         edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
                     }
                 }
@@ -204,7 +204,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     State from = GetNewEdge(lEdge.From, rEdge.From);
                     State to = GetNewEdge(lEdge.To, rEdge.To);
                     Edge edge = ta.AddEdge(from, to, '\0');
-                    edge.AddClockRanges(lEdge.GetValidClockRanges());
+                    edge.AddClockRanges(lEdge.GetClockRanges());
                     edge.AddClockResets(lEdge.GetClockResets());
                 }
             }
@@ -234,7 +234,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         {
             Edge edge = ta.AddEdge(e.From, newFinal, e.Symbol);
             edge.AddClockRange(clock, range);
-            edge.AddClockRanges(e.GetValidClockRanges());
+            edge.AddClockRanges(e.GetClockRanges());
         }
 
         foreach (State location in ta.GetFinalStates().Where(l => l.Id != newFinal.Id))
@@ -293,7 +293,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge edges in left.GetEdgesFrom(left.InitialLocation!).Concat(right.GetEdgesFrom(right.InitialLocation!)))
         {
             Edge e = ta.AddEdge(initial, edges.To, edges.Symbol);
-            e.AddClockRanges(edges.GetValidClockRanges());
+            e.AddClockRanges(edges.GetClockRanges());
             e.AddClockResets(edges.GetClockResets());
         }
         

@@ -130,19 +130,25 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
     internal void PruneDeadStates()
     {
-        while (TryPruneSates(false));
+        while (TryPruneSates(false))
+        {
+            
+        }
     }
 
     internal void PruneUnreachableStates()
     {
-        while (TryPruneSates(true));
+        while (TryPruneSates(true))
+        {
+            
+        }
     }
     
 
     internal void PruneClocks()
     {
         HashSet<Clock> usedClocks = _edges.Values
-            .SelectMany(e => e.GetValidClockRanges())
+            .SelectMany(e => e.GetClockRanges())
             .Select(c => c.Item1).ToHashSet();
         
         foreach ((int index, Clock clock) in _clocks)
