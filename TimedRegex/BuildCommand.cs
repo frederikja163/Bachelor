@@ -39,6 +39,16 @@ internal sealed class BuildCommand
         HelpText = $"If set, outputs extra information about the automaton generated. Can't be used along with '{nameof(Quiet)}'.")]
     public bool Verbose { get; set; } = false;
     
+    [Option('s', "state", Default = false,
+        HelpText = $"If set, all states will stay even if they are unreachable or dead.")]
+    public bool StatePruning { get; set; } = false;
+    [Option('e', "edge", Default = false,
+        HelpText = $"If set, all edges will stay even if they are overconstrained.")]
+    public bool EdgePruning { get; set; } = false;
+    [Option('c', "clock", Default = false, 
+        HelpText = $"If set, all clocks will stay even if they are not used.")]
+    public bool ClockPruning { get; set; } = false;
+    
     internal int Run()
     {
         if (Quiet && Verbose)
@@ -85,6 +95,40 @@ internal sealed class BuildCommand
         Log.WriteLineIf(Verbose, $"States/TotalStates: {timedAutomaton.GetStates().Count()}/{TimedAutomaton.TotalStateCount}");
         Log.WriteLineIf(Verbose, $"Edges/TotalEdges: {timedAutomaton.GetEdges().Count()}/{TimedAutomaton.TotalEdgeCount}");
         Log.WriteLineIf(Verbose, $"Clock/TotalClocks: {timedAutomaton.GetClocks().Count()}/{TimedAutomaton.TotalClockCount}");
+
+        if (!StatePruning || !ClockPruning || !EdgePruning)
+        {
+            Log.StartTimeIf(Verbose, out Stopwatch? totalPruning);
+            if (!EdgePruning)
+            {
+                Log.WriteLineIf(Verbose, "Pruning Edges");
+                Log.StartTimeIf(Verbose, out sw);
+                timedAutomaton.PruneEdges();
+                Log.StopTime(sw, "Edges pruned in {0}");
+            }
+            
+            if (!StatePruning)
+            {
+                Log.WriteLineIf(Verbose, "Pruning States");
+                Log.StartTimeIf(Verbose, out sw);
+                timedAutomaton.PruneDeadStates();
+                timedAutomaton.PruneUnreachableStates();
+                Log.StopTime(sw, "States pruned in {0}");
+            }
+            
+            if (!ClockPruning)
+            {
+                Log.WriteLineIf(Verbose, "Pruning Clocks");
+                Log.StartTimeIf(Verbose, out sw);
+                timedAutomaton.PruneClocks();
+                Log.StopTime(sw, "Clocks pruned in {0}");
+            }
+            
+            Log.StopTime(totalPruning, "Pruning took a total of {0}");
+            Log.WriteLineIf(Verbose, $"States: {timedAutomaton.GetStates().Count()}");
+            Log.WriteLineIf(Verbose, $"Edges: {timedAutomaton.GetEdges().Count()}");
+            Log.WriteLineIf(Verbose, $"Clock: {timedAutomaton.GetClocks().Count()}");
+        }
         
         // make structure timedAutomaton -> graphAutomaton -> compressedAutomaton
         // Log.WriteLineIf(Verbose, "Adding positions.");
