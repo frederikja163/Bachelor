@@ -11,6 +11,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     private readonly Clock _clock;
     private readonly State _initialState;
     private readonly State _returnState;
+    
     public TimedWordAutomaton(List<TimedCharacter> timedWord)
     {
         _clock = new Clock(0);
