@@ -67,6 +67,28 @@ internal sealed class UppaalGenerator : IGenerator
             xmlWriter.WriteValue($"chan {string.Join(", ", declaration.GetChannels())};");
         }
 
+        if (declaration.GetSymbols().Any())
+        {
+            string str = "";
+            foreach (char symbol in declaration.GetSymbols())
+            {
+                str.Concat('"' + symbol + '"' + ", ");
+            }
+            str.Concat("\"\\0\"");
+            xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Length}] = " + '{' + str + "};\n");
+        }
+
+        if (declaration.GetTimes().Any())
+        {
+            string str = "";
+            foreach (int time in declaration.GetTimes())
+            {
+                str.Concat(time + ", ");
+            }
+            str.Concat("0");
+            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length}] = " + '{' + str + "};\n");
+        }
+
         xmlWriter.WriteEndElement();
     }
 
