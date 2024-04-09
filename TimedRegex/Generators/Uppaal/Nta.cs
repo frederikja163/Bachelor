@@ -32,7 +32,6 @@ internal sealed class Nta
 
     internal void AddAutomaton(ITimedAutomaton automaton)
     {
-        Declaration.AddClocks(automaton.GetClocks().Select(clocks => $"c{clocks.Id}"));
         Declaration.AddChannels(automaton.GetAlphabet()
             .Where(x => x != '\0')
             .Select(s => s.ToString()));
@@ -40,6 +39,7 @@ internal sealed class Nta
         
         _templates.Add(new (new(), $"ta{NewTemplateId()}",
             $"l{automaton.InitialLocation!.Id}",
+            automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
             automaton.GetEdges().Select(e => new Transition(e))));
     }
