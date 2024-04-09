@@ -74,7 +74,7 @@ public sealed class TimedAutomatonTest
     {
         TimedAutomaton automaton = CreateAutomaton();
         
-        Assert.True(automaton.GetEdges().All(e => e.GetValidClockRanges().Any()));
+        Assert.True(automaton.GetEdges().All(e => e.GetClockRanges().Any()));
     }
     
     [Test]
@@ -126,7 +126,7 @@ public sealed class TimedAutomatonTest
         edge.AddClockRange(clock, new Range(1.00f, 7.55f, true, false));
         edge.AddClockRange(clock, new Range(3.4f, 10.04f, false, true));
 
-        Assert.That(edge.GetValidClockRanges().First().Item2, Is.EqualTo(new Range(3.4f, 7.55f, false, false)));
+        Assert.That(edge.GetClockRanges().First().Item2, Is.EqualTo(new Range(3.4f, 7.55f, false, false)));
     }
 
     [TestCase(1, 2, true, true, false)]
@@ -205,6 +205,7 @@ public sealed class TimedAutomatonTest
         edge.AddClockRange(clock, new Range(0.5f, 0.5f, true, true));
         edge.AddClockRange(clock, new Range(2f, 2f, true, true));
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
+        Assert.That(edge.GetClockRanges().Count(), Is.EqualTo(1));
         ta.PruneEdges();
         
         Assert.That(ta.GetEdges().Count(), Is.EqualTo(0));

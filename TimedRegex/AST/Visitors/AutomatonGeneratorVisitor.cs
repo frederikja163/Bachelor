@@ -41,7 +41,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
-            edge.AddClockRanges(e.GetValidClockRanges());
+            edge.AddClockRanges(e.GetClockRanges());
             edge.AddClockResets(right.GetClocks());
         }
 
@@ -59,8 +59,8 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
-            Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol, true);
-            edge.AddClockRanges(oldEdge.GetValidClockRanges());
+            Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol);
+            edge.AddClockRanges(oldEdge.GetClockRanges());
             edge.AddClockResets(ta.GetClocks());
         }
 
@@ -75,7 +75,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
             Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
-            edge.AddClockRanges(e.GetValidClockRanges());
+            edge.AddClockRanges(e.GetClockRanges());
         }
 
         foreach (State location in left.GetFinalStates())
@@ -128,7 +128,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     newLocsTo[resetClocks] = to;
                 }
                 
-                List<(Clock, Range)> ranges = childEdge.GetValidClockRanges()
+                List<(Clock, Range?)> ranges = childEdge.GetClockRanges()
                     .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
                     .ToList();
                 
@@ -138,7 +138,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
                 if (child.IsFinal(childEdge.To))
                 {
-                    edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol, true);
+                    edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol);
                     edge.AddClockResets(childEdge.GetClockResets());
                     edge.AddClockRanges(ranges);
                 }
@@ -171,13 +171,13 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     State from = GetNewEdge(lEdge.From, rEdge.From);
                     State to = GetNewEdge(lEdge.To, rEdge.To);
                     Edge edge = ta.AddEdge(from, to, c);
-                    edge.AddClockRanges(lEdge.GetValidClockRanges().Concat(rEdge.GetValidClockRanges()));
+                    edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
                     edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
 
                     if (left.IsFinal(lEdge.To) && right.IsFinal(rEdge.To))
                     {
                         edge = ta.AddEdge(from, final, c);
-                        edge.AddClockRanges(lEdge.GetValidClockRanges().Concat(rEdge.GetValidClockRanges()));
+                        edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
                         edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
                     }
                 }
@@ -204,7 +204,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     State from = GetNewEdge(lEdge.From, rEdge.From);
                     State to = GetNewEdge(lEdge.To, rEdge.To);
                     Edge edge = ta.AddEdge(from, to, '\0');
-                    edge.AddClockRanges(lEdge.GetValidClockRanges());
+                    edge.AddClockRanges(lEdge.GetClockRanges());
                     edge.AddClockResets(lEdge.GetClockResets());
                 }
             }
@@ -234,7 +234,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         {
             Edge edge = ta.AddEdge(e.From, newFinal, e.Symbol);
             edge.AddClockRange(clock, range);
-            edge.AddClockRanges(e.GetValidClockRanges());
+            edge.AddClockRanges(e.GetClockRanges());
         }
 
         foreach (State location in ta.GetFinalStates().Where(l => l.Id != newFinal.Id))
@@ -284,16 +284,36 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     public void Visit(Union union)
     {
         (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
-        TimedAutomaton ta = new(left, right);
+        EpsilonConcat(right);
+        EpsilonConcat(left);
+        TimedAutomaton ta = new(left, right, e => IsNotInitial(e.From), IsNotInitial);
 
-        Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
-        
-        ta.AddState(newInitial: true);
-        Edge lEdge = ta.AddEdge(ta.InitialLocation!, left.InitialLocation!, '\0');
-        lEdge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
-        Edge rEdge = ta.AddEdge(ta.InitialLocation!, right.InitialLocation!, '\0');
-        rEdge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
+        State initial = ta.AddState(newInitial: true);
+
+        foreach (Edge edges in left.GetEdgesFrom(left.InitialLocation!).Concat(right.GetEdgesFrom(right.InitialLocation!)))
+        {
+            Edge e = ta.AddEdge(initial, edges.To, edges.Symbol);
+            e.AddClockRanges(edges.GetClockRanges());
+            e.AddClockResets(edges.GetClockResets());
+        }
         
         _stack.Push(ta);
+
+        static void EpsilonConcat(TimedAutomaton ta)
+        {
+            if (ta.GetEdgesTo(ta.InitialLocation!).Any())
+            {
+                State oldInitial = ta.InitialLocation!;
+                State newInitial = ta.AddState(ta.IsFinal(oldInitial), true);
+                Edge edge = ta.AddEdge(newInitial, oldInitial, '\0');
+                Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
+                edge.AddClockRange(clock, new Range(0, 0, true, true));
+            }
+        }
+
+        bool IsNotInitial(State state)
+        {
+            return !left.InitialLocation!.Equals(state) && !right.InitialLocation!.Equals(state);
+        }
     }
 }

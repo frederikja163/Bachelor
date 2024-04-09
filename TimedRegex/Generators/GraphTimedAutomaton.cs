@@ -32,7 +32,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
             Edge edge = _edges[i];
             Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
             reverseEdge.AddClockResets(edge.GetClockResets());
-            reverseEdge.AddClockRanges(edge.GetClockRanges();
+            reverseEdge.AddClockRanges(edge.GetClockRanges());
             _edges[i] = reverseEdge;
         }
     }
