@@ -255,9 +255,9 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         return state;
     }
 
-    internal Edge AddEdge(State from, State to, char symbol)
+    internal Edge AddEdge(State from, State to, char symbol, bool isReversible = false)
     {
-        Edge edge = new(CreateEdgeId(), from, to, symbol);
+        Edge edge = new(CreateEdgeId(), from, to, symbol, isReversible);
         
         _edges.Add(edge.Id, edge);
         _alphabet.Add(symbol);
