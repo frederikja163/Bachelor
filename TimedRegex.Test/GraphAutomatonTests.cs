@@ -9,7 +9,7 @@ namespace TimedRegex.Test;
 
 public class GraphAutomatonTests
 {
-    internal GraphTimedAutomaton CreateGta()
+    private static GraphTimedAutomaton CreateGta()
     {
         Union union = new(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
         AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, '+'));
