@@ -19,6 +19,8 @@ public class GraphAutomatonTests
         ITimedAutomaton ta = visitor.GetAutomaton();
         
         GraphTimedAutomaton gta = new(ta);
+
+        int count = gta.GetEdges().Count(e => e.To.Equals(gta.InitialLocation));
         
         // Assert that edges have been reversed
         Assert.That(gta.GetEdges().Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(0));
