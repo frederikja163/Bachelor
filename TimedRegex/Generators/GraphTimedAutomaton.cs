@@ -55,32 +55,50 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     public IEnumerable<Clock> GetClocks()
     {
-        foreach (var clock in _clocks) yield return clock;
+        foreach (var clock in _clocks)
+        {
+            yield return clock;
+        }
     }
 
     public IEnumerable<Edge> GetEdges()
     {
-        foreach (var edge in _edges) yield return edge;
+        foreach (var edge in _edges.Concat(_selfEdges))
+        {
+            yield return edge;
+        }
     }
     
     internal IEnumerable<Edge> GetSelfEdges()
     {
-        foreach (var edge in _selfEdges) yield return edge;
+        foreach (var edge in _selfEdges)
+        {
+            yield return edge;
+        }
     }
 
     public IEnumerable<State> GetStates()
     {
-        foreach (var state in _states) yield return state;
+        foreach (var state in _states)
+        {
+            yield return state;
+        }
     }
 
     public IEnumerable<State> GetFinalStates()
     {
-        foreach (var finalState in _finalStates) yield return finalState;
+        foreach (var finalState in _finalStates)
+        {
+            yield return finalState;
+        }
     }
 
     public IEnumerable<char> GetAlphabet()
     {
-        foreach (var c in _alphabet) yield return c;
+        foreach (var c in _alphabet)
+        {
+            yield return c;
+        }
     }
 
     public bool IsFinal(State state)
