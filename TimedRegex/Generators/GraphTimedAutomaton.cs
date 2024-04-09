@@ -5,6 +5,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     private readonly HashSet<char> _alphabet;
     private readonly List<Clock> _clocks;
     private readonly List<Edge> _edges;
+    private readonly List<Edge> _selfEdges;
     private readonly List<State> _states;
     private readonly HashSet<State> _finalStates;
 
@@ -13,7 +14,8 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         InitialLocation = automaton.InitialLocation;
         _alphabet = automaton.GetAlphabet().ToHashSet();
         _clocks = automaton.GetClocks().ToList();
-        _edges = automaton.GetEdges().ToList();
+        _edges = automaton.GetEdges().Where(e => !e.From.Equals(e.To)).ToList();
+        _selfEdges = automaton.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
         _states = automaton.GetStates().ToList();
         _finalStates = automaton.GetFinalStates().ToHashSet();
 
@@ -53,27 +55,32 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     public IEnumerable<Clock> GetClocks()
     {
-        return _clocks;
+        foreach (var clock in _clocks) yield return clock;
     }
 
     public IEnumerable<Edge> GetEdges()
     {
-        return _edges;
+        foreach (var edge in _edges) yield return edge;
+    }
+    
+    internal IEnumerable<Edge> GetSelfEdges()
+    {
+        foreach (var edge in _selfEdges) yield return edge;
     }
 
     public IEnumerable<State> GetStates()
     {
-        return _states;
+        foreach (var state in _states) yield return state;
     }
 
     public IEnumerable<State> GetFinalStates()
     {
-        return _finalStates;
+        foreach (var finalState in _finalStates) yield return finalState;
     }
 
     public IEnumerable<char> GetAlphabet()
     {
-        return _alphabet;
+        foreach (var c in _alphabet) yield return c;
     }
 
     public bool IsFinal(State state)

@@ -59,7 +59,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
-            Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol);
+            Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol, true);
             edge.AddClockRanges(oldEdge.GetClockRanges());
             edge.AddClockResets(ta.GetClocks());
         }
@@ -138,7 +138,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
                 if (child.IsFinal(childEdge.To))
                 {
-                    edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol);
+                    edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol, true);
                     edge.AddClockResets(childEdge.GetClockResets());
                     edge.AddClockRanges(ranges);
                 }

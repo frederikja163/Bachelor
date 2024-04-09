@@ -9,18 +9,21 @@ namespace TimedRegex.Test;
 
 public class GraphAutomatonTests
 {
-    [Test]
-    public void ReverseEdgesTest()
+    internal GraphTimedAutomaton CreateGta()
     {
         Union union = new(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
         AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, '+'));
         AutomatonGeneratorVisitor visitor = new();
         absorbedGuaranteedIterator.Accept(visitor);
         ITimedAutomaton ta = visitor.GetAutomaton();
-        
-        GraphTimedAutomaton gta = new(ta);
 
-        int count = gta.GetEdges().Count(e => e.To.Equals(gta.InitialLocation));
+        return new GraphTimedAutomaton(ta);
+    }
+    
+    [Test]
+    public void ReverseEdgesTest()
+    {
+        GraphTimedAutomaton gta = CreateGta();
         
         // Assert that edges have been reversed
         Assert.That(gta.GetEdges().Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(0));
@@ -28,6 +31,18 @@ public class GraphAutomatonTests
         gta.ReverseEdges();
         
         // Assert that reversed edges have been reversed back 
-        Assert.That(gta.GetEdges().Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(8));
+        Assert.That(gta.GetEdges().Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(6));
+    }
+
+    [Test]
+    public void CorrectSelfEdgesTest()
+    {
+        GraphTimedAutomaton gta = CreateGta();
+        
+        Assert.That(gta.GetSelfEdges().Count(), Is.EqualTo(2));
+        foreach (Edge selfEdge in gta.GetSelfEdges())
+        {
+            Assert.That(selfEdge.From, Is.EqualTo(selfEdge.To));
+        }
     }
 }
