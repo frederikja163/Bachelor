@@ -6,22 +6,21 @@ namespace TimedRegex.Generators;
 internal sealed class TimedWordAutomata : ITimedAutomaton
 {
     private readonly HashSet<char> _alphabet;
-    private readonly Dictionary<int, Edge> _edges;
+    private readonly List<Edge> _edges;
     private readonly List<TimedCharacter> _word;
-    private readonly List<State> _states;
     private readonly Clock _clock;
+    private readonly State _initialState;
+    private readonly State _returnState;
     public TimedWordAutomata(List<TimedCharacter> timedWord)
     {
         _clock = new Clock(0);
         _word = timedWord;
-        _states = [
-            new State(0), 
-            new State(1)
-            ];
+        _initialState = new State(0);
+        _returnState = new State(1);
         _alphabet = new();
         _edges = new()
         {
-            { 0, new Edge(0, _states[1], _states[0], '\0') } // Return edge.
+            new Edge(0, _returnState, _initialState, '\0') // Return edge.
         };
         LoopOverAllCharacters();
     }
@@ -39,18 +38,13 @@ internal sealed class TimedWordAutomata : ITimedAutomaton
             else
             {
                 _alphabet.Add(character.Symbol);
-                Edge newEdge = new Edge(edgeCounter++, _states[0], _states[1], character.Symbol);
-                edges.Add(character.Symbol, newEdge);
+                Edge newEdge = new Edge(edgeCounter++, _initialState, _returnState, character.Symbol);
+                _edges.Add(newEdge);
             }
-        }
-        edgeCounter = 1;
-        foreach (char symbol in _alphabet)
-        {
-            _edges.Add(edgeCounter++, edges[symbol]);
         }
     }
 
-    public State? InitialLocation => _states[0];
+    public State? InitialLocation => _initialState;
 
     public IEnumerable<char> GetAlphabet()
     {
@@ -67,7 +61,10 @@ internal sealed class TimedWordAutomata : ITimedAutomaton
 
     public IEnumerable<Edge> GetEdges()
     {
-        return _edges.Values;
+        foreach (Edge edge in _edges)
+        {
+            yield return edge;
+        }
     }
 
     public IEnumerable<State> GetFinalStates()
@@ -77,10 +74,8 @@ internal sealed class TimedWordAutomata : ITimedAutomaton
 
     public IEnumerable<State> GetStates()
     {
-        foreach (State state in _states)
-        {
-            yield return state;
-        }
+        yield return _initialState;
+        yield return _returnState;
     }
 
     public bool IsFinal(State state)
