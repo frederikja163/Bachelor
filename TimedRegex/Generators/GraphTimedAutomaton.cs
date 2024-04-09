@@ -68,14 +68,6 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
             yield return edge;
         }
     }
-    
-    internal IEnumerable<Edge> GetSelfEdges()
-    {
-        foreach (var edge in _selfEdges)
-        {
-            yield return edge;
-        }
-    }
 
     public IEnumerable<State> GetStates()
     {

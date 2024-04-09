@@ -24,23 +24,25 @@ public class GraphAutomatonTests
     public void ReverseEdgesTest()
     {
         GraphTimedAutomaton gta = CreateGta();
+        List<Edge> SelfEdges = gta.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
         
         // Assert that edges have been reversed
-        Assert.That(gta.GetEdges().Except(gta.GetSelfEdges()).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(0));
+        Assert.That(gta.GetEdges().Except(SelfEdges).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(0));
         
         gta.ReverseEdges();
         
         // Assert that reversed edges have been reversed back 
-        Assert.That(gta.GetEdges().Except(gta.GetSelfEdges()).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(6));
+        Assert.That(gta.GetEdges().Except(SelfEdges).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(6));
     }
 
     [Test]
     public void CorrectSelfEdgesTest()
     {
         GraphTimedAutomaton gta = CreateGta();
-        
-        Assert.That(gta.GetSelfEdges().Count(), Is.EqualTo(2));
-        foreach (Edge selfEdge in gta.GetSelfEdges())
+        List<Edge> SelfEdges = gta.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
+
+        Assert.That(SelfEdges, Has.Count.EqualTo(2));
+        foreach (Edge selfEdge in SelfEdges)
         {
             Assert.That(selfEdge.From, Is.EqualTo(selfEdge.To));
         }
