@@ -2,31 +2,31 @@ namespace TimedRegex.Generators.Uppaal;
 
 internal sealed class Declaration
 {
-    private readonly List<string> _clocks;
-    private readonly List<string> _channels;
+    private readonly HashSet<string> _clocks;
+    private readonly HashSet<string> _channels;
     private readonly int[] _times;
     private readonly char[] _symbols;
 
     internal Declaration()
     {
-        _clocks = new List<string>();
-        _channels = new List<string>();
+        _clocks = new HashSet<string>();
+        _channels = new HashSet<string>();
         _times = [];
         _symbols = [];
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<char> symbols)
     {
-        _clocks = clocks.ToList();
-        _channels = channels.ToList();
+        _clocks = clocks.ToHashSet();
+        _channels = channels.ToHashSet();
         _times = times.ToArray();
         _symbols = symbols.ToArray();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels)
     {
-        _clocks = clocks.ToList();
-        _channels = channels.ToList();
+        _clocks = clocks.ToHashSet();
+        _channels = channels.ToHashSet();
         _times = [];
         _symbols = [];
     }
@@ -47,14 +47,23 @@ internal sealed class Declaration
         }
     }
 
-    internal void AddClocks(IEnumerable<string> clock)
+    internal void AddClocks(IEnumerable<string> clocks)
     {
-        _clocks.AddRange(clock);
+        foreach (var clock in clocks)
+        {
+            if (!_clocks.Add(clock))
+            {
+                throw new Exception("Can not add the same clock more than once.");
+            }
+        }
     }
 
-    internal void AddChannels(IEnumerable<string> channel)
+    internal void AddChannels(IEnumerable<string> channels)
     {
-        _channels.AddRange(channel);
+        foreach (var channel in channels)
+        {
+            _channels.Add(channel);
+        }
     }
 
     internal char[] GetSymbols()
