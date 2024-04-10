@@ -80,7 +80,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         foreach (State location in left.GetFinalStates())
         {
-            left.MakeNotFinal(location);
+            ta.MakeNotFinal(location);
         }
 
         _stack.Push(ta);
