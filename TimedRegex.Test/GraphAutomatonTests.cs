@@ -15,7 +15,7 @@ public class GraphAutomatonTests
         AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, '+'));
         AutomatonGeneratorVisitor visitor = new();
         absorbedGuaranteedIterator.Accept(visitor);
-        ITimedAutomaton ta = visitor.GetAutomaton();
+        TimedAutomaton ta = visitor.GetAutomaton();
 
         return new GraphTimedAutomaton(ta);
     }
@@ -46,5 +46,22 @@ public class GraphAutomatonTests
         {
             Assert.That(selfEdge.From, Is.EqualTo(selfEdge.To));
         }
+    }
+
+    [Test]
+    public void AssignLayersTest()
+    {
+        GraphTimedAutomaton gta = CreateGta();
+
+        int initialLayer = gta.GetLayers()[gta.InitialLocation!];
+        List<State> finalStates = gta.GetFinalStates().ToList();
+        State finalState = gta.GetLayers().First(s => finalStates.Contains(s.Key)).Key;
+        
+        Assert.Multiple(() =>
+        {
+            // Assert that initial location is in layer 0 and final location is in the last layer
+            Assert.That(initialLayer, Is.EqualTo(0));
+            Assert.That(gta.GetLayers()[finalState], Is.EqualTo(gta.GetLayers().Values.Max()));
+        });
     }
 }
