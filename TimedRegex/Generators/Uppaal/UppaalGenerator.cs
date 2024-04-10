@@ -89,6 +89,11 @@ internal sealed class UppaalGenerator : IGenerator
             xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length+1}] = " + '{' + str + "};\n");
         }
 
+        if (declaration.GetTimes().Any())
+        {
+            xmlWriter.WriteValue("int index = 0;\n");
+        }
+
         xmlWriter.WriteEndElement();
     }
 
