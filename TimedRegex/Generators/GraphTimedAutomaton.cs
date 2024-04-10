@@ -27,6 +27,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         AssignLayers(automaton, automaton.InitialLocation!, 0);
         OrderLocations();
         AssignPositions();
+        ReverseEdges();
     }
 
     internal void ReverseEdges()
