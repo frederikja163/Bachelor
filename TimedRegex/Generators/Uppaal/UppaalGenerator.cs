@@ -103,6 +103,11 @@ internal sealed class UppaalGenerator : IGenerator
     {
         xmlWriter.WriteStartElement("location");
         xmlWriter.WriteAttributeString("id", location.Id);
+        if (location.X != -1 && location.Y != -1)
+        {
+            xmlWriter.WriteAttributeString("x", location.X.ToString());
+            xmlWriter.WriteAttributeString("y", location.Y.ToString());
+        }
         if (!String.IsNullOrWhiteSpace(location.Name))
         {
             xmlWriter.WriteStartElement("name");
@@ -137,6 +142,11 @@ internal sealed class UppaalGenerator : IGenerator
     {
         xmlWriter.WriteStartElement("label");
         xmlWriter.WriteAttributeString("kind", label.Kind.ToString().ToLower());
+        if (label.X != -1 && label.Y != -1)
+        {
+            xmlWriter.WriteAttributeString("x", label.X.ToString());
+            xmlWriter.WriteAttributeString("y", label.Y.ToString());
+        }
         xmlWriter.WriteValue(label.LabelString);
         xmlWriter.WriteEndElement();
     }

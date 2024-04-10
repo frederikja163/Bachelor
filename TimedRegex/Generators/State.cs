@@ -5,14 +5,22 @@ internal sealed class State : IEquatable<State>
     internal State(int id)
     {
         Id = id;
+        X = Id / 2 * 300;
+        Y = Id % 2 * 300;
     }
-    
+
     internal int Id { get; }
     
-    internal int X { get; }
+    internal int X { get; set; }
     
-    internal int Y { get; }
-
+    internal int Y { get; set; }
+    
+    internal void SetPosition(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+    
     public bool Equals(State? other)
     {
         if (ReferenceEquals(null, other)) return false;

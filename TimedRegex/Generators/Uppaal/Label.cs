@@ -9,28 +9,37 @@ internal enum LabelKind
 
 internal sealed class Label
 {
-    internal Label(LabelKind kind, string labelString)
+    internal Label(LabelKind kind, string labelString, int x = -1, int y = -1)
     {
         Kind = kind;
         LabelString = labelString;
+        X = x;
+        Y = y;
     }
     
     internal LabelKind Kind { get; }
     internal string LabelString { get; }
+    
+    internal int X { get; }
+    
+    internal int Y { get; }
 
-    internal static Label CreateGuard(Edge edge)
+    internal static Label CreateGuard(Edge edge, int x = -1, int y = -1)
     {
-        return new Label(LabelKind.Guard, string.Join(" && ", GenerateGuard(edge)));
+        string labelString = string.Join(" && ", GenerateGuard(edge));
+        return new Label(LabelKind.Guard, labelString, x - 75, y);
     }
 
-    internal static Label CreateSynchronization(Edge edge)
+    internal static Label CreateSynchronization(Edge edge, int x = -1, int y = -1)
     {
-        return new Label(LabelKind.Synchronisation, $"{edge.Symbol}?");
-    }
+        string labelString = $"{edge.Symbol}?";
+        return new Label(LabelKind.Synchronisation, labelString, x - 75, y + 15);
+    } 
 
-    internal static Label CreateAssignment(Edge edge)
+    internal static Label CreateAssignment(Edge edge, int x = -1, int y = -1)
     {
-        return new Label(LabelKind.Assignment, string.Join(", ", GenerateAssignment(edge)));
+        string labelString = string.Join(", ", GenerateAssignment(edge));
+        return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
     }
 
     private static IEnumerable<string> GenerateGuard(Edge edge)

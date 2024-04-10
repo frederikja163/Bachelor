@@ -7,18 +7,21 @@ internal sealed class Transition
     internal Transition(Edge edge)
     {
         _labels = new();
+        
+        int x = (edge.From.X + edge.To.X) / 2;
+        int y = (edge.From.Y + edge.To.Y) / 2;
 
         if (edge.GetClockRanges().Any())
         {
-            _labels.Add(Label.CreateGuard(edge));
+            _labels.Add(Label.CreateGuard(edge, x, y));
         }
         if (edge.GetClockResets().Any())
         {
-            _labels.Add(Label.CreateAssignment(edge));
+            _labels.Add(Label.CreateAssignment(edge, x, y));
         }
         if (edge.Symbol != '\0')
         {
-            _labels.Add(Label.CreateSynchronization(edge));
+            _labels.Add(Label.CreateSynchronization(edge, x, y));
         }
 
         Source = $"l{edge.From.Id}";
