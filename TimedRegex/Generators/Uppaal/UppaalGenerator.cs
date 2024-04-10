@@ -75,7 +75,7 @@ internal sealed class UppaalGenerator : IGenerator
                 str = str + ("\"" + symbol + "\"" + ", ");
             }
             str = str + ("\"\\0\"");
-            xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Length+1}] = " + '{' + str + "};\n");
+            xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Length+1}] = {{{str}}};\n");
         }
 
         if (declaration.GetTimes().Any())
@@ -86,7 +86,7 @@ internal sealed class UppaalGenerator : IGenerator
                 str = str + (time + ", ");
             }
             str = str + "0";
-            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length+1}] = " + '{' + str + "};\n");
+            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length+1}] = {{{str}}};\n");
         }
 
         if (declaration.GetTimes().Any())
