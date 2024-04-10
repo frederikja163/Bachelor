@@ -56,8 +56,8 @@ internal sealed class Label
             }
             
             yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
-                $"{(int)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
-                $"{(int)(range.EndInterval * 1000)})";
+                $"{(short)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{(short)(range.EndInterval * 1000)})";
         }
     }
 
