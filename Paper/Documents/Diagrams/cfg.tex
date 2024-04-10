@@ -21,19 +21,25 @@ Union := Concatenation union Union
 
 \qquad $\mid$ Concatenation
 
-Concatenation := Interval Concatenation
+Concatenation := Iterator Concatenation
 
-\qquad $\mid$ Interval absorb Concatenation
+\qquad $\mid$ Iterator absorb Concatenation
+
+\qquad $\mid$ Iterator
+
+Iterator := Interval guaranteedIterator
+
+\qquad $\mid$ Interval guaranteedIterator absorb
+
+\qquad $\mid$ Interval iterator
+
+\qquad $\mid$ Interval iterator absorb
 
 \qquad $\mid$ Interval
 
-Concatenation := Concatenation Interval
+Interval := Match IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
 
-\qquad $\mid$ Interval
-
-Interval := Unary IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
-
-\qquad $\mid$ Unary
+\qquad $\mid$ Match
 
 IntervalStartEnd := intervalOpen
 
@@ -42,16 +48,6 @@ IntervalStartEnd := intervalOpen
 Number := digit Number
 
 \qquad $\mid$ digit
-
-Unary := Match guaranteedIterator
-
-\qquad $\mid$ Match guaranteedIterator absorb
-
-\qquad $\mid$ Match iterator
-
-\qquad $\mid$ Match iterator absorb
-
-\qquad $\mid$ Match
 
 Match := parenthesisStart Rename parenthesisEnd
 
