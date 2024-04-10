@@ -32,7 +32,7 @@ internal sealed class Label
 
     internal static Label CreateSynchronization(Edge edge, int x = -1, int y = -1)
     {
-        string labelString = $"{edge.Symbol}?";
+        string labelString = $"{edge.Symbol}{(edge.IsOutput ? '!' : '?')}";
         return new Label(LabelKind.Synchronisation, labelString, x - 75, y + 15);
     } 
 
@@ -56,8 +56,8 @@ internal sealed class Label
             }
             
             yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
-                $"{(int)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
-                $"{(int)(range.EndInterval * 1000)})";
+                $"{(short)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{(short)(range.EndInterval * 1000)})";
         }
     }
 

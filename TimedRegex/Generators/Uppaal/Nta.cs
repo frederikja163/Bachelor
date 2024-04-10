@@ -37,7 +37,7 @@ internal sealed class Nta
             .Select(s => s.ToString()));
         
         
-        _templates.Add(new (new(), $"ta{NewTemplateId()}",
+        _templates.Add(new (new(automaton.GetTimedCharacters()), $"ta{NewTemplateId()}",
             $"l{automaton.InitialLocation!.Id}",
             automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
