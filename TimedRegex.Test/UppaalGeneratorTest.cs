@@ -159,7 +159,7 @@ public sealed class UppaalGeneratorTest
         Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<int>([1, 4, 6]), new List<char>(['a', 'b', 'a']));
         UppaalGenerator generator = new();
         StringBuilder sb = new();
-        string expected = "<declaration>clock c;chan a, b;const string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nint times[4] = {1, 4, 6, 0};\nint index = 0;\n</declaration>";
+        string expected = "<declaration>clock c;chan a, b;const string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nint times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {

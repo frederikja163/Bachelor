@@ -75,7 +75,8 @@ internal sealed class UppaalGenerator : IGenerator
 
         if (declaration.GetTimes().Any())
         {
-            string str = string.Join(", ", declaration.GetTimes().Append(0));
+            int emptyCharTime = declaration.GetTimes().Last() + 1;
+            string str = string.Join(", ", declaration.GetTimes().Append(emptyCharTime));
             xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length+1}] = {{{str}}};\n");
         }
 
