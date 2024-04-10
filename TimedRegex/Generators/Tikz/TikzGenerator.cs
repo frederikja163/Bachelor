@@ -88,8 +88,27 @@ internal sealed class TikzGenerator : IGenerator
     {
         sw.Write($"(q{edge.From.Id})");
         sw.Write("edge");
+        if (edge.To.Equals(edge.From))
+        {
+            sw.Write(" [loop above]");
+        }
         sw.Write(" node");
-        sw.Write($"{{${(edge.Symbol == '\0' ? "\\epsilon" : edge.Symbol)}$}}");
+        
+        sw.Write($"{{${(edge.Symbol == '\0' ? "\\epsilon" : edge.Symbol)}");
+        if (edge.GetClockRanges().Any())
+        {
+            sw.Write("\\mid ");
+            sw.Write(string.Join("\\wedge", edge.GetClockRanges()
+                .Select(t => t.Item2 is null ? "false" : $"c_{t.Item1.Id}\\in{t.Item2.ToString()}")));
+        }
+        if (edge.GetClockResets().Any())
+        {
+            sw.Write("\\mid ");
+            sw.Write(string.Join("\\wedge", edge.GetClockResets().Select(c => $"<c_{c.Id}>")));
+            sw.Write("=0");
+        }
+        sw.Write("$}");
+        
         sw.WriteLine($"(q{edge.To.Id})");
     }
 }
