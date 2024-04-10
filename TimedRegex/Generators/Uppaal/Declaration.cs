@@ -53,7 +53,7 @@ internal sealed class Declaration
         {
             if (!_clocks.Add(clock))
             {
-                throw new Exception("Tried to add the same clock more than once.");
+                throw new Exception("Can not add the same clock more than once.");
             }
         }
     }
