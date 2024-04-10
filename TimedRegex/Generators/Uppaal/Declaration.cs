@@ -29,8 +29,8 @@ internal sealed class Declaration
         }
         _times = times.ToArray();
         _symbols = symbols.ToArray();
-        _clocks = new HashSet<string>(["c"]);
-        _channels = symbols.Select(s => s.ToString()).ToHashSet();
+        _clocks = new();
+        _channels = new();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<char> symbols)
