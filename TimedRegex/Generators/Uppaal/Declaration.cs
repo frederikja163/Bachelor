@@ -23,7 +23,7 @@ internal sealed class Declaration
         List<char> symbols = new();
         foreach (TimedCharacter character in timedWord)
         {
-            times.Add((short)(character.Time * 100)); // TODO: Change to int in a smarter way.
+            times.Add((short)(character.Time * 1000)); // TODO: Change to int in a smarter way.
             symbols.Add(character.Symbol);
         }
         _times = times.ToArray();
