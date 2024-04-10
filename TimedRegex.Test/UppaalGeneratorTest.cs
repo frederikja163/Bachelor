@@ -561,4 +561,56 @@ public sealed class UppaalGeneratorTest
 
         Assert.That(transitions[transitionIndex].GetLabels().First().LabelString, Is.EqualTo(guard));
     }
+
+    [TestCase(100, 100)]
+    [TestCase(500, 500)]
+    [TestCase(1000, 1000)]
+    public void StatePositionsTest(int x, int y)
+    {
+        State state = new(1);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(state.X, Is.EqualTo(0));
+            Assert.That(state.Y, Is.EqualTo(300));
+        });
+        
+        state.SetPosition(x, y);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(state.X, Is.EqualTo(x));
+            Assert.That(state.Y, Is.EqualTo(y));
+        });
+    }
+
+    [Test]
+    public void LabelPositionTest()
+    {
+        Clock clock1 = new(0);
+        
+        State state0 = new(0);
+        State state1 = new(1);
+        
+        Edge edge = new(0, state0, state1, 'a');
+        edge.AddClockRange(clock1, new(0, 1, true, true));
+        edge.AddClockReset(clock1);
+        
+        state0.SetPosition(0,0);
+        state1.SetPosition(300,300);
+
+        Transition transition = new(edge);
+        List<Label> labels = transition.GetLabels().ToList();
+
+        foreach (Label label in labels)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(label.X, Is.Not.EqualTo(-1));
+                Assert.That(label.Y, Is.Not.EqualTo(-1));
+                Assert.That(Enumerable.Range(state0.X,state1.X), Does.Contain(label.X));
+                Assert.That(Enumerable.Range(state0.Y,state1.Y), Does.Contain(label.Y));
+            });
+        }
+    }
 }

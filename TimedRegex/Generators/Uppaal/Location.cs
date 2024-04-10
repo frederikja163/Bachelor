@@ -6,16 +6,20 @@ internal sealed class Location
 
     internal Location(State state, bool isFinal)
     {
+        _labels = new();
         Id = $"l{state.Id}";
         Name = $"loc{state.Id}{(isFinal ? "Final" : "")}";
-        _labels = new();
+        X = state.X;
+        Y = state.Y;
     }
 
-    internal Location(string id, string name, IEnumerable<Label> labels)
+    internal Location(string id, string name, IEnumerable<Label> labels, int x = -1, int y = -1)
     {
+        _labels = labels.ToList();
         Id = id;
         Name = name;
-        _labels = labels.ToList();
+        X = x;
+        Y = y;
     }
 
     internal string Id { get; }
