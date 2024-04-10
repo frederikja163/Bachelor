@@ -72,10 +72,10 @@ internal sealed class UppaalGenerator : IGenerator
             string str = "";
             foreach (char symbol in declaration.GetSymbols())
             {
-                str.Concat('"' + symbol + '"' + ", ");
+                str = str + ("\"" + symbol + "\"" + ", ");
             }
-            str.Concat("\"\\0\"");
-            xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Length}] = " + '{' + str + "};\n");
+            str = str + ("\"\\0\"");
+            xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Length+1}] = " + '{' + str + "};\n");
         }
 
         if (declaration.GetTimes().Any())
@@ -83,10 +83,10 @@ internal sealed class UppaalGenerator : IGenerator
             string str = "";
             foreach (int time in declaration.GetTimes())
             {
-                str.Concat(time + ", ");
+                str = str + (time + ", ");
             }
-            str.Concat("0");
-            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length}] = " + '{' + str + "};\n");
+            str = str + "0";
+            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length+1}] = " + '{' + str + "};\n");
         }
 
         xmlWriter.WriteEndElement();
