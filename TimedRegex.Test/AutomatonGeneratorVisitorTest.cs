@@ -107,6 +107,22 @@ public sealed class AutomatonGeneratorVisitorTest
     }
 
     [Test]
+    public void GenerateAbsorbedConcatenationTaTest()
+    {
+        AbsorbedConcatenation concatenation = new(Interval('a', 0, 3), Interval('b', 0, 3), EmptyToken());
+        AutomatonGeneratorVisitor visitor = new();
+        concatenation.Accept(visitor);
+        ITimedAutomaton ta = visitor.GetAutomaton();
+        Assert.Multiple(() =>
+        {
+            Assert.That(ta.GetStates().Count(), Is.EqualTo(6));
+            Assert.That(ta.GetEdges().Count(), Is.EqualTo(5));
+            Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(0));
+            Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(3));
+        });
+    }
+
+    [Test]
     public void GenerateAbsorbedGuaranteedIteratorTaTest()
     {
         Union union = new(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));

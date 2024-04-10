@@ -419,28 +419,47 @@ public sealed class ParserTests
         Assert.That(node, Is.TypeOf(type));
     }
 
-    [TestCase("a}")]
-    [TestCase("/")]
-    [TestCase("a|")]
-    [TestCase("&b")]
-    [TestCase("a]")]
-    [TestCase("a)")]
-    [TestCase("a|b+)")]
-    [TestCase("a(")]
-    [TestCase("a;")]
-    [TestCase("a5")]
-    [TestCase("a<")]
-    [TestCase("a||b")]
-    [TestCase("a**")]
-    [TestCase("a*''")]
-    [TestCase("a'")]
-    [TestCase("a[")]
-    [TestCase("a[;")]
-    [TestCase("a{")]
-    public void ParseInvalidTest(string input)
+    [TestCase("a}", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("/", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("a|", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("&b", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("a]", TimedRegexErrorType.UnexpectedToken)]
+    [TestCase("a)", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a|b+)", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a(", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("a;", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a5", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a<", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a||b", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("a**", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a*''", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("a'", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("a[", TimedRegexErrorType.UnexpectedToken)]
+    [TestCase("a[;", TimedRegexErrorType.NumberImproperFormat)]
+    [TestCase("a{", TimedRegexErrorType.RenameImproperFormat)]
+    [TestCase("a*[1;4]", TimedRegexErrorType.ExpectedEndOfInput)]
+    public void ParseInvalidTest(string input, int errorType)
     {
         Tokenizer tokenizer = new(input);
-        Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
+        TimedRegexCompileException? exception = Assert.Throws<TimedRegexCompileException>(() => Parser.Parse(tokenizer));
+        Assert.IsNotNull(exception);
+        Assert.That(exception!.Type, Is.EqualTo((TimedRegexErrorType)errorType));
+    }
+    
+    [TestCase("a[1;5]*")]
+    [TestCase("a[1;5]*'")]
+    [TestCase("a[1;5]+")]
+    [TestCase("a[1;5]+'")]
+    [TestCase("a[1;5]|b[4;5]&ac")]
+    [TestCase("a[1;5]&a")]
+    [TestCase("a[1;5]&a{aa,bb}")]
+    [TestCase("a[1;5]|b{ab,ba}")]
+    [TestCase("a[1;5]|b{ac,bc}")]
+    [TestCase("a[1;5]|b{ac,cb}")]
+    public void ParseValidTest(string input)
+    {
+        Tokenizer tokenizer = new(input);
+        Assert.DoesNotThrow(() => Parser.Parse(tokenizer));
     }
 
     [TestCase("[1.23;20]", 1.23f, 20, true, true)]
