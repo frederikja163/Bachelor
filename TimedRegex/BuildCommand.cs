@@ -3,6 +3,7 @@ using CommandLine;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
+using TimedRegex.Generators.Tikz;
 using TimedRegex.Generators.Uppaal;
 using TimedRegex.Parsing;
 using Parser = TimedRegex.Parsing.Parser;
@@ -12,6 +13,8 @@ namespace TimedRegex;
 internal enum OutputFormat
 {
     Uppaal,
+    TikzFigure,
+    TikzDocument,
 }
 
 [Verb("build", isDefault: true, HelpText = "Builds a given timed regular expression.")]
@@ -72,10 +75,11 @@ internal sealed class BuildCommand
         }
         Log.StartTimeIf(Verbose, out Stopwatch? totalSw);
 
-        
         IGenerator generator = Format switch
         {
             OutputFormat.Uppaal => new UppaalGenerator(),
+            OutputFormat.TikzDocument => new TikzGenerator(true),
+            OutputFormat.TikzFigure => new TikzGenerator(false),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))
         };
 
@@ -101,16 +105,22 @@ internal sealed class BuildCommand
         else
         {
             Output ??= Path.GetTempFileName();
+            DirectoryInfo dirInfo = new DirectoryInfo(Output);
+            string parentPath = dirInfo.Parent?.FullName ?? "";
+            if (!Directory.Exists(parentPath))
+            {
+                Directory.CreateDirectory(parentPath);
+            }
             generator.GenerateFile(Output);
         }
         Log.StopTime(sw, "Automaton outputted in {0}");
 
         Log.StopTime(totalSw, "Total time was {0}");
-        if (!NoOpen)
+        if (!NoOpen && Format == OutputFormat.Uppaal)
         {
             Log.WriteLineIf(Verbose, "Opening automaton in uppaal.");
             // On windows paths are relative to the uppaal installation.
-            // This means we need to look for uppaal in the path use the relative path.
+            // This means we need to loopatk for uppaal in the path use the relative path.
             // https://github.com/frederikja163/Bachelor/issues/241
             // https://github.com/UPPAALModelChecker/UPPAAL-Meta/issues/252
             // 21/03/2024
