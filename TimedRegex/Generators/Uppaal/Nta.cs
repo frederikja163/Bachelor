@@ -42,7 +42,6 @@ internal sealed class Nta
             automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
             automaton.GetEdges().Select(e => new Transition(e))));
-
     }
 
 
