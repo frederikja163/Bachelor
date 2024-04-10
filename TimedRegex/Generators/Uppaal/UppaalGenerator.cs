@@ -69,12 +69,7 @@ internal sealed class UppaalGenerator : IGenerator
 
         if (declaration.GetSymbols().Any())
         {
-            string str = "";
-            foreach (char symbol in declaration.GetSymbols())
-            {
-                str = str + ("\"" + symbol + "\"" + ", ");
-            }
-            str = str + ("\"\\0\"");
+            string str = string.Join(", ", declaration.GetSymbols().Select(s => '"' + s + '"').Append("\"\\0\""));
             xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Length+1}] = {{{str}}};\n");
         }
 
