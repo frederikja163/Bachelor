@@ -39,7 +39,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
             else
             {
                 _alphabet.Add(character.Symbol);
-                Edge newEdge = new Edge(edgeCounter++, _initialState, _returnState, character.Symbol, false, true);
+                Edge newEdge = new Edge(edgeCounter++, _initialState, _returnState, character.Symbol, isOutput: true);
                 _edges.Add(newEdge);
             }
         }
