@@ -71,7 +71,7 @@ namespace TimedRegex.Parsing
 
         private static IAstNode ParseConcatenation(Tokenizer tokenizer)
         {
-            IAstNode left = ParseInterval(tokenizer);
+            IAstNode left = ParseIterator(tokenizer);
             if (tokenizer.Peek().Type == TokenType.Absorb)
             {
                 Token token = tokenizer.Advance();
@@ -90,7 +90,7 @@ namespace TimedRegex.Parsing
 
         private static IAstNode ParseInterval(Tokenizer tokenizer)
         {
-            IAstNode child = ParseUnary(tokenizer);
+            IAstNode child = ParseMatch(tokenizer);
             if ((tokenizer.Peek().Type != TokenType.IntervalOpen && tokenizer.Peek().Type != TokenType.IntervalClose))
             {
                 return child;
@@ -121,9 +121,9 @@ namespace TimedRegex.Parsing
             return value;
         }
 
-        private static IAstNode ParseUnary(Tokenizer tokenizer)
+        private static IAstNode ParseIterator(Tokenizer tokenizer)
         {
-            IAstNode child = ParseMatch(tokenizer);
+            IAstNode child = ParseInterval(tokenizer);
             if (tokenizer.Peek().Type == TokenType.EndOfInput)
             {
                 return child;
