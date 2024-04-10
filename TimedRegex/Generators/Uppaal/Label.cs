@@ -25,7 +25,7 @@ internal sealed class Label
 
     internal static Label CreateSynchronization(Edge edge)
     {
-        return new Label(LabelKind.Synchronisation, $"{edge.Symbol}?");
+        return new Label(LabelKind.Synchronisation, $"{edge.Symbol}{(edge.IsOutput ? '!' : '?')}");
     }
 
     internal static Label CreateAssignment(Edge edge)
@@ -47,8 +47,8 @@ internal sealed class Label
             }
             
             yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
-                $"{(int)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
-                $"{(int)(range.EndInterval * 1000)})";
+                $"{(short)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{(short)(range.EndInterval * 1000)})";
         }
     }
 

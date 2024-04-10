@@ -1,3 +1,5 @@
+using TimedRegex.Parsing;
+
 namespace TimedRegex.Generators.Uppaal;
 
 internal sealed class Declaration
@@ -13,6 +15,21 @@ internal sealed class Declaration
         _channels = new HashSet<string>();
         _times = [];
         _symbols = [];
+    }
+
+    internal Declaration(IEnumerable<TimedCharacter> timedWord)
+    {
+        List<int> times = new();
+        List<char> symbols = new();
+        foreach (TimedCharacter character in timedWord)
+        {
+            times.Add((short)(character.Time * 100)); // TODO: Change to int in a smarter way.
+            symbols.Add(character.Symbol);
+        }
+        _times = times.ToArray();
+        _symbols = symbols.ToArray();
+        _clocks = new HashSet<string>();
+        _channels = new HashSet<string>();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<char> symbols)

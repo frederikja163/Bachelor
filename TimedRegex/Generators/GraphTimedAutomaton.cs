@@ -1,3 +1,5 @@
+using TimedRegex.Parsing;
+
 namespace TimedRegex.Generators;
 
 internal sealed class GraphTimedAutomaton : ITimedAutomaton
@@ -96,5 +98,10 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     public bool IsFinal(State state)
     {
         return _finalStates.Contains(state);
+    }
+
+    public IEnumerable<TimedCharacter> GetTimedCharacters()
+    {
+        yield break;
     }
 }
