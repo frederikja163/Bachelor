@@ -1,3 +1,5 @@
+using TimedRegex.Parsing;
+
 namespace TimedRegex.Generators;
 
 internal sealed class GraphTimedAutomaton : ITimedAutomaton
@@ -111,5 +113,10 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     public Dictionary<State, int> GetLayers()
     {
         return _layers;
+    }
+
+    public IEnumerable<TimedCharacter> GetTimedCharacters()
+    {
+        yield break;
     }
 }
