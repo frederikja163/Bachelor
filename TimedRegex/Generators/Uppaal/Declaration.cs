@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-using TimedRegex.Extensions;
 using TimedRegex.Parsing;
 
 namespace TimedRegex.Generators.Uppaal;
