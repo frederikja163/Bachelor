@@ -26,11 +26,11 @@ public class GraphAutomatonTests
         GraphTimedAutomaton gta = CreateGta();
         List<Edge> selfEdges = gta.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
         
+        gta.ReverseEdges();
         // Assert that edges have been reversed
         Assert.That(gta.GetEdges().Except(selfEdges).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(0));
         
         gta.ReverseEdges();
-        
         // Assert that reversed edges have been reversed back 
         Assert.That(gta.GetEdges().Except(selfEdges).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(6));
     }
