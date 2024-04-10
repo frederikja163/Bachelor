@@ -10,8 +10,9 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     private readonly List<Edge> _selfEdges;
     private readonly List<State> _states;
     private readonly HashSet<State> _finalStates;
+    private readonly Dictionary<State, int> _layers;
 
-    internal GraphTimedAutomaton(ITimedAutomaton automaton)
+    internal GraphTimedAutomaton(TimedAutomaton automaton)
     {
         InitialLocation = automaton.InitialLocation;
         _alphabet = automaton.GetAlphabet().ToHashSet();
@@ -20,9 +21,10 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         _selfEdges = automaton.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
         _states = automaton.GetStates().ToList();
         _finalStates = automaton.GetFinalStates().ToHashSet();
+        _layers = new Dictionary<State, int>();
 
         ReverseEdges();
-        AssignLayers();
+        AssignLayers(automaton, automaton.InitialLocation!, 0, 0);
         OrderLocations();
         AssignPositions();
     }
@@ -41,8 +43,19 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         }
     }
 
-    internal void AssignLayers()
+    internal void AssignLayers(TimedAutomaton automaton, State state, int layer, int y)
     {
+        _layers.Add(state, layer);
+        state.X = layer * 200;
+        state.Y = y * 100;
+        y = 0;
+        foreach (Edge edge in automaton.GetEdgesFrom(state))
+        {
+            if (!_layers.ContainsKey(edge.To))
+            {
+                AssignLayers(automaton, edge.To, layer + 1, y++);
+            }
+        }
     }
 
     internal void OrderLocations()
@@ -103,5 +116,10 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     public IEnumerable<TimedCharacter> GetTimedCharacters()
     {
         yield break;
+    }
+
+    public Dictionary<State, int> GetLayers()
+    {
+        return _layers;
     }
 }

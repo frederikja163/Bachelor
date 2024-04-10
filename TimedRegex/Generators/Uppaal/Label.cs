@@ -24,6 +24,18 @@ internal sealed class Label
     
     internal int Y { get; }
 
+    internal static Label CreateOutputGuard(Edge edge, int x, int y)
+    {
+        string label = $"word[index] == \"{edge.Symbol}\" && times[index] == c0";
+        return new Label(LabelKind.Guard, label, x - 75, y);
+    }
+
+    public static Label CreateOutputUpdate(Edge edge, int x, int y)
+    {
+        string label = $"index++";
+        return new Label(LabelKind.Assignment, label, x - 75, y);
+    }
+    
     internal static Label CreateGuard(Edge edge, int x = -1, int y = -1)
     {
         string labelString = string.Join(" && ", GenerateGuard(edge));

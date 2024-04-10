@@ -21,7 +21,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
         _alphabet = new();
         _edges = new()
         {
-            new Edge(0, _returnState, _initialState, '\0', true) // Return edge.
+            new Edge(0, _returnState, _initialState, '\0', true, true) // Return edge.
         };
         LoopOverAllCharacters();
     }

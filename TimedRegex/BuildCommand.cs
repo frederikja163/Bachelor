@@ -2,6 +2,7 @@ using System.Diagnostics;
 using CommandLine;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
+using TimedRegex.Extensions;
 using TimedRegex.Generators;
 using TimedRegex.Generators.Tikz;
 using TimedRegex.Generators.Uppaal;
@@ -50,6 +51,9 @@ internal sealed class BuildCommand
     [Option('c', "clock", Default = false, 
         HelpText = $"If set, all clocks will stay even if they are not used.")]
     public bool ClockPruning { get; set; } = false;
+    [Option('w', "word", 
+        HelpText = $"If set, all clocks will stay even if they are not used.")]
+    public IEnumerable<string>? Words { get; set; }
     
     internal int Run()
     {
@@ -93,6 +97,15 @@ internal sealed class BuildCommand
         
         Log.WriteLineIf(Verbose, $"Outputting automaton.");
         Log.StartTimeIf(Verbose, out Stopwatch? sw);
+
+        if (Words is not null)
+        {
+            foreach (string word in Words)
+            {
+                var t = TimedWord.GetStringFromCSV(word);
+                generator.AddAutomaton(new TimedWordAutomaton(t));
+            }
+        }
         
         if (Output is null && NoOpen)
         {
@@ -145,7 +158,7 @@ internal sealed class BuildCommand
                 Process.Start("uppaal", Output!);
             }
         }
-        
+
         return 0;
     }
 
@@ -217,14 +230,14 @@ internal sealed class BuildCommand
         }
         
         // make structure timedAutomaton -> graphAutomaton -> compressedAutomaton
-        // Log.WriteLineIf(Verbose, "Adding positions.");
-        // Log.StartTimeIf(Verbose, out sw);
-        // ITimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
-        // Log.StopTime(sw, "Added positions in {0}");
+        Log.WriteLineIf(Verbose, "Adding positions.");
+        Log.StartTimeIf(Verbose, out sw);
+        ITimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
+        Log.StopTime(sw, "Added positions in {0}");
         
         Log.WriteLineIf(Verbose, "Compressing ids.");
         Log.StartTimeIf(Verbose, out sw);
-        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(timedAutomaton);
+        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(graphAutomaton);
         Log.StopTime(sw, "Compressed ids in {0}");
         return compressedAutomaton;
     }
