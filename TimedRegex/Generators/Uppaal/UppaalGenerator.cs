@@ -70,14 +70,14 @@ internal sealed class UppaalGenerator : IGenerator
         if (declaration.GetSymbols().Any())
         {
             string str = string.Join(", ", declaration.GetSymbols().Select(s => "\"" + s + "\"").Append("\"\\0\""));
-            xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Length+1}] = {{{str}}};\n");
+            xmlWriter.WriteValue($"const string word[{declaration.GetSymbols().Count()+1}] = {{{str}}};\n");
         }
 
         if (declaration.GetTimes().Any())
         {
-            int emptyCharTime = declaration.GetTimes().Last() + 1;
+            short emptyCharTime = (short)(declaration.GetTimes().Last() + 1);
             string str = string.Join(", ", declaration.GetTimes().Append(emptyCharTime));
-            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Length+1}] = {{{str}}};\n");
+            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Count() +1 }] = {{{str}}};\n");
         }
 
         if (declaration.GetTimes().Any())

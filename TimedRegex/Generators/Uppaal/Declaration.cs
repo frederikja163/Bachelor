@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using TimedRegex.Extensions;
 using TimedRegex.Parsing;
 
 namespace TimedRegex.Generators.Uppaal;
@@ -7,38 +8,23 @@ internal sealed class Declaration
 {
     private readonly HashSet<string> _clocks;
     private readonly HashSet<string> _channels;
-    private readonly int[] _times;
-    private readonly char[] _symbols;
+    private readonly List<short> _times;
+    private readonly List<char> _symbols;
 
     internal Declaration()
     {
         _clocks = new HashSet<string>();
         _channels = new HashSet<string>();
-        _times = [];
-        _symbols = [];
-    }
-
-    internal Declaration(IEnumerable<TimedCharacter> timedWord)
-    {
-        List<int> times = new();
-        List<char> symbols = new();
-        foreach (TimedCharacter character in timedWord)
-        {
-            times.Add((short)(character.Time * 1000)); // TODO: Change to int in a smarter way.
-            symbols.Add(character.Symbol);
-        }
-        _times = times.ToArray();
-        _symbols = symbols.ToArray();
-        _clocks = new();
-        _channels = new();
+        _times = new List<short>();
+        _symbols = new List<char>();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<char> symbols)
     {
         _clocks = clocks.ToHashSet();
         _channels = channels.ToHashSet();
-        _times = times.ToArray();
-        _symbols = symbols.ToArray();
+        _times = new();
+        _symbols = new();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels)
@@ -47,6 +33,19 @@ internal sealed class Declaration
         _channels = channels.ToHashSet();
         _times = [];
         _symbols = [];
+    }
+
+    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters)
+    {
+        foreach (TimedCharacter character in timedCharacters)
+        {
+            if (character.Time < _times.Last())
+            {
+                throw new FormatException("Timed characters must be in ascending order.");
+            }
+            _times.Add((short)(character.Time * 1000)); // TODO: Change to int in a smarter way.
+            _symbols.Add(character.Symbol);
+        }
     }
     
     internal IEnumerable<string> GetClocks()
@@ -84,12 +83,12 @@ internal sealed class Declaration
         }
     }
 
-    internal char[] GetSymbols()
+    internal List<char> GetSymbols()
     {
         return _symbols;
     }
 
-    internal int[] GetTimes()
+    internal List<short> GetTimes()
     {
         return _times;
     }
