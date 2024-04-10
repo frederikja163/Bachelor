@@ -1,5 +1,3 @@
-using TimedRegex.Parsing;
-
 namespace TimedRegex.Generators;
 
 internal sealed class GraphTimedAutomaton : ITimedAutomaton
