@@ -19,12 +19,12 @@ internal sealed class Declaration
         _symbols = new List<char>();
     }
 
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<char> symbols)
+    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<short> times, IEnumerable<char> symbols)
     {
         _clocks = clocks.ToHashSet();
         _channels = channels.ToHashSet();
-        _times = new();
-        _symbols = new();
+        _times = times.ToList();
+        _symbols = symbols.ToList();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels)
@@ -39,7 +39,7 @@ internal sealed class Declaration
     {
         foreach (TimedCharacter character in timedCharacters)
         {
-            if (character.Time < _times.Last())
+            if ((_times.Count() > 0) && (character.Time * 1000 < _times.Last()))
             {
                 throw new FormatException("Timed characters must be in ascending order.");
             }
