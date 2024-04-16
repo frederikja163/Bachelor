@@ -40,7 +40,16 @@ internal sealed class TikzGenerator : IGenerator
 
     private void GenerateDocument(StreamWriter sw)
     {
-        throw new NotImplementedException();
+        sw.WriteLine("\\documentclass{standalone}");
+        sw.WriteLine("\\usepackage{tikz}");
+        sw.WriteLine("\\begin{document}");
+
+        foreach (ITimedAutomaton ta in _automata)
+        {
+            GenerateFigure(sw, ta);
+        }
+        
+        sw.WriteLine("\\end{document}");
     }
 
     private static void GenerateFigure(StreamWriter sw, ITimedAutomaton ta)
