@@ -64,4 +64,37 @@ public class GraphAutomatonTests
             Assert.That(gta.GetLayers()[finalState], Is.EqualTo(gta.GetLayers().Values.Max()));
         });
     }
+
+    [Test]
+    public void CorrectLayersTest()
+    {
+        TimedAutomaton ta = new TimedAutomaton();
+
+        State root = ta.AddState(newInitial: true);
+        State l11 = ta.AddState();
+        State l12 = ta.AddState();
+        State l13 = ta.AddState();
+        State l21 = ta.AddState();
+        State l31 = ta.AddState();
+        
+        ta.AddEdge(root, l11, 'a');
+        ta.AddEdge(root, l12, 'a');
+        ta.AddEdge(root, l13, 'a');
+        ta.AddEdge(l11, l31, 'b');
+        ta.AddEdge(l12, l21, 'b');
+        ta.AddEdge(l13, l21, 'b');
+        ta.AddEdge(l21, l31, 'c');
+        
+        GraphTimedAutomaton gta = new(ta);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(gta.GetLayers()[root], Is.EqualTo(0));
+            Assert.That(gta.GetLayers()[l11], Is.EqualTo(1));
+            Assert.That(gta.GetLayers()[l12], Is.EqualTo(1));
+            Assert.That(gta.GetLayers()[l13], Is.EqualTo(1));
+            Assert.That(gta.GetLayers()[l21], Is.EqualTo(2));
+            Assert.That(gta.GetLayers()[l31], Is.EqualTo(3));
+        });
+    }
 }

@@ -41,7 +41,6 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
             _edges[i] = reverseEdge;
         }
     }
-
     internal void AssignLayers(TimedAutomaton automaton, State state, int layer)
     {
         _layers.Add(state, layer);
@@ -50,6 +49,11 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
             if (!_layers.ContainsKey(edge.To))
             {
                 AssignLayers(automaton, edge.To, layer + 1);
+            }
+            
+            else if (_layers.TryGetValue(edge.To, out int value) && value <= layer)
+            {
+                _layers[edge.To] = layer + 1;
             }
         }
     }
