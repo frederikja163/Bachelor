@@ -1,3 +1,5 @@
+using System.CodeDom.Compiler;
+
 namespace TimedRegex.Generators.Tikz;
 
 internal sealed class TikzGenerator : IGenerator
@@ -24,100 +26,108 @@ internal sealed class TikzGenerator : IGenerator
     public void GenerateFile(Stream stream)
     {
         StreamWriter sw = new(stream);
+        IndentedTextWriter tw = new IndentedTextWriter(sw);
         if (_generateDocument)
         {
-            GenerateDocument(sw);
-            sw.Flush();
+            GenerateDocument(tw);
+            tw.Flush();
             return;
         }
 
         foreach (ITimedAutomaton ta in _automata)
         {
-            GenerateFigure(sw, ta);
+            GenerateFigure(tw, ta);
         }
         sw.Flush();
     }
 
-    private void GenerateDocument(StreamWriter sw)
+    private void GenerateDocument(IndentedTextWriter tw)
     {
-        sw.WriteLine("\\documentclass{standalone}");
-        sw.WriteLine("\\usepackage{tikz}");
-        sw.WriteLine("\\begin{document}");
+        tw.WriteLine("\\documentclass{standalone}");
+        tw.WriteLine("\\usepackage{tikz}");
+        tw.WriteLine("\\begin{document}");
+        tw.Indent++;
 
         foreach (ITimedAutomaton ta in _automata)
         {
-            GenerateFigure(sw, ta);
+            GenerateFigure(tw, ta);
         }
         
-        sw.WriteLine("\\end{document}");
+        tw.Indent--;
+        tw.WriteLine("\\end{document}");
     }
 
-    private static void GenerateFigure(StreamWriter sw, ITimedAutomaton ta)
+    private static void GenerateFigure(IndentedTextWriter tw, ITimedAutomaton ta)
     {
-        sw.WriteLine("\\usetikzlibrary {automata,positioning}");
-        sw.WriteLine("\\begin{tikzpicture}[auto]");
+        tw.WriteLine("\\usetikzlibrary {automata,positioning}");
+        tw.WriteLine("\\begin{tikzpicture}[auto]");
+        tw.Indent++;
 
         foreach (State state in ta.GetStates())
         {
-            DrawNode(sw, state, state.Equals(ta.InitialLocation), ta.IsFinal(state));
+            DrawNode(tw, state, state.Equals(ta.InitialLocation), ta.IsFinal(state));
         }
+        tw.WriteLine("");
         
-        sw.Write("\\path[->]");
+        tw.WriteLine("\\path[->]");
+        tw.Indent++;
         foreach (Edge edge in ta.GetEdges())
         {
-            DrawEdge(sw, edge);
+            DrawEdge(tw, edge);
         }
-        sw.WriteLine(";");
-        
-        sw.WriteLine("\\end{tikzpicture}");
+        tw.WriteLine(";");
+        tw.Indent--;
+
+        tw.Indent--;
+        tw.WriteLine("\\end{tikzpicture}");
     }
 
-    private static void DrawNode(StreamWriter sw, State state, bool isInitial, bool isFinal)
+    private static void DrawNode(IndentedTextWriter tw, State state, bool isInitial, bool isFinal)
     {
-        sw.Write("\\node[state");
+        tw.Write("\\node[state");
         if (isInitial)
         {
-            sw.Write(", initial");
+            tw.Write(", initial");
         }
 
         if (isFinal)
         {
-            sw.Write(", accepting");
+            tw.Write(", accepting");
         }
-        sw.Write("]");
+        tw.Write("]");
         
-        sw.Write($" at ({state.X / 100}, {state.Y / 100})");
-        sw.Write($"(q{state.Id})");
-        sw.Write($"{{$q{state.Id}$}}");
+        tw.Write($" at ({state.X / 100}, {state.Y / 100})");
+        tw.Write($"(q{state.Id})");
+        tw.Write($"{{$q{state.Id}$}}");
         
-        sw.WriteLine(";");
+        tw.WriteLine(";");
     }
 
-    private static void DrawEdge(StreamWriter sw, Edge edge)
+    private static void DrawEdge(IndentedTextWriter tw, Edge edge)
     {
-        sw.Write($"(q{edge.From.Id})");
-        sw.Write("edge");
+        tw.Write($"(q{edge.From.Id})");
+        tw.Write("edge");
         if (edge.To.Equals(edge.From))
         {
-            sw.Write(" [loop above]");
+            tw.Write(" [loop above]");
         }
-        sw.Write(" node");
+        tw.Write(" node");
         
-        sw.Write($"{{${(edge.Symbol == '\0' ? "\\epsilon" : edge.Symbol)}");
+        tw.Write($"{{${(edge.Symbol == '\0' ? "\\epsilon" : edge.Symbol)}");
         if (edge.GetClockRanges().Any())
         {
-            sw.Write("\\mid ");
-            sw.Write(string.Join("\\wedge", edge.GetClockRanges()
+            tw.Write("\\mid ");
+            tw.Write(string.Join("\\wedge", edge.GetClockRanges()
                 .Select(t => t.Item2 is null ? "false" : $"c_{t.Item1.Id}\\in{t.Item2.ToString()}")));
         }
         if (edge.GetClockResets().Any())
         {
-            sw.Write("\\mid ");
-            sw.Write(string.Join("\\wedge", edge.GetClockResets().Select(c => $"<c_{c.Id}>")));
-            sw.Write("=0");
+            tw.Write("\\mid ");
+            tw.Write(string.Join("\\wedge", edge.GetClockResets().Select(c => $"<c_{c.Id}>")));
+            tw.Write("=0");
         }
-        sw.Write("$}");
+        tw.Write("$}");
         
-        sw.WriteLine($"(q{edge.To.Id})");
+        tw.WriteLine($"(q{edge.To.Id})");
     }
 }
