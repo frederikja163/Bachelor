@@ -156,7 +156,7 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void DeclarationWithTimedWordTest()
     {
-        Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<int>([1, 4, 6]), new List<char>(['a', 'b', 'a']));
+        Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<int>([1, 4, 6]), new List<string>(["a", "b", "a"]));
         UppaalGenerator generator = new();
         StringBuilder sb = new();
         string expected = "<declaration>clock c;chan a, b;const string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nint times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
@@ -215,9 +215,9 @@ public sealed class UppaalGeneratorTest
     {
         List<Transition> transitions =
         [
-            new Transition(new Edge(0, new State(from), new State(to), 'A')),
-            new Transition(new Edge(1, new State(from), new State(to), 'B')),
-            new Transition(new Edge(2, new State(from), new State(to), '\0'))
+            new Transition(new Edge(0, new State(from), new State(to), "A")),
+            new Transition(new Edge(1, new State(from), new State(to), "B")),
+            new Transition(new Edge(2, new State(from), new State(to), "\0"))
         ];
 
         Assert.That(transitions, Has.Count.EqualTo(3));
@@ -238,7 +238,7 @@ public sealed class UppaalGeneratorTest
 
         Clock clock1 = new(0);
         Clock clock2 = new(1);
-        Edge edge = new(2, new State(0), new State(1), 'a');
+        Edge edge = new(2, new State(0), new State(1), "a");
 
         edge.AddClockRange(clock1, new Range(1, 5, true, false));
         edge.AddClockRange(clock2, new Range(2, 3, true, false));
@@ -269,7 +269,7 @@ public sealed class UppaalGeneratorTest
     {
         State state1 = new State(0);
         State state2 = new State(1);
-        Edge edge = new Edge(0, state1, state2, '\0');
+        Edge edge = new Edge(0, state1, state2, "\0");
         Clock clock = new Clock(0);
         
         edge.AddClockRange(clock, new Range(0.0f, 1.0f, true, true));
@@ -286,7 +286,7 @@ public sealed class UppaalGeneratorTest
     {
         Clock clock1 = new(0);
         Clock clock2 = new(1);
-        Edge edge = new(0, new State(1), new State(2), 'a');
+        Edge edge = new(0, new State(1), new State(2), "a");
 
         edge.AddClockRange(clock1, new Range(2, 7, false, false));
         edge.AddClockRange(clock2, new Range(1, 7, true, false));
@@ -311,7 +311,7 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void GenerateEmptyLabelTest()
     {
-        Edge edge = new(2, new State(0), new State(1), '\0');
+        Edge edge = new(2, new State(0), new State(1), "\0");
 
         Transition transition = new Transition(edge);
 
@@ -559,7 +559,7 @@ public sealed class UppaalGeneratorTest
         State state0 = new(0);
         State state1 = new(1);
         
-        Edge edge = new(0, state0, state1, 'a');
+        Edge edge = new(0, state0, state1, "a");
         edge.AddClockRange(clock1, new(0, 1, true, true));
         edge.AddClockReset(clock1);
         

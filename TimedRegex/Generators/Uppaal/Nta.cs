@@ -33,7 +33,7 @@ internal sealed class Nta
     internal void AddAutomaton(ITimedAutomaton automaton)
     {
         Declaration.AddChannels(automaton.GetAlphabet()
-            .Where(x => x != '\0')
+            .Where(x => x != "\0")
             .Select(s => s.ToString()));
         
         

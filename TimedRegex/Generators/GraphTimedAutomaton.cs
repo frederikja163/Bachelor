@@ -2,7 +2,7 @@ namespace TimedRegex.Generators;
 
 internal sealed class GraphTimedAutomaton : ITimedAutomaton
 {
-    private readonly HashSet<char> _alphabet;
+    private readonly HashSet<string> _alphabet;
     private readonly List<Clock> _clocks;
     private readonly List<Edge> _edges;
     private readonly List<Edge> _selfEdges;
@@ -95,7 +95,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         }
     }
 
-    public IEnumerable<char> GetAlphabet()
+    public IEnumerable<string> GetAlphabet()
     {
         foreach (var c in _alphabet)
         {

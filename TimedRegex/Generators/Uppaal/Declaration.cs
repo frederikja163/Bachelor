@@ -5,7 +5,7 @@ internal sealed class Declaration
     private readonly HashSet<string> _clocks;
     private readonly HashSet<string> _channels;
     private readonly int[] _times;
-    private readonly char[] _symbols;
+    private readonly string[] _symbols;
 
     internal Declaration()
     {
@@ -15,7 +15,7 @@ internal sealed class Declaration
         _symbols = [];
     }
 
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<char> symbols)
+    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<string> symbols)
     {
         _clocks = clocks.ToHashSet();
         _channels = channels.ToHashSet();
@@ -66,7 +66,7 @@ internal sealed class Declaration
         }
     }
 
-    internal char[] GetSymbols()
+    internal string[] GetSymbols()
     {
         return _symbols;
     }

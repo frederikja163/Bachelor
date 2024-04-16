@@ -6,7 +6,7 @@ internal sealed class Edge : IEquatable<Edge>
     private readonly HashSet<Clock> _clockResets;
     private readonly bool _isReversible;
 
-    internal Edge(int id, State from, State to, char symbol, bool isReversible = false)
+    internal Edge(int id, State from, State to, string symbol, bool isReversible = false)
     {
         Id = id;
         From = from;
@@ -21,7 +21,7 @@ internal sealed class Edge : IEquatable<Edge>
     internal int Id { get; }
     internal State From { get; }
     internal State To { get; }
-    internal char Symbol { get; set; }
+    internal string Symbol { get; set; }
     internal bool IsDead { get; private set; }
     internal bool IsReversible => _isReversible;
 

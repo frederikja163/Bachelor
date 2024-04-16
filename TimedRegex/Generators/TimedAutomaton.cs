@@ -2,7 +2,7 @@ namespace TimedRegex.Generators;
 
 internal sealed class TimedAutomaton : ITimedAutomaton
 {
-    private readonly HashSet<char> _alphabet;
+    private readonly HashSet<string> _alphabet;
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
@@ -15,7 +15,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _states = new Dictionary<int, State>();
         _finalStates = new HashSet<State>();
         InitialLocation = null;
-        _alphabet = new HashSet<char>();
+        _alphabet = new HashSet<string>();
     }
     
     internal TimedAutomaton(TimedAutomaton other, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
@@ -219,9 +219,9 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _finalStates.Remove(state);
     }
 
-    public IEnumerable<char> GetAlphabet()
+    public IEnumerable<string> GetAlphabet()
     {
-        foreach (char c in _alphabet)
+        foreach (string c in _alphabet)
         {
             yield return c;
         }
@@ -255,7 +255,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         return state;
     }
 
-    internal Edge AddEdge(State from, State to, char symbol, bool isReversible = false)
+    internal Edge AddEdge(State from, State to, string symbol, bool isReversible = false)
     {
         Edge edge = new(CreateEdgeId(), from, to, symbol, isReversible);
         
@@ -265,11 +265,11 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         return edge;
     }
 
-    internal void Rename(IReadOnlyDictionary<char, char> renameList)
+    internal void Rename(IReadOnlyDictionary<string, string> renameList)
     {
-        IEnumerable<char> newChars = renameList.IntersectBy(_alphabet, kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
+        IEnumerable<string> newChars = renameList.IntersectBy(_alphabet, kvp => kvp.Key).Select(kvp => kvp.Value).ToList();
         _alphabet.RemoveWhere(renameList.ContainsKey);
-        foreach (char newChar in newChars)
+        foreach (string newChar in newChars)
         {
             _alphabet.Add(newChar);
         }

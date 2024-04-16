@@ -75,25 +75,25 @@ internal sealed class Tokenizer
         while (lookAhead >= _lookAhead.Count)
         {
             Token token = _head >= _input.Length ?
-                new Token(_head, '\0', TokenType.EndOfInput) :
+                new Token(_head, "\0", TokenType.EndOfInput) :
                 _input[_head] switch
                 {
-                    char c when char.IsLetter(c) => new Token(_head, c, TokenType.Match),
-                    '.' => new Token(_head, '.', TokenType.MatchAny),
-                    '(' => new Token(_head, '(', TokenType.ParenthesisStart),
-                    ')' => new Token(_head, ')', TokenType.ParenthesisEnd),
-                    '|' => new Token(_head, '|', TokenType.Union),
-                    '\'' => new Token(_head, '\'', TokenType.Absorb),
-                    '*' => new Token(_head, '*', TokenType.Iterator),
-                    '+' => new Token(_head, '+', TokenType.GuaranteedIterator),
-                    '&' => new Token(_head, '&', TokenType.Intersection),
-                    '[' => new Token(_head, '[', TokenType.IntervalOpen),
-                    ']' => new Token(_head, ']', TokenType.IntervalClose),
-                    ';' => new Token(_head, ';', TokenType.IntervalSeparator),
-                    '{' => new Token(_head, '{', TokenType.RenameStart),
-                    '}' => new Token(_head, '}', TokenType.RenameEnd),
-                    ',' => new Token(_head, ',', TokenType.RenameSeparator),
-                    _ => new Token(_head, _input[_head], TokenType.Unrecognized)
+                    char c when char.IsLetter(c) => new Token(_head, c.ToString(), TokenType.Match),
+                    '.' => new Token(_head, ".", TokenType.MatchAny),
+                    '(' => new Token(_head, "(", TokenType.ParenthesisStart),
+                    ')' => new Token(_head, ")", TokenType.ParenthesisEnd),
+                    '|' => new Token(_head, "|", TokenType.Union),
+                    '\'' => new Token(_head, "\'", TokenType.Absorb),
+                    '*' => new Token(_head, "*", TokenType.Iterator),
+                    '+' => new Token(_head, "+", TokenType.GuaranteedIterator),
+                    '&' => new Token(_head, "&", TokenType.Intersection),
+                    '[' => new Token(_head, "[", TokenType.IntervalOpen),
+                    ']' => new Token(_head, "]", TokenType.IntervalClose),
+                    ';' => new Token(_head, ";", TokenType.IntervalSeparator),
+                    '{' => new Token(_head, "{", TokenType.RenameStart),
+                    '}' => new Token(_head, "}", TokenType.RenameEnd),
+                    ',' => new Token(_head, ",", TokenType.RenameSeparator),
+                    _ => new Token(_head, _input[_head].ToString(), TokenType.Unrecognized)
                 };
             _lookAhead.Add(token);
             _head += 1;

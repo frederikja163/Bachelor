@@ -11,8 +11,8 @@ public class GraphAutomatonTests
 {
     private static GraphTimedAutomaton CreateGta()
     {
-        Union union = new(Interval('a', 1, 3), Interval('b', 3, 5), Token(TokenType.Union, '|'));
-        AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, '+'));
+        Union union = new(Interval("a", 1, 3), Interval("b", 3, 5), Token(TokenType.Union, "|"));
+        AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, "+"));
         AutomatonGeneratorVisitor visitor = new();
         absorbedGuaranteedIterator.Accept(visitor);
         TimedAutomaton ta = visitor.GetAutomaton();

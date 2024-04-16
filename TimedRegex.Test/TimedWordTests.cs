@@ -14,10 +14,10 @@ public sealed class TimedWordTests
     public void CanConstructTimedWordFromCsvTest()
     {
         List<TimedCharacter> testWord = TimedWord.GetStringFromCSV($"{testPath}SimpleTimedWord.csv");
-        List<TimedCharacter> expected = [new TimedCharacter('a', 1f), 
-            new TimedCharacter('b', 4f),
-            new TimedCharacter('c', 7f),
-            new TimedCharacter('d', 9f)];
+        List<TimedCharacter> expected = [new TimedCharacter("a", 1f), 
+            new TimedCharacter("b", 4f),
+            new TimedCharacter("c", 7f),
+            new TimedCharacter("d", 9f)];
 
         Assert.That(testWord, Is.EqualTo(expected));
     }

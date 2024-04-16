@@ -14,8 +14,8 @@ public sealed class VisitorTests
     [TestCase(false,true,true)]
     public void IntervalInclusiveExclusiveValidationTest(bool startInclusive, bool endInclusive, bool expectThrow)
     {
-        Interval interval = new(new Match(new Token(0, 'a', TokenType.Match)), 
-            new Token(1, (startInclusive ? '[' : ']'), (startInclusive ? TokenType.IntervalOpen : TokenType.IntervalClose)), 
+        Interval interval = new(new Match(new Token(0, "a", TokenType.Match)), 
+            new Token(1, (startInclusive ? "[" : "]"), (startInclusive ? TokenType.IntervalOpen : TokenType.IntervalClose)), 
             new Range(1.00f, 1.00f, startInclusive, endInclusive));
         ValidIntervalVisitor visitor = new();
 
@@ -32,7 +32,7 @@ public sealed class VisitorTests
     [Test]
     public void InvalidIntervalTest([Range(0, 5, 1)] int start, [Range(0, 5, 1)] int end)
     {
-        Interval interval = AutomatonGeneratorVisitorTest.Interval('a', start, end);
+        Interval interval = AutomatonGeneratorVisitorTest.Interval("a", start, end);
         ValidIntervalVisitor visitor = new();
         // Since we generate the intervals as inclusive-exclusive, start should be strictly less than end.
         if (start < end)
@@ -49,8 +49,8 @@ public sealed class VisitorTests
     public void GenerateIteratorAstTest()
     {
         IteratorVisitor visitor = new();
-        Match match = AutomatonGeneratorVisitorTest.Match('a');
-        Iterator iterator = new(match, AutomatonGeneratorVisitorTest.Token(TokenType.Iterator, '*'));
+        Match match = AutomatonGeneratorVisitorTest.Match("a");
+        Iterator iterator = new(match, AutomatonGeneratorVisitorTest.Token(TokenType.Iterator, "*"));
         iterator.Accept(visitor);
         
         IAstNode node = visitor.GetNode();
@@ -69,8 +69,8 @@ public sealed class VisitorTests
     public void GenerateAbsorbedIteratorAstTest()
     {
         IteratorVisitor visitor = new();
-        Match match = AutomatonGeneratorVisitorTest.Match('a');
-        AbsorbedIterator iterator = new(match, AutomatonGeneratorVisitorTest.Token(TokenType.Iterator, '*'));
+        Match match = AutomatonGeneratorVisitorTest.Match("a");
+        AbsorbedIterator iterator = new(match, AutomatonGeneratorVisitorTest.Token(TokenType.Iterator, "*"));
         iterator.Accept(visitor);
         
         IAstNode node = visitor.GetNode();

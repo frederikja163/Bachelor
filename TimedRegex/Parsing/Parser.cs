@@ -15,7 +15,7 @@ namespace TimedRegex.Parsing
         {
             if (tokenizer.Peek().Type == TokenType.EndOfInput)
             {
-                return new Epsilon(new Token(0, 'Ɛ', TokenType.None));
+                return new Epsilon(new Token(0, "Ɛ", TokenType.None));
             }
             IAstNode ast = ParseRename(tokenizer);
             tokenizer.Expect(TimedRegexErrorType.ExpectedEndOfInput, TokenType.EndOfInput);

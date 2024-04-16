@@ -19,7 +19,7 @@ internal sealed class Transition
         {
             _labels.Add(Label.CreateAssignment(edge, x, y));
         }
-        if (edge.Symbol != '\0')
+        if (edge.Symbol != "\0")
         {
             _labels.Add(Label.CreateSynchronization(edge, x, y));
         }

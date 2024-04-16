@@ -21,14 +21,14 @@ public sealed class TimedAutomatonTest
         
         State init = timedAutomaton.AddState(newInitial: true);
 
-        Edge recognizeEdge1 = timedAutomaton.AddEdge(loc1, final1, 'A');
+        Edge recognizeEdge1 = timedAutomaton.AddEdge(loc1, final1, "A");
         recognizeEdge1.AddClockRange(clock1, new Range(1, 5, true, false));
-        Edge recognizeEdge2 = timedAutomaton.AddEdge(loc2, final2, 'B');
+        Edge recognizeEdge2 = timedAutomaton.AddEdge(loc2, final2, "B");
         recognizeEdge2.AddClockRange(clock2, new Range(1, 3, true, false));
         
-        Edge orEdge1 = timedAutomaton.AddEdge(init, loc1, '\0');
+        Edge orEdge1 = timedAutomaton.AddEdge(init, loc1, "\0");
         orEdge1.AddClockRange(clock1, new Range(0, 0, true, true));
-        Edge orEdge2 = timedAutomaton.AddEdge(init, loc2, '\0');
+        Edge orEdge2 = timedAutomaton.AddEdge(init, loc2, "\0");
         orEdge2.AddClockRange(clock2, new Range(0, 0, true, true));
 
         return timedAutomaton;
@@ -89,28 +89,28 @@ public sealed class TimedAutomatonTest
     {
         yield return new object[]
         {
-            new (char, char?)[] { ('A', null), ('B', null), ('\0', null) },
+            new (string, string?)[] { ("A", null), ("B", null), ("\0", null) },
         };
         yield return new object[]
         {
-            new (char, char?)[] { ('A', 'B'), ('B', null), ('\0', null) },
+            new (string, string?)[] { ("A", "B"), ("B", null), ("\0", null) },
         };
         yield return new object[]
         {
-            new (char, char?)[] { ('A', 'B'), ('B', 'C'), ('C', null), ('B', null), ('\0', null) },
+            new (string, string?)[] { ("A", "B"), ("B", "C"), ("C", null), ("B", null), ("\0", null) },
         };
         yield return new object[]
         {
-            new (char, char?)[] { ('A', 'B'), ('B', 'A'), ('A', null), ('B', null), ('\0', null) },
+            new (string, string?)[] { ("A", "B"), ("B", "A"), ("A", null), ("B", null), ("\0", null) },
         };
     }
     
     [TestCaseSource(nameof(RenameSource))]
-    public void RenameTest((char from, char? to)[] rename)
+    public void RenameTest((string from, string? to)[] rename)
     {
         TimedAutomaton automaton = CreateAutomaton();
-        Dictionary<char, char> renameList = rename.Where(r => r.to is not null).ToDictionary(r => r.from, r => r.to!.Value);
-        List<char> expected = rename.Where(r => r.to is null).Select(r => r.from).ToList();
+        Dictionary<string, string> renameList = rename.Where(r => r.to is not null).ToDictionary(r => r.from, r => r.to!);
+        List<string> expected = rename.Where(r => r.to is null).Select(r => r.from).ToList();
         automaton.Rename(renameList);
         Assert.That(automaton.GetAlphabet(), Is.EquivalentTo(expected));
     }
@@ -121,7 +121,7 @@ public sealed class TimedAutomatonTest
         Clock clock = automaton.AddClock();
         State s1 = automaton.AddState();
         State s2 = automaton.AddState();
-        Edge edge = automaton.AddEdge(s1, s2, '\0');
+        Edge edge = automaton.AddEdge(s1, s2, "\0");
 
         edge.AddClockRange(clock, new Range(1.00f, 7.55f, true, false));
         edge.AddClockRange(clock, new Range(3.4f, 10.04f, false, true));
@@ -183,8 +183,8 @@ public sealed class TimedAutomatonTest
         State state = ta.AddState();
         State state1 = ta.AddState();
 
-        ta.AddEdge(state, state1, '\0');
-        ta.AddEdge(state1, state, '\0');
+        ta.AddEdge(state, state1, "\0");
+        ta.AddEdge(state1, state, "\0");
         
         Assert.That(ta.GetEdgesTo(new []{state, state1}).Count(), Is.EqualTo(2));
         Assert.That(ta.GetEdgesTo(new []{state1, state}).Count(), Is.EqualTo(2));
@@ -198,7 +198,7 @@ public sealed class TimedAutomatonTest
         TimedAutomaton ta = new();
         State state1 = ta.AddState();
         State state2 = ta.AddState();
-        Edge edge = ta.AddEdge(state1, state2, '\0');
+        Edge edge = ta.AddEdge(state1, state2, "\0");
         Clock clock = ta.AddClock();
         
         edge.AddClockRange(clock, new Range(0.0f, 1.0f, true, true));
@@ -223,13 +223,13 @@ public sealed class TimedAutomatonTest
         State state6 = ta.AddState();
         State state7 = ta.AddState();
 
-        Edge edge1 = ta.AddEdge(state1, state2, '\0');
-        Edge edge2 = ta.AddEdge(state2, state3, '\0');
-        Edge edge3 = ta.AddEdge(state2, state4, '\0');
-        Edge edge4 = ta.AddEdge(state1, state5, '\0');
-        Edge edge5 = ta.AddEdge(state5, state1, '\0');
-        Edge edge6 = ta.AddEdge(state5, state6, '\0');
-        Edge edge7 = ta.AddEdge(state6, state7, '\0');
+        Edge edge1 = ta.AddEdge(state1, state2, "\0");
+        Edge edge2 = ta.AddEdge(state2, state3, "\0");
+        Edge edge3 = ta.AddEdge(state2, state4, "\0");
+        Edge edge4 = ta.AddEdge(state1, state5, "\0");
+        Edge edge5 = ta.AddEdge(state5, state1, "\0");
+        Edge edge6 = ta.AddEdge(state5, state6, "\0");
+        Edge edge7 = ta.AddEdge(state6, state7, "\0");
 
         Assert.Multiple(() =>
         {
@@ -274,13 +274,13 @@ public sealed class TimedAutomatonTest
         State state6 = ta.AddState();
         State state7 = ta.AddState();
 
-        Edge edge1 = ta.AddEdge(state1, state3, '\0');
-        Edge edge2 = ta.AddEdge(state2, state3, '\0');
-        Edge edge3 = ta.AddEdge(state2, state4, '\0');
-        Edge edge4 = ta.AddEdge(state1, state5, '\0');
-        Edge edge5 = ta.AddEdge(state5, state1, '\0');
-        Edge edge6 = ta.AddEdge(state1, state1, '\0');
-        Edge edge7 = ta.AddEdge(state6, state7, '\0');
+        Edge edge1 = ta.AddEdge(state1, state3, "\0");
+        Edge edge2 = ta.AddEdge(state2, state3, "\0");
+        Edge edge3 = ta.AddEdge(state2, state4, "\0");
+        Edge edge4 = ta.AddEdge(state1, state5, "\0");
+        Edge edge5 = ta.AddEdge(state5, state1, "\0");
+        Edge edge6 = ta.AddEdge(state1, state1, "\0");
+        Edge edge7 = ta.AddEdge(state6, state7, "\0");
 
         Assert.Multiple(() =>
         {
@@ -312,8 +312,8 @@ public sealed class TimedAutomatonTest
         TimedAutomaton ta = new();
         State state1 = ta.AddState();
         State state2 = ta.AddState();
-        Edge edge1 = ta.AddEdge(state1, state2, '\0');
-        Edge edge2 = ta.AddEdge(state1, state2, '\0');
+        Edge edge1 = ta.AddEdge(state1, state2, "\0");
+        Edge edge2 = ta.AddEdge(state1, state2, "\0");
 
         Clock clock1 = ta.AddClock();
         Clock clock2 = ta.AddClock();

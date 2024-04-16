@@ -44,7 +44,7 @@ public sealed class TokenizerTests
 
         foreach (char c in str)
         {
-            Assert.That(tokenizer.Advance().Match, Is.EqualTo(c));
+            Assert.That(tokenizer.Advance().Match, Is.EqualTo(c.ToString()));
         }
     }
     
@@ -84,7 +84,7 @@ public sealed class TokenizerTests
             Token token = tokenizer.Peek(i);
             Assert.Multiple(() =>
             {
-                Assert.That(token.Match, Is.EqualTo(str[i]));
+                Assert.That(token.Match, Is.EqualTo(str[i].ToString()));
                 Assert.That(token.CharacterIndex, Is.EqualTo(i));
                 Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
             });
@@ -115,7 +115,7 @@ public sealed class TokenizerTests
             Token token = tokenizer.Advance();
             Assert.Multiple(() =>
             {
-                Assert.That(token.Match, Is.EqualTo(str[i]));
+                Assert.That(token.Match, Is.EqualTo(str[i].ToString()));
                 Assert.That(token.CharacterIndex, Is.EqualTo(i));
                 Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
             });
@@ -130,13 +130,13 @@ public sealed class TokenizerTests
         Token token = tokenizer.Advance(n);
         Assert.Multiple(() =>
         {
-            Assert.That(token.Match, Is.EqualTo('a'));
+            Assert.That(token.Match, Is.EqualTo("a"));
             Assert.That(token.CharacterIndex, Is.EqualTo(0));
             Assert.That(tokenizer.Peek(), Is.Not.Null);
         });
         Assert.Multiple(() =>
         {
-            Assert.That(tokenizer.Peek().Match, Is.EqualTo(inputString[n]));
+            Assert.That(tokenizer.Peek().Match, Is.EqualTo(inputString[n].ToString()));
             Assert.That(tokenizer.Peek().CharacterIndex, Is.EqualTo(n));
         });
     }
@@ -157,17 +157,17 @@ public sealed class TokenizerTests
     {
         Tokenizer tokenizer = new("0123456789");
         
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo('0'));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("0"));
         tokenizer.Skip();
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo('2'));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("2"));
         tokenizer.Skip(3);
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo('6'));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("6"));
     }
 
     [Test]
     public void TokenToStringTest()
     {
-        Token token = new(2, 'a', TokenType.Match);
+        Token token = new(2, "a", TokenType.Match);
         Assert.That(token.ToString(), Is.EqualTo("2.a.Match"));
     }
 
