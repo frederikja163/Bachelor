@@ -423,7 +423,7 @@ public sealed class ParserTests
     [TestCase("/", TimedRegexErrorType.UnrecognizedToken)]
     [TestCase("a|", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("&b", TimedRegexErrorType.ExpectedMatch)]
-    [TestCase("a]", TimedRegexErrorType.UnexpectedToken)]
+    [TestCase("a]", TimedRegexErrorType.NumberImproperFormat)]
     [TestCase("a)", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a|b+)", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a(", TimedRegexErrorType.ExpectedMatch)]
@@ -434,7 +434,7 @@ public sealed class ParserTests
     [TestCase("a**", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a*''", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("a'", TimedRegexErrorType.ExpectedMatch)]
-    [TestCase("a[", TimedRegexErrorType.UnexpectedToken)]
+    [TestCase("a[", TimedRegexErrorType.NumberImproperFormat)]
     [TestCase("a[;", TimedRegexErrorType.NumberImproperFormat)]
     [TestCase("a{", TimedRegexErrorType.RenameImproperFormat)]
     [TestCase("a*[1;4]", TimedRegexErrorType.ExpectedEndOfInput)]
@@ -447,6 +447,9 @@ public sealed class ParserTests
     }
     
     [TestCase("a[1;5]*")]
+    [TestCase("a<abc>")]
+    [TestCase("<123>")]
+    [TestCase("<_ ->")]
     [TestCase("a[1;5]*'")]
     [TestCase("a[1;5]+")]
     [TestCase("a[1;5]+'")]

@@ -107,14 +107,8 @@ namespace TimedRegex.Parsing
 
         private static float ParseNumber(Tokenizer tokenizer)
         {
-            Token token = tokenizer.Peek();
-            StringBuilder sb = new();
-            while (!(tokenizer.Peek().Type == TokenType.IntervalClose || tokenizer.Peek().Type == TokenType.IntervalSeparator || tokenizer.Peek().Type == TokenType.IntervalOpen))
-            {
-                sb.Append(tokenizer.Advance().Match);
-                tokenizer.DontExpect(TimedRegexErrorType.UnexpectedToken, TokenType.EndOfInput);
-            }
-            if (!float.TryParse(sb.ToString(), out float value))
+            Token token = tokenizer.Advance();
+            if (!float.TryParse(token.Match, out float value))
             {
                 throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", token);
             }

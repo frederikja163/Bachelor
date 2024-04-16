@@ -81,28 +81,30 @@ internal sealed class Tokenizer
     {
         while (lookAhead >= _lookAhead.Count)
         {
-            Token token;
             if (_head >= _input.Length)
             {
-                token = new Token(_head, "\0", TokenType.EndOfInput);
-                goto cont;
+                _lookAhead.Add(new Token(_head, "\0", TokenType.EndOfInput));
+                _head += 1;
+                continue;
             }
 
             Match match = _match.Match(_input[_head..]);
             if (match.Success)
             {
                 string value = match.Value.Trim('<', '>');
-                token = new Token(_head, value, TokenType.Match);
-                goto cont;
+                _lookAhead.Add(new Token(_head, value, TokenType.Match));
+                _head += match.Length;
+                continue;
             }
             Match number = _number.Match(_input[_head..]);
             if (number.Success)
             {
-                token = new Token(_head, number.Value, TokenType.Number);
-                goto cont;
+                _lookAhead.Add(new Token(_head, number.Value, TokenType.Number));
+                _head += number.Length;
+                continue;
             }
             
-            token = _input[_head] switch
+            Token token = _input[_head] switch
             {
                 '.' => new Token(_head, ".", TokenType.MatchAny),
                 '(' => new Token(_head, "(", TokenType.ParenthesisStart),
@@ -123,9 +125,8 @@ internal sealed class Tokenizer
                     new Token(_head, _input[_head].ToString(), TokenType.Unrecognized)),
             };
 
-            cont:
             _lookAhead.Add(token);
-            _head += token.Match.Length;
+            _head += 1;
         }
     }
 

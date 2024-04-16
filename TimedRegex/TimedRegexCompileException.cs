@@ -8,7 +8,6 @@ internal enum TimedRegexErrorType
     
     // 0100-0199 - Tokenizer
     UnrecognizedToken = 0100,
-    UnexpectedToken = 0101,
     
     // 0200-0299 - Parser
     ExpectedEndOfInput = 0200,
