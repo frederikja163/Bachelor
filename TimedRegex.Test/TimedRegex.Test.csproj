@@ -22,14 +22,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="TestData\CSV\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Update="TestData\CSV\SimpleTimedWord.csv">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
       <None Update="TestData\CSV\SymbolsRepeatedLater.csv">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestData\CSV\MultipleCharacters.csv">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

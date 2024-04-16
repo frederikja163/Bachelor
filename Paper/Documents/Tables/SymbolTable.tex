@@ -2,7 +2,8 @@
     \hline
     \textbf{Tokens} & \textbf{Character}\\
     \hline
-    match & a-z$\mid$A-Z\\
+    match & $\verb!^[a-zA-Z]|<[a-zA-Z0-9_\- |']+>!$ \\
+    % match & $^[a-zA-Z]|<[a-zA-Z0-9_\\- |']+>$\\
     \hline
     matchAny & .\\
     \hline
@@ -32,6 +33,6 @@
     \hline
     renameSeparator & ,\\
     \hline
-    digit & 0-9\\
+    number & $\verb!^[0-9]+(?:\.[0-9]+)?!$\\
     \hline
 \end{tabular}

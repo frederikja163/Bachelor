@@ -37,17 +37,13 @@ Iterator := Interval guaranteedIterator
 
 \qquad $\mid$ Interval
 
-Interval := Match IntervalStartEnd Number intervalSeperator Number IntervalStartEnd
+Interval := Match IntervalStartEnd number intervalSeperator number IntervalStartEnd
 
 \qquad $\mid$ Match
 
 IntervalStartEnd := intervalOpen
 
 \qquad $\mid$ intervalClose
-
-Number := digit Number
-
-\qquad $\mid$ digit
 
 Match := parenthesisStart Rename parenthesisEnd
 

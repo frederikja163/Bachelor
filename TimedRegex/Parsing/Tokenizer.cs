@@ -4,19 +4,16 @@ namespace TimedRegex.Parsing;
 
 internal sealed class Tokenizer
 {
+    private static readonly Regex Match = new Regex("^[a-zA-Z]|<[a-zA-Z0-9_\\- |']+>", RegexOptions.Compiled);
+    private static readonly Regex Number = new Regex("^[0-9]+(?:\\.[0-9]+)?", RegexOptions.Compiled);
     private int _head;
     private readonly string _input;
     private readonly List<Token> _lookAhead;
-    private readonly Regex _match;
-    private readonly Regex _number;
 
     internal Tokenizer(string input)
     {
         _input = input;
         _lookAhead = new List<Token>();
-
-        _match = new Regex("^[a-zA-Z]|<[a-zA-Z0-9_\\- ]+>", RegexOptions.Compiled);
-        _number = new Regex("^[0-9]+(?:\\.[0-9]+)?", RegexOptions.Compiled);
     }
 
     public int PeekedCharacters => _head;
@@ -88,7 +85,7 @@ internal sealed class Tokenizer
                 continue;
             }
 
-            Match match = _match.Match(_input[_head..]);
+            Match match = Match.Match(_input[_head..]);
             if (match.Success)
             {
                 string value = match.Value.Trim('<', '>');
@@ -96,7 +93,7 @@ internal sealed class Tokenizer
                 _head += match.Length;
                 continue;
             }
-            Match number = _number.Match(_input[_head..]);
+            Match number = Number.Match(_input[_head..]);
             if (number.Success)
             {
                 _lookAhead.Add(new Token(_head, number.Value, TokenType.Number));
