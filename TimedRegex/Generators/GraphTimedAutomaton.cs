@@ -113,9 +113,4 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     {
         return _layers;
     }
-
-    public IEnumerable<TimedCharacter> GetTimedCharacters()
-    {
-        yield break;
-    }
 }
