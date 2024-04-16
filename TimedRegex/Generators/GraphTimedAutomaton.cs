@@ -25,7 +25,6 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         AssignLayers(automaton, automaton.InitialLocation!, 0);
         OrderLocations();
         AssignPositions();
-        ReverseEdges();
     }
 
     internal void ReverseEdges()
@@ -33,7 +32,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         for (int i = 0; i < _edges.Count; i++)
         {
             if (!_edges[i].IsReversible) continue;
-            
+
             Edge edge = _edges[i];
             Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
             reverseEdge.AddClockResets(edge.GetClockResets());
@@ -113,4 +112,10 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     {
         return _layers;
     }
+
+    public IEnumerable<TimedCharacter> GetTimedCharacters()
+    {
+        yield break;
+    }
 }
+
