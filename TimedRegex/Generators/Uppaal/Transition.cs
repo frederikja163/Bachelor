@@ -19,9 +19,19 @@ internal sealed class Transition
         {
             _labels.Add(Label.CreateAssignment(edge, x, y));
         }
+
         if (edge.Symbol != '\0')
         {
             _labels.Add(Label.CreateSynchronization(edge, x, y));
+        }
+
+        if (edge.IsOutput && edge.Symbol != '\0')
+        {
+            _labels.Add(Label.CreateOutputGuard(edge, x, y));
+        }
+        else if (edge.IsOutput)
+        {
+            _labels.Add(Label.CreateOutputUpdate(edge, x, y));
         }
 
         Source = $"l{edge.From.Id}";
