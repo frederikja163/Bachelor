@@ -38,7 +38,7 @@ public sealed class TokenizerTests
     [Test]
     public void ParseMatchTest()
     {
-        const string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
+        const string str = "1asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new(str);
 
@@ -55,9 +55,12 @@ public sealed class TokenizerTests
 
         Tokenizer tokenizer = new(str);
 
+        int index = 0;
         for (int i = 0; i < str.Length; i++)
         {
-            Assert.That(tokenizer.Advance().CharacterIndex, Is.EqualTo(i));
+            Token token = tokenizer.Advance();
+            Assert.That(token.CharacterIndex, Is.EqualTo(index));
+            index += token.Match.Length;
         }
     }
 
@@ -72,7 +75,9 @@ public sealed class TokenizerTests
     public void CannotParseInvalidTokensTest(string str)
     {
         Tokenizer tokenizer = new(str);
-        Assert.That(tokenizer.Advance().Type, Is.EqualTo(TokenType.Unrecognized));
+        TimedRegexCompileException? compileException = Assert.Throws<TimedRegexCompileException>(() => tokenizer.Advance());
+        Assert.IsNotNull(compileException);
+        Assert.That(compileException!.Type, Is.EqualTo(TimedRegexErrorType.UnrecognizedToken));
     }
     
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]
@@ -155,13 +160,13 @@ public sealed class TokenizerTests
     [Test]
     public void SkipTest()
     {
-        Tokenizer tokenizer = new("0123456789");
+        Tokenizer tokenizer = new("abcdefgh");
         
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo("0"));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("a"));
         tokenizer.Skip();
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo("2"));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("c"));
         tokenizer.Skip(3);
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo("6"));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("g"));
     }
 
     [Test]

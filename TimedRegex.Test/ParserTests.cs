@@ -420,7 +420,7 @@ public sealed class ParserTests
     }
 
     [TestCase("a}", TimedRegexErrorType.ExpectedEndOfInput)]
-    [TestCase("/", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("/", TimedRegexErrorType.UnrecognizedToken)]
     [TestCase("a|", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("&b", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("a]", TimedRegexErrorType.UnexpectedToken)]
@@ -429,7 +429,7 @@ public sealed class ParserTests
     [TestCase("a(", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("a;", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a5", TimedRegexErrorType.ExpectedEndOfInput)]
-    [TestCase("a<", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a<", TimedRegexErrorType.UnrecognizedToken)]
     [TestCase("a||b", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("a**", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a*''", TimedRegexErrorType.ExpectedMatch)]

@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace TimedRegex.Parsing;
 
 internal sealed class Tokenizer
@@ -5,11 +7,16 @@ internal sealed class Tokenizer
     private int _head;
     private readonly string _input;
     private readonly List<Token> _lookAhead;
-    
+    private readonly Regex _match;
+    private readonly Regex _number;
+
     internal Tokenizer(string input)
     {
         _input = input;
         _lookAhead = new List<Token>();
+
+        _match = new Regex("^[a-zA-Z]|<[a-zA-Z0-9_\\- ]+>", RegexOptions.Compiled);
+        _number = new Regex("^[0-9]+(?:\\.[0-9]+)?", RegexOptions.Compiled);
     }
 
     public int PeekedCharacters => _head;
@@ -74,29 +81,51 @@ internal sealed class Tokenizer
     {
         while (lookAhead >= _lookAhead.Count)
         {
-            Token token = _head >= _input.Length ?
-                new Token(_head, "\0", TokenType.EndOfInput) :
-                _input[_head] switch
-                {
-                    char c when char.IsLetter(c) => new Token(_head, c.ToString(), TokenType.Match),
-                    '.' => new Token(_head, ".", TokenType.MatchAny),
-                    '(' => new Token(_head, "(", TokenType.ParenthesisStart),
-                    ')' => new Token(_head, ")", TokenType.ParenthesisEnd),
-                    '|' => new Token(_head, "|", TokenType.Union),
-                    '\'' => new Token(_head, "\'", TokenType.Absorb),
-                    '*' => new Token(_head, "*", TokenType.Iterator),
-                    '+' => new Token(_head, "+", TokenType.GuaranteedIterator),
-                    '&' => new Token(_head, "&", TokenType.Intersection),
-                    '[' => new Token(_head, "[", TokenType.IntervalOpen),
-                    ']' => new Token(_head, "]", TokenType.IntervalClose),
-                    ';' => new Token(_head, ";", TokenType.IntervalSeparator),
-                    '{' => new Token(_head, "{", TokenType.RenameStart),
-                    '}' => new Token(_head, "}", TokenType.RenameEnd),
-                    ',' => new Token(_head, ",", TokenType.RenameSeparator),
-                    _ => new Token(_head, _input[_head].ToString(), TokenType.Unrecognized)
-                };
+            Token token;
+            if (_head >= _input.Length)
+            {
+                token = new Token(_head, "\0", TokenType.EndOfInput);
+                goto cont;
+            }
+
+            Match match = _match.Match(_input[_head..]);
+            if (match.Success)
+            {
+                string value = match.Value.Trim('<', '>');
+                token = new Token(_head, value, TokenType.Match);
+                goto cont;
+            }
+            Match number = _number.Match(_input[_head..]);
+            if (number.Success)
+            {
+                token = new Token(_head, number.Value, TokenType.Number);
+                goto cont;
+            }
+            
+            token = _input[_head] switch
+            {
+                '.' => new Token(_head, ".", TokenType.MatchAny),
+                '(' => new Token(_head, "(", TokenType.ParenthesisStart),
+                ')' => new Token(_head, ")", TokenType.ParenthesisEnd),
+                '|' => new Token(_head, "|", TokenType.Union),
+                '\'' => new Token(_head, "\'", TokenType.Absorb),
+                '*' => new Token(_head, "*", TokenType.Iterator),
+                '+' => new Token(_head, "+", TokenType.GuaranteedIterator),
+                '&' => new Token(_head, "&", TokenType.Intersection),
+                '[' => new Token(_head, "[", TokenType.IntervalOpen),
+                ']' => new Token(_head, "]", TokenType.IntervalClose),
+                ';' => new Token(_head, ";", TokenType.IntervalSeparator),
+                '{' => new Token(_head, "{", TokenType.RenameStart),
+                '}' => new Token(_head, "}", TokenType.RenameEnd),
+                ',' => new Token(_head, ",", TokenType.RenameSeparator),
+                _ => throw new TimedRegexCompileException(TimedRegexErrorType.UnrecognizedToken,
+                    $"Unrecognized token at {_head}",
+                    new Token(_head, _input[_head].ToString(), TokenType.Unrecognized)),
+            };
+
+            cont:
             _lookAhead.Add(token);
-            _head += 1;
+            _head += token.Match.Length;
         }
     }
 
@@ -122,6 +151,7 @@ internal sealed class Tokenizer
             TokenType.None => "none",
             TokenType.EndOfInput => "end of input",
             TokenType.Unrecognized => "Unrecognized",
+            TokenType.Number => "number",
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
