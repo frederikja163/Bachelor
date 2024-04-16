@@ -75,17 +75,27 @@ public class GraphAutomatonTests
         State l12 = ta.AddState();
         State l13 = ta.AddState();
         State l21 = ta.AddState();
+        State l22 = ta.AddState();
         State final = ta.AddState();
         
         ta.AddEdge(root, l11, 'a');
         ta.AddEdge(root, l12, 'a');
         ta.AddEdge(root, l13, 'a');
-        ta.AddEdge(l11, final, 'b');
+        ta.AddEdge(l11, l22, 'b');
         ta.AddEdge(l12, l21, 'b');
         ta.AddEdge(l13, l21, 'b');
-        ta.AddEdge(l21, final, 'c');
+        ta.AddEdge(l22, final, 'd');
+        ta.AddEdge(l21, l22, 'c');
         
         GraphTimedAutomaton gta = new(ta);
+
+        foreach (State state in ta.GetStates())
+        {
+            foreach (Edge edge in ta.GetEdgesTo(state).ToList())
+            {
+                Assert.That(gta.GetLayers()[edge.To], Is.GreaterThan(gta.GetLayers()[edge.From]));
+            }
+        }
         
         Assert.Multiple(() =>
         {
@@ -94,7 +104,8 @@ public class GraphAutomatonTests
             Assert.That(gta.GetLayers()[l12], Is.EqualTo(1));
             Assert.That(gta.GetLayers()[l13], Is.EqualTo(1));
             Assert.That(gta.GetLayers()[l21], Is.EqualTo(2));
-            Assert.That(gta.GetLayers()[final], Is.EqualTo(3));
+            Assert.That(gta.GetLayers()[l22], Is.EqualTo(3));
+            Assert.That(gta.GetLayers()[final], Is.EqualTo(4));
         });
     }
 }

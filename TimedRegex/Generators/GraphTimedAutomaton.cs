@@ -33,7 +33,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         for (int i = 0; i < _edges.Count; i++)
         {
             if (!_edges[i].IsReversible) continue;
-            
+
             Edge edge = _edges[i];
             Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
             reverseEdge.AddClockResets(edge.GetClockResets());
@@ -44,7 +44,8 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     private void AssignLayers(TimedAutomaton automaton, State state, int layer)
     {
-        _layers.Add(state, layer);
+        _layers.TryAdd(state, layer);
+
         foreach (Edge edge in automaton.GetEdgesFrom(state).Where(e => !IsSelfEdge(e)))
         {
             if (!_layers.TryGetValue(edge.To, out int toLayer))
@@ -57,6 +58,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
                 if (toLayer <= layer)
                 {
                     _layers[edge.To] = layer + 1;
+                    AssignLayers(automaton, edge.To, layer + 1);
                 }
             }
         }
