@@ -14,6 +14,9 @@ public sealed class ParserTests
     [TestCase("a")]
     [TestCase("b")]
     [TestCase("z")]
+    [TestCase("<test>")]
+    [TestCase("<123>")]
+    [TestCase("<_hello world->")]
     public void ParseMatchValidTest(string inputString)
     {
         Tokenizer tokenizer = new(inputString);
@@ -22,7 +25,7 @@ public sealed class ParserTests
         Match match = (Match)astNode;
         Assert.Multiple(() =>
         {
-            Assert.That(match.Token.Match, Is.EqualTo(inputString[0].ToString()));
+            Assert.That(match.Token.Match, Is.EqualTo(inputString.Trim('<', '>').ToString()));
             Assert.That(match.Token.CharacterIndex, Is.EqualTo(0));
             Assert.That(match, Is.TypeOf<Match>());
         });
