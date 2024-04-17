@@ -15,8 +15,8 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         InitialLocation = automaton.InitialLocation;
         _alphabet = automaton.GetAlphabet().ToHashSet();
         _clocks = automaton.GetClocks().ToList();
-        _edges = automaton.GetEdges().Where(e => !e.From.Equals(e.To)).ToList();
-        _selfEdges = automaton.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
+        _edges = automaton.GetEdges().Where(e => !IsSelfEdge(e)).ToList();
+        _selfEdges = automaton.GetEdges().Where(IsSelfEdge).ToList();
         _states = automaton.GetStates().ToList();
         _finalStates = automaton.GetFinalStates().ToHashSet();
         _layers = new Dictionary<State, int>();
@@ -25,6 +25,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         AssignLayers(automaton, automaton.InitialLocation!, 0);
         OrderLocations();
         AssignPositions();
+        ReverseEdges();
     }
 
     internal void ReverseEdges()
@@ -32,7 +33,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         for (int i = 0; i < _edges.Count; i++)
         {
             if (!_edges[i].IsReversible) continue;
-            
+
             Edge edge = _edges[i];
             Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
             reverseEdge.AddClockResets(edge.GetClockResets());
@@ -41,14 +42,24 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         }
     }
 
-    internal void AssignLayers(TimedAutomaton automaton, State state, int layer)
+    private void AssignLayers(TimedAutomaton automaton, State state, int layer)
     {
-        _layers.Add(state, layer);
-        foreach (Edge edge in automaton.GetEdgesFrom(state))
+        _layers.TryAdd(state, layer);
+
+        foreach (Edge edge in automaton.GetEdgesFrom(state).Where(e => !IsSelfEdge(e)))
         {
-            if (!_layers.ContainsKey(edge.To))
+            if (!_layers.TryGetValue(edge.To, out int toLayer))
             {
                 AssignLayers(automaton, edge.To, layer + 1);
+            }
+            else
+            {
+                // edges should not go between two states in the same layer or backwards, so update layer if this is the case 
+                if (toLayer <= layer)
+                {
+                    _layers[edge.To] = layer + 1;
+                    AssignLayers(automaton, edge.To, layer + 1);
+                }
             }
         }
     }
@@ -59,6 +70,11 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     internal void AssignPositions()
     {
+    }
+
+    private static bool IsSelfEdge(Edge edge)
+    {
+        return edge.From.Equals(edge.To);
     }
 
     public State? InitialLocation { get; }

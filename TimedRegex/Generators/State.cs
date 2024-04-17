@@ -2,6 +2,13 @@ namespace TimedRegex.Generators;
 
 internal sealed class State : IEquatable<State>
 {
+    internal State(int id, int x, int y)
+    {
+        Id = id;
+        X = x;
+        Y = y;
+    }
+
     internal State(int id)
     {
         Id = id;
