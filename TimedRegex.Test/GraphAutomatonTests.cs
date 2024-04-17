@@ -78,14 +78,14 @@ public class GraphAutomatonTests
         State l22 = ta.AddState();
         State final = ta.AddState();
         
-        ta.AddEdge(root, l11, 'a');
-        ta.AddEdge(root, l12, 'a');
-        ta.AddEdge(root, l13, 'a');
-        ta.AddEdge(l11, l22, 'b');
-        ta.AddEdge(l12, l21, 'b');
-        ta.AddEdge(l13, l21, 'b');
-        ta.AddEdge(l22, final, 'd');
-        ta.AddEdge(l21, l22, 'c');
+        ta.AddEdge(root, l11, "a");
+        ta.AddEdge(root, l12, "a");
+        ta.AddEdge(root, l13, "a");
+        ta.AddEdge(l11, l22, "b");
+        ta.AddEdge(l12, l21, "b");
+        ta.AddEdge(l13, l21, "b");
+        ta.AddEdge(l22, final, "d");
+        ta.AddEdge(l21, l22, "c");
         
         GraphTimedAutomaton gta = new(ta);
 
