@@ -23,10 +23,10 @@ internal sealed class Transition
         if (edge.Symbol != "\0")
         {
             string symbol = symbolRenames?.ContainsKey(edge.Symbol) ?? false ? symbolRenames[edge.Symbol] : edge.Symbol;
-            _labels.Add(Label.CreateSynchronization(symbol, x, y));
+            _labels.Add(edge.IsOutput ? Label.CreateOutputSynchronization(symbol, x, y) : Label.CreateInputSynchronization(symbol, x, y));
         }
 
-        if (edge.IsOutput && edge.Symbol != '\0')
+        if (edge.IsOutput && edge.Symbol != "\0")
         {
             _labels.Add(Label.CreateOutputGuard(edge, x, y));
         }

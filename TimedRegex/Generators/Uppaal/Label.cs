@@ -42,9 +42,15 @@ internal sealed class Label
         return new Label(LabelKind.Guard, labelString, x - 75, y);
     }
 
-    internal static Label CreateSynchronization(string symbol, int x = -1, int y = -1)
+    internal static Label CreateInputSynchronization(string symbol, int x = -1, int y = -1)
     {
-        string labelString = $"{symbol}{(edge.IsOutput ? '!' : '?')}";
+        string labelString = $"{symbol}?";
+        return new Label(LabelKind.Synchronisation, labelString, x - 75, y + 15);
+    }
+    
+    internal static Label CreateOutputSynchronization(string symbol, int x = -1, int y = -1)
+    {
+        string labelString = $"{symbol}!";
         return new Label(LabelKind.Synchronisation, labelString, x - 75, y + 15);
     } 
 

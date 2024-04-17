@@ -16,7 +16,7 @@ internal sealed class Declaration
         _clocks = new HashSet<string>();
         _channels = new HashSet<string>();
         _times = new List<short>();
-        _symbols = new List<char>();
+        _symbols = new List<string>();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<short> times, IEnumerable<string> symbols)
@@ -84,13 +84,19 @@ internal sealed class Declaration
     }
 
 
-    internal List<char> GetSymbols()
+    internal IEnumerable<string> GetSymbols()
     {
-        return _symbols;
+        foreach (string symbol in _symbols)
+        {
+            yield return symbol;
+        }
     }
 
-    internal List<short> GetTimes()
+    internal IEnumerable<short> GetTimes()
     {
-        return _times;
+        foreach (short time in _times)
+        {
+            yield return time;
+        }
     }
 }

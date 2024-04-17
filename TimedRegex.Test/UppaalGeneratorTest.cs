@@ -25,10 +25,10 @@ public sealed class UppaalGeneratorTest
     private static Nta GenerateTestTimedWordAutomaton()
     {
         List<TimedCharacter> timedWord = new([
-            new TimedCharacter('a', 1f),
-            new TimedCharacter('b', 2f),
-            new TimedCharacter('c', 3f),
-            new TimedCharacter('a', 4f)
+            new TimedCharacter("a", 1f),
+            new TimedCharacter("b", 2f),
+            new TimedCharacter("c", 3f),
+            new TimedCharacter("a", 4f)
             ]);
         TimedWordAutomaton automaton = new(timedWord);
         Nta nta = new();
@@ -172,7 +172,7 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void DeclarationWithTimedWordTest()
     {
-        Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<int>([1, 4, 6]), new List<string>(["a", "b", "a"]));
+        Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<short>([1, 4, 6]), new List<string>(["a", "b", "a"]));
         UppaalGenerator generator = new();
         StringBuilder sb = new();
         string expected = "<declaration>clock c;chan a, b;const string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nint times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
@@ -265,7 +265,7 @@ public sealed class UppaalGeneratorTest
         [
             Label.CreateGuard(edge),
             Label.CreateAssignment(edge),
-            Label.CreateSynchronization(edge.Symbol)
+            Label.CreateInputSynchronization(edge.Symbol)
         ];
 
         Transition transition = new Transition(edge);
@@ -310,7 +310,7 @@ public sealed class UppaalGeneratorTest
         List<Label> labels =
         [
             Label.CreateGuard(edge),
-            Label.CreateSynchronization(edge.Symbol)
+            Label.CreateInputSynchronization(edge.Symbol)
         ];
 
         Transition transition = new Transition(edge);
