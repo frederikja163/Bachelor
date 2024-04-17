@@ -113,7 +113,7 @@ internal sealed class TikzGenerator : IGenerator
         }
         tw.Write(" node");
         
-        tw.Write($"{{${(edge.Symbol == '\0' ? "\\epsilon" : edge.Symbol)}");
+        tw.Write($"{{${(edge.Symbol == "\0" ? "\\epsilon" : edge.Symbol)}");
         if (edge.GetClockRanges().Any())
         {
             tw.Write("\\mid ");
