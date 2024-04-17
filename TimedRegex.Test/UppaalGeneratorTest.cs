@@ -249,7 +249,7 @@ public sealed class UppaalGeneratorTest
         [
             Label.CreateGuard(edge),
             Label.CreateAssignment(edge),
-            Label.CreateSynchronization(edge)
+            Label.CreateSynchronization(edge.Symbol)
         ];
 
         Transition transition = new Transition(edge);
@@ -294,7 +294,7 @@ public sealed class UppaalGeneratorTest
         List<Label> labels =
         [
             Label.CreateGuard(edge),
-            Label.CreateSynchronization(edge)
+            Label.CreateSynchronization(edge.Symbol)
         ];
 
         Transition transition = new Transition(edge);

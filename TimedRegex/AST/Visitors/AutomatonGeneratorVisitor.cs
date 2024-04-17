@@ -269,15 +269,6 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         Dictionary<string, string> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol.Match, r => r.NewSymbol.Match);
         ta.Rename(replaceList);
 
-        foreach (Edge edge in ta.GetEdges())
-        {
-            string? symbol = edge.Symbol;
-            if (replaceList.TryGetValue(symbol, out string? newSymbol))
-            {
-                edge.Symbol = newSymbol;
-            }
-        }
-
         _stack.Push(ta);
     }
 

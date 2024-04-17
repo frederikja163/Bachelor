@@ -273,6 +273,15 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         {
             _alphabet.Add(newChar);
         }
+
+        foreach (Edge edge in GetEdges())
+        {
+            string? symbol = edge.Symbol;
+            if (renameList.TryGetValue(symbol, out string? newSymbol))
+            {
+                edge.Symbol = newSymbol;
+            }
+        }
     }
     
     private static int CreateLocationId()

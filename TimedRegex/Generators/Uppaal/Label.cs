@@ -30,9 +30,9 @@ internal sealed class Label
         return new Label(LabelKind.Guard, labelString, x - 75, y);
     }
 
-    internal static Label CreateSynchronization(Edge edge, int x = -1, int y = -1)
+    internal static Label CreateSynchronization(string symbol, int x = -1, int y = -1)
     {
-        string labelString = $"{edge.Symbol}?";
+        string labelString = $"{symbol}?";
         return new Label(LabelKind.Synchronisation, labelString, x - 75, y + 15);
     } 
 
