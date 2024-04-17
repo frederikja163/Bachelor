@@ -16,7 +16,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         Dictionary<int, Clock> newClocks =
             automaton.GetClocks().ToDictionary(c => c.Id, (_) => new Clock(clockId++));
         Dictionary<int, State> newStates =
-            automaton.GetStates().ToDictionary(s => s.Id, s => new State(stateId++, s.X, s.Y));
+            automaton.GetStates().ToDictionary(s => s.Id, (s) => new State(stateId++, s.X, s.Y));
         _finalStates = automaton.GetFinalStates().Select(s => newStates[s.Id]).ToHashSet();
         
         _alphabet = automaton.GetAlphabet().ToHashSet();
