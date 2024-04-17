@@ -14,4 +14,5 @@ internal interface IAstVisitor
     internal void Visit(Rename rename);
     internal void Visit(Union union);
     internal void Visit(Epsilon epsilon);
+    internal void Visit(MatchAny matchAny);
 }
