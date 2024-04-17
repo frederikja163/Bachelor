@@ -3,6 +3,7 @@ using System.Xml;
 using NUnit.Framework;
 using TimedRegex.Generators;
 using TimedRegex.Generators.Uppaal;
+using TimedRegex.Parsing;
 using Contains = NUnit.Framework.Contains;
 using Location = TimedRegex.Generators.Uppaal.Location;
 using Range = TimedRegex.Generators.Range;
@@ -18,6 +19,21 @@ public sealed class UppaalGeneratorTest
 
         nta.AddAutomaton(automaton);
 
+        return nta;
+    }
+
+    private static Nta GenerateTestTimedWordAutomaton()
+    {
+        List<TimedCharacter> timedWord = new([
+            new TimedCharacter('a', 1f),
+            new TimedCharacter('b', 2f),
+            new TimedCharacter('c', 3f),
+            new TimedCharacter('a', 4f)
+            ]);
+        TimedWordAutomaton automaton = new(timedWord);
+        Nta nta = new();
+
+        nta.AddAutomaton(automaton);
         return nta;
     }
 
@@ -156,7 +172,7 @@ public sealed class UppaalGeneratorTest
     [Test]
     public void DeclarationWithTimedWordTest()
     {
-        Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<int>([1, 4, 6]), new List<char>(['a', 'b', 'a']));
+        Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<short>([1, 4, 6]), new List<char>(['a', 'b', 'a']));
         UppaalGenerator generator = new();
         StringBuilder sb = new();
         string expected = "<declaration>clock c;chan a, b;const string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nint times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
@@ -345,6 +361,23 @@ public sealed class UppaalGeneratorTest
         Nta nta = new(template, declaration);
 
         const string expected = "<nta>\n  <declaration>clock c1, c2;</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
+        StringBuilder sb = new();
+
+        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
+        {
+            uppaalGenerator.WriteNta(xmlWriter, nta);
+        }
+
+        Assert.That(sb.ToString(), Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void WriteTimedWordNtaTest()
+    {
+        UppaalGenerator uppaalGenerator = new();
+        Nta nta = GenerateTestTimedWordAutomaton();
+
+        const string expected = "<nta>\n  <declaration>chan a, b, c;</declaration>\n  <template>\n    <name>ta0</name>\n    <declaration>clock c0;const string word[5] = {\"a\", \"b\", \"c\", \"a\", \"\\0\"};\nint times[5] = {1000, 2000, 3000, 4000, 4001};\nint index = 0;\n</declaration>\n    <location id=\"l0\" x=\"0\" y=\"0\">\n      <name>loc0</name>\n    </location>\n    <location id=\"l1\" x=\"0\" y=\"300\">\n      <name>loc1</name>\n    </location>\n    <init ref=\"l0\" />\n    <transition>\n      <source ref=\"l1\" />\n      <target ref=\"l0\" />\n    </transition>\n    <transition>\n      <source ref=\"l0\" />\n      <target ref=\"l1\" />\n      <label kind=\"synchronisation\" x=\"-75\" y=\"165\">a!</label>\n      <label kind=\"guard\" x=\"-75\" y=\"150\">word[index] == \"a\" &amp;&amp; times[index] == c0</label>\n    </transition>\n    <transition>\n      <source ref=\"l0\" />\n      <target ref=\"l1\" />\n      <label kind=\"synchronisation\" x=\"-75\" y=\"165\">b!</label>\n      <label kind=\"guard\" x=\"-75\" y=\"150\">word[index] == \"b\" &amp;&amp; times[index] == c0</label>\n    </transition>\n    <transition>\n      <source ref=\"l0\" />\n      <target ref=\"l1\" />\n      <label kind=\"synchronisation\" x=\"-75\" y=\"165\">c!</label>\n      <label kind=\"guard\" x=\"-75\" y=\"150\">word[index] == \"c\" &amp;&amp; times[index] == c0</label>\n    </transition>\n  </template>\n  <system>system ta0;</system>\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))

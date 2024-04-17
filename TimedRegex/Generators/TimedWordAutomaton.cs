@@ -21,7 +21,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
         _alphabet = new();
         _edges = new()
         {
-            new Edge(0, _returnState, _initialState, '\0') // Return edge.
+            new Edge(0, _returnState, _initialState, '\0', true) // Return edge.
         };
         LoopOverAllCharacters();
     }
@@ -39,7 +39,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
             else
             {
                 _alphabet.Add(character.Symbol);
-                Edge newEdge = new Edge(edgeCounter++, _initialState, _returnState, character.Symbol);
+                Edge newEdge = new Edge(edgeCounter++, _initialState, _returnState, character.Symbol, isOutput: true);
                 _edges.Add(newEdge);
             }
         }
@@ -82,5 +82,12 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     public bool IsFinal(State state)
     {
         return false;
+    }
+    public IEnumerable<TimedCharacter> GetTimedCharacters()
+    {
+        foreach (var character in _word)
+        {
+            yield return character;
+        }
     }
 }
