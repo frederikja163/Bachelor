@@ -1,3 +1,5 @@
+using TimedRegex.Parsing;
+
 namespace TimedRegex.Generators;
 
 internal sealed class CompressedTimedAutomaton : ITimedAutomaton
@@ -8,7 +10,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
     private readonly Dictionary<int, State> _states;
     private readonly HashSet<State> _finalStates;
 
-    internal CompressedTimedAutomaton(TimedAutomaton automaton)
+    internal CompressedTimedAutomaton(ITimedAutomaton automaton)
     {
         int clockId = 0, stateId = 0, edgeId = 0;
         Dictionary<int, Clock> newClocks =
@@ -65,5 +67,10 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
     public bool IsFinal(State state)
     {
         return _finalStates.Contains(state);
+    }
+
+    public IEnumerable<TimedCharacter> GetTimedCharacters()
+    {
+        yield break;
     }
 }

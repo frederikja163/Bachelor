@@ -1,3 +1,5 @@
+using TimedRegex.Parsing;
+
 namespace TimedRegex.Generators;
 
 internal sealed class TimedAutomaton : ITimedAutomaton
@@ -202,6 +204,11 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     public IEnumerable<State> GetFinalStates()
     {
         return _finalStates;
+    }
+
+    public IEnumerable<TimedCharacter> GetTimedCharacters()
+    {
+        yield break;
     }
 
     public bool IsFinal(State state)

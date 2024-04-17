@@ -1,26 +1,30 @@
+using System.Linq.Expressions;
+using TimedRegex.Extensions;
+using TimedRegex.Parsing;
+
 namespace TimedRegex.Generators.Uppaal;
 
 internal sealed class Declaration
 {
     private readonly HashSet<string> _clocks;
     private readonly HashSet<string> _channels;
-    private readonly int[] _times;
-    private readonly string[] _symbols;
+    private readonly List<short> _times;
+    private readonly List<string> _symbols;
 
     internal Declaration()
     {
         _clocks = new HashSet<string>();
         _channels = new HashSet<string>();
-        _times = [];
-        _symbols = [];
+        _times = new List<short>();
+        _symbols = new List<char>();
     }
 
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<int> times, IEnumerable<string> symbols)
+    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<short> times, IEnumerable<string> symbols)
     {
         _clocks = clocks.ToHashSet();
         _channels = channels.ToHashSet();
-        _times = times.ToArray();
-        _symbols = symbols.ToArray();
+        _times = times.ToList();
+        _symbols = symbols.ToList();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels)
@@ -29,6 +33,19 @@ internal sealed class Declaration
         _channels = channels.ToHashSet();
         _times = [];
         _symbols = [];
+    }
+
+    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters)
+    {
+        foreach (TimedCharacter character in timedCharacters)
+        {
+            if ((_times.Count() > 0) && (character.Time * 1000 < _times.Last()))
+            {
+                throw new FormatException("Timed characters must be in ascending order.");
+            }
+            _times.Add((short)(character.Time * 1000)); // TODO: Change to int in a smarter way.
+            _symbols.Add(character.Symbol);
+        }
     }
     
     internal IEnumerable<string> GetClocks()
@@ -66,12 +83,13 @@ internal sealed class Declaration
         }
     }
 
-    internal string[] GetSymbols()
+
+    internal List<char> GetSymbols()
     {
         return _symbols;
     }
 
-    internal int[] GetTimes()
+    internal List<short> GetTimes()
     {
         return _times;
     }
