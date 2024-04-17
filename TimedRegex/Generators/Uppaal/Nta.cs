@@ -48,7 +48,7 @@ internal sealed class Nta
         
         Declaration.AddChannels(automaton.GetAlphabet()
             .Where(x => x != "\0")
-            .Select(s => s.ToString()));
+            .Select(s => _symbolToRenamed[s]));
         
         
         _templates.Add(new (new(), $"ta{NewTemplateId()}",
@@ -69,7 +69,8 @@ internal sealed class Nta
         if (_renamedToSymbol.ContainsKey(renamed))
         {
             // Name collided with another name.
-            CheckForRenamedCollision(symbol, "_" + symbol);
+            CheckForRenamedCollision(symbol, "_" + renamed);
+            return;
         }
             
         // No name collisions.
@@ -82,7 +83,7 @@ internal sealed class Nta
         StringBuilder sb = new();
         foreach (char c in s)
         {
-            if (char.IsLetter(c))
+            if (char.IsLetter(c) || char.IsDigit(c))
             {
                 sb.Append(c);
             }
@@ -93,7 +94,7 @@ internal sealed class Nta
         }
         string symbol = sb.ToString();
             
-        if (!char.IsLetter(symbol[0]) || symbol[0] != '_')
+        if (!char.IsLetter(symbol[0]) && symbol[0] != '_')
         {
             symbol = "_" + symbol;
         }

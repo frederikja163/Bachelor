@@ -12,10 +12,6 @@ internal sealed class TimedCharacter : IEquatable<TimedCharacter>
         {
             throw new FormatException("Too many elements in timed character, a timed character consists of only a character and a float for the time. Seperated by a comma.");
         }
-        if (strArr[0].Length != 1)
-        {
-            throw new FormatException("Length of time characters can not exceed 1 character.");
-        }
         _symbol = strArr[0];
         _time = float.Parse(strArr[1]);
     }

@@ -419,6 +419,29 @@ public sealed class UppaalGeneratorTest
 
         Assert.That(sb.ToString(), Is.EqualTo(expected));
     }
+    
+    [Test]
+    public void SymbolRenameTest()
+    {
+        TimedAutomaton ta = new TimedAutomaton();
+        State s1 = ta.AddState(newInitial: true);
+        State s2 = ta.AddState();
+
+        Edge edge1 = ta.AddEdge(s1, s2, "1-");
+        Edge edge2 = ta.AddEdge(s1, s2, "1_");
+        Edge edge3 = ta.AddEdge(s1, s2, "_1-");
+        Edge edge4 = ta.AddEdge(s1, s2, "a");
+
+        Nta nta = new Nta();
+        
+        nta.AddAutomaton(ta);
+
+        Assert.That(nta.Declaration.GetChannels().Count(), Is.EqualTo(4));
+        Assert.That(nta.Declaration.GetChannels(), Does.Contain("_1_"));
+        Assert.That(nta.Declaration.GetChannels(), Does.Contain("__1_"));
+        Assert.That(nta.Declaration.GetChannels(), Does.Contain("___1_"));
+        Assert.That(nta.Declaration.GetChannels(), Does.Contain("a"));
+    }
 
     [Test]
     public void WriteLabelTest()

@@ -21,6 +21,19 @@ public sealed class TimedWordTests
 
         Assert.That(testWord, Is.EqualTo(expected));
     }
+    
+    [Test]
+    public void MultipleCharacterSymbolsTest()
+    {
+        List<TimedCharacter> testWord = TimedWord.GetStringFromCSV($"{testPath}MultipleCharacters.csv");
+        List<TimedCharacter> expected = [
+            new TimedCharacter("abc", 1f),
+            new TimedCharacter("b234", 4f),
+            new TimedCharacter("_543", 7f),
+            new TimedCharacter("-543 43", 9f)];
+
+        Assert.That(testWord, Is.EqualTo(expected));
+    }
 
     [Test]
     public void TimedWordAutomataConstructorTest()
