@@ -10,7 +10,7 @@ internal interface ITimedAutomaton
     internal IEnumerable<Edge> GetEdges();
     internal IEnumerable<State> GetStates();
     internal IEnumerable<State> GetFinalStates();
-    internal IEnumerable<char> GetAlphabet();
+    internal IEnumerable<string> GetAlphabet();
     internal IEnumerable<TimedCharacter> GetTimedCharacters();
     internal bool IsFinal(State state);
 }

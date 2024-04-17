@@ -4,7 +4,7 @@ namespace TimedRegex.Generators;
 
 internal sealed class CompressedTimedAutomaton : ITimedAutomaton
 {
-    private readonly HashSet<char> _alphabet;
+    private readonly HashSet<string> _alphabet;
     private readonly Dictionary<int, Clock> _clocks;
     private readonly Dictionary<int, Edge> _edges;
     private readonly Dictionary<int, State> _states;
@@ -56,9 +56,9 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         return _finalStates;
     }
 
-    public IEnumerable<char> GetAlphabet()
+    public IEnumerable<string> GetAlphabet()
     {
-        foreach (char c in _alphabet)
+        foreach (string c in _alphabet)
         {
             yield return c;
         }

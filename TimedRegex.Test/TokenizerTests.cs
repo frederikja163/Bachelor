@@ -38,13 +38,13 @@ public sealed class TokenizerTests
     [Test]
     public void ParseMatchTest()
     {
-        const string str = ".1234567890asdfghjklqwertyuiop{}&*();'";
+        const string str = "1asdfghjklqwertyuiop{}&*();'";
 
         Tokenizer tokenizer = new(str);
 
         foreach (char c in str)
         {
-            Assert.That(tokenizer.Advance().Match, Is.EqualTo(c));
+            Assert.That(tokenizer.Advance().Match, Is.EqualTo(c.ToString()));
         }
     }
     
@@ -55,9 +55,12 @@ public sealed class TokenizerTests
 
         Tokenizer tokenizer = new(str);
 
+        int index = 0;
         for (int i = 0; i < str.Length; i++)
         {
-            Assert.That(tokenizer.Advance().CharacterIndex, Is.EqualTo(i));
+            Token token = tokenizer.Advance();
+            Assert.That(token.CharacterIndex, Is.EqualTo(index));
+            index += token.Match.Length;
         }
     }
 
@@ -72,7 +75,9 @@ public sealed class TokenizerTests
     public void CannotParseInvalidTokensTest(string str)
     {
         Tokenizer tokenizer = new(str);
-        Assert.That(tokenizer.Advance().Type, Is.EqualTo(TokenType.Unrecognized));
+        TimedRegexCompileException? compileException = Assert.Throws<TimedRegexCompileException>(() => tokenizer.Advance());
+        Assert.IsNotNull(compileException);
+        Assert.That(compileException!.Type, Is.EqualTo(TimedRegexErrorType.UnrecognizedToken));
     }
     
     [TestCase("A|.'*", TokenType.Match, TokenType.Union, TokenType.MatchAny, TokenType.Absorb, TokenType.Iterator)]
@@ -84,7 +89,7 @@ public sealed class TokenizerTests
             Token token = tokenizer.Peek(i);
             Assert.Multiple(() =>
             {
-                Assert.That(token.Match, Is.EqualTo(str[i]));
+                Assert.That(token.Match, Is.EqualTo(str[i].ToString()));
                 Assert.That(token.CharacterIndex, Is.EqualTo(i));
                 Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
             });
@@ -115,7 +120,7 @@ public sealed class TokenizerTests
             Token token = tokenizer.Advance();
             Assert.Multiple(() =>
             {
-                Assert.That(token.Match, Is.EqualTo(str[i]));
+                Assert.That(token.Match, Is.EqualTo(str[i].ToString()));
                 Assert.That(token.CharacterIndex, Is.EqualTo(i));
                 Assert.That(token.Type, Is.EqualTo((TokenType)tokenTypes[i]));
             });
@@ -130,13 +135,13 @@ public sealed class TokenizerTests
         Token token = tokenizer.Advance(n);
         Assert.Multiple(() =>
         {
-            Assert.That(token.Match, Is.EqualTo('a'));
+            Assert.That(token.Match, Is.EqualTo("a"));
             Assert.That(token.CharacterIndex, Is.EqualTo(0));
             Assert.That(tokenizer.Peek(), Is.Not.Null);
         });
         Assert.Multiple(() =>
         {
-            Assert.That(tokenizer.Peek().Match, Is.EqualTo(inputString[n]));
+            Assert.That(tokenizer.Peek().Match, Is.EqualTo(inputString[n].ToString()));
             Assert.That(tokenizer.Peek().CharacterIndex, Is.EqualTo(n));
         });
     }
@@ -155,19 +160,19 @@ public sealed class TokenizerTests
     [Test]
     public void SkipTest()
     {
-        Tokenizer tokenizer = new("0123456789");
+        Tokenizer tokenizer = new("abcdefgh");
         
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo('0'));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("a"));
         tokenizer.Skip();
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo('2'));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("c"));
         tokenizer.Skip(3);
-        Assert.That(tokenizer.Advance().Match, Is.EqualTo('6'));
+        Assert.That(tokenizer.Advance().Match, Is.EqualTo("g"));
     }
 
     [Test]
     public void TokenToStringTest()
     {
-        Token token = new(2, 'a', TokenType.Match);
+        Token token = new(2, "a", TokenType.Match);
         Assert.That(token.ToString(), Is.EqualTo("2.a.Match"));
     }
 
@@ -175,33 +180,33 @@ public sealed class TokenizerTests
     public void ExpectThrowsTest()
     {
         Tokenizer tokenizer = new("ab");
-        Assert.DoesNotThrow(() => tokenizer.Expect(TimedRegexErrorType.UnexpectedToken, TokenType.Match));
-        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Match));
-        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Intersection, TokenType.Match));
-        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Intersection));
-        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Expect(TimedRegexErrorType.UnexpectedToken, TokenType.ParenthesisEnd));
-        Assert.Throws<TimedRegexCompileException>(() => tokenizer.ExpectOr(TimedRegexErrorType.UnexpectedToken, TokenType.MatchAny, TokenType.Iterator));
+        Assert.DoesNotThrow(() => tokenizer.Expect(TimedRegexErrorType.UnrecognizedToken, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnrecognizedToken, TokenType.Match, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnrecognizedToken, TokenType.Intersection, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.ExpectOr(TimedRegexErrorType.UnrecognizedToken, TokenType.Match, TokenType.Intersection));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Expect(TimedRegexErrorType.UnrecognizedToken, TokenType.ParenthesisEnd));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.ExpectOr(TimedRegexErrorType.UnrecognizedToken, TokenType.MatchAny, TokenType.Iterator));
     }
     
     [Test]
     public void AcceptThrowsTest()
     {
         Tokenizer tokenizer = new("abcdefghijkl");
-        Assert.DoesNotThrow(() => tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Match));
-        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Match));
-        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Intersection, TokenType.Match));
-        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.Match, TokenType.Intersection));
-        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.ParenthesisEnd));
-        Assert.Throws<TimedRegexCompileException>(() => tokenizer.AcceptOr(TimedRegexErrorType.UnexpectedToken, TokenType.MatchAny, TokenType.Iterator));
+        Assert.DoesNotThrow(() => tokenizer.Accept(TimedRegexErrorType.UnrecognizedToken, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnrecognizedToken, TokenType.Match, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnrecognizedToken, TokenType.Intersection, TokenType.Match));
+        Assert.DoesNotThrow(() => tokenizer.AcceptOr(TimedRegexErrorType.UnrecognizedToken, TokenType.Match, TokenType.Intersection));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.Accept(TimedRegexErrorType.UnrecognizedToken, TokenType.ParenthesisEnd));
+        Assert.Throws<TimedRegexCompileException>(() => tokenizer.AcceptOr(TimedRegexErrorType.UnrecognizedToken, TokenType.MatchAny, TokenType.Iterator));
     }
 
     [Test]
     public void AcceptAdvances()
     {
         Tokenizer tokenizer = new("|+*");
-        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Union).Type, Is.EqualTo(TokenType.Union));
-        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.GuaranteedIterator).Type, Is.EqualTo(TokenType.GuaranteedIterator));
-        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.Iterator).Type, Is.EqualTo(TokenType.Iterator));
-        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnexpectedToken, TokenType.EndOfInput).Type, Is.EqualTo(TokenType.EndOfInput));
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnrecognizedToken, TokenType.Union).Type, Is.EqualTo(TokenType.Union));
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnrecognizedToken, TokenType.GuaranteedIterator).Type, Is.EqualTo(TokenType.GuaranteedIterator));
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnrecognizedToken, TokenType.Iterator).Type, Is.EqualTo(TokenType.Iterator));
+        Assert.That(tokenizer.Accept(TimedRegexErrorType.UnrecognizedToken, TokenType.EndOfInput).Type, Is.EqualTo(TokenType.EndOfInput));
     }
 }

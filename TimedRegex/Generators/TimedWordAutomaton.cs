@@ -5,7 +5,7 @@ namespace TimedRegex.Generators;
 
 internal sealed class TimedWordAutomaton : ITimedAutomaton
 {
-    private readonly HashSet<char> _alphabet;
+    private readonly HashSet<string> _alphabet;
     private readonly List<Edge> _edges;
     private readonly List<TimedCharacter> _word;
     private readonly Clock _clock;
@@ -21,14 +21,14 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
         _alphabet = new();
         _edges = new()
         {
-            new Edge(0, _returnState, _initialState, '\0', true) // Return edge.
+            new Edge(0, _returnState, _initialState, "\0", true) // Return edge.
         };
         LoopOverAllCharacters();
     }
 
     private void LoopOverAllCharacters()
     {
-        Dictionary<char, Edge> edges = new();
+        Dictionary<string, Edge> edges = new();
         int edgeCounter = 1;
         foreach (TimedCharacter character in _word)
         {
@@ -47,9 +47,9 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
 
     public State? InitialLocation => _initialState;
 
-    public IEnumerable<char> GetAlphabet()
+    public IEnumerable<string> GetAlphabet()
     {
-        foreach (char c in _alphabet)
+        foreach (string c in _alphabet)
         {
             yield return c;
         }

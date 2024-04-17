@@ -4,7 +4,7 @@ internal sealed class Transition
 {
     private readonly List<Label> _labels;
     
-    internal Transition(Edge edge)
+    internal Transition(Edge edge, Dictionary<string, string>? symbolRenames = null)
     {
         _labels = new();
         
@@ -20,12 +20,13 @@ internal sealed class Transition
             _labels.Add(Label.CreateAssignment(edge, x, y));
         }
 
-        if (edge.Symbol != '\0')
+        if (edge.Symbol != "\0")
         {
-            _labels.Add(Label.CreateSynchronization(edge, x, y));
+            string symbol = symbolRenames?.ContainsKey(edge.Symbol) ?? false ? symbolRenames[edge.Symbol] : edge.Symbol;
+            _labels.Add(edge.IsOutput ? Label.CreateOutputSynchronization(symbol, x, y) : Label.CreateInputSynchronization(symbol, x, y));
         }
 
-        if (edge.IsOutput && edge.Symbol != '\0')
+        if (edge.IsOutput && edge.Symbol != "\0")
         {
             _labels.Add(Label.CreateOutputGuard(edge, x, y));
         }
@@ -37,7 +38,7 @@ internal sealed class Transition
         Source = $"l{edge.From.Id}";
         Target = $"l{edge.To.Id}";
     }
-    
+
     internal Transition(string source, string target, IEnumerable<Label> labels)
     {
         Source = source;

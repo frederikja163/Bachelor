@@ -14,6 +14,9 @@ public sealed class ParserTests
     [TestCase("a")]
     [TestCase("b")]
     [TestCase("z")]
+    [TestCase("<test>")]
+    [TestCase("<123>")]
+    [TestCase("<_hello world->")]
     public void ParseMatchValidTest(string inputString)
     {
         Tokenizer tokenizer = new(inputString);
@@ -22,7 +25,7 @@ public sealed class ParserTests
         Match match = (Match)astNode;
         Assert.Multiple(() =>
         {
-            Assert.That(match.Token.Match, Is.EqualTo(inputString[0]));
+            Assert.That(match.Token.Match, Is.EqualTo(inputString.Trim('<', '>').ToString()));
             Assert.That(match.Token.CharacterIndex, Is.EqualTo(0));
             Assert.That(match, Is.TypeOf<Match>());
         });
@@ -46,7 +49,7 @@ public sealed class ParserTests
         Assert.Multiple(() =>
         {
             Assert.That(node.Child, Is.TypeOf<Match>());
-            Assert.That(node.Token.Match, Is.EqualTo('+'));
+            Assert.That(node.Token.Match, Is.EqualTo("+"));
             Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
         });
     }
@@ -61,7 +64,7 @@ public sealed class ParserTests
         Assert.Multiple(() =>
         {
             Assert.That(node.Child, Is.TypeOf<Match>());
-            Assert.That(node.Token.Match, Is.EqualTo('*'));
+            Assert.That(node.Token.Match, Is.EqualTo("*"));
             Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
         });
     }
@@ -76,7 +79,7 @@ public sealed class ParserTests
         Assert.Multiple(() =>
         {
             Assert.That(node.Child, Is.TypeOf<Match>());
-            Assert.That(node.Token.Match, Is.EqualTo('*'));
+            Assert.That(node.Token.Match, Is.EqualTo("*"));
             Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
         });
     }
@@ -91,7 +94,7 @@ public sealed class ParserTests
         Assert.Multiple(() =>
         {
             Assert.That(node.Child, Is.TypeOf<Match>());
-            Assert.That(node.Token.Match, Is.EqualTo('+'));
+            Assert.That(node.Token.Match, Is.EqualTo("+"));
             Assert.That(node.Token.CharacterIndex, Is.EqualTo(1));
         });
     }
@@ -110,8 +113,8 @@ public sealed class ParserTests
         });
         Assert.Multiple(() =>
         {
-            Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
-            Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+            Assert.That(node.LeftNode.Token.Match, Is.EqualTo("a"));
+            Assert.That(node.RightNode.Token.Match, Is.EqualTo("b"));
             Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
         });
     }
@@ -130,8 +133,8 @@ public sealed class ParserTests
         });
         Assert.Multiple(() =>
         {
-            Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
-            Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+            Assert.That(node.LeftNode.Token.Match, Is.EqualTo("a"));
+            Assert.That(node.RightNode.Token.Match, Is.EqualTo("b"));
             Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(1));
         });
     }
@@ -159,8 +162,8 @@ public sealed class ParserTests
         });
         Assert.Multiple(() =>
         {
-            Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
-            Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+            Assert.That(node.LeftNode.Token.Match, Is.EqualTo("a"));
+            Assert.That(node.RightNode.Token.Match, Is.EqualTo("b"));
             Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
         });
     }
@@ -179,8 +182,8 @@ public sealed class ParserTests
         });
         Assert.Multiple(() =>
         {
-            Assert.That(node.LeftNode.Token.Match, Is.EqualTo('a'));
-            Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+            Assert.That(node.LeftNode.Token.Match, Is.EqualTo("a"));
+            Assert.That(node.RightNode.Token.Match, Is.EqualTo("b"));
             Assert.That(node.RightNode.Token.CharacterIndex, Is.EqualTo(2));
         });
     }
@@ -214,10 +217,10 @@ public sealed class ParserTests
         Assert.That(node.Child, Is.InstanceOf<Match>());
         Assert.Multiple(() =>
         {
-            Assert.That(node.Child.Token.Match, Is.EqualTo('a'));
-            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 't' && s.NewSymbol.Match == 'T')));
-            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'y' && s.NewSymbol.Match == 'Y')));
-            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 'u' && s.NewSymbol.Match == 'U')));
+            Assert.That(node.Child.Token.Match, Is.EqualTo("a"));
+            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == "t" && s.NewSymbol.Match == "T")));
+            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == "y" && s.NewSymbol.Match == "Y")));
+            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == "u" && s.NewSymbol.Match == "U")));
         });
     }
 
@@ -244,7 +247,7 @@ public sealed class ParserTests
         Rename node = (Rename)astNode;
         Assert.Multiple(() =>
         {
-            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == 't' && s.NewSymbol.Match == 'y')));
+            Assert.That(node.GetReplaceList().Any(s => (s.OldSymbol.Match == "t" && s.NewSymbol.Match == "y")));
             Assert.That(node.GetReplaceList().Count() == 1);
         });
     }
@@ -359,22 +362,22 @@ public sealed class ParserTests
 
         Assert.That(node.LeftNode, Is.TypeOf<Match>());
         Match leftNode = (Match)node.LeftNode;
-        Assert.That(leftNode.Token.Match, Is.EqualTo('a'));
+        Assert.That(leftNode.Token.Match, Is.EqualTo("a"));
 
         Assert.That(node.RightNode, Is.TypeOf<Concatenation>());
         Concatenation rightNode = (Concatenation)node.RightNode;
         Assert.That(rightNode.LeftNode, Is.TypeOf<Match>());
-        Assert.That(rightNode.LeftNode.Token.Match, Is.EqualTo('b'));
+        Assert.That(rightNode.LeftNode.Token.Match, Is.EqualTo("b"));
 
         Assert.That(rightNode.RightNode, Is.TypeOf<Concatenation>());
         Concatenation rightRightNode = (Concatenation)rightNode.RightNode;
         Assert.That(rightRightNode.LeftNode, Is.TypeOf<Match>());
-        Assert.That(rightRightNode.LeftNode.Token.Match, Is.EqualTo('c'));
+        Assert.That(rightRightNode.LeftNode.Token.Match, Is.EqualTo("c"));
 
         Assert.That(rightRightNode.RightNode, Is.TypeOf<Concatenation>());
         Concatenation finalConcatNode = (Concatenation)rightRightNode.RightNode;
-        Assert.That(finalConcatNode.LeftNode.Token.Match, Is.EqualTo('d'));
-        Assert.That(finalConcatNode.RightNode.Token.Match, Is.EqualTo('e'));
+        Assert.That(finalConcatNode.LeftNode.Token.Match, Is.EqualTo("d"));
+        Assert.That(finalConcatNode.RightNode.Token.Match, Is.EqualTo("e"));
     }
 
     [Test]
@@ -387,7 +390,7 @@ public sealed class ParserTests
         Assert.Multiple(() =>
         {
             Assert.That(node.LeftNode, Is.TypeOf<AbsorbedGuaranteedIterator>());
-            Assert.That(node.RightNode.Token.Match, Is.EqualTo('b'));
+            Assert.That(node.RightNode.Token.Match, Is.EqualTo("b"));
         });
     }
 
@@ -420,21 +423,21 @@ public sealed class ParserTests
     }
 
     [TestCase("a}", TimedRegexErrorType.ExpectedEndOfInput)]
-    [TestCase("/", TimedRegexErrorType.ExpectedMatch)]
+    [TestCase("/", TimedRegexErrorType.UnrecognizedToken)]
     [TestCase("a|", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("&b", TimedRegexErrorType.ExpectedMatch)]
-    [TestCase("a]", TimedRegexErrorType.UnexpectedToken)]
+    [TestCase("a]", TimedRegexErrorType.NumberImproperFormat)]
     [TestCase("a)", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a|b+)", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a(", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("a;", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a5", TimedRegexErrorType.ExpectedEndOfInput)]
-    [TestCase("a<", TimedRegexErrorType.ExpectedEndOfInput)]
+    [TestCase("a<", TimedRegexErrorType.UnrecognizedToken)]
     [TestCase("a||b", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("a**", TimedRegexErrorType.ExpectedEndOfInput)]
     [TestCase("a*''", TimedRegexErrorType.ExpectedMatch)]
     [TestCase("a'", TimedRegexErrorType.ExpectedMatch)]
-    [TestCase("a[", TimedRegexErrorType.UnexpectedToken)]
+    [TestCase("a[", TimedRegexErrorType.NumberImproperFormat)]
     [TestCase("a[;", TimedRegexErrorType.NumberImproperFormat)]
     [TestCase("a{", TimedRegexErrorType.RenameImproperFormat)]
     [TestCase("a*[1;4]", TimedRegexErrorType.ExpectedEndOfInput)]
@@ -447,6 +450,9 @@ public sealed class ParserTests
     }
     
     [TestCase("a[1;5]*")]
+    [TestCase("a<abc>")]
+    [TestCase("<123>")]
+    [TestCase("<_ ->")]
     [TestCase("a[1;5]*'")]
     [TestCase("a[1;5]+")]
     [TestCase("a[1;5]+'")]

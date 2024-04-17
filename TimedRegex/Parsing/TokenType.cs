@@ -20,4 +20,5 @@ internal enum TokenType
     RenameStart,
     RenameEnd,
     RenameSeparator,
+    Number
 }

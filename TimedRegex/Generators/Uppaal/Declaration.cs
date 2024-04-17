@@ -9,17 +9,17 @@ internal sealed class Declaration
     private readonly HashSet<string> _clocks;
     private readonly HashSet<string> _channels;
     private readonly List<short> _times;
-    private readonly List<char> _symbols;
+    private readonly List<string> _symbols;
 
     internal Declaration()
     {
         _clocks = new HashSet<string>();
         _channels = new HashSet<string>();
         _times = new List<short>();
-        _symbols = new List<char>();
+        _symbols = new List<string>();
     }
 
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<short> times, IEnumerable<char> symbols)
+    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<short> times, IEnumerable<string> symbols)
     {
         _clocks = clocks.ToHashSet();
         _channels = channels.ToHashSet();
@@ -83,13 +83,20 @@ internal sealed class Declaration
         }
     }
 
-    internal List<char> GetSymbols()
+
+    internal IEnumerable<string> GetSymbols()
     {
-        return _symbols;
+        foreach (string symbol in _symbols)
+        {
+            yield return symbol;
+        }
     }
 
-    internal List<short> GetTimes()
+    internal IEnumerable<short> GetTimes()
     {
-        return _times;
+        foreach (short time in _times)
+        {
+            yield return time;
+        }
     }
 }

@@ -24,7 +24,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         State initial = ta.AddState(false, true);
         State final = ta.AddState(true);
         Clock clock = ta.AddClock();
-        Edge edge = ta.AddEdge(initial, final, '\0');
+        Edge edge = ta.AddEdge(initial, final, "\0");
         edge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
         _stack.Push(ta);
     }
@@ -158,9 +158,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         State final = ta.AddState(true);
         ta.InitialLocation = GetNewEdge(left.InitialLocation!, right.InitialLocation!);
 
-        Dictionary<char, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
-        Dictionary<char, List<Edge>> rSymEdges = right.GetEdges().ToListDictionary(e => e.Symbol, e => e);
-        foreach (char c in ta.GetAlphabet().Where(c => c != '\0'))
+        Dictionary<string, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
+        Dictionary<string, List<Edge>> rSymEdges = right.GetEdges().ToListDictionary(e => e.Symbol, e => e);
+        foreach (string c in ta.GetAlphabet().Where(c => c != "\0"))
         {
             List<Edge> lEdges = lSymEdges.TryGetValue(c, out List<Edge>? le) ? le : new List<Edge>();
             List<Edge> rEdges = rSymEdges.TryGetValue(c, out List<Edge>? re) ? re : new List<Edge>();
@@ -188,9 +188,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         _stack.Push(ta);
 
 
-        void AddEmptyEdges(Dictionary<char, List<Edge>> primary, List<Edge> sEdges, bool isLeftPrimary)
+        void AddEmptyEdges(Dictionary<string, List<Edge>> primary, List<Edge> sEdges, bool isLeftPrimary)
         {
-            if (!primary.TryGetValue('\0', out List<Edge>? pEdges))
+            if (!primary.TryGetValue("\0", out List<Edge>? pEdges))
             {
                 return;
             }
@@ -203,7 +203,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                 {
                     State from = GetNewEdge(lEdge.From, rEdge.From);
                     State to = GetNewEdge(lEdge.To, rEdge.To);
-                    Edge edge = ta.AddEdge(from, to, '\0');
+                    Edge edge = ta.AddEdge(from, to, "\0");
                     edge.AddClockRanges(lEdge.GetClockRanges());
                     edge.AddClockResets(lEdge.GetClockResets());
                 }
@@ -266,17 +266,8 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     {
         TimedAutomaton ta = _stack.Pop();
 
-        Dictionary<char, char> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol.Match, r => r.NewSymbol.Match);
+        Dictionary<string, string> replaceList = rename.GetReplaceList().ToDictionary(r => r.OldSymbol.Match, r => r.NewSymbol.Match);
         ta.Rename(replaceList);
-
-        foreach (Edge edge in ta.GetEdges())
-        {
-            char? symbol = edge.Symbol;
-            if (replaceList.TryGetValue(symbol.Value, out char newSymbol))
-            {
-                edge.Symbol = newSymbol;
-            }
-        }
 
         _stack.Push(ta);
     }
@@ -305,7 +296,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             {
                 State oldInitial = ta.InitialLocation!;
                 State newInitial = ta.AddState(ta.IsFinal(oldInitial), true);
-                Edge edge = ta.AddEdge(newInitial, oldInitial, '\0');
+                Edge edge = ta.AddEdge(newInitial, oldInitial, "\0");
                 Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
                 edge.AddClockRange(clock, new Range(0, 0, true, true));
             }
