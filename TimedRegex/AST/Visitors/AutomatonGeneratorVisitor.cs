@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using TimedRegex.Extensions;
 using TimedRegex.Generators;
 using Range = TimedRegex.Generators.Range;
@@ -26,6 +27,18 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         Clock clock = ta.AddClock();
         Edge edge = ta.AddEdge(initial, final, "\0");
         edge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
+        _stack.Push(ta);
+    }
+
+    public void Visit(MatchAny matchAny)
+    {
+        TimedAutomaton ta = new();
+
+        State initial = ta.AddState(newInitial: true);
+        State final = ta.AddState(true);
+
+        ta.AddEdge(initial, final, "Any");
+
         _stack.Push(ta);
     }
 
