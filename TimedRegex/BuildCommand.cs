@@ -217,14 +217,15 @@ internal sealed class BuildCommand
         }
         
         // make structure timedAutomaton -> graphAutomaton -> compressedAutomaton
-        // Log.WriteLineIf(Verbose, "Adding positions.");
-        // Log.StartTimeIf(Verbose, out sw);
-        // ITimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
-        // Log.StopTime(sw, "Added positions in {0}");
+        Log.WriteLineIf(Verbose, "Adding positions.");
+        Log.StartTimeIf(Verbose, out sw);
+        GraphTimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
+        graphAutomaton.AssignPositions();
+        Log.StopTime(sw, "Added positions in {0}");
         
         Log.WriteLineIf(Verbose, "Compressing ids.");
         Log.StartTimeIf(Verbose, out sw);
-        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(timedAutomaton);
+        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(graphAutomaton);
         Log.StopTime(sw, "Compressed ids in {0}");
         return compressedAutomaton;
     }

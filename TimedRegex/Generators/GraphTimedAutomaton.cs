@@ -1,68 +1,160 @@
 using TimedRegex.Parsing;
+using TaState = TimedRegex.Generators.State;
+using Layer = System.Collections.Generic.List<TimedRegex.Generators.GState>;
 
 namespace TimedRegex.Generators;
+
+internal sealed class GState
+{
+    private readonly HashSet<GState> _from;
+    private readonly HashSet<GState> _to;
+    private int _layer;
+
+    public GState(int layer)
+    {
+        Index = -1;
+        _layer = layer;
+        _from = new();
+        _to = new();
+    }
+    
+    public int Index { get; set; }
+
+    public int Layer
+    {
+        get => _layer;
+        set
+        {
+            _layer = value;
+
+            while (UpdateFromLayers())
+            {
+            }
+
+            while (UpdateToLayers())
+            {
+            }
+
+            bool UpdateFromLayers()
+            {
+                GState? fromState = _from.FirstOrDefault(gs => gs._layer - _layer > 1);
+                if (fromState is null)
+                {
+                    return false;
+                }
+
+                fromState._to.Remove(this);
+                _from.Remove(fromState);
+
+                GState newState = new GState(fromState._layer + 1);
+                fromState.AddTo(newState);
+                newState.AddTo(this);
+                
+                return true;
+            }
+
+            bool UpdateToLayers()
+            {
+                GState? toState = _to.FirstOrDefault(gs => _layer - gs._layer > 1);
+                if (toState is null)
+                {
+                    return false;
+                }
+
+                toState._from.Remove(this);
+                _to.Remove(toState);
+
+                GState newState = new GState(toState._layer - 1);
+                toState.AddFrom(newState);
+                newState.AddFrom(this);
+
+                return true;
+            }
+        }
+    }
+
+    public void AddFrom(GState state)
+    {
+        _from.Add(state);
+        state._to.Add(state);
+    }
+
+    public void AddTo(GState state)
+    {
+        _to.Add(state);
+        state._from.Add(state);
+    }
+}
 
 internal sealed class GraphTimedAutomaton : ITimedAutomaton
 {
     private readonly HashSet<string> _alphabet;
     private readonly List<Clock> _clocks;
     private readonly List<Edge> _edges;
-    private readonly List<Edge> _selfEdges;
-    private readonly List<State> _states;
-    private readonly HashSet<State> _finalStates;
-    private readonly Dictionary<State, int> _layers;
+    private readonly List<TaState> _states;
+    private readonly HashSet<TaState> _finalStates;
+    private readonly List<Layer> _layers;
+    private readonly Dictionary<GState, TaState> _gStateToTaState = new Dictionary<GState, TaState>();
+    private readonly Dictionary<TaState, GState> _taStateToGState = new Dictionary<TaState, GState>();
 
-    internal GraphTimedAutomaton(TimedAutomaton automaton)
+    internal GraphTimedAutomaton(TimedAutomaton ta)
     {
-        InitialLocation = automaton.InitialLocation;
-        _alphabet = automaton.GetAlphabet().ToHashSet();
-        _clocks = automaton.GetClocks().ToList();
-        _edges = automaton.GetEdges().Where(e => !IsSelfEdge(e)).ToList();
-        _selfEdges = automaton.GetEdges().Where(IsSelfEdge).ToList();
-        _states = automaton.GetStates().ToList();
-        _finalStates = automaton.GetFinalStates().ToHashSet();
-        _layers = new Dictionary<State, int>();
-
-        ReverseEdges();
-        AssignLayers(automaton, automaton.InitialLocation!, 0);
-        OrderLocations();
-        AssignPositions();
-        ReverseEdges();
+        InitialLocation = ta.InitialLocation;
+        _alphabet = ta.GetAlphabet().ToHashSet();
+        _clocks = ta.GetClocks().ToList();
+        _edges = ta.GetEdges().ToList();
+        _states = ta.GetStates().ToList();
+        _finalStates = ta.GetFinalStates().ToHashSet();
+        
+        _layers = new List<Layer>();
+        AssignLayers(ta, ta.InitialLocation!, 0);
     }
 
-    internal void ReverseEdges()
+    // internal void ReverseEdges()
+    // {
+    //     for (int i = 0; i < _edges.Count; i++)
+    //     {
+    //         if (!_edges[i].IsReversible) continue;
+    //
+    //         Edge edge = _edges[i];
+    //         Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
+    //         reverseEdge.AddClockResets(edge.GetClockResets());
+    //         reverseEdge.AddClockRanges(edge.GetClockRanges());
+    //         _edges[i] = reverseEdge;
+    //     }
+    // }
+    
+    private void AssignLayers(TimedAutomaton ta, TaState taState, int layerIndex)
     {
-        for (int i = 0; i < _edges.Count; i++)
+        GState gState = GetOrCreateGState(taState, layerIndex);
+        gState.Layer = layerIndex;
+    
+        foreach (Edge edge in ta.GetEdgesFrom(taState).Where(e => !e.IsReversible))
         {
-            if (!_edges[i].IsReversible) continue;
-
-            Edge edge = _edges[i];
-            Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
-            reverseEdge.AddClockResets(edge.GetClockResets());
-            reverseEdge.AddClockRanges(edge.GetClockRanges());
-            _edges[i] = reverseEdge;
+            GState toState = GetOrCreateGState(edge.To, layerIndex + 1);
+            toState.AddFrom(gState);
+            gState.AddTo(toState);
+            AssignLayers(ta, edge.To, layerIndex + 1);
         }
-    }
 
-    private void AssignLayers(TimedAutomaton automaton, State state, int layer)
-    {
-        _layers.TryAdd(state, layer);
-
-        foreach (Edge edge in automaton.GetEdgesFrom(state).Where(e => !IsSelfEdge(e)))
+        foreach (Edge edge in ta.GetEdgesTo(taState).Where(e => e.IsReversible && !e.To.Equals(taState)))
         {
-            if (!_layers.TryGetValue(edge.To, out int toLayer))
+            GState toState = GetOrCreateGState(edge.From, layerIndex + 1);
+            toState.AddFrom(gState);
+            gState.AddTo(toState);
+            AssignLayers(ta, edge.From, layerIndex + 1);
+        }
+
+        GState GetOrCreateGState(TaState state, int layer)
+        {
+            if (!_taStateToGState.TryGetValue(state, out GState? gs))
             {
-                AssignLayers(automaton, edge.To, layer + 1);
+                gs = new GState(layer);
+                _gStateToTaState[gs] = state;
+                _taStateToGState[state] = gs;
             }
-            else
-            {
-                // edges should not go between two states in the same layer or backwards, so update layer if this is the case 
-                if (toLayer <= layer)
-                {
-                    _layers[edge.To] = layer + 1;
-                    AssignLayers(automaton, edge.To, layer + 1);
-                }
-            }
+
+            return gs;
         }
     }
 
@@ -72,14 +164,13 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     internal void AssignPositions()
     {
+        foreach ((GState gState, TaState taState) in _gStateToTaState)
+        {
+            taState.X = gState.Layer * 100;
+        }
     }
 
-    private static bool IsSelfEdge(Edge edge)
-    {
-        return edge.From.Equals(edge.To);
-    }
-
-    public State? InitialLocation { get; }
+    public TaState? InitialLocation { get; }
 
     public IEnumerable<Clock> GetClocks()
     {
@@ -91,13 +182,13 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     public IEnumerable<Edge> GetEdges()
     {
-        foreach (var edge in _edges.Concat(_selfEdges))
+        foreach (var edge in _edges)
         {
             yield return edge;
         }
     }
 
-    public IEnumerable<State> GetStates()
+    public IEnumerable<TaState> GetStates()
     {
         foreach (var state in _states)
         {
@@ -105,7 +196,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         }
     }
 
-    public IEnumerable<State> GetFinalStates()
+    public IEnumerable<TaState> GetFinalStates()
     {
         foreach (var finalState in _finalStates)
         {
@@ -121,15 +212,15 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         }
     }
 
-    public bool IsFinal(State state)
+    public bool IsFinal(TaState state)
     {
         return _finalStates.Contains(state);
     }
 
-    public Dictionary<State, int> GetLayers()
-    {
-        return _layers;
-    }
+    // public Dictionary<TaState, int> GetLayers()
+    // {
+    //     return _layers;
+    // }
 
     public IEnumerable<TimedCharacter> GetTimedCharacters()
     {
