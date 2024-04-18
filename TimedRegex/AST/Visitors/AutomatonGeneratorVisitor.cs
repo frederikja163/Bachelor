@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using TimedRegex.Extensions;
 using TimedRegex.Generators;
 using Range = TimedRegex.Generators.Range;
