@@ -10,6 +10,8 @@
 *.blg
 *.run.xml
 *.synctex(busy)
+figures.pdf
+main.pdf
 
 .vscode/
 .idea/
