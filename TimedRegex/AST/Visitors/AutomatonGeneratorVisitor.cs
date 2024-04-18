@@ -37,7 +37,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         State initial = ta.AddState(newInitial: true);
         State final = ta.AddState(true);
 
-        ta.AddEdge(initial, final, "Any");
+        ta.AddEdge(initial, final, matchAny.Token.Match);
 
         _stack.Push(ta);
     }
