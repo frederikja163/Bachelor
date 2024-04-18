@@ -2,6 +2,7 @@ using System.Diagnostics;
 using CommandLine;
 using TimedRegex.AST;
 using TimedRegex.AST.Visitors;
+using TimedRegex.Extensions;
 using TimedRegex.Generators;
 using TimedRegex.Generators.Tikz;
 using TimedRegex.Generators.Uppaal;
@@ -50,6 +51,9 @@ internal sealed class BuildCommand
     [Option('c', "clock", Default = false, 
         HelpText = $"If set, all clocks will stay even if they are not used.")]
     public bool ClockPruning { get; set; } = false;
+    [Option('w', "word", 
+        HelpText = $"One or more timed words to run the automata over.")]
+    public IEnumerable<string>? Words { get; set; }
     
     internal int Run()
     {
@@ -77,7 +81,10 @@ internal sealed class BuildCommand
 
         IGenerator generator = Format switch
         {
-            OutputFormat.Uppaal => new UppaalGenerator(),
+            OutputFormat.Uppaal => new UppaalGenerator()
+            {
+                IsQuiet = Quiet,
+            },
             OutputFormat.TikzDocument => new TikzGenerator(true),
             OutputFormat.TikzFigure => new TikzGenerator(false),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))
@@ -89,10 +96,22 @@ internal sealed class BuildCommand
             generator.AddAutomaton(ta);
         }
         
+        Log.StartTimeIf(Verbose, out Stopwatch? sw);
+        Log.WriteLineIf(Verbose,"Parsing words.");
+        if (Words is not null)
+        {
+            foreach (string word in Words)
+            {
+                List<TimedCharacter> characters = TimedWord.GetStringFromCSV(word);
+                generator.AddAutomaton(new TimedWordAutomaton(characters));
+            }
+        }
+        Log.StopTime(sw, "Words parsed in {0}");
+        
         Log.WriteLineIf(Verbose, $"Outputting in {Format} format.");
         
         Log.WriteLineIf(Verbose, $"Outputting automaton.");
-        Log.StartTimeIf(Verbose, out Stopwatch? sw);
+        Log.StartTimeIf(Verbose, out sw);
         
         if (Output is null && NoOpen)
         {

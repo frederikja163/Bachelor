@@ -35,7 +35,8 @@ internal sealed class Declaration
         _symbols = [];
     }
 
-    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters)
+    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters,
+        Dictionary<string, string> symbolToRenamed)
     {
         foreach (TimedCharacter character in timedCharacters)
         {
@@ -44,7 +45,7 @@ internal sealed class Declaration
                 throw new FormatException("Timed characters must be in ascending order.");
             }
             _times.Add((short)(character.Time * 1000)); // TODO: Change to int in a smarter way.
-            _symbols.Add(character.Symbol);
+            _symbols.Add(symbolToRenamed[character.Symbol]);
         }
     }
     

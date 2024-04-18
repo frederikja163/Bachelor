@@ -4,7 +4,14 @@ namespace TimedRegex.Generators.Uppaal;
 
 internal sealed class UppaalGenerator : IGenerator
 {
-    private readonly Nta _nta = new Nta();
+    private readonly Nta _nta;
+    
+    public bool IsQuiet { get; init; }
+
+    public UppaalGenerator()
+    {
+        _nta = new Nta(IsQuiet);
+    }
     
     internal static XmlWriterSettings XmlSettings { get; } = new()
     {
