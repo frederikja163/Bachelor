@@ -102,8 +102,8 @@ internal sealed class BuildCommand
         {
             foreach (string word in Words)
             {
-                var t = TimedWord.GetStringFromCSV(word);
-                generator.AddAutomaton(new TimedWordAutomaton(t));
+                List<TimedCharacter> characters = TimedWord.GetStringFromCSV(word);
+                generator.AddAutomaton(new TimedWordAutomaton(characters));
             }
         }
         Log.StopTime(sw, "Words parsed in {0}");
