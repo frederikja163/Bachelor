@@ -21,7 +21,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
         _alphabet = new();
         _edges = new()
         {
-            new Edge(0, _returnState, _initialState, ".", true) // Return edge.
+            new Edge(0, _returnState, _initialState, ".", true, true) // Return edge.
         };
         LoopOverAllCharacters();
     }
@@ -30,6 +30,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     {
         Dictionary<string, Edge> edges = new();
         int edgeCounter = 1;
+        _alphabet.Add("."); // Add MatchAny character.
         foreach (TimedCharacter character in _word)
         {
             if (_alphabet.Contains(character.Symbol))
