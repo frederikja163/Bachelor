@@ -23,6 +23,11 @@ public sealed class AutomatonGeneratorVisitorTest
     {
         return new Match(Token(TokenType.Match, c));
     }
+
+    internal static MatchAny MatchAny()
+    {
+        return new MatchAny(Token(TokenType.MatchAny, "."));
+    }
     
     internal static Interval Interval(string c, int start, int end)
     {
@@ -43,6 +48,23 @@ public sealed class AutomatonGeneratorVisitorTest
 
             Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo("a"));
             Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new[] { "a" }));
+        });
+    }
+
+    [Test]
+    public void GenerateMatchAnyTaTest()
+    {
+        AutomatonGeneratorVisitor visitor = new();
+        MatchAny().Accept(visitor);
+        ITimedAutomaton ta = visitor.GetAutomaton();
+        Assert.Multiple(() =>
+        {
+            Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
+            Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
+            Assert.That(ta.GetClocks().Count(), Is.EqualTo(0));
+
+            Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo("."));
+            Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new[] { "." }));
         });
     }
 
