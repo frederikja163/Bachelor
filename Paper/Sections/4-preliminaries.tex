@@ -8,3 +8,25 @@ theory of timed automata: https://www.sciencedirect.com/science/article/pii/0304
 -Outline automata
 -Explain timed aspects and Kleene Theorem
 -Introduce THE paper
+
+
+The research in this paper is based on the research of Asarin, Caspi, and Maler \cite{asarin1998timed} on timed regular expressions, and their equivalence to timed automata.
+An automata can be defined as a set of states, and a set of transitions between those states. This can be visualized as a directed graph of nodes with edges connecting them.
+A timed automata is a type of automata that can analyse events happening one after the other, after or within, a specified time and can be formally defined as a quintouple:
+
+\input{Documents/Definitions/Automaton.tex}\\
+
+Clocks are variables that track time. All clocks count up simultaniously, but may be individually reset when a specific transition is taken.
+
+Transition relations are the transitions between states, and may be formally described with the following tuple:
+\input{Documents/Definitions/Transition.tex}\\
+
+The alphabet is the set of symbols that are accepted by the automata. The symbols name the events that are to be analysed.
+
+The initial state is the unique state from which the simulation starts, and is entered at time zero.
+
+The accepting states are a set of states that the simulation must be able to reach for a word to be accepted.\\
+
+The words describe sets of events that happen one after the other. A timed automata is able to analyse timed words, where each event has an associated time, to determined whether the word is accepted by the automata.
+
+
