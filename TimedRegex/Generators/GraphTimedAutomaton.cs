@@ -25,28 +25,7 @@ internal sealed class GState
     {
         get => _index;
 
-        set
-        {
-            _index = value;
-            // SetIndexRec(value);
-            //
-            // void SetIndexRec(float index)
-            // {
-            //     if (_layers[_layer].TryGetValue(index, out GState? gState) && gState != this)
-            //     {
-            //         SetIndexRec(index + 0.5f);
-            //     }
-            //     else
-            //     {
-            //         if (_index != -1)
-            //         {
-            //             _layers[_layer].Remove(_index);
-            //         }
-            //         _index = index;
-            //         _layers[_layer].Add(_index, this);
-            //     }
-            // }
-        }
+        set => _index = value;
     }
 
     public int FromCount => _from.Count;
@@ -75,7 +54,7 @@ internal sealed class GState
         {
             while (value >= _layers.Count)
             {
-                _layers.Add(new ());
+                _layers.Add(new());
             }
 
             if (_index != -1)
@@ -153,8 +132,8 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     private readonly List<TaState> _states;
     private readonly HashSet<TaState> _finalStates;
     private readonly List<Layer> _layers;
-    private readonly Dictionary<GState, TaState> _gStateToTaState = new Dictionary<GState, TaState>();
-    private readonly Dictionary<TaState, GState> _taStateToGState = new Dictionary<TaState, GState>();
+    private readonly Dictionary<GState, TaState> _gStateToTaState = new();
+    private readonly Dictionary<TaState, GState> _taStateToGState = new();
 
     internal GraphTimedAutomaton(TimedAutomaton ta)
     {
@@ -168,9 +147,9 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         _layers = new List<Layer>();
         AssignLayersRec(ta, ta.InitialLocation!, 0);
     }
-    
-        
-    void AssignLayersRec(TimedAutomaton ta, TaState taState, int layerIndex)
+
+
+    private void AssignLayersRec(TimedAutomaton ta, TaState taState, int layerIndex)
     {
         GState gState = GetOrCreateGState(taState, layerIndex);
         gState.Layer = layerIndex;
@@ -240,7 +219,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         foreach ((GState gState, TaState taState) in _gStateToTaState)
         {
             taState.X = gState.Layer * 250;
-            taState.Y = (int)(gState.Index * 250);
+            taState.Y = gState.Index * 250;
         }
     }
 
@@ -290,11 +269,6 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     {
         return _finalStates.Contains(state);
     }
-
-    // public Dictionary<TaState, int> GetLayers()
-    // {
-    //     return _layers;
-    // }
 
     public IEnumerable<TimedCharacter> GetTimedCharacters()
     {
