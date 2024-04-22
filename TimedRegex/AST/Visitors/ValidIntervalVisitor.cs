@@ -42,6 +42,10 @@ internal sealed class ValidIntervalVisitor : IAstVisitor
     {
     }
 
+    public void Visit(MatchAny matchAny)
+    {
+    }
+
     public void Visit(Rename rename)
     {
     }

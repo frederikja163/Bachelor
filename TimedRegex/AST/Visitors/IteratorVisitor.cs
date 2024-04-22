@@ -66,6 +66,11 @@ internal sealed class IteratorVisitor : IAstVisitor
         _stack.Push(new Match(match.Token));
     }
 
+    public void Visit(MatchAny matchAny)
+    {
+        _stack.Push(new MatchAny(matchAny.Token));
+    }
+
     public void Visit(Rename rename)
     {
         _stack.Push(new Rename(_stack.Pop(), rename.Token, rename.GetReplaceList()));

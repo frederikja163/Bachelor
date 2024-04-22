@@ -21,6 +21,8 @@ public sealed class TokenizerTests
     [TestCase("{", TokenType.RenameStart)]
     [TestCase("}", TokenType.RenameEnd)]
     [TestCase(",", TokenType.RenameSeparator)]
+    [TestCase("<a>", TokenType.Match)]
+    [TestCase(".", TokenType.MatchAny)]
     public void ParseTokenTypeTest(string str, int type)
     {
         Tokenizer tokenizer = new(str);

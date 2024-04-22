@@ -29,6 +29,18 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         _stack.Push(ta);
     }
 
+    public void Visit(MatchAny matchAny)
+    {
+        TimedAutomaton ta = new();
+
+        State initial = ta.AddState(newInitial: true);
+        State final = ta.AddState(true);
+
+        ta.AddEdge(initial, final, matchAny.Token.Match);
+
+        _stack.Push(ta);
+    }
+
     public void Visit(AbsorbedIterator absorbedIterator){
         throw new UnreachableException("Iterator is turned off, but was still used.");
     }

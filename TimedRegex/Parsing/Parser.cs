@@ -90,7 +90,7 @@ namespace TimedRegex.Parsing
 
         private static IAstNode ParseInterval(Tokenizer tokenizer)
         {
-            IAstNode child = ParseMatch(tokenizer);
+            IAstNode child = ParseMatchAny(tokenizer);
             if ((tokenizer.Peek().Type != TokenType.IntervalOpen && tokenizer.Peek().Type != TokenType.IntervalClose))
             {
                 return child;
@@ -103,6 +103,15 @@ namespace TimedRegex.Parsing
             bool endInclusive = tokenizer.AcceptOr(TimedRegexErrorType.IntervalImproperFormat, TokenType.IntervalOpen, TokenType.IntervalClose)
                 .Type == TokenType.IntervalClose;
             return new Interval(child, token, new Range(startInterval, endInterval, startInclusive, endInclusive));
+        }
+
+        private static IAstNode ParseMatchAny(Tokenizer tokenizer)
+        {
+            if (tokenizer.Peek().Type != TokenType.MatchAny)
+            {
+                return ParseMatch(tokenizer);
+            }
+            return new MatchAny(tokenizer.Advance());
         }
 
         private static float ParseNumber(Tokenizer tokenizer)

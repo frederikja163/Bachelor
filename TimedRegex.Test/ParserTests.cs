@@ -85,6 +85,20 @@ public sealed class ParserTests
     }
 
     [Test]
+    public void ParseMatchAnyTest()
+    {
+        Tokenizer tokenizer = new(".");
+        IAstNode astNode = Parser.Parse(tokenizer);
+        Assert.That(astNode, Is.InstanceOf<MatchAny>());
+        MatchAny node = (MatchAny)astNode;
+        Assert.Multiple(() =>
+        {
+            Assert.That(node.Token.Match, Is.EqualTo("."));
+            Assert.That(node.Token.CharacterIndex, Is.EqualTo(0));
+        });
+    }
+
+    [Test]
     public void ParseGuaranteedIteratorTest()
     {
         Tokenizer tokenizer = new("a+");
