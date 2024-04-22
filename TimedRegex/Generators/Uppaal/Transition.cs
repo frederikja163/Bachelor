@@ -26,7 +26,7 @@ internal sealed class Transition
             _labels.Add(edge.IsOutput ? Label.CreateOutputSynchronization(symbol, x, y) : Label.CreateInputSynchronization(symbol, x, y));
         }
 
-        if (edge.IsOutput && edge.Symbol != "\0")
+        if (edge.IsOutput && edge.Symbol != "\0" && edge.Symbol != ".")
         {
             _labels.Add(Label.CreateOutputGuard(edge, x, y));
         }

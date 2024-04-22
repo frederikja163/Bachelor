@@ -4,6 +4,7 @@ namespace TimedRegex.Generators.Uppaal;
 
 internal sealed class Nta
 {
+    private readonly bool _isQuiet;
     private int _templateId;
     private readonly Dictionary<string, string> _symbolToRenamed;
     private readonly Dictionary<string, string> _renamedToSymbol;
@@ -11,14 +12,16 @@ internal sealed class Nta
 
     internal Nta(Template template, Declaration declaration)
     {
+        _isQuiet = false;
         _templates = new List<Template>() { template };
         Declaration = declaration;
         _symbolToRenamed = new Dictionary<string, string>();
         _renamedToSymbol = new Dictionary<string, string>();
     }
     
-    internal Nta()
+    internal Nta(bool isQuiet = false)
     {
+        _isQuiet = isQuiet;
         _templates = new List<Template>();
         Declaration = new Declaration(new List<string>(), new List<string>());
         _symbolToRenamed = new Dictionary<string, string>();
@@ -52,7 +55,7 @@ internal sealed class Nta
 
 
         Declaration localDeclaration = new();
-        localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters());
+        localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters(), _symbolToRenamed);
 
         _templates.Add(new (localDeclaration, $"ta{NewTemplateId()}",
             $"l{automaton.InitialLocation!.Id}",
@@ -77,6 +80,7 @@ internal sealed class Nta
         }
             
         // No name collisions.
+        Log.WriteLineIf(!_isQuiet && symbol != renamed, $"<{symbol}> will be renamed to <{renamed}> in Uppaal.");
         _symbolToRenamed.Add(symbol, renamed);
         _renamedToSymbol.Add(renamed, symbol);
     }
