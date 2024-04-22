@@ -50,6 +50,9 @@ internal sealed class BuildCommand
     [Option('c', "clock", Default = false, 
         HelpText = $"If set, all clocks will stay even if they are not used.")]
     public bool ClockPruning { get; set; } = false;
+    [Option('l', "layout", Default = false, 
+        HelpText = $"If set, disable expensive layout creation, instead using random locations.")]
+    public bool DisableLayout { get; set; } = false;
     
     internal int Run()
     {
@@ -215,20 +218,25 @@ internal sealed class BuildCommand
             Log.WriteLineIf(Verbose, $"Edges: {timedAutomaton.GetEdges().Count()}");
             Log.WriteLineIf(Verbose, $"Clock: {timedAutomaton.GetClocks().Count()}");
         }
+
+        ITimedAutomaton ta = timedAutomaton;
         
-        // make structure timedAutomaton -> graphAutomaton -> compressedAutomaton
-        Log.WriteLineIf(Verbose, "Adding positions.");
-        Log.StartTimeIf(Verbose, out sw);
-        GraphTimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
-        graphAutomaton.OrderLocationsForward();
-        graphAutomaton.OrderLocationsBackward();
-        graphAutomaton.OrderLocationsForward();
-        graphAutomaton.AssignPositions();
-        Log.StopTime(sw, "Added positions in {0}");
+        if (!DisableLayout)
+        {
+            Log.WriteLineIf(Verbose, "Adding positions.");
+            Log.StartTimeIf(Verbose, out sw);
+            GraphTimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
+            graphAutomaton.OrderLocationsForward();
+            graphAutomaton.OrderLocationsBackward();
+            graphAutomaton.OrderLocationsForward();
+            graphAutomaton.AssignPositions();
+            ta = graphAutomaton;
+            Log.StopTime(sw, "Added positions in {0}");
+        }
         
         Log.WriteLineIf(Verbose, "Compressing ids.");
         Log.StartTimeIf(Verbose, out sw);
-        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(graphAutomaton);
+        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(ta);
         Log.StopTime(sw, "Compressed ids in {0}");
         return compressedAutomaton;
     }

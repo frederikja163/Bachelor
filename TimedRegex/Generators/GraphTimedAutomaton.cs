@@ -1,6 +1,6 @@
 using TimedRegex.Parsing;
 using TaState = TimedRegex.Generators.State;
-using Layer = System.Collections.Generic.Dictionary<float, TimedRegex.Generators.GState>;
+using Layer = System.Collections.Generic.HashSet<TimedRegex.Generators.GState>;
 
 namespace TimedRegex.Generators;
 
@@ -10,7 +10,7 @@ internal sealed class GState
     private readonly HashSet<GState> _from;
     private readonly HashSet<GState> _to;
     private int _layer;
-    private float _index;
+    private int _index;
 
     public GState(int layer, List<Layer> layers)
     {
@@ -21,30 +21,31 @@ internal sealed class GState
         Layer = layer;
     }
 
-    public float Index
+    public int Index
     {
         get => _index;
 
         set
         {
-            SetIndexRec(value);
-            
-            void SetIndexRec(float index)
-            {
-                if (_layers[_layer].TryGetValue(index, out GState? gState) && gState != this)
-                {
-                    SetIndexRec(index + 0.5f);
-                }
-                else
-                {
-                    if (_index != -1)
-                    {
-                        _layers[_layer].Remove(_index);
-                    }
-                    _index = index;
-                    _layers[_layer].Add(_index, this);
-                }
-            }
+            _index = value;
+            // SetIndexRec(value);
+            //
+            // void SetIndexRec(float index)
+            // {
+            //     if (_layers[_layer].TryGetValue(index, out GState? gState) && gState != this)
+            //     {
+            //         SetIndexRec(index + 0.5f);
+            //     }
+            //     else
+            //     {
+            //         if (_index != -1)
+            //         {
+            //             _layers[_layer].Remove(_index);
+            //         }
+            //         _index = index;
+            //         _layers[_layer].Add(_index, this);
+            //     }
+            // }
         }
     }
 
@@ -77,9 +78,13 @@ internal sealed class GState
                 _layers.Add(new ());
             }
 
+            if (_index != -1)
+            {
+                _layers[_layer].Remove(this);
+            }
             Index = _layers[value].Count;
-            
             _layer = value;
+            _layers[_layer].Add(this);
             
             while (UpdateFromLayers())
             {
@@ -204,26 +209,28 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     {
         foreach (Layer layer in _layers)
         {
-            foreach (GState gState in layer.Values.ToList())
+            foreach ((GState gState, int i) in layer
+                         .OrderBy(gs => gs.FromCount == 0 ? gs.Index : gs.GetFrom().Average(gs => (double)gs.Index))
+                         .ThenByDescending(gs => gs.FromCount)
+                         .ThenByDescending(gs => gs.ToCount)
+                         .Select((gs, i) => (gs, i)))
             {
-                if (gState.FromCount > 0)
-                {
-                    gState.Index = (int)gState.GetFrom().Average(gs => (double)gs.Index);
-                }
+                gState.Index = i;
             }
         }
     }
     
     internal void OrderLocationsBackward()
     {
-        foreach (Layer layer in _layers)
+        foreach (Layer layer in ((IEnumerable<Layer>)_layers).Reverse())
         {
-            foreach (GState gState in layer.Values.ToList())
+            foreach ((GState gState, int i) in layer
+                         .OrderBy(gs => gs.ToCount == 0 ? gs.Index : gs.GetTo().Average(g => (double)g.Index))
+                         .ThenByDescending(gs => gs.ToCount)
+                         .ThenByDescending(gs => gs.FromCount)
+                         .Select((gs, i) => (gs, i)))
             {
-                if (gState.ToCount > 0)
-                {
-                    gState.Index = (int)gState.GetTo().Average(gs => (double)gs.Index);
-                }
+                gState.Index = i;
             }
         }
     }
