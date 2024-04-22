@@ -6,27 +6,45 @@ namespace TimedRegex.Generators;
 
 internal sealed class GState
 {
+    private readonly List<Layer> _layers;
     private readonly HashSet<GState> _from;
     private readonly HashSet<GState> _to;
     private int _layer;
 
-    public GState(int layer)
+    public GState(int layer, List<Layer> layers)
     {
+        _layers = layers;
         Index = -1;
-        _layer = layer;
         _from = new();
         _to = new();
+        Layer = layer;
     }
     
-    public int Index { get; set; }
+    public int Index { get; private set; }
 
     public int Layer
     {
         get => _layer;
         set
         {
-            _layer = value;
+            while (value >= _layers.Count)
+            {
+                _layers.Add(new ());
+            }
 
+            if (Index != -1)
+            { 
+                _layers[_layer].RemoveAt(Index);
+                for (int i = Index; i < _layers[_layer].Count; i++)
+                {
+                    _layers[_layer][i].Index -= 1;
+                }
+            }
+            Index = _layers[value].Count;
+            _layers[value].Add(this);
+            
+            _layer = value;
+            
             while (UpdateFromLayers())
             {
             }
@@ -34,6 +52,8 @@ internal sealed class GState
             while (UpdateToLayers())
             {
             }
+
+            
 
             bool UpdateFromLayers()
             {
@@ -46,7 +66,7 @@ internal sealed class GState
                 fromState._to.Remove(this);
                 _from.Remove(fromState);
 
-                GState newState = new GState(fromState._layer + 1);
+                GState newState = new GState(fromState._layer + 1, _layers);
                 fromState.AddTo(newState);
                 newState.AddTo(this);
                 
@@ -64,7 +84,7 @@ internal sealed class GState
                 toState._from.Remove(this);
                 _to.Remove(toState);
 
-                GState newState = new GState(toState._layer - 1);
+                GState newState = new GState(toState._layer - 1, _layers);
                 toState.AddFrom(newState);
                 newState.AddFrom(this);
 
@@ -107,7 +127,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         _finalStates = ta.GetFinalStates().ToHashSet();
         
         _layers = new List<Layer>();
-        AssignLayers(ta, ta.InitialLocation!, 0);
+        AssignLayers(ta);
     }
 
     // internal void ReverseEdges()
@@ -123,40 +143,51 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     //         _edges[i] = reverseEdge;
     //     }
     // }
-    
-    private void AssignLayers(TimedAutomaton ta, TaState taState, int layerIndex)
+
+    private void AssignLayers(TimedAutomaton ta)
     {
-        GState gState = GetOrCreateGState(taState, layerIndex);
-        gState.Layer = layerIndex;
+        AssignLayersRec(ta, ta.InitialLocation!, 0);
+
+        foreach (KeyValuePair<GState,TaState> gState in _gStateToTaState)
+        {
+            
+        }
+        
+        void AssignLayersRec(TimedAutomaton ta, TaState taState, int layerIndex)
+        {
+            GState gState = GetOrCreateGState(taState, layerIndex);
+            gState.Layer = layerIndex;
     
-        foreach (Edge edge in ta.GetEdgesFrom(taState).Where(e => !e.IsReversible))
-        {
-            GState toState = GetOrCreateGState(edge.To, layerIndex + 1);
-            toState.AddFrom(gState);
-            gState.AddTo(toState);
-            AssignLayers(ta, edge.To, layerIndex + 1);
-        }
-
-        foreach (Edge edge in ta.GetEdgesTo(taState).Where(e => e.IsReversible && !e.To.Equals(taState)))
-        {
-            GState toState = GetOrCreateGState(edge.From, layerIndex + 1);
-            toState.AddFrom(gState);
-            gState.AddTo(toState);
-            AssignLayers(ta, edge.From, layerIndex + 1);
-        }
-
-        GState GetOrCreateGState(TaState state, int layer)
-        {
-            if (!_taStateToGState.TryGetValue(state, out GState? gs))
+            foreach (Edge edge in ta.GetEdgesFrom(taState).Where(e => !e.IsReversible))
             {
-                gs = new GState(layer);
-                _gStateToTaState[gs] = state;
-                _taStateToGState[state] = gs;
+                GState toState = GetOrCreateGState(edge.To, layerIndex + 1);
+                toState.AddFrom(gState);
+                gState.AddTo(toState);
+                AssignLayersRec(ta, edge.To, layerIndex + 1);
             }
 
-            return gs;
+            foreach (Edge edge in ta.GetEdgesTo(taState).Where(e => e.IsReversible && !e.To.Equals(taState)))
+            {
+                GState toState = GetOrCreateGState(edge.From, layerIndex + 1);
+                toState.AddFrom(gState);
+                gState.AddTo(toState);
+                AssignLayersRec(ta, edge.From, layerIndex + 1);
+            }
+
+            GState GetOrCreateGState(TaState state, int layer)
+            {
+                if (!_taStateToGState.TryGetValue(state, out GState? gs))
+                {
+                    gs = new GState(layer, _layers);
+                    _gStateToTaState[gs] = state;
+                    _taStateToGState[state] = gs;
+                }
+
+                return gs;
+            }
         }
     }
+    
 
     internal void OrderLocations()
     {
@@ -167,6 +198,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         foreach ((GState gState, TaState taState) in _gStateToTaState)
         {
             taState.X = gState.Layer * 100;
+            taState.Y = gState.Index * 100;
         }
     }
 
