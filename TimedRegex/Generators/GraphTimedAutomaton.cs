@@ -1,6 +1,6 @@
 using TimedRegex.Parsing;
 using TaState = TimedRegex.Generators.State;
-using Layer = System.Collections.Generic.HashSet<TimedRegex.Generators.GState>;
+using Layer = System.Collections.Generic.Dictionary<float, TimedRegex.Generators.GState>;
 
 namespace TimedRegex.Generators;
 
@@ -10,17 +10,43 @@ internal sealed class GState
     private readonly HashSet<GState> _from;
     private readonly HashSet<GState> _to;
     private int _layer;
+    private float _index;
 
     public GState(int layer, List<Layer> layers)
     {
         _layers = layers;
-        Index = -1;
+        _index = -1;
         _from = new();
         _to = new();
         Layer = layer;
     }
-    
-    public int Index { get; set; }
+
+    public float Index
+    {
+        get => _index;
+
+        set
+        {
+            SetIndexRec(value);
+            
+            void SetIndexRec(float index)
+            {
+                if (_layers[_layer].TryGetValue(index, out GState? gState) && gState != this)
+                {
+                    SetIndexRec(index + 0.5f);
+                }
+                else
+                {
+                    if (_index != -1)
+                    {
+                        _layers[_layer].Remove(_index);
+                    }
+                    _index = index;
+                    _layers[_layer].Add(_index, this);
+                }
+            }
+        }
+    }
 
     public int FromCount => _from.Count;
     public int ToCount => _to.Count;
@@ -51,12 +77,7 @@ internal sealed class GState
                 _layers.Add(new ());
             }
 
-            if (Index != -1)
-            { 
-                _layers[_layer].Remove(this);
-            }
             Index = _layers[value].Count;
-            _layers[value].Add(this);
             
             _layer = value;
             
@@ -183,7 +204,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     {
         foreach (Layer layer in _layers)
         {
-            foreach (GState gState in layer)
+            foreach (GState gState in layer.Values.ToList())
             {
                 if (gState.FromCount > 0)
                 {
@@ -197,7 +218,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     {
         foreach (Layer layer in _layers)
         {
-            foreach (GState gState in layer)
+            foreach (GState gState in layer.Values.ToList())
             {
                 if (gState.ToCount > 0)
                 {
@@ -211,8 +232,8 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     {
         foreach ((GState gState, TaState taState) in _gStateToTaState)
         {
-            taState.X = gState.Layer * 100;
-            taState.Y = gState.Index * 100;
+            taState.X = gState.Layer * 250;
+            taState.Y = (int)(gState.Index * 250);
         }
     }
 
