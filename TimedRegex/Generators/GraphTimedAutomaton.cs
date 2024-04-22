@@ -1,6 +1,6 @@
 using TimedRegex.Parsing;
 using TaState = TimedRegex.Generators.State;
-using Layer = System.Collections.Generic.List<TimedRegex.Generators.GState>;
+using Layer = System.Collections.Generic.HashSet<TimedRegex.Generators.GState>;
 
 namespace TimedRegex.Generators;
 
@@ -20,7 +20,26 @@ internal sealed class GState
         Layer = layer;
     }
     
-    public int Index { get; private set; }
+    public int Index { get; set; }
+
+    public int FromCount => _from.Count;
+    public int ToCount => _to.Count;
+    
+    public IEnumerable<GState> GetFrom()
+    {
+        foreach (GState gState in _from)
+        {
+            yield return gState;
+        }
+    }
+
+    public IEnumerable<GState> GetTo()
+    {
+        foreach (GState gState in _to)
+        {
+            yield return gState;
+        }
+    }
 
     public int Layer
     {
@@ -34,11 +53,7 @@ internal sealed class GState
 
             if (Index != -1)
             { 
-                _layers[_layer].RemoveAt(Index);
-                for (int i = Index; i < _layers[_layer].Count; i++)
-                {
-                    _layers[_layer][i].Index -= 1;
-                }
+                _layers[_layer].Remove(this);
             }
             Index = _layers[value].Count;
             _layers[value].Add(this);
@@ -52,8 +67,6 @@ internal sealed class GState
             while (UpdateToLayers())
             {
             }
-
-            
 
             bool UpdateFromLayers()
             {
@@ -127,70 +140,71 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         _finalStates = ta.GetFinalStates().ToHashSet();
         
         _layers = new List<Layer>();
-        AssignLayers(ta);
-    }
-
-    // internal void ReverseEdges()
-    // {
-    //     for (int i = 0; i < _edges.Count; i++)
-    //     {
-    //         if (!_edges[i].IsReversible) continue;
-    //
-    //         Edge edge = _edges[i];
-    //         Edge reverseEdge = new(edge.Id, edge.To, edge.From, edge.Symbol, true);
-    //         reverseEdge.AddClockResets(edge.GetClockResets());
-    //         reverseEdge.AddClockRanges(edge.GetClockRanges());
-    //         _edges[i] = reverseEdge;
-    //     }
-    // }
-
-    private void AssignLayers(TimedAutomaton ta)
-    {
         AssignLayersRec(ta, ta.InitialLocation!, 0);
-
-        foreach (KeyValuePair<GState,TaState> gState in _gStateToTaState)
-        {
-            
-        }
-        
-        void AssignLayersRec(TimedAutomaton ta, TaState taState, int layerIndex)
-        {
-            GState gState = GetOrCreateGState(taState, layerIndex);
-            gState.Layer = layerIndex;
+    }
     
-            foreach (Edge edge in ta.GetEdgesFrom(taState).Where(e => !e.IsReversible))
+        
+    void AssignLayersRec(TimedAutomaton ta, TaState taState, int layerIndex)
+    {
+        GState gState = GetOrCreateGState(taState, layerIndex);
+        gState.Layer = layerIndex;
+
+        foreach (Edge edge in ta.GetEdgesFrom(taState).Where(e => !e.IsReversible))
+        {
+            GState toState = GetOrCreateGState(edge.To, layerIndex + 1);
+            toState.AddFrom(gState);
+            gState.AddTo(toState);
+            AssignLayersRec(ta, edge.To, layerIndex + 1);
+        }
+
+        foreach (Edge edge in ta.GetEdgesTo(taState).Where(e => e.IsReversible && !e.To.Equals(taState)))
+        {
+            GState toState = GetOrCreateGState(edge.From, layerIndex + 1);
+            toState.AddFrom(gState);
+            gState.AddTo(toState);
+            AssignLayersRec(ta, edge.From, layerIndex + 1);
+        }
+
+        GState GetOrCreateGState(TaState state, int layer)
+        {
+            if (!_taStateToGState.TryGetValue(state, out GState? gs))
             {
-                GState toState = GetOrCreateGState(edge.To, layerIndex + 1);
-                toState.AddFrom(gState);
-                gState.AddTo(toState);
-                AssignLayersRec(ta, edge.To, layerIndex + 1);
+                gs = new GState(layer, _layers);
+                _gStateToTaState[gs] = state;
+                _taStateToGState[state] = gs;
             }
 
-            foreach (Edge edge in ta.GetEdgesTo(taState).Where(e => e.IsReversible && !e.To.Equals(taState)))
-            {
-                GState toState = GetOrCreateGState(edge.From, layerIndex + 1);
-                toState.AddFrom(gState);
-                gState.AddTo(toState);
-                AssignLayersRec(ta, edge.From, layerIndex + 1);
-            }
-
-            GState GetOrCreateGState(TaState state, int layer)
-            {
-                if (!_taStateToGState.TryGetValue(state, out GState? gs))
-                {
-                    gs = new GState(layer, _layers);
-                    _gStateToTaState[gs] = state;
-                    _taStateToGState[state] = gs;
-                }
-
-                return gs;
-            }
+            return gs;
         }
     }
     
 
-    internal void OrderLocations()
+    internal void OrderLocationsForward()
     {
+        foreach (Layer layer in _layers)
+        {
+            foreach (GState gState in layer)
+            {
+                if (gState.FromCount > 0)
+                {
+                    gState.Index = (int)gState.GetFrom().Average(gs => (double)gs.Index);
+                }
+            }
+        }
+    }
+    
+    internal void OrderLocationsBackward()
+    {
+        foreach (Layer layer in _layers)
+        {
+            foreach (GState gState in layer)
+            {
+                if (gState.ToCount > 0)
+                {
+                    gState.Index = (int)gState.GetTo().Average(gs => (double)gs.Index);
+                }
+            }
+        }
     }
 
     internal void AssignPositions()
