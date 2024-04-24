@@ -10,15 +10,15 @@
 % -Introduce THE paper
 
 
-The research in this paper is based on the research of Asarin, Caspi, and Maler \cite{Eugene2001} on timed regular expressions, and their equivalence to timed automata. Their methods of constructing timed automata from a timed regex, are used and expanded upon throughout this paper.
+The research in this paper is based on the research of Asarin, Caspi, and Maler\cite{Eugene2001} on timed regular expressions, and their equivalence to timed automata. Their methods of constructing timed automata from a timed regex, are used and expanded upon throughout this paper.
 An automata can be defined as a set of states, and a set of transitions between those states. This can be visualized as a directed graph of nodes with edges connecting them.
-A timed automata\cite{ALUR1994183} is a type of automata that can analyse events happening one after the other, after or within, a specified time, and can be formally defined as a quintouple:
+A timed automata is a type of automata that can analyse events happening one after the other, after or within, a specified time, and can be formally defined as a quintouple\cite{ALUR1994}. See \cref{definition:automatonDefinition}.
 
 \input{Documents/Definitions/Automaton.tex}\\
 
 Clocks are variables that track time. All clocks count up simultaneously, but may be individually reset when a specific transition is taken.
 
-Transition relations are the transitions between states, and may be formally described with the following tuple:
+Transition relations are the transitions between states, and may be formally described with the following tuple. See \cref{definition:transition}.
 \input{Documents/Definitions/Transition.tex}\\
 
 The alphabet is the set of symbols that are accepted by the automata. The symbols name the events that are to be analysed.
