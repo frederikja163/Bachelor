@@ -16,7 +16,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _edges = new Dictionary<int, Edge>();
         _states = new Dictionary<int, State>();
         _finalStates = new HashSet<State>();
-        InitialLocation = null;
+        InitialState = null;
         _alphabet = new HashSet<string>();
     }
     
@@ -32,7 +32,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             ? other._states.ToDictionary()
             : new Dictionary<int, State>();
         _finalStates = !excludeLocations ? other._finalStates : new HashSet<State>();
-        InitialLocation = !excludeLocations ? other.InitialLocation : null;
+        InitialState = !excludeLocations ? other.InitialState : null;
         _alphabet = other._alphabet.ToHashSet();
     }
 
@@ -48,7 +48,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             ? left._states.UnionBy(right._states, kvp => kvp.Key).ToDictionary()
             : new Dictionary<int, State>();
         _finalStates = !excludeLocations ? left._finalStates.Union(right._finalStates).ToHashSet() : new HashSet<State>();
-        InitialLocation = !excludeLocations ? left.InitialLocation ?? right.InitialLocation : null;
+        InitialState = !excludeLocations ? left.InitialState ?? right.InitialState : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
@@ -58,15 +58,15 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         _edges = left._edges.Values.Union(right._edges.Values).Where(includedEdges).ToDictionary(e => e.Id);
         _states = left._states.Values.Union(right._states.Values).Where(includedLocations).ToDictionary(s => s.Id);
         _finalStates = left._finalStates.Union(right._finalStates).Where(includedLocations).ToHashSet();
-        InitialLocation = includedLocations(left.InitialLocation!) ? left.InitialLocation :
-            includedLocations(right.InitialLocation!) ? right.InitialLocation : null;
+        InitialState = includedLocations(left.InitialState!) ? left.InitialState :
+            includedLocations(right.InitialState!) ? right.InitialState : null;
         _alphabet = left._alphabet.Union(right._alphabet).ToHashSet();
     }
     
     internal static int TotalStateCount { get; private set; }
     internal static int TotalEdgeCount { get; private set; }
     internal static int TotalClockCount { get; private set; }
-    public State? InitialLocation { get; internal set; }
+    public State? InitialState { get; internal set; }
 
     internal void PruneEdges()
     {
@@ -104,7 +104,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             {
                 continue;
             }
-            if ((!validStates.Contains(state)) && !InitialLocation!.Equals(state))
+            if ((!validStates.Contains(state)) && !InitialState!.Equals(state))
             {
                 result = true;
                 _states.Remove(index);
@@ -249,7 +249,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         
         if (newInitial)
         {
-            InitialLocation = state;
+            InitialState = state;
         }
 
         if (final)

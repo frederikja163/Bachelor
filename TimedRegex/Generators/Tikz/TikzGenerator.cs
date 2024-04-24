@@ -65,7 +65,7 @@ internal sealed class TikzGenerator : IGenerator
 
         foreach (State state in ta.GetStates())
         {
-            DrawNode(tw, state, state.Equals(ta.InitialLocation), ta.IsFinal(state));
+            DrawNode(tw, state, state.Equals(ta.InitialState), ta.IsFinal(state));
         }
         tw.WriteLine("");
         

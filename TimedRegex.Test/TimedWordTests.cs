@@ -43,7 +43,7 @@ public sealed class TimedWordTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(a.InitialLocation, Is.EqualTo(new State(0)));
+            Assert.That(a.InitialState, Is.EqualTo(new State(0)));
             Assert.That(a.GetFinalStates().Any(), Is.False);
             Assert.That(a.GetClocks().First(), Is.EqualTo(new Clock(0)));
             Assert.That(a.GetAlphabet().Count(), Is.EqualTo(4));

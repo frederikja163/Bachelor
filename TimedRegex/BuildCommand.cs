@@ -245,9 +245,9 @@ internal sealed class BuildCommand
             Log.WriteLineIf(Verbose, "Adding positions.");
             Log.StartTimeIf(Verbose, out sw);
             GraphTimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
-            graphAutomaton.OrderLocationsForward();
-            graphAutomaton.OrderLocationsBackward();
-            graphAutomaton.OrderLocationsForward();
+            graphAutomaton.OrderStatesForward();
+            graphAutomaton.OrderStatesBackward();
+            graphAutomaton.OrderStatesForward();
             graphAutomaton.AssignPositions();
             ta = graphAutomaton;
             Log.StopTime(sw, "Added positions in {0}");

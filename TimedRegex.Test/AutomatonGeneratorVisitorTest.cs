@@ -158,8 +158,8 @@ public sealed class AutomatonGeneratorVisitorTest
             Assert.That(ta.GetClocks().Count(), Is.EqualTo(3));
             Assert.That(ta.GetStates().Count(l => ta.IsFinal(l)), Is.EqualTo(8));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(24));
-            Assert.That(ta.GetEdges().Count(e => e.From.Equals(ta.InitialLocation)), Is.EqualTo(6));
-            Assert.That(ta.GetEdges().Count(e => e.To.Equals(ta.InitialLocation)), Is.EqualTo(8));
+            Assert.That(ta.GetEdges().Count(e => e.From.Equals(ta.InitialState)), Is.EqualTo(6));
+            Assert.That(ta.GetEdges().Count(e => e.To.Equals(ta.InitialState)), Is.EqualTo(8));
             Assert.That(ta.GetEdges().Count(e => e.GetClockResets().Any()), Is.EqualTo(0));
             Assert.That(ta.GetEdges().Count(e => e.GetClockRanges().Any()), Is.EqualTo(16));
             Assert.That(ta.GetEdges().Count(e => ta.IsFinal(e.To)), Is.EqualTo(8));

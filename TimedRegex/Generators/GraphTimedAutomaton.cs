@@ -137,7 +137,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     internal GraphTimedAutomaton(TimedAutomaton ta)
     {
-        InitialLocation = ta.InitialLocation;
+        InitialState = ta.InitialState;
         _alphabet = ta.GetAlphabet().ToHashSet();
         _clocks = ta.GetClocks().ToList();
         _edges = ta.GetEdges().ToList();
@@ -145,11 +145,11 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         _finalStates = ta.GetFinalStates().ToHashSet();
         
         _layers = new List<Layer>();
-        AssignLayersRec(ta, ta.InitialLocation!, 0);
+        AssignLayers(ta, ta.InitialState!, 0);
     }
 
 
-    private void AssignLayersRec(TimedAutomaton ta, TaState taState, int layerIndex)
+    private void AssignLayers(TimedAutomaton ta, TaState taState, int layerIndex)
     {
         GState gState = GetOrCreateGState(taState, layerIndex);
         gState.Layer = layerIndex;
@@ -159,7 +159,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
             GState toState = GetOrCreateGState(edge.To, layerIndex + 1);
             toState.AddFrom(gState);
             gState.AddTo(toState);
-            AssignLayersRec(ta, edge.To, layerIndex + 1);
+            AssignLayers(ta, edge.To, layerIndex + 1);
         }
 
         foreach (Edge edge in ta.GetEdgesTo(taState).Where(e => e.IsReversible && !e.To.Equals(taState)))
@@ -167,7 +167,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
             GState toState = GetOrCreateGState(edge.From, layerIndex + 1);
             toState.AddFrom(gState);
             gState.AddTo(toState);
-            AssignLayersRec(ta, edge.From, layerIndex + 1);
+            AssignLayers(ta, edge.From, layerIndex + 1);
         }
 
         GState GetOrCreateGState(TaState state, int layer)
@@ -184,7 +184,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     }
     
 
-    internal void OrderLocationsForward()
+    internal void OrderStatesForward()
     {
         foreach (Layer layer in _layers)
         {
@@ -199,7 +199,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         }
     }
     
-    internal void OrderLocationsBackward()
+    internal void OrderStatesBackward()
     {
         foreach (Layer layer in ((IEnumerable<Layer>)_layers).Reverse())
         {
@@ -223,7 +223,12 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
         }
     }
 
-    public TaState? InitialLocation { get; }
+    public TaState? InitialState { get; }
+    
+    public GState GetGState(TaState state)
+    {
+        return _taStateToGState[state];
+    }
 
     public IEnumerable<Clock> GetClocks()
     {
