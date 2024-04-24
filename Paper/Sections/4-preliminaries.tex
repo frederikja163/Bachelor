@@ -19,11 +19,11 @@ Clocks are variables that track time. All clocks count up simultaneously, but ma
 
 Transition relations are the transitions between states, and may be formally described with the following tuple. See \cref{definition:transition}.
 
-The alphabet is the set of symbols that are accepted by the automaton. The symbols name the events that are to be analysed.
+The alphabet is the set of symbols that are accepted by the automaton.
 
 The initial state is the unique state from which the simulation starts, and is entered at time zero.
 
-The accepting states are a set of states that the simulation must be able to reach for a word to be accepted.\\
+The accepting states are a finite set of states. If any of these states are reachable during a run of the transition system, the word is accepted.\\
 
 The words describe sets of events that happen one after the other. A timed automaton is able to analyse timed words, where each event has an associated time, to determine whether the word is accepted by the automaton.
 \input{Documents/Definitions/Transition.tex}
