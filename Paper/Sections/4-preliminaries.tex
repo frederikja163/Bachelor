@@ -1,1 +1,29 @@
 \section{Preliminaries}
+
+% THE paper: https://www-verimag.imag.fr/~maler/Papers/timed.pdf
+
+% theory of timed automata: https://www.sciencedirect.com/science/article/pii/0304397594900108
+
+
+% -Outline automata
+% -Explain timed symbols
+% -Introduce THE paper
+
+
+The research in this paper is based on the research done in the paper "Timed Regular Expressions" by Eugene Asarin et al.\cite{Eugene2001}. The Paper describes the equivalence between timed regular expressions and timed automata. Their methods of constructing a timed automaton from a timed regular expression, are used and expanded upon throughout this paper.
+An automaton can be defined as a set of states, and a set of transitions between those states. This can be visualized as a directed graph of nodes with edges connecting them.
+A timed automaton is a type of automaton that can analyse events happening one after the other, after or within, a specified time, and can be formally defined as a quintuple\cite{ALUR1994}. See \cref{definition:automatonDefinition}.
+\input{Documents/Definitions/Automaton.tex}\\
+
+Clocks are variables that track time. All clocks count up simultaneously, but may be individually reset on transitions.
+
+Transition relations are the transitions between states, and may be formally described with the following tuple. See \cref{definition:transition}.
+
+The alphabet is the set of symbols the automaton can read.
+
+The initial state is the unique state from which the automaton starts, and is entered at time zero.
+
+The accepting states are a finite set of states. If any of these states are reachable, given a timed word, that timed word is accepted.\\
+
+The words describe sets of events that happen one after the other. A timed automaton is able to analyse timed words, where each event has an associated time, to determine whether the word is accepted by the automaton.
+\input{Documents/Definitions/Transition.tex}
