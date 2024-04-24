@@ -18,7 +18,6 @@ A timed automaton is a type of automaton that can analyse events happening one a
 Clocks are variables that track time. All clocks count up simultaneously, but may be individually reset when a specific transition is taken.
 
 Transition relations are the transitions between states, and may be formally described with the following tuple. See \cref{definition:transition}.
-\input{Documents/Definitions/Transition.tex}\\
 
 The alphabet is the set of symbols that are accepted by the automaton. The symbols name the events that are to be analysed.
 
@@ -27,3 +26,4 @@ The initial state is the unique state from which the simulation starts, and is e
 The accepting states are a set of states that the simulation must be able to reach for a word to be accepted.\\
 
 The words describe sets of events that happen one after the other. A timed automaton is able to analyse timed words, where each event has an associated time, to determine whether the word is accepted by the automaton.
+\input{Documents/Definitions/Transition.tex}
