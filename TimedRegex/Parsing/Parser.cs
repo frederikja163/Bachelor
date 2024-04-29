@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using TimedRegex.AST;
 using Range = TimedRegex.Generators.Range;
 
@@ -117,7 +118,7 @@ namespace TimedRegex.Parsing
         private static float ParseNumber(Tokenizer tokenizer)
         {
             Token token = tokenizer.Advance();
-            if (!float.TryParse(token.Match, out float value))
+            if (!float.TryParse(token.Match, CultureInfo.InvariantCulture, out float value))
             {
                 throw new TimedRegexCompileException(TimedRegexErrorType.NumberImproperFormat, "Interval was improper format.", token);
             }
