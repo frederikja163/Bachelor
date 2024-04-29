@@ -11,7 +11,6 @@
 
 This section aims to describe and review the literature that has been foundational for the research and work done in this paper. It contextualises the contents and contributions of this paper in the field of Timed Regular Expressions and graph layout visualisations.
 
-
 The term \textit{timed regular expression} was coined in the abtly named paper "Timed Regular Expressions" from 2001, written by Eugene Asarin et al.\cite{Eugene2001}. The paper discusses the equivalence between the expressive power of timed automata\cite{ALUR1994} and timed regular expressions. To prove this equivalence, they formalise the construction of timed automata from timed regular expressions, and vice versa. In this paper, only their research on timed regular expressions and how to construct timed automata from them is used.
 
 The aforementioned paper on timed regular expressions has been the basis for multiple studies and projects. One such project has resulted in a tool called MONAA. MONAA is a tool used for performing timed pattern matching on timed words \cite{MONAA2017}. Given a timed regular expression, MONAA translates it to an equivalent timed automata, on which the timed pattern matching is performed. Additionally, since MONAA uses the DOT language for Graphviz \cite{Graphviz} to represent their timed automata, said automata can be visualized\footnote{MONAAs automata cannot be directly visualised by Graphviz since they use custom attributes, but the developers of MONAA offer a program for converting to automata recognizable by Graphviz\cite{MONAA2017}.}.
