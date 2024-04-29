@@ -2,6 +2,9 @@
 \begin{comment}
     Where do most of our semantics come from?
     
+    Intersection semantics
+     - Motivation
+
     Describe union semantics
      - Motivation
      - New definition
@@ -12,3 +15,15 @@
      - Definition
      - Visual
 \end{comment}
+
+Most of the semantics have been copied directly from the paper by Eugene et al. \cite{Eugene2001}. However we have made a few modifications.
+
+\subsubsection{Intersection}
+When creating automata using an intersection with the rules from Eugene et al.
+many states are created with no transitions.
+By creating the intersection states lazily as needed for transitions we can greatly decrease the amount of states created.
+% TODO: Possibly insert a figure here.
+
+\subsubsection{Union}
+
+
