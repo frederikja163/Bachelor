@@ -4,7 +4,7 @@ namespace TimedRegex.Generators;
 
 internal interface ITimedAutomaton
 {
-    internal State? InitialLocation { get; }
+    internal State? InitialState { get; }
     
     internal IEnumerable<Clock> GetClocks();
     internal IEnumerable<Edge> GetEdges();
