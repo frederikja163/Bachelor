@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{verbatim}
 \usepackage{tikz-uml}
+
 \usetikzlibrary{arrows}
 \usetikzlibrary {arrows.meta}
 
@@ -21,8 +22,10 @@
 
 \addbibresource{bibliography.bib}
 
-\newcounter{Definition}
-\newtheorem{definition}[Definition]{Definition}
+\usepackage[capitalise]{cleveref}
+\newcounter{defCounter}
+\newtheorem{definition}[defCounter]{Definition}
+\crefname{defCounter}{Definition}{Definitions}
 
 
 \newcommand{\semaut}[1]{[\![#1]\!]}

@@ -52,7 +52,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         TimedAutomaton ta = new(left, right);
         foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
-            Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
+            Edge edge = ta.AddEdge(e.From, right.InitialState!, e.Symbol);
             edge.AddClockRanges(e.GetClockRanges());
             edge.AddClockResets(right.GetClocks());
         }
@@ -71,7 +71,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
         {
-            Edge edge = ta.AddEdge(oldEdge.From, ta.InitialLocation!, oldEdge.Symbol, true);
+            Edge edge = ta.AddEdge(oldEdge.From, ta.InitialState!, oldEdge.Symbol, true);
             edge.AddClockRanges(oldEdge.GetClockRanges());
             edge.AddClockResets(ta.GetClocks());
         }
@@ -86,7 +86,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         TimedAutomaton ta = new(left, right);
         foreach (Edge e in left.GetEdgesTo(left.GetFinalStates()))
         {
-            Edge edge = ta.AddEdge(e.From, right.InitialLocation!, e.Symbol);
+            Edge edge = ta.AddEdge(e.From, right.InitialState!, e.Symbol);
             edge.AddClockRanges(e.GetClockRanges());
         }
 
@@ -106,9 +106,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         SortedSetEqualityComparer<Clock> sortedSetEqualityComparer = new();
         List<SortedSet<Clock>> clockPowerSet = child.GetClocks().PowerSet().Select(s => s.ToSortedSet()).ToList();
         Dictionary<State, Dictionary<SortedSet<Clock>, State>> newLocs = new Dictionary<State, Dictionary<SortedSet<Clock>, State>>();
-        newLocs[child.InitialLocation!] = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer)
+        newLocs[child.InitialState!] = new Dictionary<SortedSet<Clock>, State>(sortedSetEqualityComparer)
         {
-            { new SortedSet<Clock>(), ta.AddState(child.IsFinal(child.InitialLocation!), true) }
+            { new SortedSet<Clock>(), ta.AddState(child.IsFinal(child.InitialState!), true) }
         };
         Clock newClock = ta.AddClock();
 
@@ -150,7 +150,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
                 if (child.IsFinal(childEdge.To))
                 {
-                    edge = ta.AddEdge(from, ta.InitialLocation!, childEdge.Symbol, true);
+                    edge = ta.AddEdge(from, ta.InitialState!, childEdge.Symbol, true);
                     edge.AddClockResets(childEdge.GetClockResets());
                     edge.AddClockRanges(ranges);
                 }
@@ -168,7 +168,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         Dictionary<(State, State), State> newLocs = new();
 
         State final = ta.AddState(true);
-        ta.InitialLocation = GetNewEdge(left.InitialLocation!, right.InitialLocation!);
+        ta.InitialState = GetNewEdge(left.InitialState!, right.InitialState!);
 
         Dictionary<string, List<Edge>> lSymEdges = left.GetEdges().ToListDictionary(e => e.Symbol, e => e);
         Dictionary<string, List<Edge>> rSymEdges = right.GetEdges().ToListDictionary(e => e.Symbol, e => e);
@@ -293,7 +293,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         State initial = ta.AddState(newInitial: true);
 
-        foreach (Edge edges in left.GetEdgesFrom(left.InitialLocation!).Concat(right.GetEdgesFrom(right.InitialLocation!)))
+        foreach (Edge edges in left.GetEdgesFrom(left.InitialState!).Concat(right.GetEdgesFrom(right.InitialState!)))
         {
             Edge e = ta.AddEdge(initial, edges.To, edges.Symbol);
             e.AddClockRanges(edges.GetClockRanges());
@@ -304,9 +304,9 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         static void EpsilonConcat(TimedAutomaton ta)
         {
-            if (ta.GetEdgesTo(ta.InitialLocation!).Any())
+            if (ta.GetEdgesTo(ta.InitialState!).Any())
             {
-                State oldInitial = ta.InitialLocation!;
+                State oldInitial = ta.InitialState!;
                 State newInitial = ta.AddState(ta.IsFinal(oldInitial), true);
                 Edge edge = ta.AddEdge(newInitial, oldInitial, "\0");
                 Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
@@ -316,7 +316,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
         bool IsNotInitial(State state)
         {
-            return !left.InitialLocation!.Equals(state) && !right.InitialLocation!.Equals(state);
+            return !left.InitialState!.Equals(state) && !right.InitialState!.Equals(state);
         }
     }
 }
