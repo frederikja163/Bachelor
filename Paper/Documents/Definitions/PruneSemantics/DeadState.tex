@@ -4,16 +4,16 @@
     Dead state pruning:
     
     \sembox{
-        $\deadstate(A_1)=\left\{\begin{array}{ll}
-            A_1 & if \forall q\in Q_1:\neg D(q) \\
-            \deadstate(\automaton[][Q][C_1][\Delta][\Sigma_1][s_1][F_1]) & otherwise \\
+        $\deadstate(A)=\left\{\begin{array}{ll}
+            A & if \forall q\in Q:\neg D(q) \\
+            \deadstate(\automaton[][Q'][C][\Delta'][\Sigma][s][F]) & otherwise \\
         \end{array}\right.
         $
 
-        $D(q)=q\notin F_1\wedge \transition[_1]\notin\Delta_1$
+        $D(q)=q\neq s\wedge q\notin F_1\wedge \transition[_1]\notin\Delta_1$
 
-        $Q=\{q\in Q_1\mid\neg D(q)\}$
+        $Q'=\{q\in Q\mid\neg D(q)\}$
 
-        $\Delta=\{\transition[_1]\in\Delta_1\mid q_1\in Q\}$
+        $\Delta'=\{\transition[]\in\Delta\mid q\in Q'\}$
     }
 \end{definition}
