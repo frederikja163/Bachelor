@@ -21,7 +21,7 @@ Most of the semantics have been copied directly from the paper by Eugene et al. 
 \subsubsection{Intersection}
 When creating automata using an intersection with the rules from Eugene et al.
 many states are created with no transitions.
-By creating the intersection states lazily as needed for transitions we can greatly decrease the amount of states created.
+By creating the intersection states lazily as needed for transitions, we can greatly decrease the amount of states created.
 % TODO: Possibly insert a figure here.
 
 \subsubsection{Union}
@@ -29,7 +29,7 @@ The only semantics changed from the paper by Eugene et al. is the semantics for 
 
 \input{Documents/Definitions/PruneSemantics/Union}
 
-The semantics work by checking if there is a transition looping back to the initial state on either automaton. If this is the case they are concatenated with an epsilon automaton. That means in the case where both automata have a transition to their initial state, our new semantics will create the same result as the one in the paper. However, when an automaton does not have a transition back to the initial location, we dont need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one automaton and then move to the other automaton.
+The semantics work by checking if there is a transition looping back to the initial state on either automaton. If this is the case they are concatenated with an epsilon automaton. That means in the case where both automata have a transition to their initial state, our new semantics will create the same result as the one in the paper. However, when an automaton does not have a transition back to the initial location, we don't need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one automaton and then move to the other automaton.
 
 \input{Automata/Union}
 
