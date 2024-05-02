@@ -47,6 +47,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     }
 
     public State? InitialState => _initialState;
+    public string Regex => "";
 
     public IEnumerable<string> GetAlphabet()
     {
