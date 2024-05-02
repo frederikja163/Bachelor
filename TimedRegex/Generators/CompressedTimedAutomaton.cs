@@ -12,6 +12,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
 
     internal CompressedTimedAutomaton(ITimedAutomaton automaton)
     {
+        Regex = automaton.Regex;
         int clockId = 0, stateId = 0, edgeId = 0;
         Dictionary<int, Clock> newClocks =
             automaton.GetClocks().ToDictionary(c => c.Id, (_) => new Clock(clockId++));
@@ -20,7 +21,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         _finalStates = automaton.GetFinalStates().Select(s => newStates[s.Id]).ToHashSet();
         
         _alphabet = automaton.GetAlphabet().ToHashSet();
-        InitialLocation = automaton.InitialLocation is null ? null : newStates[automaton.InitialLocation.Id];
+        InitialState = automaton.InitialState is null ? null : newStates[automaton.InitialState.Id];
         _edges = automaton.GetEdges().ToDictionary(_ => edgeId, CopyEdge);
         _states = newStates.ToDictionary(kvp => kvp.Value.Id, kvp => kvp.Value);
         _clocks = newClocks.ToDictionary(kvp => kvp.Value.Id, kvp => kvp.Value);
@@ -34,7 +35,8 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
         }
     }
 
-    public State? InitialLocation { get; set; }
+    public State? InitialState { get; set; }
+    public string Regex { get; }
 
     public IEnumerable<Clock> GetClocks()
     {

@@ -1,111 +1,108 @@
 using NUnit.Framework;
-using TimedRegex.AST;
-using TimedRegex.AST.Visitors;
 using TimedRegex.Generators;
-using TimedRegex.Parsing;
-using static TimedRegex.Test.AutomatonGeneratorVisitorTest;
 
 namespace TimedRegex.Test;
 
 public class GraphAutomatonTests
 {
-    private static GraphTimedAutomaton CreateGta()
+    private static GraphTimedAutomaton GenerateTestGta()
     {
-        Union union = new(Interval("a", 1, 3), Interval("b", 3, 5), Token(TokenType.Union, "|"));
-        AbsorbedGuaranteedIterator absorbedGuaranteedIterator = new(union, Token(TokenType.Iterator, "+"));
-        AutomatonGeneratorVisitor visitor = new();
-        absorbedGuaranteedIterator.Accept(visitor);
-        TimedAutomaton ta = visitor.GetAutomaton();
+        TimedAutomaton ta = new TimedAutomaton("");
 
-        return new GraphTimedAutomaton(ta);
+        State root = ta.AddState(newInitial: true);
+        State l12 = ta.AddState();
+        State l13 = ta.AddState();
+        State l11 = ta.AddState();
+        State l21 = ta.AddState();
+        State l22 = ta.AddState();
+        State final = ta.AddState(final: true);
+
+        ta.AddEdge(root, l11, "\0");
+        ta.AddEdge(root, l12, "\0");
+        ta.AddEdge(root, l13, "\0");
+        ta.AddEdge(l11, l21, "\0");
+        ta.AddEdge(l12, l22, "\0");
+        ta.AddEdge(l13, l22, "\0");
+        ta.AddEdge(l21, final, "\0");
+
+        return new(ta);
     }
     
     [Test]
-    public void ReverseEdgesTest()
+    public void GStateLayersTest()
     {
-        GraphTimedAutomaton gta = CreateGta();
-        List<Edge> selfEdges = gta.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
-        
-        gta.ReverseEdges();
-        // Assert that edges have been reversed
-        Assert.That(gta.GetEdges().Except(selfEdges).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(0));
-        
-        gta.ReverseEdges();
-        // Assert that reversed edges have been reversed back 
-        Assert.That(gta.GetEdges().Except(selfEdges).Count(e => e.To.Equals(gta.InitialLocation)), Is.EqualTo(6));
+        List<HashSet<GState>> layers = new();
+        GState gState1 = new GState(0, layers);
+        GState gState2 = new GState(3, layers);
+
+        Assert.That(layers, Has.Count.EqualTo(4));
     }
 
     [Test]
-    public void CorrectSelfEdgesTest()
+    public void GStateToTest()
     {
-        GraphTimedAutomaton gta = CreateGta();
-        List<Edge> selfEdges = gta.GetEdges().Where(e => e.From.Equals(e.To)).ToList();
+        List<HashSet<GState>> layers = new();
+        GState gState1 = new GState(0, layers);
+        GState gState2 = new GState(1, layers);
 
-        Assert.That(selfEdges, Has.Count.EqualTo(2));
-        foreach (Edge selfEdge in selfEdges)
+        gState1.AddTo(gState2);
+
+        Assert.Multiple(() =>
         {
-            Assert.That(selfEdge.From, Is.EqualTo(selfEdge.To));
-        }
+            Assert.That(gState1.ToCount, Is.EqualTo(1));
+            Assert.That(gState2.FromCount, Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public void GStateFromTest()
+    {
+        List<HashSet<GState>> layers = new();
+        GState gState1 = new GState(0, layers);
+        GState gState2 = new GState(1, layers);
+
+        gState2.AddFrom(gState1);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(gState1.ToCount, Is.EqualTo(1));
+            Assert.That(gState2.FromCount, Is.EqualTo(1));
+        });
     }
 
     [Test]
     public void AssignLayersTest()
     {
-        GraphTimedAutomaton gta = CreateGta();
+        GraphTimedAutomaton gta = GenerateTestGta();
 
-        int initialLayer = gta.GetLayers()[gta.InitialLocation!];
-        List<State> finalStates = gta.GetFinalStates().ToList();
-        State finalState = gta.GetLayers().First(s => finalStates.Contains(s.Key)).Key;
-        
-        Assert.Multiple(() =>
+        Assert.Multiple(() => 
         {
-            // Assert that initial location is in layer 0 and final location is in the last layer
-            Assert.That(initialLayer, Is.EqualTo(0));
-            Assert.That(gta.GetLayers()[finalState], Is.EqualTo(gta.GetLayers().Values.Max()));
+            Assert.That(gta.GetGState(gta.InitialState!).Layer, Is.EqualTo(0));
+            Assert.That(gta.GetGState(gta.GetStates().ElementAt(1)).Layer, Is.EqualTo(1));
+            Assert.That(gta.GetGState(gta.GetStates().ElementAt(2)).Layer, Is.EqualTo(1));
+            Assert.That(gta.GetGState(gta.GetStates().ElementAt(3)).Layer, Is.EqualTo(1));
+            Assert.That(gta.GetGState(gta.GetStates().ElementAt(4)).Layer, Is.EqualTo(2));
+            Assert.That(gta.GetGState(gta.GetStates().ElementAt(5)).Layer, Is.EqualTo(2));
+            Assert.That(gta.GetGState(gta.GetStates().Last()).Layer, Is.EqualTo(3));
         });
     }
 
     [Test]
-    public void CorrectLayersTest()
+    public void AssignPositionsTest()
     {
-        TimedAutomaton ta = new TimedAutomaton();
-
-        State root = ta.AddState(newInitial: true);
-        State l11 = ta.AddState();
-        State l12 = ta.AddState();
-        State l13 = ta.AddState();
-        State l21 = ta.AddState();
-        State l22 = ta.AddState();
-        State final = ta.AddState();
         
-        ta.AddEdge(root, l11, "a");
-        ta.AddEdge(root, l12, "a");
-        ta.AddEdge(root, l13, "a");
-        ta.AddEdge(l11, l22, "b");
-        ta.AddEdge(l12, l21, "b");
-        ta.AddEdge(l13, l21, "b");
-        ta.AddEdge(l22, final, "d");
-        ta.AddEdge(l21, l22, "c");
-        
-        GraphTimedAutomaton gta = new(ta);
-
-        foreach (State state in ta.GetStates())
-        {
-            foreach (Edge edge in ta.GetEdgesTo(state).ToList())
-            {
-                Assert.That(gta.GetLayers()[edge.To], Is.GreaterThan(gta.GetLayers()[edge.From]));
-            }
-        }
+        GraphTimedAutomaton gta = GenerateTestGta();
+        gta.AssignPositions();
         
         Assert.Multiple(() =>
         {
-            Assert.That(gta.GetLayers()[root], Is.EqualTo(0));
-            Assert.That(gta.GetLayers()[l11], Is.EqualTo(1));
-            Assert.That(gta.GetLayers()[l12], Is.EqualTo(1));
-            Assert.That(gta.GetLayers()[l13], Is.EqualTo(1));
-            Assert.That(gta.GetLayers()[l21], Is.EqualTo(2));
-            Assert.That(gta.GetLayers()[l22], Is.EqualTo(3));
-            Assert.That(gta.GetLayers()[final], Is.EqualTo(4));
+            Assert.That((gta.InitialState!.X, gta.InitialState!.Y), Is.EqualTo((0, 0)));
+            Assert.That((gta.GetStates().ElementAt(1).X, gta.GetStates().ElementAt(1).Y), Is.EqualTo((250, 250)));
+            Assert.That((gta.GetStates().ElementAt(2).X, gta.GetStates().ElementAt(2).Y), Is.EqualTo((250, 500)));
+            Assert.That((gta.GetStates().ElementAt(3).X, gta.GetStates().ElementAt(3).Y), Is.EqualTo((250, 0)));
+            Assert.That((gta.GetStates().ElementAt(4).X, gta.GetStates().ElementAt(4).Y), Is.EqualTo((500, 0)));
+            Assert.That((gta.GetStates().ElementAt(5).X, gta.GetStates().ElementAt(5).Y), Is.EqualTo((500, 250)));
+            Assert.That((gta.GetStates().Last().X, gta.GetStates().Last().Y), Is.EqualTo((750, 0)));
         });
     }
 }

@@ -51,6 +51,9 @@ internal sealed class BuildCommand
     [Option('c', "clock", Default = false, 
         HelpText = $"If set, all clocks will stay even if they are not used.")]
     public bool ClockPruning { get; set; } = false;
+    [Option('l', "layout", Default = false, 
+        HelpText = $"If set, disable expensive layout creation, instead using random locations.")]
+    public bool DisableLayout { get; set; } = false;
     [Option('w', "word", 
         HelpText = $"One or more timed words to run the automata over.")]
     public IEnumerable<string>? Words { get; set; }
@@ -193,7 +196,7 @@ internal sealed class BuildCommand
 
         Log.WriteLineIf(Verbose, "Generating automaton.");
         Log.StartTimeIf(Verbose, out sw);
-        AutomatonGeneratorVisitor automatonGeneratorVisitor = new();
+        AutomatonGeneratorVisitor automatonGeneratorVisitor = new(regularExpression);
         root.Accept(automatonGeneratorVisitor);
         TimedAutomaton timedAutomaton = automatonGeneratorVisitor.GetAutomaton();
         Log.StopTime(sw, "Automaton generated in {0}");
@@ -234,16 +237,25 @@ internal sealed class BuildCommand
             Log.WriteLineIf(Verbose, $"Edges: {timedAutomaton.GetEdges().Count()}");
             Log.WriteLineIf(Verbose, $"Clock: {timedAutomaton.GetClocks().Count()}");
         }
+
+        ITimedAutomaton ta = timedAutomaton;
         
-        // make structure timedAutomaton -> graphAutomaton -> compressedAutomaton
-        // Log.WriteLineIf(Verbose, "Adding positions.");
-        // Log.StartTimeIf(Verbose, out sw);
-        // ITimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
-        // Log.StopTime(sw, "Added positions in {0}");
+        if (!DisableLayout)
+        {
+            Log.WriteLineIf(Verbose, "Adding positions.");
+            Log.StartTimeIf(Verbose, out sw);
+            GraphTimedAutomaton graphAutomaton = new GraphTimedAutomaton(timedAutomaton);
+            graphAutomaton.OrderStatesForward();
+            graphAutomaton.OrderStatesBackward();
+            graphAutomaton.OrderStatesForward();
+            graphAutomaton.AssignPositions();
+            ta = graphAutomaton;
+            Log.StopTime(sw, "Added positions in {0}");
+        }
         
         Log.WriteLineIf(Verbose, "Compressing ids.");
         Log.StartTimeIf(Verbose, out sw);
-        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(timedAutomaton);
+        ITimedAutomaton compressedAutomaton = new CompressedTimedAutomaton(ta);
         Log.StopTime(sw, "Compressed ids in {0}");
         return compressedAutomaton;
     }

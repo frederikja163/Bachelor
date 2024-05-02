@@ -256,7 +256,7 @@ public sealed class TimedAutomatonTest
     {
         TimedAutomaton ta = new();
         State state = ta.AddState();
-        ta.InitialLocation = state;
+        ta.InitialState = state;
         ta.PruneDeadStates();
 
         Assert.That(ta.GetStates().Contains(state));

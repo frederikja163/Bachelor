@@ -1,28 +1,31 @@
 % We can improve upon union by removing unnecessary epsilon transitions.
-
-\sembox{
-    $\semaut{\varphi_1|\varphi_2}=
-    \left\{\begin{array}{ll}
-        \semaut{(\epsilon\cdot\varphi_1)\cup\varphi_2} & if (q_1,\phi_1,p_1,a,s_1)\in\Delta_1 \\
-        \semaut{\varphi_1\cup(\epsilon\cdot\varphi_2)} & if (q_2,\phi_2,p_2,a,s_2)\in\Delta_2 \\
-        \automaton & otherwise \\
-    \end{array}\right.
-    $
+\begin{definition}
+    Union\label{def:union-semantics}
     
-    Where
-    
-    $f\transition=
-    \left\{\begin{array}{ll}
-        \transition[][s] & if q\in\{s_1,s_2\} \\
-        \transition & otherwise \\
-    \end{array}\right.
-    $
-    
-    $Q=Q_1\cup Q_2 \cup {s}\backslash\{s_1,s_2\}$
-    
-    $C=C_1\cup C_2$
-    
-    $\Delta=f(\Delta_1\cup\Delta_2)$
-    
-    $F=F_1\cup F_2\backslash\{s_1,s_2\}$
-}
+    \sembox{
+        $\semaut{\varphi_1|\varphi_2}=
+        \left\{\begin{array}{ll}
+            \semaut{(\epsilon\cdot\varphi_1)\cup\varphi_2} & if (q_1,\phi_1,p_1,a,s_1)\in\Delta_1 \\
+            \semaut{\varphi_1\cup(\epsilon\cdot\varphi_2)} & if (q_2,\phi_2,p_2,a,s_2)\in\Delta_2 \\
+            \automaton & otherwise \\
+        \end{array}\right.
+        $
+        
+        Where
+        
+        $f\transition=
+        \left\{\begin{array}{ll}
+            \transition[][s] & if q\in\{s_1,s_2\} \\
+            \transition & otherwise \\
+        \end{array}\right.
+        $
+        
+        $Q=Q_1\cup Q_2 \cup {s}\backslash\{s_1,s_2\}$
+        
+        $C=C_1\cup C_2$
+        
+        $\Delta=f(\Delta_1\cup\Delta_2)$
+        
+        $F=F_1\cup F_2\backslash\{s_1,s_2\}$
+    }
+\end{definition}
