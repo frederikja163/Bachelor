@@ -80,7 +80,9 @@ namespace TimedRegex.Parsing
             }
             // This if statement needs to be updated with every possible first-token after a concatenation.
             // Could there possibly be a better way to do this?
-            if (tokenizer.Peek().Type == TokenType.Match || tokenizer.Peek().Type == TokenType.ParenthesisStart)
+            if (tokenizer.Peek().Type == TokenType.Match ||
+                tokenizer.Peek().Type == TokenType.MatchAny ||
+                tokenizer.Peek().Type == TokenType.ParenthesisStart)
             {
                 IAstNode right = ParseConcatenation(tokenizer);
                 return new Concatenation(left, right);
@@ -90,7 +92,7 @@ namespace TimedRegex.Parsing
 
         private static IAstNode ParseInterval(Tokenizer tokenizer)
         {
-            IAstNode child = ParseMatchAny(tokenizer);
+            IAstNode child = ParseMatch(tokenizer);
             if ((tokenizer.Peek().Type != TokenType.IntervalOpen && tokenizer.Peek().Type != TokenType.IntervalClose))
             {
                 return child;
@@ -104,16 +106,7 @@ namespace TimedRegex.Parsing
                 .Type == TokenType.IntervalClose;
             return new Interval(child, token, new Range(startInterval, endInterval, startInclusive, endInclusive));
         }
-
-        private static IAstNode ParseMatchAny(Tokenizer tokenizer)
-        {
-            if (tokenizer.Peek().Type != TokenType.MatchAny)
-            {
-                return ParseMatch(tokenizer);
-            }
-            return new MatchAny(tokenizer.Advance());
-        }
-
+        
         private static float ParseNumber(Tokenizer tokenizer)
         {
             Token token = tokenizer.Advance();
@@ -159,6 +152,10 @@ namespace TimedRegex.Parsing
 
                 tokenizer.Accept(TimedRegexErrorType.ParenthesisImproperFormat, TokenType.ParenthesisEnd);
                 return block;
+            }
+            if (tokenizer.Peek().Type == TokenType.MatchAny)
+            {
+                return new MatchAny(tokenizer.Advance());
             }
             tokenizer.Expect(TimedRegexErrorType.ExpectedMatch, TokenType.Match);
             return new Match(tokenizer.Advance());
