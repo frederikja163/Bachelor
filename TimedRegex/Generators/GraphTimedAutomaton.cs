@@ -137,6 +137,7 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
 
     internal GraphTimedAutomaton(TimedAutomaton ta)
     {
+        Regex = ta.Regex;
         InitialState = ta.InitialState;
         _alphabet = ta.GetAlphabet().ToHashSet();
         _clocks = ta.GetClocks().ToList();
@@ -224,7 +225,8 @@ internal sealed class GraphTimedAutomaton : ITimedAutomaton
     }
 
     public TaState? InitialState { get; }
-    
+    public string Regex { get; }
+
     public GState GetGState(TaState state)
     {
         return _taStateToGState[state];

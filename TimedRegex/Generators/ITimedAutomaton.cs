@@ -6,6 +6,7 @@ internal interface ITimedAutomaton
 {
     internal State? InitialState { get; }
     
+    internal string Regex { get; }
     internal IEnumerable<Clock> GetClocks();
     internal IEnumerable<Edge> GetEdges();
     internal IEnumerable<State> GetStates();

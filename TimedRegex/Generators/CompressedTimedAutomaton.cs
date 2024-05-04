@@ -12,6 +12,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
 
     internal CompressedTimedAutomaton(ITimedAutomaton automaton)
     {
+        Regex = automaton.Regex;
         int clockId = 0, stateId = 0, edgeId = 0;
         Dictionary<int, Clock> newClocks =
             automaton.GetClocks().ToDictionary(c => c.Id, (_) => new Clock(clockId++));
@@ -35,6 +36,7 @@ internal sealed class CompressedTimedAutomaton : ITimedAutomaton
     }
 
     public State? InitialState { get; set; }
+    public string Regex { get; }
 
     public IEnumerable<Clock> GetClocks()
     {
