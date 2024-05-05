@@ -71,7 +71,7 @@ internal sealed class UppaalGenerator : IGenerator
 
         if (declaration.GetChannels().Any())
         {
-            xmlWriter.WriteValue($"chan {string.Join(", ", declaration.GetChannels())};");
+            xmlWriter.WriteValue($"broadcast chan {string.Join(", ", declaration.GetChannels())};");
         }
 
         if (declaration.GetSymbols().Any())
