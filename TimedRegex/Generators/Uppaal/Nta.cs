@@ -58,7 +58,7 @@ internal sealed class Nta
         localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters(), _symbolToRenamed);
 
         _templates.Add(new (localDeclaration, $"ta{NewTemplateId()}",
-            $"l{automaton.InitialLocation!.Id}",
+            $"l{automaton.InitialState!.Id}",
             automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
             automaton.GetEdges().Select(e => new Transition(e, _symbolToRenamed))));
