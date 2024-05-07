@@ -196,7 +196,7 @@ internal sealed class BuildCommand
 
         Log.WriteLineIf(Verbose, "Generating automaton.");
         Log.StartTimeIf(Verbose, out sw);
-        AutomatonGeneratorVisitor automatonGeneratorVisitor = new();
+        AutomatonGeneratorVisitor automatonGeneratorVisitor = new(regularExpression);
         root.Accept(automatonGeneratorVisitor);
         TimedAutomaton timedAutomaton = automatonGeneratorVisitor.GetAutomaton();
         Log.StopTime(sw, "Automaton generated in {0}");

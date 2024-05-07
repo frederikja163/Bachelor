@@ -10,8 +10,9 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     private readonly Dictionary<int, State> _states;
     private readonly HashSet<State> _finalStates;
     
-    internal TimedAutomaton()
+    internal TimedAutomaton(string regex = "")
     {
+        Regex = regex;
         _clocks = new Dictionary<int, Clock>();
         _edges = new Dictionary<int, Edge>();
         _states = new Dictionary<int, State>();
@@ -22,6 +23,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     
     internal TimedAutomaton(TimedAutomaton other, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
     {
+        Regex = other.Regex;
         _clocks = !excludeClocks
             ? other._clocks.ToDictionary()
             : new Dictionary<int, Clock>();
@@ -38,6 +40,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
     internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, bool excludeLocations = false, bool excludeEdges = false, bool excludeClocks = false)
     {
+        Regex = left.Regex;
         _clocks = !excludeClocks
             ? left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary()
             : new Dictionary<int, Clock>();
@@ -54,6 +57,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     
     internal TimedAutomaton(TimedAutomaton left, TimedAutomaton right, Func<Edge, bool>  includedEdges, Func<State, bool> includedLocations)
     {
+        Regex = left.Regex;
         _clocks = left._clocks.UnionBy(right._clocks, kvp => kvp.Key).ToDictionary();
         _edges = left._edges.Values.Union(right._edges.Values).Where(includedEdges).ToDictionary(e => e.Id);
         _states = left._states.Values.Union(right._states.Values).Where(includedLocations).ToDictionary(s => s.Id);
@@ -67,6 +71,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     internal static int TotalEdgeCount { get; private set; }
     internal static int TotalClockCount { get; private set; }
     public State? InitialState { get; internal set; }
+    public string Regex { get; }
 
     internal void PruneEdges()
     {
