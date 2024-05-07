@@ -7,7 +7,7 @@ public class GraphAutomatonTests
 {
     private static GraphTimedAutomaton GenerateTestGta()
     {
-        TimedAutomaton ta = new TimedAutomaton();
+        TimedAutomaton ta = new TimedAutomaton("");
 
         State root = ta.AddState(newInitial: true);
         State l12 = ta.AddState();

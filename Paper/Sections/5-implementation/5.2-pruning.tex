@@ -1,0 +1,22 @@
+\subsection{Pruning}\label[subsection]{pruning}
+
+Some of the semantics from \cref{subsec:semantics} can lead to automata of an explosive size. An optional pruning step is performed on the automaton, in order to remove transitions, states, and clocks, that do not affect the transition system. This leads to better performance (see \cref{subsec:benchmarks}), and better readability. 
+%TODO: Affirm claims made about performance after benchmarks
+
+\subsubsection{Dead State Pruning}\label[subsubsection]{deadStatePruning}
+States that are not final states, and that are not the source of any transition, are considered "dead states" according to this pruning rule. Implementing this rule effectively removes any branches of the automaton, that do not end in a final state when applied recursively. Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
+
+\input{Documents/Definitions/PruneSemantics/DeadState.tex}
+
+\subsubsection{Unreachable State Pruning}\label[subsubsection]{unreachableStatePruning}
+States that are not the destination of any transition, are considered unreachable states according to this rule. The initial location is an exception to this rule. When this rule is applied until continuously, it removes any part of the automaton that is disconnected from parts of the automata connected to the initial state. This rule is formally defined in \cref{definition:unreachableStatePruning}
+
+\input{Documents/Definitions/PruneSemantics/Unreachable.tex}
+
+\subsubsection{Dead Clock Pruning}\label[subsubsection]{deadClockPruning}
+During construction and pruning of the automaton, certain clocks may end up not being checked in any transition. This pruning rule defines them as "dead clocks" and prunes them. This rule is formally defined in \cref{definition:deadClockPruning}
+
+\input{Documents/Definitions/PruneSemantics/DeadClock.tex}
+
+\subsubsection{Dead Edge Pruning}\label[subsubsection]{deadEdgePruning}
+\input{Documents/Definitions/PruneSemantics/DeadEdge.tex}

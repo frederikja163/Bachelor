@@ -8,9 +8,11 @@ namespace TimedRegex.AST.Visitors;
 internal class AutomatonGeneratorVisitor : IAstVisitor
 {
     private readonly Stack<TimedAutomaton> _stack = new();
+    private readonly string _regex;
 
-    public AutomatonGeneratorVisitor()
+    public AutomatonGeneratorVisitor(string regex)
     {
+        _regex = regex;
     }
     
     internal TimedAutomaton GetAutomaton()
@@ -20,7 +22,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
     
     public void Visit(Epsilon epsilon)
     {
-        TimedAutomaton ta = new();
+        TimedAutomaton ta = new(_regex);
         State initial = ta.AddState(false, true);
         State final = ta.AddState(true);
         Clock clock = ta.AddClock();
@@ -31,7 +33,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
     public void Visit(MatchAny matchAny)
     {
-        TimedAutomaton ta = new();
+        TimedAutomaton ta = new(_regex);
 
         State initial = ta.AddState(newInitial: true);
         State final = ta.AddState(true);
@@ -264,7 +266,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
 
     public void Visit(Match match)
     {
-        TimedAutomaton ta = new();
+        TimedAutomaton ta = new(_regex);
         
         State initial = ta.AddState(newInitial: true);
         State final = ta.AddState(true);

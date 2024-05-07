@@ -4,7 +4,7 @@ namespace TimedRegex.Parsing;
 
 internal sealed class Tokenizer
 {
-    private static readonly Regex Match = new Regex("^[a-zA-Z]|<[a-zA-Z0-9_\\- |']+>", RegexOptions.Compiled);
+    private static readonly Regex Match = new Regex("^(?:[a-zA-Z]|<[a-zA-Z0-9_\\- |']+>)", RegexOptions.Compiled);
     private static readonly Regex Number = new Regex("^[0-9]+(?:\\.[0-9]+)?", RegexOptions.Compiled);
     private int _head;
     private readonly string _input;
