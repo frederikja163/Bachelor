@@ -21,7 +21,7 @@ Most of the semantics have been copied directly from the paper by Eugene et al. 
 \subsubsection{Intersection}
 When creating automata using an intersection with the rules from Eugene et al.
 many states are created with no transitions.
-By creating the intersection states lazily as needed for transitions we can greatly decrease the amount of states created.
+By creating the intersection states lazily as needed for transitions, we can greatly decrease the number of states created.
 % TODO: Possibly insert a figure here.
 
 \subsubsection{Union}
@@ -29,11 +29,11 @@ The only semantics changed from the paper by Eugene et al. is the semantics for 
 
 \input{Documents/Definitions/PruneSemantics/Union}
 
-The semantics work by checking if there is a transition looping back to the initial state on either automaton. If this is the case they are concatenated with an epsilon automaton. That means in the case where both automata have a transition to their initial state, our new semantics will create the same result as the one in the paper. However, when an automaton does not have a transition back to the initial location, we dont need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one automaton and then move to the other automaton.
+The semantics work by checking if there is a transition looping back to the initial state on either automaton. If this is the case they are concatenated with an epsilon automaton. That means in the case where both automata have a transition to their initial state, our new semantics will create the same result as the one in the paper. However, when an automaton does not have a transition back to the initial location, we do not need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one automaton, and then move to the other automaton.
 
 \input{Automata/Union}
 
 \subsubsection{Match any}
-Since only match on a single character was defined in the paper by Euegene et al. and we wanted to have a way to match all possible characters like normal regular expressions and Monaa. For this we used a '.' like in normal regular expressions. Transitions with this symbol are allowed to be taken like any other transition when any input is given. Otherwise this symbol is the same as all other symbols in the automaton.
+Only match on a single character was defined in the paper by Euegene et al. and we wanted to have a way to match all possible characters like normal regular expressions and Monaa. For this we used a '.' like in normal regular expressions. Transitions with this symbol are allowed to be taken like any other transition when any input is given. Otherwise this symbol is the same as all other symbols in the automaton.
 
 \input{Automata/MatchAny}
