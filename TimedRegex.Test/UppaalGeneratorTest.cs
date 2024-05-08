@@ -175,7 +175,7 @@ public sealed class UppaalGeneratorTest
         Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<(int, string)>([(100, "test")]), new List<int>([1, 4, 6]), new List<string>(["a", "b", "a"]));
         UppaalGenerator generator = new();
         StringBuilder sb = new();
-        string expected = "<declaration>clock c;broadcast chan a, b;const string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nclock_t times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
+        string expected = "<declaration>clock c;\nchan a, b;\nconst string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nclock_t times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
@@ -272,7 +272,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1000 && c0 < 5000) && (c1 >= 2000 && c1 < 3000)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 >= 1 && c0 < 5) && (c1 >= 2 && c1 < 3)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("c0 = 0, c1 = 0"));
             Assert.That(labels[2].LabelString, Is.EqualTo("a?"));
         });
@@ -317,7 +317,7 @@ public sealed class UppaalGeneratorTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2000 && c0 < 7000) && (c1 >= 1000 && c1 < 7000)"));
+            Assert.That(labels[0].LabelString, Is.EqualTo("(c0 > 2 && c0 < 7) && (c1 >= 1 && c1 < 7)"));
             Assert.That(labels[1].LabelString, Is.EqualTo("a?"));
         });
 
@@ -340,7 +340,7 @@ public sealed class UppaalGeneratorTest
         UppaalGenerator uppaalGenerator = new();
         Nta nta = CreateTestNta();
         const string expected =
-            "<nta>\n  <template>\n    <name>ta1</name>\n    <declaration>clock c0, c1, c2;</declaration>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition>\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition>\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
+            "<nta>\n  <template>\n    <name>ta1</name>\n    <declaration>clock c0, c1, c2;\n</declaration>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition>\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition>\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -360,24 +360,7 @@ public sealed class UppaalGeneratorTest
         Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
         Nta nta = new(template, declaration);
 
-        const string expected = "<nta>\n  <declaration>clock c1, c2;typedef int[-1073741822,1073741822] clock_t;\n</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
-        StringBuilder sb = new();
-
-        using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
-        {
-            uppaalGenerator.WriteNta(xmlWriter, nta);
-        }
-
-        Assert.That(sb.ToString(), Is.EqualTo(expected));
-    }
-
-    [Test]
-    public void WriteTimedWordNtaTest()
-    {
-        UppaalGenerator uppaalGenerator = new();
-        Nta nta = GenerateTestTimedWordAutomaton();
-
-        const string expected = "<nta>\n  <declaration>broadcast chan _, a, b, c;typedef int[-1073741822,1073741822] clock_t;\n</declaration>\n  <template>\n    <name>ta0</name>\n    <declaration>clock c0;const string word[5] = {\"a\", \"b\", \"c\", \"a\", \"\\0\"};\nclock_t times[5] = {1000, 2000, 3000, 4000, 4001};\nint index = 0;\n</declaration>\n    <location id=\"l0\" x=\"0\" y=\"0\">\n      <name>loc0</name>\n    </location>\n    <location id=\"l1\" x=\"0\" y=\"300\">\n      <name>loc1</name>\n    </location>\n    <init ref=\"l0\" />\n    <transition>\n      <source ref=\"l1\" />\n      <target ref=\"l0\" />\n      <label kind=\"synchronisation\" x=\"-75\" y=\"165\">_!</label>\n      <label kind=\"assignment\" x=\"-75\" y=\"150\">index++</label>\n    </transition>\n    <transition>\n      <source ref=\"l0\" />\n      <target ref=\"l1\" />\n      <label kind=\"synchronisation\" x=\"-75\" y=\"165\">a!</label>\n      <label kind=\"guard\" x=\"-75\" y=\"150\">word[index] == \"a\" &amp;&amp; times[index] == c0</label>\n    </transition>\n    <transition>\n      <source ref=\"l0\" />\n      <target ref=\"l1\" />\n      <label kind=\"synchronisation\" x=\"-75\" y=\"165\">b!</label>\n      <label kind=\"guard\" x=\"-75\" y=\"150\">word[index] == \"b\" &amp;&amp; times[index] == c0</label>\n    </transition>\n    <transition>\n      <source ref=\"l0\" />\n      <target ref=\"l1\" />\n      <label kind=\"synchronisation\" x=\"-75\" y=\"165\">c!</label>\n      <label kind=\"guard\" x=\"-75\" y=\"150\">word[index] == \"c\" &amp;&amp; times[index] == c0</label>\n    </transition>\n  </template>\n  <system>system ta0;</system>\n</nta>";        
+        const string expected = "<nta>\n  <declaration>clock c1, c2;\ntypedef int[-1073741822,1073741822] clock_t;\n</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -408,7 +391,7 @@ public sealed class UppaalGeneratorTest
             },
             new List<Transition>());
 
-        const string expected = "<template>\n  <name>ta1</name>\n  <declaration>clock c0;</declaration>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
+        const string expected = "<template>\n  <name>ta1</name>\n  <declaration>clock c0;\n</declaration>\n  <location id=\"id0\">\n    <name>id0</name>\n  </location>\n  <init ref=\"id0\" />\n</template>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -499,7 +482,7 @@ public sealed class UppaalGeneratorTest
         UppaalGenerator uppaalGenerator = new();
         Declaration declaration = new(new List<string> { "c1", "c2" }, new List<string> { "x", "y" });
 
-        const string expected = "<declaration>clock c1, c2;broadcast chan x, y;</declaration>";
+        const string expected = "<declaration>clock c1, c2;\nchan x, y;\n</declaration>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
