@@ -26,12 +26,16 @@ internal sealed class Transition
             _labels.Add(edge.IsOutput ? Label.CreateOutputSynchronization(symbol, x, y) : Label.CreateInputSynchronization(symbol, x, y));
         }
 
-        if (edge.IsOutput && edge.Symbol != "\0" && edge.Symbol != ".")
+        if (edge.IsOutput)
         {
-            _labels.Add(Label.CreateOutputGuard(edge, x, y));
-        }
-        else if (edge.IsOutput)
-        {
+            if (edge.Symbol != ".")
+            {
+                _labels.Add(Label.CreateOutputGuard(edge, x, y));
+            }
+            else
+            {
+                _labels.Add(Label.CreateOutputGuardMatchAny(edge, x, y));
+            }
             _labels.Add(Label.CreateOutputUpdate(edge, x, y));
         }
 

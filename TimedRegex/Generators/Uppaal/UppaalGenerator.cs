@@ -5,6 +5,7 @@ namespace TimedRegex.Generators.Uppaal;
 internal sealed class UppaalGenerator : IGenerator
 {
     private readonly Nta _nta;
+    internal const int MaxClockValue = 1073741822;
     
     public bool IsQuiet { get; init; }
 
@@ -66,12 +67,19 @@ internal sealed class UppaalGenerator : IGenerator
         xmlWriter.WriteStartElement("declaration");
         if (declaration.GetClocks().Any())
         {
-            xmlWriter.WriteValue($"clock {string.Join(", ", declaration.GetClocks())};");
+            xmlWriter.WriteValue($"clock {string.Join(", ", declaration.GetClocks())};\n");
         }
 
         if (declaration.GetChannels().Any())
         {
-            xmlWriter.WriteValue($"broadcast chan {string.Join(", ", declaration.GetChannels())};");
+            xmlWriter.WriteValue($"chan {string.Join(", ", declaration.GetChannels())};\n");
+        }
+
+        if (declaration.GetTypes().Any())
+        {
+            string str = string.Join(";\n",
+                declaration.GetTypes().Select(t => $"typedef int[-{t.maxValue},{t.maxValue}] {t.name};\n"));
+            xmlWriter.WriteValue(str);
         }
 
         if (declaration.GetSymbols().Any())
@@ -82,9 +90,9 @@ internal sealed class UppaalGenerator : IGenerator
 
         if (declaration.GetTimes().Any())
         {
-            short emptyCharTime = (short)(declaration.GetTimes().Last() + 1);
+            int emptyCharTime = declaration.GetTimes().Last() + 1;
             string str = string.Join(", ", declaration.GetTimes().Append(emptyCharTime));
-            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Count() +1 }] = {{{str}}};\n");
+            xmlWriter.WriteValue($"clock_t times[{declaration.GetTimes().Count() +1 }] = {{{str}}};\n");
         }
 
         if (declaration.GetTimes().Any())
