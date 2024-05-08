@@ -84,10 +84,7 @@ internal sealed class BuildCommand
 
         IGenerator generator = Format switch
         {
-            OutputFormat.Uppaal => new UppaalGenerator()
-            {
-                IsQuiet = Quiet,
-            },
+            OutputFormat.Uppaal => new UppaalGenerator(Quiet),
             OutputFormat.TikzDocument => new TikzGenerator(true),
             OutputFormat.TikzFigure => new TikzGenerator(false),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))

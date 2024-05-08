@@ -7,11 +7,16 @@ internal sealed class UppaalGenerator : IGenerator
     private readonly Nta _nta;
     internal const int MaxClockValue = 1073741822;
     
-    public bool IsQuiet { get; init; }
+    public bool IsQuiet { get; }
 
-    public UppaalGenerator()
+    public UppaalGenerator(bool isQuiet = false)
     {
+        IsQuiet = isQuiet;
         _nta = new Nta(IsQuiet);
+        if (!IsQuiet)
+        {
+            Console.WriteLine("Warning! Uppaal cannot handle floating point clocks, all times have been converted into their whole integer parts.");
+        }
     }
     
     internal static XmlWriterSettings XmlSettings { get; } = new()
