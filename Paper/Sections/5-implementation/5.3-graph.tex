@@ -2,7 +2,7 @@
 
 % Motivation for implementing algorithm ourselves
 %   - alternative: use DOT language for Graphviz. 
-%       - too much bloat and better understanding of algorithm if implemened manually
+%       - too much bloat and better understanding of algorithm if implemented manually
 % Sugiyama framework
 %   - 4 steps
 %       - make graph acyclic
@@ -16,15 +16,25 @@ As mentioned earlier, the layout algorithm used in (TODO: Insert name of program
 % Visualise steps with different automata
 
 \subsubsection{Make automata acyclic}
-The first step of the Sugiyama framework is to, temporarily, make the automata acyclic. As described by Mazetti, this is done by reversing a specific list of edges \cite{Mazetti2012}.
+The first step of the Sugiyama framework is to, temporarily, make the automata acyclic. This is necessary because subsequent steps require edges to have a consistent direction. As described by Mazetti et al., this is done by reversing a specific list of edges \cite{Mazetti2012}.
 Mazetti describes several methods for finding this list of edges, including using a depth first search to visit all states, and any edges that lead to already visited states, should be reversed.
 This is the method used by Graphviz' implementation of the Sugiyama framework. % could be irrelevant
 
 This step, however, is trivially completed during the conversion from a timed regular expression to a timed automaton, since the semantics described by Eugene et al. precisely describe when reversible edges are created.
 More specifically, in the construction of guaranteed iterator automata, and it's absorbed variant\cite{Eugene2001}.
 
-
+% insert image of step
 
 \subsubsection{Assign states to layers}
+The next step is to assign states to layers. Mazetti et al. describes this process by assigning a given state to the layer index equal to the longest path from the initial state \cite{Mazetti2012}.
+
+This has been implemented by assigning the initial state of the automaton to layer 0, and assigning the states connected by outgoing edges to layer 1.
+This is done recursively for all outgoing states until final state is reached.
+If, at any point, a state is reached that is on the same layer or lower, it is moved to the next layer, and its outgoing states are recursively updated aswell.
+
+% insert image of step
+
 \subsubsection{Order states in layers}
+After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of edge crossings, which, more often than not, degrades the visual clarity of the automata. Mazetti et al. formulates this by sweeping through each layer and ordering its states by the barycenter (average) of the positions of its connected states in the previous layer. E.g. if a state is connected to two states in the previous layer, and their positions are (0, 0) and (0, 100), the given state's position would be (100, 50).
+
 \subsubsection{Assign positions}
