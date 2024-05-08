@@ -1,4 +1,5 @@
-﻿using TimedRegex.AST.Visitors;
+﻿using System.Globalization;
+using TimedRegex.AST.Visitors;
 using TimedRegex.Parsing;
 using Range = TimedRegex.Generators.Range;
 
@@ -26,7 +27,7 @@ internal sealed class Interval : IUnary
     public string ToString(bool forceParenthesis = false)
     {
         return forceParenthesis
-            ? $"({Child.ToString(forceParenthesis)}{Token.Match}{Range.StartInterval};{Range.EndInterval}{(Range.EndInclusive ? ']' : '[')})"
-            : $"{Child.ToString(forceParenthesis)}{Token.Match}{Range.StartInterval};{Range.EndInterval}{(Range.EndInclusive ? ']' : '[')}";
+            ? $"({Child.ToString(forceParenthesis)}{Token.Match}{Range.StartInterval.ToString(CultureInfo.InvariantCulture)};{Range.EndInterval.ToString(CultureInfo.InvariantCulture)}{(Range.EndInclusive ? ']' : '[')})"
+            : $"{Child.ToString(forceParenthesis)}{Token.Match}{Range.StartInterval.ToString(CultureInfo.InvariantCulture)};{Range.EndInterval.ToString(CultureInfo.InvariantCulture)}{(Range.EndInclusive ? ']' : '[')}";
     }
 }
