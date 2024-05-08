@@ -11,12 +11,13 @@
 %       - order states in layers
 %       - assign positions
 
+As mentioned earlier, the layout algorithm used in (TODO: Insert name of program) to organize and arrange the states in timed automata, is called the Sugiyama framework, also known as layered graph drawing (TODO: cite sugiyama when \#343 merged). The method comprises four steps that, when combined, results in a layered graph with minimized edge crossings.
 
-As mentioned earlier, the layout algorithm used in (TODO: Insert name of program) to organize and arrange the states in timed automata, is called the Sugiyama Framework, also known as layered graph drawing (TODO: cite sugiyama when \#343 merged). The method comprises four steps that, when combined, results in a layered graph with minimized edge crossings.
+% Visualise steps with different automata
 
-% Visualise 
+\subsubsection{Make automata acyclic}
+The first step of the Sugiyama framework is to make the automata acyclic. As described by Mazetti, this is done by reversing a specific selection of edges \cite{Mazetti2012}.
 
-\subsubsection{Make graph acyclic}
 \subsubsection{Assign states to layers}
 \subsubsection{Order states in layers}
 \subsubsection{Assign positions}
