@@ -6,9 +6,10 @@
 \usepackage{amsmath}
 \usepackage{verbatim}
 \usepackage{tikz-uml}
+%\usepackage{parskip} % automatically adds line breaks
 
 \usetikzlibrary{arrows}
-\usetikzlibrary {arrows.meta}
+\usetikzlibrary{arrows.meta}
 
 \tikzset{
     vertex/.style={circle,draw,minimum size=1.5em},
@@ -27,6 +28,7 @@
 \newtheorem{definition}[defCounter]{Definition}
 \crefname{defCounter}{Definition}{Definitions}
 
+\setlength{\parindent}{0pt}
 \usepackage{etoolbox}
 \AtBeginEnvironment{definition}{\setlength{\parindent}{-0.45em}}
 
