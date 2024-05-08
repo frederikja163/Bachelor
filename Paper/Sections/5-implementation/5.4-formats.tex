@@ -1,16 +1,14 @@
 \subsection{Output Formats}\label[subsection]{output formats}
 
-In order to represent the automaton created from timed regular expressions, 
-the intermediate automaton, represented as a C\# class in code, can be output to various formats. 
-At the time of release of this paper, two output formats are supported.
+In order to represent the automaton created from timed regular expressions, we have explored two formats, both described in this subsection.
 
 \subsubsection{UPPAAL}
 UPPAAL, mentioned in \cref{sec:related work}, is a state of the art program for representing timed automata \cite*{UPPAAL}. 
 When outputting to this format, it is possible to check timed words on the timed regular expression, as further described in \cref{subsec:checking}.
 Outputting to UPPAAL is achieved through translating the automata to an XML file, which can be interpreted by the UPPAAL program.
-When outputting to this format, all clocks and intervals are converted from float values to short values, since UPPAAL defines their clocks with integer values.
+When outputting to this format, there are several challenges that have to be overcome all of these have to do with checking so they will also be described in \cref{subsec:checking}.
 
 \subsubsection{TikZ}
 TikZ can be used to visualize figures and graphs in LaTeX \cite{Tikz}. TikZ uses some specialized statements for specifying certain parts of a graph.
-These statements, as well as common LaTeX statements, are generated from the intermediate automaton, and combined into a LaTeX file.
+Outputting graphs in TikZ is trivial when the automaton is loaded into memory. As the syntax is simple, and it is only used for visualization.
 This output format is useful for getting a simple visualization of one or more automata, as well as dynamically creating visualizations of automata for scientific papers written in LaTeX.
