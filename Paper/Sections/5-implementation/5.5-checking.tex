@@ -1,8 +1,14 @@
 \subsection{Checking}\label{subsec:checking}
 
-Outputting automata to UPPAAL, allows for checking of timed words. The timed word itself is represented in the declarations section in UPPAAL.
+Outputting automata to UPPAAL, allows for checking of timed words, to determine whether they are accepted by the automaton generated from the regular expression. 
+This can be done using UPPAAL's verifier, which simulates the transition system.
+
+The timed word itself is represented in the declarations section in UPPAAL.
+In order to check words containing values outside of the bounds of shorts, the type used by the timed word array containing types, uses a custom type that is defined to be of the same size as the integer representing clock values.
 Here we define two arrays. One containing the symbols, and one containing the times. 
-The alphabet is represented by channels, as well as an automaton with edges for each symbol, that also increase the index of the timed word arrays.
-When this automaton is simulated alongside any automaton representing the timed regular expression, the timed word can be checked against the expression.
-This can be done using UPPAAL's verifier.
-In order to check words containing values outside of the bounds of shorts, the type used by the timed word array containing types, uses a custom type that is defined when otputting timed words.
+The alphabet is represented by channels, as well as an automaton with transitions for each symbol, that also increase the index of the timed word arrays.
+During simulations, the clock ticks up until a symbol time is reached. When this happens, the automaton representing the alphabet takes the corresponding transition. 
+This sends a signal though the channel of the same name, which allows a transition to be taken in the automaton representing the timed regular expression.
+A timed word is considered to be accepted by the timed regular expression, when the automaton representing the timed regular expression is able to reach a final state.
+
+
