@@ -15,7 +15,7 @@ internal sealed class UppaalGenerator : IGenerator
         _nta = new Nta(IsQuiet);
         if (!IsQuiet)
         {
-            Console.WriteLine("Warning! Uppaal cannot handle floating point clocks, all times have been converted into their whole integer parts.");
+            Console.WriteLine("Warning: UPPAAL cannot handle floating point clocks, all times have been converted into their whole integer parts.");
         }
     }
     

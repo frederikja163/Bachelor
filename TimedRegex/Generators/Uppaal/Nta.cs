@@ -61,7 +61,7 @@ internal sealed class Nta
             
             if (range.StartInterval > UppaalGenerator.MaxClockValue || range.EndInterval > UppaalGenerator.MaxClockValue)
             {
-                Console.WriteLine($"Warning you used a clock bigger than the maximum one allowed in uppaal (max: {UppaalGenerator.MaxClockValue}). It has been clamped to the maximum value.");
+                Console.WriteLine($"Warning: You used a clock bigger than the maximum one allowed in UPPAAL (max: {UppaalGenerator.MaxClockValue}). It has been clamped to the maximum value.");
             }
         }
         
