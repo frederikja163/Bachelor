@@ -31,10 +31,18 @@ The next step is to assign states to layers. Mazetti et al. describes this proce
 This has been implemented by assigning the initial state of the automaton to layer 0, and assigning the states connected by outgoing edges to layer 1.
 This is done recursively for all outgoing states until final state is reached.
 If, at any point, a state is reached that is on the same layer or lower, it is moved to the next layer, and its outgoing states are recursively updated aswell.
+If
 
 % insert image of step
 
 \subsubsection{Order states in layers}
-After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of edge crossings, which, more often than not, degrades the visual clarity of the automata. Mazetti et al. formulates this by sweeping through each layer and ordering its states by the barycenter (average) of the positions of its connected states in the previous layer. E.g. if a state is connected to two states in the previous layer, and their positions are (0, 0) and (0, 100), the given state's position would be (100, 50).
+After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of edge crossings, which, more often than not, degrades the visual clarity of the automata.
+Mazetti et al. formulates this by sweeping through each layer and ordering its states by the barycenter (average) of the positions of its connected states in the previous layer.
+E.g. if a state is connected to two states in the previous layer, and their positions are (0, 0) and (0, 100), the given state's position would be (100, 50).
+This sweep is performed thrice, once forward, once backwards, and lastly, forward again.
+This ensures that both a given state's incoming and outgoing states play a role in minimizing edge crossings.
+
+% insert image of step
 
 \subsubsection{Assign positions}
+The last step is to assign positions to each state.
