@@ -8,6 +8,7 @@ At the time of release of this paper, two output formats are supported.
 UPPAAL, mentioned in \cref{sec:related work}, is a state of the art program for representing timed automata \cite*{UPPAAL}. 
 When outputting to this format, it is possible to check timed words on the timed regular expression, as further described in \cref{subsec:checking}.
 Outputting to UPPAAL is achieved through translating the automata to an XML file, which can be interpreted by the UPPAAL program.
+When outputting to this format, all clocks and intervals are converted from float values to short values, since UPPAAL defines their clocks with integer values.
 
 \subsubsection{TikZ}
 TikZ can be used to visualize figures and graphs in LaTeX \cite{Tikz}. TikZ uses some specialized statements for specifying certain parts of a graph.
