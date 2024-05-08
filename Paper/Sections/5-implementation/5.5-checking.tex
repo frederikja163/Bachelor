@@ -2,5 +2,7 @@
 
 Outputting automata to UPPAAL, allows for checking of timed words. The timed word itself is represented in the declarations section in UPPAAL.
 Here we define two arrays. One containing the symbols, and one containing the times. 
-The alphabet is represented by channels, as well as an automaton with edged for each symbol, that also increase the index of the timed word arrays.
-When all of this is put together, UPPAAL's verifier can check the word by simulating the transition system. 
+The alphabet is represented by channels, as well as an automaton with edges for each symbol, that also increase the index of the timed word arrays.
+When this automaton is simulated alongside any automaton representing the timed regular expression, the timed word can be checked against the expression.
+This can be done using UPPAAL's verifier.
+In order to check words containing values outside of the bounds of shorts, the type used by the timed word array containing types, uses a custom type that is defined when otputting timed words.
