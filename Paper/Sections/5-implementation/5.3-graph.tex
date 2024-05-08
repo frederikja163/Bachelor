@@ -41,7 +41,7 @@ After all states have been assigned to a layer, they are ordered in those layers
 Mazetti et al. formulates this by sweeping through each layer and ordering its states by the barycenter (average) of the positions of its connected states in the previous layer.
 E.g. if a state is connected to two states in the previous layer, and their positions are (0, 0) and (0, 100), the given state's position would be (100, 50).
 This sweep is performed thrice, once forward, once backwards, and lastly, forward again.
-This ensures that both a given state's incoming and outgoing states play a role in minimizing edge crossings. \cite*{Mazetti2012}
+This ensures that both a given state's incoming and outgoing states play a role in minimizing edge crossings. \cite{Mazetti2012}
 
 The approach implemented for this paper shares the same philosophies as the one described above.
 
