@@ -10,3 +10,10 @@ When outputting to this format, it is possible to check timed works on the timed
 This is made possible by the automata created using the timed word, and the declarations in UPPAAL.
 Here we define two arrays. One containing the symbols, and one containing the times. 
 When all of this is put together, UPPAAL's verifier can check the word by simulating the transition system. 
+
+Outputting to UPPAAL is achieved through translating the automata to an XML file, which can be interpreted by the UPPAAL program.
+
+\subsubsection{TikZ}
+TikZ can be used to visualize figures and graphs in LaTeX \cite{Tikz}. TikZ uses some specialized statements for specifying certain parts of a graph.
+These statements, as well as common LaTeX statements, are generated from the intermediate automaton, and combined into a LaTeX file.
+This output format is useful for getting a simple visualization of one or more automata, as well as dynamically creating visualizations of automata for scientific papers written in LaTeX.
