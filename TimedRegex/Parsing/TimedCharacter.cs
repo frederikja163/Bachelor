@@ -1,4 +1,6 @@
-﻿namespace TimedRegex.Parsing;
+﻿using System.Globalization;
+
+namespace TimedRegex.Parsing;
 
 internal sealed class TimedCharacter : IEquatable<TimedCharacter>
 {
@@ -13,7 +15,7 @@ internal sealed class TimedCharacter : IEquatable<TimedCharacter>
             throw new FormatException("Too many elements in timed character, a timed character consists of only a character and a float for the time. Seperated by a comma.");
         }
         _symbol = strArr[0];
-        _time = float.Parse(strArr[1]);
+        _time = float.Parse(strArr[1], CultureInfo.InvariantCulture);
     }
 
     public TimedCharacter(string symbol, float time)
