@@ -15,6 +15,7 @@ internal sealed class Nta
         _isQuiet = false;
         _templates = new List<Template>() { template };
         Declaration = declaration;
+        Declaration.AddType(UppaalGenerator.MaxClockValue, "clock_t");
         _symbolToRenamed = new Dictionary<string, string>();
         _renamedToSymbol = new Dictionary<string, string>();
     }
@@ -24,6 +25,7 @@ internal sealed class Nta
         _isQuiet = isQuiet;
         _templates = new List<Template>();
         Declaration = new Declaration(new List<string>(), new List<string>());
+        Declaration.AddType(UppaalGenerator.MaxClockValue, "clock_t");
         _symbolToRenamed = new Dictionary<string, string>();
         _renamedToSymbol = new Dictionary<string, string>();
     }
@@ -43,6 +45,26 @@ internal sealed class Nta
 
     internal void AddAutomaton(ITimedAutomaton automaton)
     {
+        foreach (Range? range in automaton.GetEdges()
+                     .SelectMany(e => e.GetClockRanges())
+                     .Select(t => t.Item2))
+        {
+            if (_isQuiet)
+            {
+                break;
+            }
+            
+            if (range is null)
+            {
+                continue;
+            }
+            
+            if (range.StartInterval > UppaalGenerator.MaxClockValue || range.EndInterval > UppaalGenerator.MaxClockValue)
+            {
+                Console.WriteLine($"Warning: You used a clock bigger than the maximum one allowed in UPPAAL (max: {UppaalGenerator.MaxClockValue}). It has been clamped to the maximum value.");
+            }
+        }
+        
         foreach (string symbol in automaton.GetAlphabet())
         {
             string renamed = MakeSymbolUppaalName(symbol);
