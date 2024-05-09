@@ -47,7 +47,7 @@ public sealed class TimedWordTests
             Assert.That(a.GetFinalStates().Any(), Is.False);
             Assert.That(a.GetClocks().First(), Is.EqualTo(new Clock(0)));
             Assert.That(a.GetAlphabet().Count(), Is.EqualTo(4));
-            Assert.That(a.GetStates().Count(), Is.EqualTo(2));
+            Assert.That(a.GetStates().Count(), Is.EqualTo(1));
             Assert.That(a.GetEdges().Count(), Is.EqualTo(4));
         });
 

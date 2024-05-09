@@ -10,18 +10,16 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     private readonly List<TimedCharacter> _word;
     private readonly Clock _clock;
     private readonly State _initialState;
-    private readonly State _returnState;
 
     public TimedWordAutomaton(IEnumerable<TimedCharacter> timedWord)
     {
         _clock = new Clock(0);
         _word = timedWord.ToList();
         _initialState = new State(0);
-        _returnState = new State(1);
-        _alphabet = new();
+        _alphabet = new(){"."};
         _edges = new()
         {
-            new Edge(0, _returnState, _initialState, ".", true, true) // Return edge.
+            new Edge(1, _initialState, _initialState, ".", false, true), // MatchAny edge.
         };
         LoopOverAllCharacters();
     }
@@ -30,7 +28,6 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     {
         Dictionary<string, Edge> edges = new();
         int edgeCounter = 1;
-        _alphabet.Add("."); // Add MatchAny character.
         foreach (TimedCharacter character in _word)
         {
             if (_alphabet.Contains(character.Symbol))
@@ -40,7 +37,7 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
             else
             {
                 _alphabet.Add(character.Symbol);
-                Edge newEdge = new Edge(edgeCounter++, _initialState, _returnState, character.Symbol, isOutput: true);
+                Edge newEdge = new Edge(edgeCounter++, _initialState, _initialState, character.Symbol, isOutput: true);
                 _edges.Add(newEdge);
             }
         }
@@ -78,7 +75,6 @@ internal sealed class TimedWordAutomaton : ITimedAutomaton
     public IEnumerable<State> GetStates()
     {
         yield return _initialState;
-        yield return _returnState;
     }
 
     public bool IsFinal(State state)

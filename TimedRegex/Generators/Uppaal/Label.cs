@@ -30,6 +30,12 @@ internal sealed class Label
         return new Label(LabelKind.Guard, label, x - 75, y);
     }
 
+    internal static Label CreateOutputGuardMatchAny(Edge edge, int x, int y)
+    {
+        string label = "times[index] == c0";
+        return new Label(LabelKind.Guard, label, x - 200, y);
+    }
+
     public static Label CreateOutputUpdate(Edge edge, int x, int y)
     {
         string label = $"index++";
@@ -74,8 +80,8 @@ internal sealed class Label
             }
             
             yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
-                $"{(short)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
-                $"{(short)(range.EndInterval * 1000)})";
+                $"{Math.Min((int)(range.StartInterval), UppaalGenerator.MaxClockValue)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{Math.Min((int)(range.EndInterval), UppaalGenerator.MaxClockValue)})";
         }
     }
 
