@@ -12,8 +12,13 @@
 \usetikzlibrary{arrows.meta}
 
 \tikzset{
-    vertex/.style={circle,draw,minimum size=1.5em},
-    edge/.style={->, arrows = {-Latex[length=5pt 3 0]}}
+vertex/.style={circle,draw,minimum size=1.5em},
+edge/.style={->, arrows = {-Latex[length=5pt 3 0]}},
+every picture/.style={
+        execute at end picture={
+                \path (current bounding box.south west) +(0,-0.3) (current bounding box.north east) +(0,0.3);
+            }
+    }
 }
 \usepackage{graphics}
 \usepackage[T1]{fontenc}
