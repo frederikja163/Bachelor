@@ -100,9 +100,10 @@ internal sealed class UppaalGenerator : IGenerator
             xmlWriter.WriteValue($"clock_t times[{declaration.GetTimes().Count() +1 }] = {{{str}}};\n");
         }
 
-        if (declaration.GetTimes().Any())
+        if (declaration.GetInts().Any())
         {
-            xmlWriter.WriteValue("int index = 0;\n");
+            string str = string.Join(", ", declaration.GetInts());
+            xmlWriter.WriteValue($"int {str} = 0;\n");
         }
 
         xmlWriter.WriteEndElement();

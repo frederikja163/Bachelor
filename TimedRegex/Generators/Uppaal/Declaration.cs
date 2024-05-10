@@ -8,6 +8,7 @@ internal sealed class Declaration
 {
     private readonly HashSet<string> _clocks;
     private readonly HashSet<string> _channels;
+    private readonly HashSet<string> _ints;
     private readonly List<(int, string)> _types;
     private readonly List<int> _times;
     private readonly List<string> _symbols;
@@ -16,18 +17,10 @@ internal sealed class Declaration
     {
         _clocks = new HashSet<string>();
         _channels = new HashSet<string>();
+        _ints = new HashSet<string>();
         _types = new List<(int, string)>();
         _times = new List<int>();
         _symbols = new List<string>();
-    }
-
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<(int, string)> types, IEnumerable<int> times, IEnumerable<string> symbols)
-    {
-        _clocks = clocks.ToHashSet();
-        _channels = channels.ToHashSet();
-        _types = new List<(int, string)>();
-        _times = times.ToList();
-        _symbols = symbols.ToList();
     }
 
     internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels) : this()
@@ -36,8 +29,7 @@ internal sealed class Declaration
         _channels = channels.ToHashSet();
     }
 
-    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters,
-        Dictionary<string, string> symbolToRenamed)
+    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters)
     {
         foreach (TimedCharacter character in timedCharacters)
         {
@@ -46,7 +38,7 @@ internal sealed class Declaration
                 throw new FormatException("Timed characters must be in ascending order.");
             }
             _times.Add((int)character.Time);
-            _symbols.Add(symbolToRenamed[character.Symbol]);
+            _symbols.Add(character.Symbol);
         }
     }
     
@@ -63,6 +55,22 @@ internal sealed class Declaration
         foreach (var channel in _channels)
         {
             yield return channel;
+        }
+    }
+
+    internal void AddInt(string name)
+    {
+        if (!_ints.Add(name))
+        {
+            throw new Exception("Can not add the same int more than once.");
+        }
+    }
+
+    internal IEnumerable<string> GetInts()
+    {
+        foreach (string i in _ints)
+        {
+            yield return i;
         }
     }
 

@@ -15,6 +15,7 @@ internal sealed class Nta
         _isQuiet = false;
         _templates = new List<Template>() { template };
         Declaration = declaration;
+        Declaration.AddInt("index");
         Declaration.AddType(UppaalGenerator.MaxClockValue, "clock_t");
         _symbolToRenamed = new Dictionary<string, string>();
         _renamedToSymbol = new Dictionary<string, string>();
@@ -25,6 +26,7 @@ internal sealed class Nta
         _isQuiet = isQuiet;
         _templates = new List<Template>();
         Declaration = new Declaration(new List<string>(), new List<string>());
+        Declaration.AddInt("index");
         Declaration.AddType(UppaalGenerator.MaxClockValue, "clock_t");
         _symbolToRenamed = new Dictionary<string, string>();
         _renamedToSymbol = new Dictionary<string, string>();
@@ -77,7 +79,7 @@ internal sealed class Nta
 
 
         Declaration localDeclaration = new();
-        localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters(), _symbolToRenamed);
+        localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters());
 
         _templates.Add(new (localDeclaration, $"ta{NewTemplateId()}",
             $"l{automaton.InitialState!.Id}",
