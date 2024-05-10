@@ -4,12 +4,14 @@ internal sealed class Transition
 {
     private readonly List<Label> _labels;
     
-    internal Transition(Edge edge, Dictionary<string, string>? symbolRenames = null, int wordSize = 0)
+    internal Transition(Edge edge, ITimedAutomaton? automaton = null, Dictionary<string, string>? symbolRenames = null, int wordSize = 0)
     {
         _labels = new();
         
         int x = (edge.From.X + edge.To.X) / 2;
         int y = (edge.From.Y + edge.To.Y) / 2;
+        Source = $"l{edge.From.Id}";
+        Target = $"l{edge.To.Id}";
 
         if (edge.GetClockRanges().Any())
         {
@@ -38,9 +40,25 @@ internal sealed class Transition
             }
             _labels.Add(Label.CreateOutputUpdate(x, y));
         }
+        else if (automaton is not null && automaton.IsFinal(edge.To))
+        {
+            _labels.Add(Label.CreateFinalAssignment(x, y));
+        }
+    }
 
-        Source = $"l{edge.From.Id}";
-        Target = $"l{edge.To.Id}";
+    internal Transition(State state, Dictionary<string, string> symbolRenames)
+    {
+        _labels = new();
+        
+        int x = state.X;
+        int y = state.Y;
+        Source = $"l{state.Id}";
+        Target = $"l{state.Id}";
+        _labels = new List<Label>()
+        {
+            Label.CreateStartAssignment(x, y),
+            Label.CreateInputSynchronization(symbolRenames["."])
+        };
     }
 
     internal Transition(string source, string target, IEnumerable<Label> labels)

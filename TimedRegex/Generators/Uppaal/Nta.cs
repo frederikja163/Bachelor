@@ -29,6 +29,7 @@ internal sealed class Nta
         Declaration.AddInt("index");
         Declaration.AddType(UppaalGenerator.MaxClockValue, "clock_t");
         _symbolToRenamed = new Dictionary<string, string>();
+        _symbolToRenamed["."] = MakeSymbolUppaalName(".");
         _renamedToSymbol = new Dictionary<string, string>();
     }
 
@@ -81,11 +82,21 @@ internal sealed class Nta
         Declaration localDeclaration = new();
         localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters());
 
+        IEnumerable<Transition> transitions = automaton.GetEdges()
+            .Select(e => new Transition(e, automaton, _symbolToRenamed, automaton.GetTimedCharacters().Count()));
+
+        if (automaton is not TimedWordAutomaton)
+        {
+            transitions = transitions.Append(new Transition(automaton.InitialState, _symbolToRenamed));
+            localDeclaration.AddInt("startIndex");
+            localDeclaration.AddInt("endIndex");
+        }
+
         _templates.Add(new (localDeclaration, $"ta{NewTemplateId()}",
             $"l{automaton.InitialState!.Id}",
             automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
-            automaton.GetEdges().Select(e => new Transition(e, _symbolToRenamed, automaton.GetTimedCharacters().Count()))));
+            transitions));
     }
 
     private void CheckForRenamedCollision(string symbol, string renamed)

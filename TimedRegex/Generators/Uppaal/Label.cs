@@ -66,6 +66,18 @@ internal sealed class Label
         return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
     }
 
+    public static Label CreateFinalAssignment(int x = -1, int y = -1)
+    {
+        string labelString = "endIndex = index";
+        return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
+    }
+
+    public static Label CreateStartAssignment(int x = -1, int y = -1)
+    {
+        string labelString = "startIndex = index";
+        return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
+    }
+
     private static IEnumerable<string> GenerateGuard(Edge edge)
     {
         if (edge.IsDead)
