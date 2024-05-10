@@ -24,19 +24,19 @@ internal sealed class Label
     
     internal int Y { get; }
 
-    internal static Label CreateOutputGuard(Edge edge, int x, int y)
+    internal static Label CreateOutputGuard(Edge edge, int wordSize, int x, int y)
     {
-        string label = $"word[index] == \"{edge.Symbol}\" && times[index] == c0";
+        string label = $"index <= {wordSize} && word[index] == \"{edge.Symbol}\" && times[index] == c0";
         return new Label(LabelKind.Guard, label, x - 75, y);
     }
 
-    internal static Label CreateOutputGuardMatchAny(Edge edge, int x, int y)
+    internal static Label CreateOutputGuardMatchAny(int wordSize, int x, int y)
     {
-        string label = "times[index] == c0";
+        string label = $"index <= {wordSize} && times[index] == c0";
         return new Label(LabelKind.Guard, label, x - 200, y);
     }
 
-    public static Label CreateOutputUpdate(Edge edge, int x, int y)
+    public static Label CreateOutputUpdate(int x, int y)
     {
         string label = $"index++";
         return new Label(LabelKind.Assignment, label, x - 75, y);

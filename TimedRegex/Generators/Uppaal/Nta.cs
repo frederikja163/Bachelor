@@ -83,7 +83,7 @@ internal sealed class Nta
             $"l{automaton.InitialState!.Id}",
             automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
-            automaton.GetEdges().Select(e => new Transition(e, _symbolToRenamed))));
+            automaton.GetEdges().Select(e => new Transition(e, _symbolToRenamed, automaton.GetTimedCharacters().Count()))));
     }
 
     private void CheckForRenamedCollision(string symbol, string renamed)

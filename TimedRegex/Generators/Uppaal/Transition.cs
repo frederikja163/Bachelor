@@ -4,7 +4,7 @@ internal sealed class Transition
 {
     private readonly List<Label> _labels;
     
-    internal Transition(Edge edge, Dictionary<string, string>? symbolRenames = null)
+    internal Transition(Edge edge, Dictionary<string, string>? symbolRenames = null, int wordSize = 0)
     {
         _labels = new();
         
@@ -30,13 +30,13 @@ internal sealed class Transition
         {
             if (edge.Symbol != ".")
             {
-                _labels.Add(Label.CreateOutputGuard(edge, x, y));
+                _labels.Add(Label.CreateOutputGuard(edge, wordSize, x, y));
             }
             else
             {
-                _labels.Add(Label.CreateOutputGuardMatchAny(edge, x, y));
+                _labels.Add(Label.CreateOutputGuardMatchAny(wordSize, x, y));
             }
-            _labels.Add(Label.CreateOutputUpdate(edge, x, y));
+            _labels.Add(Label.CreateOutputUpdate(x, y));
         }
 
         Source = $"l{edge.From.Id}";
