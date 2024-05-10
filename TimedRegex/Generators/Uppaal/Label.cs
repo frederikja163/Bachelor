@@ -60,9 +60,9 @@ internal sealed class Label
         return new Label(LabelKind.Synchronisation, labelString, x - 75, y + 15);
     } 
 
-    internal static Label CreateAssignment(Edge edge, int x = -1, int y = -1)
+    internal static Label CreateAssignment(IEnumerable<Clock> clocks, int x = -1, int y = -1)
     {
-        string labelString = string.Join(", ", GenerateAssignment(edge));
+        string labelString = string.Join(", ", GenerateAssignment(clocks));
         return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
     }
 
@@ -72,9 +72,9 @@ internal sealed class Label
         return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
     }
 
-    public static Label CreateStartAssignment(int x = -1, int y = -1)
+    public static Label CreateStartAssignment(IEnumerable<Clock> clocks, int x = -1, int y = -1)
     {
-        string labelString = "startIndex = index";
+        string labelString = string.Join(", ", GenerateAssignment(clocks).Append("startIndex = index + 1"));
         return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
     }
 
@@ -97,9 +97,9 @@ internal sealed class Label
         }
     }
 
-    private static IEnumerable<string> GenerateAssignment(Edge edge)
+    private static IEnumerable<string> GenerateAssignment(IEnumerable<Clock> clocks)
     {
-        foreach (Clock clock in edge.GetClockResets())
+        foreach (Clock clock in clocks)
         {
             yield return $"c{clock.Id} = 0";
         }

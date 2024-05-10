@@ -19,7 +19,7 @@ internal sealed class Transition
         }
         if (edge.GetClockResets().Any())
         {
-            _labels.Add(Label.CreateAssignment(edge, x, y));
+            _labels.Add(Label.CreateAssignment(edge.GetClockResets(), x, y));
         }
 
         if (edge.Symbol != "\0")
@@ -46,7 +46,7 @@ internal sealed class Transition
         }
     }
 
-    internal Transition(State state, Dictionary<string, string> symbolRenames)
+    internal Transition(State state, IEnumerable<Clock> clocks, Dictionary<string, string> symbolRenames)
     {
         _labels = new();
         
@@ -56,8 +56,8 @@ internal sealed class Transition
         Target = $"l{state.Id}";
         _labels = new List<Label>()
         {
-            Label.CreateStartAssignment(x, y),
-            Label.CreateInputSynchronization(symbolRenames["."])
+            Label.CreateStartAssignment(clocks, x, y),
+            Label.CreateInputSynchronization(symbolRenames["."]),
         };
     }
 

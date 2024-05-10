@@ -55,8 +55,16 @@ internal sealed class UppaalGenerator : IGenerator
             WriteTemplate(xmlWriter, template);
         }
 
-        xmlWriter.WriteStartElement("system");
-        xmlWriter.WriteValue($"system {nta.System};");
+        xmlWriter.WriteElementString("system", $"system {nta.System};");
+        
+        xmlWriter.WriteStartElement("queries");
+        foreach (Query query in nta.GetQueries())
+        {
+            xmlWriter.WriteStartElement("query");
+            xmlWriter.WriteElementString("formula", query.Formula);
+            xmlWriter.WriteElementString("comment", query.Comment);
+            xmlWriter.WriteEndElement();
+        }
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteEndElement();
