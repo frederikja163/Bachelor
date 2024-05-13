@@ -48,7 +48,7 @@ This implementation can be seen on \cref{fig:graph_step2}, which has resulted in
 \input{Documents/Diagrams/GraphFigures/graphstep2.tex}
 
 \subsubsection{Order states in layers}
-After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of transition crossings, which, more often than not, degrades the visual clarity of the automata.
+After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of transition crossings. These crossings, more often than not, degrade the visual clarity of the automata.
 Mazetti et al. formulates this by sweeping through each layer and ordering its states by the barycenter (average) of the positions of its connected states in the previous layer.
 E.g. if a state is connected to two states in the previous layer, and their positions are (0, 0) and (0, 100), the given state's position would be (100, 50).
 This sweep is performed thrice, once forward, once backwards, and lastly, forward again.
