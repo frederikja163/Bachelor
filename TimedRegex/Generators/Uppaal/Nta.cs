@@ -9,15 +9,18 @@ internal sealed class Nta
     private readonly Dictionary<string, string> _symbolToRenamed;
     private readonly Dictionary<string, string> _renamedToSymbol;
     private readonly List<Template> _templates;
+    private readonly List<Query> _queries;
 
     internal Nta(Template template, Declaration declaration)
     {
         _isQuiet = false;
         _templates = new List<Template>() { template };
         Declaration = declaration;
+        Declaration.AddInt("index");
         Declaration.AddType(UppaalGenerator.MaxClockValue, "clock_t");
         _symbolToRenamed = new Dictionary<string, string>();
         _renamedToSymbol = new Dictionary<string, string>();
+        _queries = new List<Query>();
     }
     
     internal Nta(bool isQuiet = false)
@@ -25,9 +28,12 @@ internal sealed class Nta
         _isQuiet = isQuiet;
         _templates = new List<Template>();
         Declaration = new Declaration(new List<string>(), new List<string>());
+        Declaration.AddInt("index");
         Declaration.AddType(UppaalGenerator.MaxClockValue, "clock_t");
         _symbolToRenamed = new Dictionary<string, string>();
+        _symbolToRenamed["."] = MakeSymbolUppaalName(".");
         _renamedToSymbol = new Dictionary<string, string>();
+        _queries = new List<Query>();
     }
 
     internal IEnumerable<Template> GetTemplates()
@@ -35,6 +41,14 @@ internal sealed class Nta
         foreach (var template in _templates)
         {
             yield return template;
+        }
+    }
+
+    internal IEnumerable<Query> GetQueries()
+    {
+        foreach (Query query in _queries)
+        {
+            yield return query;
         }
     }
 
@@ -77,13 +91,29 @@ internal sealed class Nta
 
 
         Declaration localDeclaration = new();
-        localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters(), _symbolToRenamed);
+        localDeclaration.AddTimedCharacters(automaton.GetTimedCharacters());
 
-        _templates.Add(new (localDeclaration, $"ta{NewTemplateId()}",
+        IEnumerable<Transition> transitions = automaton.GetEdges()
+            .Select(e => new Transition(e, automaton, _symbolToRenamed, automaton.GetTimedCharacters().Count()));
+
+        int id = NewTemplateId();
+        string name = $"ta{id}";
+        if (automaton is not TimedWordAutomaton)
+        {
+            transitions = transitions.Append(new Transition(automaton.InitialState!, automaton.GetClocks(), _symbolToRenamed));
+            localDeclaration.AddInt("startIndex");
+            localDeclaration.AddInt("endIndex");
+
+            string states = string.Join(" || ", automaton.GetFinalStates().Select(s => $"{name}.loc{s.Id}Final"));
+            _queries.Add(new Query(
+                $"inf{{{name}.startIndex >= 0 && ({states})}}: {name}.startIndex, {name}.endIndex"));
+        }
+
+        _templates.Add(new (localDeclaration, name,
             $"l{automaton.InitialState!.Id}",
             automaton.GetClocks().Select(clocks => $"c{clocks.Id}"),
             automaton.GetStates().Select(s => new Location(s, automaton.IsFinal(s))),
-            automaton.GetEdges().Select(e => new Transition(e, _symbolToRenamed))));
+            transitions));
     }
 
     private void CheckForRenamedCollision(string symbol, string renamed)

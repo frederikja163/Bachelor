@@ -50,8 +50,7 @@ public sealed class UppaalGeneratorTest
         Transition id7 = new("id1", "id3", new[] { new Label(LabelKind.Guard, "1 <= c1 < 5") });
         Transition id8 = new("id2", "id4", new[] { new Label(LabelKind.Guard, "1 <= c2 < 3") });
 
-        Template ta1 = new(new Declaration(new List<string>(),
-                new List<string>()),
+        Template ta1 = new(new Declaration(),
             "ta1",
             "id0",
             new []
@@ -76,7 +75,7 @@ public sealed class UppaalGeneratorTest
                 id8
             });
 
-        Declaration declaration = new Declaration(Array.Empty<string>(), Array.Empty<string>());
+        Declaration declaration = new Declaration();
         Nta nta = new(ta1, declaration);
 
         return nta;
@@ -170,12 +169,17 @@ public sealed class UppaalGeneratorTest
     }
 
     [Test]
-    public void DeclarationWithTimedWordTest()
+    public void GenerateDeclarationEverythingTest()
     {
-        Declaration declaration = new(new List<string>(["c"]), new List<string>(["a", "b"]), new List<(int, string)>([(100, "test")]), new List<int>([1, 4, 6]), new List<string>(["a", "b", "a"]));
+        Declaration declaration = new();
+        declaration.AddChannels(new List<string>(["a", "b"]));
+        declaration.AddClocks(new List<string>(["c"]));
+        declaration.AddType(100, "test");
+        declaration.AddInt("index");
+        declaration.AddTimedCharacters(new List<TimedCharacter>([new TimedCharacter("a", 1), new TimedCharacter("b", 4), new TimedCharacter("a", 6)]));
         UppaalGenerator generator = new();
         StringBuilder sb = new();
-        string expected = "<declaration>clock c;\nchan a, b;\nconst string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nclock_t times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
+        string expected = "<declaration>clock c;\nchan a, b;\ntypedef int[-100,100] test;\nconst string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nclock_t times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
@@ -196,7 +200,7 @@ public sealed class UppaalGeneratorTest
             Assert.That(template.Name, Is.EqualTo("ta0"));
             Assert.That(template.Init, Is.Not.EqualTo(""));
             Assert.That(template.GetLocations().Count(), Is.EqualTo(5));
-            Assert.That(template.GetTransitions().Count(), Is.EqualTo(4));
+            Assert.That(template.GetTransitions().Count(), Is.EqualTo(5));
         });
     }
 
@@ -264,7 +268,7 @@ public sealed class UppaalGeneratorTest
         List<Label> labels =
         [
             Label.CreateGuard(edge),
-            Label.CreateAssignment(edge),
+            Label.CreateAssignment(edge.GetClockResets()),
             Label.CreateInputSynchronization(edge.Symbol)
         ];
 
@@ -340,7 +344,7 @@ public sealed class UppaalGeneratorTest
         UppaalGenerator uppaalGenerator = new();
         Nta nta = CreateTestNta();
         const string expected =
-            "<nta>\n  <template>\n    <name>ta1</name>\n    <declaration>clock c0, c1, c2;\n</declaration>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition>\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition>\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n</nta>";
+            "<nta>\n  <template>\n    <name>ta1</name>\n    <declaration>clock c0, c1, c2;\n</declaration>\n    <location id=\"id0\">\n      <name>id0</name>\n    </location>\n    <location id=\"id1\">\n      <name>id1</name>\n    </location>\n    <location id=\"id2\">\n      <name>id2</name>\n    </location>\n    <location id=\"id3\">\n      <name>id3</name>\n    </location>\n    <location id=\"id4\">\n      <name>id4</name>\n    </location>\n    <init ref=\"id0\" />\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id1\" />\n    </transition>\n    <transition>\n      <source ref=\"id0\" />\n      <target ref=\"id2\" />\n    </transition>\n    <transition>\n      <source ref=\"id1\" />\n      <target ref=\"id3\" />\n      <label kind=\"guard\">1 &lt;= c1 &lt; 5</label>\n    </transition>\n    <transition>\n      <source ref=\"id2\" />\n      <target ref=\"id4\" />\n      <label kind=\"guard\">1 &lt;= c2 &lt; 3</label>\n    </transition>\n  </template>\n  <system>system ta1;</system>\n  <queries />\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -360,7 +364,7 @@ public sealed class UppaalGeneratorTest
         Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
         Nta nta = new(template, declaration);
 
-        const string expected = "<nta>\n  <declaration>clock c1, c2;\ntypedef int[-1073741822,1073741822] clock_t;\n</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n</nta>";
+        const string expected = "<nta>\n  <declaration>clock c1, c2;\ntypedef int[-1073741822,1073741822] clock_t;\nint index = 0;\n</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n  <queries />\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
@@ -376,7 +380,7 @@ public sealed class UppaalGeneratorTest
     {
         UppaalGenerator uppaalGenerator = new();
         Template template = new(
-            new Declaration(new List<string>(), new List<string>()),
+            new Declaration(),
             "ta1",
             "id0",
             new []
