@@ -26,7 +26,7 @@ The first step of the Sugiyama framework is to, temporarily, make the automata a
 Mazetti describes several methods for finding this list of edges, including using a depth first search to visit all states, and any edges that lead to already visited states, should be reversed.
 This is the method used by Graphviz' implementation of the Sugiyama framework \cite{Graphviz}. % could be irrelevant
 
-This step, however, is trivially completed during the conversion from a timed regular expression to a timed automaton, since the semantics described by Eugene et al. precisely describe when reversible edges are created.
+This step, however, is trivially completed during the conversion from a timed regular expression to a timed automaton, since we can deduce where they are by using the semantics described by Eugene et al.
 More specifically, in the construction of guaranteed iterator automata, and it's absorbed variant\cite{Eugene2001}.
 % mention self loops
 
