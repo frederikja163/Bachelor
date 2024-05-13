@@ -16,7 +16,7 @@
 
 % automaton is also missing dummy states
 
-As mentioned earlier, the layout algorithm used in (TODO: Insert name of program) to organize and arrange the states in timed automata, is called the Sugiyama framework, also known as layered graph drawing (TODO: cite sugiyama when \#343 merged). The method comprises four steps that, when combined, results in a layered graph with minimized edge crossings. These steps are discussed below, using the timed automaton shown below, which was constructed using the following timed regular expression: $$"(CDE\mid(BC)+)\mid A"$$
+As mentioned in \cref{sec:related work}, the layout algorithm used in (TODO: Insert name of program) to organize and arrange the states in timed automata, is called the Sugiyama framework, also known as layered graph drawing (TODO: cite sugiyama when \#343 merged). The method comprises four steps that, when combined, results in a layered graph with minimized edge crossings. These steps are discussed below, using the timed automaton shown on \cref{fig:graph_step0}, which was constructed using the following timed regular expression: $$"(CDE\mid(BC)+)\mid A"$$
 
 % Visualise steps with different automata
 \input{Documents/Diagrams/GraphFigures/graphstep0.tex}
@@ -28,6 +28,7 @@ This is the method used by Graphviz' implementation of the Sugiyama framework \c
 
 This step, however, is trivially completed during the conversion from a timed regular expression to a timed automaton, since the semantics described by Eugene et al. precisely describe when reversible edges are created.
 More specifically, in the construction of guaranteed iterator automata, and it's absorbed variant\cite{Eugene2001}.
+In the implementation, reversible edges are completely omitted. This is done because some reversible edges are self-looping which do not change when reversed $(ex. q9\rightarrow q9)$, and handling all reversible edges equally makes the algorithm much simpler. This could, however, introduce unforeseen edge crossings when reintroducing the reversible edges, but we chose the simpler algorithm. A reversible transition can be seen on \cref{fig:graph_step1} (dashed line), described as $q2\rightarrow q1$.
 % mention self loops
 
 % insert image of step
@@ -41,6 +42,8 @@ This is done recursively for all outgoing states until a final state is reached.
 If, at any point, a state is reached that is on the same layer or lower, it is moved to the next layer, and its outgoing states are recursively updated as well.
 Dummy states are introduced if two connected states are more than one layer apart.
 
+This implementation can be seen on \cref{fig:graph_step2}, which has resulted in a much more structured TA.
+
 % insert image of step
 \input{Documents/Diagrams/GraphFigures/graphstep2.tex}
 
@@ -51,7 +54,7 @@ E.g. if a state is connected to two states in the previous layer, and their posi
 This sweep is performed thrice, once forward, once backwards, and lastly, forward again.
 This ensures that both a given state's incoming and outgoing states play a role in minimizing edge crossings. \cite{Mazetti2012}
 
-The approach implemented for this paper shares the same philosophies as the step described above.
+The approach implemented for this paper shares the same philosophies as the step described above, and can be seen on \cref{fig:graph_step3}.
 
 % insert image of step
 \input{Documents/Diagrams/GraphFigures/graphstep3.tex}
@@ -63,7 +66,7 @@ More connections give a higher priority. This is quite similar to the previous s
 Each state is placed based on their priority, with the ability to move states with lower priority.
 Lastly, edges between dummy states are merged, and restoring the correct edge oritentations that were reversed in the first step. \cite{Mazetti2012}
 
-As of writing this paper, this apporach has not yet been implemented. Instead, states are simply placed based on their layer, and their index on said layer, which already offers much visual clarity. The cycles are reintroduced at the very end of this step.
+As of writing this paper, this approach for assigning positions has not yet been implemented. Instead, states are simply placed based on their layer, and their index on said layer, which already offers much visual clarity. The cycles are reintroduced at the very end of this step. This is reflected in the TA on \cref{fig:graph_step4}.
 
 % insert image of step
 \input{Documents/Diagrams/GraphFigures/graphstep4.tex}
