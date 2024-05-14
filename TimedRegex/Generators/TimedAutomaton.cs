@@ -150,7 +150,30 @@ internal sealed class TimedAutomaton : ITimedAutomaton
             
         }
     }
-    
+
+    internal void ReduceClocks()
+    {
+        foreach ((int _, Clock clock1) in _clocks)
+        {
+            foreach ((int _, Clock clock2) in _clocks)
+            {
+                bool areEqual = true;
+                foreach ((int _, Edge edge) in _edges)
+                {
+                    if (edge.GetClockResets().Contains(clock1) != edge.GetClockResets().Contains(clock2))
+                    {
+                        areEqual = false;
+                        break;
+                    }
+                }
+
+                if (areEqual)
+                {
+                    clock1.Id = clock2.Id;
+                }
+            }
+        }
+    }
 
     internal void PruneClocks()
     {

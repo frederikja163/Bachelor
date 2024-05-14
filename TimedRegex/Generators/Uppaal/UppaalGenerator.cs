@@ -55,8 +55,16 @@ internal sealed class UppaalGenerator : IGenerator
             WriteTemplate(xmlWriter, template);
         }
 
-        xmlWriter.WriteStartElement("system");
-        xmlWriter.WriteValue($"system {nta.System};");
+        xmlWriter.WriteElementString("system", $"system {nta.System};");
+        
+        xmlWriter.WriteStartElement("queries");
+        foreach (Query query in nta.GetQueries())
+        {
+            xmlWriter.WriteStartElement("query");
+            xmlWriter.WriteElementString("formula", query.Formula);
+            xmlWriter.WriteElementString("comment", query.Comment);
+            xmlWriter.WriteEndElement();
+        }
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteEndElement();
@@ -100,9 +108,10 @@ internal sealed class UppaalGenerator : IGenerator
             xmlWriter.WriteValue($"clock_t times[{declaration.GetTimes().Count() +1 }] = {{{str}}};\n");
         }
 
-        if (declaration.GetTimes().Any())
+        if (declaration.GetInts().Any())
         {
-            xmlWriter.WriteValue("int index = 0;\n");
+            string str = string.Join(", ", declaration.GetInts());
+            xmlWriter.WriteValue($"int {str} = 0;\n");
         }
 
         xmlWriter.WriteEndElement();

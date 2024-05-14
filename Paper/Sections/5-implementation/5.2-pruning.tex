@@ -9,6 +9,14 @@ This leads to better performance (see \cref{subsec:benchmarks}), and better read
 Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work.
 The TA is equivalent to the TReg $A_{[1;10]}+'$
 
+\subsubsection{Clock Reduction}\label[subsubsection]{clockReduction}
+The amount of clocks in the automaton can be reduced after generation of the TA.
+A paper by Daws et al. describes these methods \cite{Daws1996}.
+Therefore we wont go into detail about it in this paper.
+
+\subsubsection{Dead State Pruning}\label[subsubsection]{deadStatePruning}
+States that are not final states, and that are not the source of any transition, are considered "dead states" according to this pruning rule. Implementing this rule effectively removes any branches of the automaton, that do not end in a final state when applied recursively. Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
+
 \input{Automata/Prune0.tex}
 
 

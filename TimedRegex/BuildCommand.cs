@@ -226,6 +226,7 @@ internal sealed class BuildCommand
                 Log.WriteLineIf(Verbose, "Pruning Clocks");
                 Log.StartTimeIf(Verbose, out sw);
                 timedAutomaton.PruneClocks();
+                timedAutomaton.ReduceClocks();
                 Log.StopTime(sw, "Clocks pruned in {0}");
             }
             
