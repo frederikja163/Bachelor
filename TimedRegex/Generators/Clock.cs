@@ -7,7 +7,7 @@ internal sealed class Clock : IEquatable<Clock>, IComparable, IComparable<Clock>
         Id = id;
     }
     
-    internal int Id { get; }
+    internal int Id { get; set; }
 
     public bool Equals(Clock? other)
     {
