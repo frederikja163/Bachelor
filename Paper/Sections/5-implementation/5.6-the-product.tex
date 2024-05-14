@@ -5,10 +5,20 @@ We have named this piece of software "TREAT". Short for "Timed Regular Expressio
 TREAT is accessed through a command line interface. The user can type in their TRE, along with a few options such as adding a timed word thourgh a .csv file, turning off pruning, and silencing any warnings or info messages.
 The user can also decide how the TA should be output at this point.
 
-The TRE is parsed into tokens by a (TODO: Type of tokenizer). These tokens are connected as children of one another, to form an abstract syntax tree. 
+The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree. 
 
 From the abstract syntax tree, the TA can be created using the rules from Eugene et al., with the modifications described earlier. %TODO: perhaps reference other sections more accurately when paper is closer to completion.
 This is done by visiting each node in the tree, and generating states and edges in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition is valid. Another goes through the AST, to specifically implement the iterator and the absorbed iterator. The last visitor is responsible for implementing the rules of all other tokens.
+
+At this stage, the TA is pruned as described in \cref{subsec:pruning}. 
+The dataformat of the internal TA is an object containing hashsets and dictionaries corresponding to the sets of the tuples described in \cref{sec:preliminaries}. 
+This means that the code executed in the functions responsible for pruning, map very closely to the mathematical operations in \cref{sec:preliminaries}.
+
+Since the TA is now in its final form with regards to states, transitions, and the operations associated with them, their positions on the visual representation, the graph, can now be assigned. This is described in \cref{subsec:graph}.
+
+
+
+
 
 
 
