@@ -7,23 +7,33 @@ This leads to better performance (see \cref{subsec:benchmarks}), and better read
 %TODO: Affirm claims made about performance after benchmarks
 
 Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work.
-The TA is equivalent to the TReg $A_{[1;10]}+'$
+The TA is equivalent to the TReg following TReg, although a few states have been pruned already to make it fit on the page.
+$$C(A[5;10]\&(BA|A)[1;3])$$
+
+\input{Automata/Prune0.tex}
 
 \subsubsection{Clock Reduction}\label[subsubsection]{clockReduction}
 The amount of clocks in the automaton can be reduced after generation of the TA.
 A paper by Daws et al. describes these methods \cite{Daws1996}.
 Therefore we wont go into detail about it in this paper.
 
-\subsubsection{Dead State Pruning}\label[subsubsection]{deadStatePruning}
-States that are not final states, and that are not the source of any transition, are considered "dead states" according to this pruning rule. Implementing this rule effectively removes any branches of the automaton, that do not end in a final state when applied recursively. Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
+In the automaton in \cref{fig:prune_0} both clock $c_1$ and $c_2$ can be combined into one clock since they are reset at the same time.
+The result of this operation can be seen in \cref{fig:prune_1}.
 
-\input{Automata/Prune0.tex}
+\input{Automata/Prune1.tex}
 
-
-\subsubsection{Dead Edge Pruning}\label[subsubsection]{deadEdgePruning}
+\subsubsection{Dead Transition Pruning}\label[subsubsection]{deadTransitionPruning}
 Edges that are overconstrained on one or more clocks, are considered "dead" edges, and can be removed without changing the language of the automaton.
 Since these edges could never be taken by any transition system, it does not change the language to remove them.
-Dead edge pruning is formally defined in \cref{definition:deadEdgePruning}.
+Dead edge pruning is formally defined in \cref{definition:deadTransitionPruning}.
+
+In the automaton \cref{fig:prune_1} we can see that after merging the two clocks, the clock intervals on $q3\rightarrow q2$ and $q4\rightarrow q2$ can be simplified to false:
+$$c_1\in[5;10]\wedge c_1\in[1;3]=false$$
+A clock can not have a value bigger than 5 and smaller than 3 at the same time.
+Since the edge can now no longer be taken, it can easily be removed.
+The result of this operation can be seen in \cref{fig:prune_2}.
+
+\input{Automata/Prune2.tex}
 
 \input{Documents/Definitions/PruneSemantics/DeadEdge.tex}
 
@@ -32,6 +42,12 @@ States that are not the destination of any transition or the initial state, are 
 When this rule is applied until continuously, it removes any part of the automaton that is unreachable from the initial state of the TA.
 Since these states could never be reached, they were not part of the transition system for any words recognized by the automaton, hence it does not change the language to remove them.
 Unreachable state pruning is formally defined in \cref{definition:unreachableStatePruning}
+
+In the automaton in \cref{fig:prune_2} $q4$ and $q2$ can be removed since they are neither the destination of any transition, nor the initial state.
+This means there is no way to enter $q4$ or $q2$, and they can be removed.
+The result of this operation can be seen in \cref{fig:prune_3}.
+
+\input{Automata/Prune3.tex}
 
 \input{Documents/Definitions/PruneSemantics/Unreachable.tex}
 
@@ -44,9 +60,28 @@ Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
 
 \input{Documents/Definitions/PruneSemantics/DeadState.tex}
 
+In the automaton in \cref{fig:prune_3} $q7$ can be removed since it is neither the source of any transition, nor a final state.
+This means there is no way to reach a final state from $q7$, and it can be removed.
+After $q7$ has been removed $q3$ is no longer the source of any transition.
+This means $q3$ can also be removed.
+This results in the simplest possible automata, one that has only one initial state and zero clocks.
+The result of this operation can be seen in \cref{fig:prune_4}.
+
+\input{Automata/Prune4.tex}
+
 \subsubsection{Dead Clock Pruning}\label[subsubsection]{deadClockPruning}
 Clocks that are never used in ranges to constrain any edges are considered "dead", and can be removed without changing the language of the automaton.
 Since these clocks never constrain any transitions, it does not change the possible ways to reach final states, hence it does not change the language to remove them.
 This rule is formally defined in \cref{definition:deadClockPruning}
 
 \input{Documents/Definitions/PruneSemantics/DeadClock.tex}
+
+If we take a look at \cref{fig:prune_3} again (from before dead state pruning).
+We can see that clock $c_0$ is not being used.
+This clock is however reset on the transition $q0\rightarrow q3$.
+This means we can remove the clock, since it does not effect the ability to take any edges.
+The result of this operation can be seen in \cref{prune_5}
+
+An interesting note here is that this clock was never removed by dead state pruning in \cref{fig:prune_4}.
+It is not present in any transitions there, but it is still present within the set of clocks.
+This step also takes care of removing it from the set of clocks, even if it was never even updated.
