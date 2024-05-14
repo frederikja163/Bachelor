@@ -17,7 +17,7 @@ The amount of clocks in the automaton can be reduced after generation of the TA.
 A paper by Daws et al. describes these methods \cite{Daws1996}.
 Therefore we wont go into detail about it in this paper.
 
-In the automaton in \cref{fig:prune_0} both clock $c_1$ and $c_2$ can be combined into one clock since they are reset at the same time.
+In the automaton in \cref{fig:prune_0} both clock $c_0$ and $c_1$ can be combined into one clock since they are reset at the same time.
 The result of this operation can be seen in \cref{fig:prune_1}.
 
 \input{Automata/Prune1.tex}
@@ -62,9 +62,6 @@ Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
 
 In the automaton in \cref{fig:prune_3} $q7$ can be removed since it is neither the source of any transition, nor a final state.
 This means there is no way to reach a final state from $q7$, and it can be removed.
-After $q7$ has been removed $q3$ is no longer the source of any transition.
-This means $q3$ can also be removed.
-This results in the simplest possible automata, one that has only one initial state and zero clocks.
 The result of this operation can be seen in \cref{fig:prune_4}.
 
 \input{Automata/Prune4.tex}
