@@ -1,9 +1,12 @@
 \subsection{The Product}\label{subsec:theProduct}
-The research in this paper has culminated in a software product that allows a user to enter a timed regular expression, and have it converted into a timed automaton.
-We have named this piece of software "TREAT". Short for "Timed Regular Expression to Automaton Transformation".
+The research in this paper has culminated in a software product that allows a user to enter a timed regular expression (TRE), and have it converted into a timed automaton (TA).
+We have named this piece of software "TREAT", short for "Timed Regular Expression to Automaton Transformation".
 
-TREAT is accessed through a command line interface. The user can type in their TRE, along with a few options such as adding a timed word thourgh a .csv file, turning off pruning, and silencing any warnings or info messages.
+TREAT is accessed through a command line interface. The user can type in their TRE, along with a few options such as adding a timed word through a .csv file, turning off pruning, and silencing any warnings or info messages.
 The user can also decide how the TA should be output at this point.
+
+If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet, along with the ANY symbol.
+An automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has an edge for each of the symbols of the alphabet, and broadcasts its symbol on channels that are also declared in the declarations in UPPAAL. Checking is described further in \cref{subsec:checking}.
 
 The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree. 
 
@@ -16,7 +19,7 @@ This means that the code executed in the functions responsible for pruning, map 
 
 Since the TA is now in its final form with regards to states, transitions, and the guards associated with them, their positions in the visual representation, the graph, can now be assigned. This is described in \cref{subsec:graph}.
 
-
+Finally, the TA is output to the selected format as described in \cref{subsec:formats}.
 
 
 
