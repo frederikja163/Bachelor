@@ -5,6 +5,8 @@ The Sugiyama Layout algorithm discussed in \cref{subsec:graphlayout} served the 
 Two of the most prevalent ways this was achieved was by layering the TAs states based on the length of the longest path from the initial state. The other was by ordering the states in each layer to achieve the smallest number of edge crossings.
 While some of the specific approaches described by Mazetti et al. \cite{Mazetti2012} was not implemented into TREAT, the resulting implementation still greatly increases readability.
 
+As mentioned in \cref{subsec:graphlayout}, the last step of the Sugiyama framework was not implemented, namely, properly positioning states in relation to each other.
+
 % formats
 As described in \cref{output formats}, two output formats can be used to represent TAs. The first format is UPPAAL. In UPPAAL, if no positions are given, the states are simply placed in a grid. This means, that using a graph layout algorithm is not strictly necessary. To show its advantages, however, a comparison between UPPAAL's standard positioning and the one implemented in TREAT can be seen on \cref{fig:layout_comparison}, with UPPAAL on the top and TREAT on the bottom.
 Do note, that the TAs in \cref{fig:layout_comparison} are only meant to show the positions of states, and are not representative of their appearance in UPPAAL.
@@ -12,8 +14,8 @@ Do note, that the TAs in \cref{fig:layout_comparison} are only meant to show the
 
 \begin{center}
     \input{Documents/Diagrams/ReadabilityFigures/uppaalLayout.tex}
+    \input{Documents/Diagrams/ReadabilityFigures/treatLayout.tex}
 \end{center}
-\input{Documents/Diagrams/ReadabilityFigures/treatLayout.tex}
 \vspace{1em}
 
 The other output format is TikZ, meant to represent graphs and the likes in LaTeX. Unlike UPPAAL, states in TikZ need positions, which necessitates some form of graph layout algorithm.
