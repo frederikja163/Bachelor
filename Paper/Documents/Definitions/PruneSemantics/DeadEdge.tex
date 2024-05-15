@@ -1,8 +1,8 @@
 \begin{definition}\label{definition:deadEdgePruning}
-    Dead edge pruning:
+    Dead transition pruning:
     \sembox{
-        $\deadedge(A)=\automaton[][Q][C][\Delta'][\Sigma][s][F]$
+        $\deadedge\automaton=\automaton[][Q][C][\Delta'][\Sigma][s][F]$
     
-        $\Delta'=\{\transition\in\Delta\mid\phi\neq\emptyset\wedge\emptyset\neq\cap_{i=1}^n\phi_i\}$
+        $\Delta'=\{\transition\in\Delta\mid\nexists c: \cap_{(c, I)\in\phi} I = \emptyset\}$
     }
 \end{definition}
