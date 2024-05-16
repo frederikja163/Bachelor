@@ -25,7 +25,7 @@ The result of this operation can be seen in \cref{fig:prune1}.
 
 \subsubsection{Dead Transition Pruning}\label[subsubsection]{deadTransitionPruning}
 Edges that are overconstrained on one or more clocks, are considered "dead" edges, and can be removed without changing the language of the automaton.
-Since these edges could never be taken by any transition system, it does not change the language to remove them.
+Since these edges could never be taken by any transition system, removing them does not change the language.
 Dead edge pruning is formally defined in \cref{definition:deadEdgePruning}.
 
 \input{Documents/Definitions/PruneSemantics/DeadEdge.tex}
