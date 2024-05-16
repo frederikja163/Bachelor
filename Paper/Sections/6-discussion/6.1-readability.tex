@@ -9,7 +9,7 @@ While some of the specific approaches described by Mazetti et al. \cite{Mazetti2
 As mentioned in \cref{subsec:graphlayout}, the last step of the Sugiyama framework was not implemented, namely, properly positioning states in relation to each other. This might be developed in the future.
 
 Another feature that would unequivocally improve readability is to visually separate transitions that share states, such as reversible transitions.
-In all TAs pictured in \cref{subsec:graphlayout} and this section, any such transitions have been clearly separated, but this has not yet been implemented. The difference can be seen on \cref{fig:transitions}.
+In all TAs pictured in \cref{subsec:graphlayout} and this section, any such transitions have been manually separated, since this feature has not been implemented. The difference can be seen on \cref{fig:transitions}.
 
 \begin{center}
     \input{Documents/Diagrams/ReadabilityFigures/transitions.tex}
@@ -28,7 +28,7 @@ Do note, that the TA shown on \cref{fig:uppaalLayout} is only meant to show the 
 \end{center}
 \vspace{1em}
 
-The other output format is TikZ, meant to represent graphs and the likes in LaTeX. Unlike UPPAAL, states in TikZ need positions, which necessitates some form of graph layout algorithm.
+The other output format is TikZ, used to represent graphs in LaTeX. Unlike UPPAAL, states in TikZ need positions, which necessitates some form of graph layout algorithm.
 
 \subsubsection{Pruning}
 
@@ -40,4 +40,4 @@ The TA on \cref{fig:nopruning} represents the same TRE as the one on \cref{fig:t
 \end{center}
 % maybe this figure is too big to include in the paper?
 
-While disabling pruning on this example TA has significantly lowered the visual clarity, the TRE it represents is quite simple, thus more comples TREs would only worsen the effect. This shows that pruning is a necessary step to ensure readbility and visual clarity.
+While disabling pruning on this example TA has significantly lowered the visual clarity, the TRE it represents is quite simple, thus more complex TREs would only worsen the effect. This shows that pruning is a necessary step to ensure readability and visual clarity.
