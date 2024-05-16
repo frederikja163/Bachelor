@@ -16,42 +16,45 @@
 
 % automaton is also missing dummy states
 
-As mentioned earlier, the layout algorithm used in (TODO: Insert name of program) to organize and arrange the states in timed automata, is called the Sugiyama framework, also known as layered graph drawing (TODO: cite sugiyama when \#343 merged). The method comprises four steps that, when combined, results in a layered graph with minimized edge crossings. These steps are discussed below, using the timed automaton shown below, which was constructed using the following timed regular expression: $$"(CDE\mid(BC)+)\mid A"$$
+As mentioned in \cref{sec:related work}, the layout algorithm used in (TODO: Insert name of program) to organize and arrange the states in TAs (Timed Automaton), is called the Sugiyama framework, also known as layered graph drawing (TODO: cite sugiyama when \#343 merged). The method comprises four steps that, when combined, results in a layered graph with minimized transition crossings. These steps are discussed below, using the TA shown on \cref{fig:graph_step0}, which was constructed using the following TRE(Timed Regular Expression): $$"(CDE\mid(BC)+)\mid A"$$
 
 % Visualise steps with different automata
 \input{Documents/Diagrams/GraphFigures/graphstep0.tex}
 
 \subsubsection{Make automata acyclic}
-The first step of the Sugiyama framework is to, temporarily, make the automata acyclic. This is necessary because subsequent steps require edges to have a consistent direction. As described by Mazetti et al., this is done by reversing a specific list of edges \cite{Mazetti2012}.
-Mazetti describes several methods for finding this list of edges, including using a depth first search to visit all states, and any edges that lead to already visited states, should be reversed.
+The first step of the Sugiyama framework is to, temporarily, make the automaton acyclic. This is necessary because subsequent steps require transitions to have a consistent direction. As described by Mazetti et al., this is done by reversing a specific list of transitions \cite{Mazetti2012}.
+Mazetti describes several methods for finding this list of transitions, including using a depth first search to visit all states, and any transitions that lead to already visited states, should be reversed.
 This is the method used by Graphviz' implementation of the Sugiyama framework \cite{Graphviz}. % could be irrelevant
 
-This step, however, is trivially completed during the conversion from a timed regular expression to a timed automaton, since the semantics described by Eugene et al. precisely describe when reversible edges are created.
+This step, however, is trivially completed during the conversion from a TRE to a TA, since we can deduce where they are by using the semantics described by Eugene et al.
 More specifically, in the construction of guaranteed iterator automata, and it's absorbed variant\cite{Eugene2001}.
+In the implementation, reversible transitions are completely omitted. This is done because some reversible transitions are self-looping which do not change when reversed $(ex. q9\rightarrow q9)$, and handling all reversible transitions equally makes the algorithm much simpler. This could, however, introduce unforeseen transition crossings when reintroducing the reversible transitions, but we chose the simpler algorithm. A reversible transition can be seen on \cref{fig:graph_step1} (dashed line), described as $q2\rightarrow q1$.
 % mention self loops
 
 % insert image of step
 \input{Documents/Diagrams/GraphFigures/graphstep1.tex}
 
 \subsubsection{Assign states to layers}
-The next step is to assign states to layers. Mazetti et al. describes this process by assigning a given state to the layer index equal to the longest path from the initial state. If an edge spans multiple layers, dummy states are placed to ensure that edges only move between adjacent layers. \cite{Mazetti2012}
+The next step is to assign states to layers. Mazetti et al. describes this process by assigning a given state to the layer index equal to the longest path from the initial state. If a transition spans multiple layers, dummy states are placed to ensure that transitions only move between adjacent layers. \cite{Mazetti2012}
 
-This has been implemented by assigning the initial state of the automaton to layer 0, and assigning the states connected by outgoing edges to layer 1.
-This is done recursively for all outgoing states until final state is reached.
-If, at any point, a state is reached that is on the same layer or lower, it is moved to the next layer, and its outgoing states are recursively updated aswell.
+This has been implemented by assigning the initial state of the automaton to layer 0, and assigning the states connected by outgoing transitions to layer 1.
+This is done recursively for all outgoing states until a final state is reached.
+If, at any point, a state is reached that is on the same layer or lower, it is moved to the next layer, and its outgoing states are recursively updated as well.
 Dummy states are introduced if two connected states are more than one layer apart.
+
+This implementation can be seen on \cref{fig:graph_step2}, which has resulted in a much more structured TA.
 
 % insert image of step
 \input{Documents/Diagrams/GraphFigures/graphstep2.tex}
 
 \subsubsection{Order states in layers}
-After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of edge crossings, which, more often than not, degrades the visual clarity of the automata.
+After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of transition crossings. These crossings, more often than not, degrade the visual clarity of the automata.
 Mazetti et al. formulates this by sweeping through each layer and ordering its states by the barycenter (average) of the positions of its connected states in the previous layer.
 E.g. if a state is connected to two states in the previous layer, and their positions are (0, 0) and (0, 100), the given state's position would be (100, 50).
 This sweep is performed thrice, once forward, once backwards, and lastly, forward again.
-This ensures that both a given state's incoming and outgoing states play a role in minimizing edge crossings. \cite{Mazetti2012}
+This ensures that both a given state's incoming and outgoing states play a role in minimizing transition crossings. \cite{Mazetti2012}
 
-The approach implemented for this paper shares the same philosophies as the one described above.
+The approach implemented for this paper shares the same philosophies as the step described above, and can be seen on \cref{fig:graph_step3}.
 
 % insert image of step
 \input{Documents/Diagrams/GraphFigures/graphstep3.tex}
@@ -59,11 +62,11 @@ The approach implemented for this paper shares the same philosophies as the one 
 \subsubsection{Assign positions}
 The last step is to assign positions to each state.
 Mazetti et al.'s procedure for this step is to prioritze all states in each layer based on the number of connected states in the previous layer.
-More connections give a higher priority. This is quite similar to the last step except, dummy states are given the highest prioritization.
+More connections give a higher priority. This is quite similar to the previous step except, dummy states are given the highest prioritization.
 Each state is placed based on their priority, with the ability to move states with lower priority.
-Lastly, edges between dummy states are merged, and restoring the correct edge oritentations that were reversed in the first step. \cite{Mazetti2012}
+Lastly, transitions between dummy states are merged, and restoring the correct transition oritentations that were reversed in the first step. \cite{Mazetti2012}
 
-As of writing this paper, this last step of assigning the positions has not yet been implemented as in Mazetti et al. \cite{Mazetti2012}. Instead, states are simply placed based on their layer, and their index on said layer, which already offers much visual clarity. It should also be noted, that cycles are reintroduced.
+As of writing this paper, this last step of assigning the positions has not yet been implemented as in Mazetti et al. \cite{Mazetti2012}. Instead, states are simply placed based on their layer, and their index on said layer, which already offers much visual clarity. It should also be noted, that cycles are reintroduced. This is reflected in the TA on \cref{fig:graph_step4}.
 
 % insert image of step
 \input{Documents/Diagrams/GraphFigures/graphstep4.tex}
