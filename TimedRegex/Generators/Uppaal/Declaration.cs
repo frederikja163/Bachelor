@@ -35,7 +35,7 @@ internal sealed class Declaration
         {
             if (_times.Any() && character.Time < _times[^1])
             {
-                throw new FormatException("Timed characters must be in ascending order.");
+                throw new FormatException($"Timed characters must be in ascending order. {_times.Count}");
             }
             _times.Add((int)character.Time);
             _symbols.Add(character.Symbol);
