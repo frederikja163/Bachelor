@@ -13,7 +13,7 @@
         \path[->]
         (q2)edge node{$C$}(q3)
         (q1)edge [bend left=15] node{$B$}(q2)
-        (q1)edge [bend right=15] node{$C$}(q2)
+        (q2)edge [dashed, bend left=15] node{$C$}(q1)
         (q5)edge node{$E$}(q6)
         (q4)edge node{$D$}(q5)
         (q7)edge node{$A$}(q0)
@@ -22,3 +22,5 @@
         ;
     \end{tikzpicture}
 }
+\captionof{figure}{States assigned to layers.}
+\label{fig:graph_step2}

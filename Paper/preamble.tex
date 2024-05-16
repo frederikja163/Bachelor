@@ -20,6 +20,8 @@ every picture/.style={
             }
     }
 }
+
+\usepackage{caption}
 \usepackage{graphics}
 \usepackage[T1]{fontenc}
 \usepackage{multicol}
@@ -32,6 +34,7 @@ every picture/.style={
 \newcounter{defCounter}
 \newtheorem{definition}[defCounter]{Definition}
 \crefname{defCounter}{Definition}{Definitions}
+\crefname{figure}{Figure}{Figures}
 
 \setlength{\parindent}{0pt}
 \usepackage{etoolbox}
