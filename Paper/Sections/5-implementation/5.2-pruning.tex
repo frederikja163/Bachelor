@@ -7,15 +7,15 @@ This leads to better performance (see \cref{subsec:benchmarks}), and better read
 %TODO: Affirm claims made about performance after benchmarks
 
 Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work.
-The TA is equivalent to the TReg following TReg, although a few states have been pruned already to make it fit on the page.
+The TA is equivalent to the following TRE, although a few states have been pruned already to make it fit on the page.
 $$C(A[5;10]\&(BA|A)[1;3])$$
 
 \input{Automata/Prune0.tex}
 
 \subsubsection{Clock Reduction}\label[subsubsection]{clockReduction}
-The amount of clocks in the automaton can be reduced after generation of the TA.
+The amount of clocks in the automaton can be reduced after generating the TA.
 A paper by Daws et al. describes these methods \cite{Daws1996}.
-Therefore we wont go into detail about it in this paper.
+Therefore we won't go into detail about it in this paper.
 We will use $\clockreduction\automaton$ as a function reducing the clocks of automaton $\automaton$.
 
 In the automaton in \cref{fig:prune0} both clock $c_0$ and $c_1$ can be combined into one clock since they are reset at the same time.
@@ -45,7 +45,7 @@ Unreachable state pruning is formally defined in \cref{definition:unreachableSta
 
 \input{Documents/Definitions/PruneSemantics/Unreachable.tex}
 
-In the automaton in \cref{fig:prune2} $q4$ and $q2$ can be removed since they are neither the destination of any transition, nor the initial state.
+In the automaton in \cref{fig:prune2}, $q4$ and $q2$ can be removed since they are neither the destination of any transition, nor the initial state.
 This means there is no way to enter $q4$ or $q2$, and they can be removed.
 The result of this operation can be seen in \cref{fig:prune3}.
 
@@ -59,7 +59,7 @@ Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
 
 \input{Documents/Definitions/PruneSemantics/DeadState.tex}
 
-In the automaton in \cref{fig:prune3} $q7$ can be removed since it is neither the source of any transition, nor a final state.
+In the automaton in \cref{fig:prune3}, $q7$ can be removed since it is neither the source of any transition, nor a final state.
 This means there is no way to reach a final state from $q7$, and it can be removed.
 The result of this operation can be seen in \cref{fig:prune4}.
 
@@ -89,6 +89,6 @@ This recursion is formally defined in \cref{definition:recursivePruning}
 
 In the automaton in \cref{fig:prune5}, there are still things left to be pruned.
 The state $q3$ is a dead state and can therefore be removed.
-The recursion will take of that and turn the automaton into the one in \cref{fig:prune6}.
+The recursion will take care of that and turn the automaton into the one in \cref{fig:prune6}.
 
 \input{Automata/Prune6.tex}
