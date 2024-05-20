@@ -7,8 +7,8 @@ Since it cannot be taken we can remove it.
 Mathematically this can be described as a function ($\mathbb{E}$) taking in an automaton and returning a new automaton with the dead edges being pruned.
 
 \sembox{
-    $\deadedge(A_1)=\automaton[][Q_1][C_1][\Delta][\Sigma][s_1][F_1]$
+    $\deadedge(A)=\automaton[][Q][C][\Delta'][\Sigma][s][F]$
  
-    $\Delta=\{\transition\mid\transition\in\Delta_1\wedge\Phi\neq\emptyset\wedge\emptyset\neq\cap_{i=1}^n\Phi_i\}$
+    $\Delta'=\{\transition\in\Delta\mid\phi\neq\emptyset\wedge\emptyset\neq\cap_{i=1}^n\phi_i\}$
 
 }

@@ -24,13 +24,19 @@ internal sealed class Label
     
     internal int Y { get; }
 
-    internal static Label CreateOutputGuard(Edge edge, int x, int y)
+    internal static Label CreateOutputGuard(Edge edge, int wordSize, int x, int y)
     {
-        string label = $"word[index] == \"{edge.Symbol}\" && times[index] == c0";
+        string label = $"index <= {wordSize} && word[index] == \"{edge.Symbol}\" && times[index] == c0";
         return new Label(LabelKind.Guard, label, x - 75, y);
     }
 
-    public static Label CreateOutputUpdate(Edge edge, int x, int y)
+    internal static Label CreateOutputGuardMatchAny(int wordSize, int x, int y)
+    {
+        string label = $"index <= {wordSize} && times[index] == c0";
+        return new Label(LabelKind.Guard, label, x - 200, y);
+    }
+
+    public static Label CreateOutputUpdate(int x, int y)
     {
         string label = $"index++";
         return new Label(LabelKind.Assignment, label, x - 75, y);
@@ -54,9 +60,21 @@ internal sealed class Label
         return new Label(LabelKind.Synchronisation, labelString, x - 75, y + 15);
     } 
 
-    internal static Label CreateAssignment(Edge edge, int x = -1, int y = -1)
+    internal static Label CreateAssignment(IEnumerable<Clock> clocks, int x = -1, int y = -1)
     {
-        string labelString = string.Join(", ", GenerateAssignment(edge));
+        string labelString = string.Join(", ", GenerateAssignment(clocks));
+        return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
+    }
+
+    public static Label CreateFinalAssignment(int x = -1, int y = -1)
+    {
+        string labelString = "endIndex = index";
+        return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
+    }
+
+    public static Label CreateStartAssignment(IEnumerable<Clock> clocks, int x = -1, int y = -1)
+    {
+        string labelString = string.Join(", ", GenerateAssignment(clocks).Append("startIndex = index + 1"));
         return new Label(LabelKind.Assignment, labelString, x - 75, y + 30);
     }
 
@@ -74,14 +92,14 @@ internal sealed class Label
             }
             
             yield return $"(c{clock.Id} {(range.StartInclusive ? ">=" : ">")} " +
-                $"{(short)(range.StartInterval * 1000)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
-                $"{(short)(range.EndInterval * 1000)})";
+                $"{Math.Min((int)(range.StartInterval), UppaalGenerator.MaxClockValue)} && c{clock.Id} {(range.EndInclusive ? "<=" : "<")} " +
+                $"{Math.Min((int)(range.EndInterval), UppaalGenerator.MaxClockValue)})";
         }
     }
 
-    private static IEnumerable<string> GenerateAssignment(Edge edge)
+    private static IEnumerable<string> GenerateAssignment(IEnumerable<Clock> clocks)
     {
-        foreach (Clock clock in edge.GetClockResets())
+        foreach (Clock clock in clocks)
         {
             yield return $"c{clock.Id} = 0";
         }

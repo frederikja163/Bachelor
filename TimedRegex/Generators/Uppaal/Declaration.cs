@@ -8,44 +8,37 @@ internal sealed class Declaration
 {
     private readonly HashSet<string> _clocks;
     private readonly HashSet<string> _channels;
-    private readonly List<short> _times;
+    private readonly HashSet<string> _ints;
+    private readonly List<(int, string)> _types;
+    private readonly List<int> _times;
     private readonly List<string> _symbols;
 
     internal Declaration()
     {
         _clocks = new HashSet<string>();
         _channels = new HashSet<string>();
-        _times = new List<short>();
+        _ints = new HashSet<string>();
+        _types = new List<(int, string)>();
+        _times = new List<int>();
         _symbols = new List<string>();
     }
 
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels, IEnumerable<short> times, IEnumerable<string> symbols)
+    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels) : this()
     {
         _clocks = clocks.ToHashSet();
         _channels = channels.ToHashSet();
-        _times = times.ToList();
-        _symbols = symbols.ToList();
     }
 
-    internal Declaration(IEnumerable<string> clocks, IEnumerable<string> channels)
-    {
-        _clocks = clocks.ToHashSet();
-        _channels = channels.ToHashSet();
-        _times = [];
-        _symbols = [];
-    }
-
-    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters,
-        Dictionary<string, string> symbolToRenamed)
+    internal void AddTimedCharacters(IEnumerable<TimedCharacter> timedCharacters)
     {
         foreach (TimedCharacter character in timedCharacters)
         {
-            if ((_times.Count() > 0) && (character.Time * 1000 < _times.Last()))
+            if (_times.Any() && character.Time < _times[^1])
             {
                 throw new FormatException("Timed characters must be in ascending order.");
             }
-            _times.Add((short)(character.Time * 1000)); // TODO: Change to int in a smarter way.
-            _symbols.Add(symbolToRenamed[character.Symbol]);
+            _times.Add((int)character.Time);
+            _symbols.Add(character.Symbol);
         }
     }
     
@@ -62,6 +55,35 @@ internal sealed class Declaration
         foreach (var channel in _channels)
         {
             yield return channel;
+        }
+    }
+
+    internal void AddInt(string name)
+    {
+        if (!_ints.Add(name))
+        {
+            throw new Exception("Can not add the same int more than once.");
+        }
+    }
+
+    internal IEnumerable<string> GetInts()
+    {
+        foreach (string i in _ints)
+        {
+            yield return i;
+        }
+    }
+
+    internal void AddType(int maxValue, string name)
+    {
+        _types.Add((maxValue, name));
+    }
+
+    internal IEnumerable<(int maxValue, string name)> GetTypes()
+    {
+        foreach ((int, string) type in _types)
+        {
+            yield return type;
         }
     }
 
@@ -84,7 +106,6 @@ internal sealed class Declaration
         }
     }
 
-
     internal IEnumerable<string> GetSymbols()
     {
         foreach (string symbol in _symbols)
@@ -93,9 +114,9 @@ internal sealed class Declaration
         }
     }
 
-    internal IEnumerable<short> GetTimes()
+    internal IEnumerable<int> GetTimes()
     {
-        foreach (short time in _times)
+        foreach (int time in _times)
         {
             yield return time;
         }

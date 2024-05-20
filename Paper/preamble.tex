@@ -6,14 +6,22 @@
 \usepackage{amsmath}
 \usepackage{verbatim}
 \usepackage{tikz-uml}
+%\usepackage{parskip} % automatically adds line breaks
 
 \usetikzlibrary{arrows}
-\usetikzlibrary {arrows.meta}
+\usetikzlibrary{arrows.meta}
 
 \tikzset{
-    vertex/.style={circle,draw,minimum size=1.5em},
-    edge/.style={->, arrows = {-Latex[length=5pt 3 0]}}
+vertex/.style={circle,draw,minimum size=1.5em},
+edge/.style={->, arrows = {-Latex[length=5pt 3 0]}},
+every picture/.style={
+        execute at end picture={
+                \path (current bounding box.south west) +(0,-0.3) (current bounding box.north east) +(0,0.3);
+            }
+    }
 }
+
+\usepackage{caption}
 \usepackage{graphics}
 \usepackage[T1]{fontenc}
 \usepackage{multicol}
@@ -26,7 +34,9 @@
 \newcounter{defCounter}
 \newtheorem{definition}[defCounter]{Definition}
 \crefname{defCounter}{Definition}{Definitions}
+\crefname{figure}{Figure}{Figures}
 
+\setlength{\parindent}{0pt}
 \usepackage{etoolbox}
 \AtBeginEnvironment{definition}{\setlength{\parindent}{-0.45em}}
 

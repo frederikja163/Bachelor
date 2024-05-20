@@ -5,12 +5,18 @@ namespace TimedRegex.Generators.Uppaal;
 internal sealed class UppaalGenerator : IGenerator
 {
     private readonly Nta _nta;
+    internal const int MaxClockValue = 1073741822;
     
-    public bool IsQuiet { get; init; }
+    public bool IsQuiet { get; }
 
-    public UppaalGenerator()
+    public UppaalGenerator(bool isQuiet = false)
     {
+        IsQuiet = isQuiet;
         _nta = new Nta(IsQuiet);
+        if (!IsQuiet)
+        {
+            Console.WriteLine("Warning: UPPAAL cannot handle floating point clocks, all times have been converted into their whole integer parts.");
+        }
     }
     
     internal static XmlWriterSettings XmlSettings { get; } = new()
@@ -49,8 +55,16 @@ internal sealed class UppaalGenerator : IGenerator
             WriteTemplate(xmlWriter, template);
         }
 
-        xmlWriter.WriteStartElement("system");
-        xmlWriter.WriteValue($"system {nta.System};");
+        xmlWriter.WriteElementString("system", $"system {nta.System};");
+        
+        xmlWriter.WriteStartElement("queries");
+        foreach (Query query in nta.GetQueries())
+        {
+            xmlWriter.WriteStartElement("query");
+            xmlWriter.WriteElementString("formula", query.Formula);
+            xmlWriter.WriteElementString("comment", query.Comment);
+            xmlWriter.WriteEndElement();
+        }
         xmlWriter.WriteEndElement();
 
         xmlWriter.WriteEndElement();
@@ -66,12 +80,19 @@ internal sealed class UppaalGenerator : IGenerator
         xmlWriter.WriteStartElement("declaration");
         if (declaration.GetClocks().Any())
         {
-            xmlWriter.WriteValue($"clock {string.Join(", ", declaration.GetClocks())};");
+            xmlWriter.WriteValue($"clock {string.Join(", ", declaration.GetClocks())};\n");
         }
 
         if (declaration.GetChannels().Any())
         {
-            xmlWriter.WriteValue($"chan {string.Join(", ", declaration.GetChannels())};");
+            xmlWriter.WriteValue($"chan {string.Join(", ", declaration.GetChannels())};\n");
+        }
+
+        if (declaration.GetTypes().Any())
+        {
+            string str = string.Join(";\n",
+                declaration.GetTypes().Select(t => $"typedef int[-{t.maxValue},{t.maxValue}] {t.name};\n"));
+            xmlWriter.WriteValue(str);
         }
 
         if (declaration.GetSymbols().Any())
@@ -82,14 +103,15 @@ internal sealed class UppaalGenerator : IGenerator
 
         if (declaration.GetTimes().Any())
         {
-            short emptyCharTime = (short)(declaration.GetTimes().Last() + 1);
+            int emptyCharTime = declaration.GetTimes().Last() + 1;
             string str = string.Join(", ", declaration.GetTimes().Append(emptyCharTime));
-            xmlWriter.WriteValue($"int times[{declaration.GetTimes().Count() +1 }] = {{{str}}};\n");
+            xmlWriter.WriteValue($"clock_t times[{declaration.GetTimes().Count() +1 }] = {{{str}}};\n");
         }
 
-        if (declaration.GetTimes().Any())
+        if (declaration.GetInts().Any())
         {
-            xmlWriter.WriteValue("int index = 0;\n");
+            string str = string.Join(", ", declaration.GetInts());
+            xmlWriter.WriteValue($"int {str} = 0;\n");
         }
 
         xmlWriter.WriteEndElement();

@@ -84,10 +84,7 @@ internal sealed class BuildCommand
 
         IGenerator generator = Format switch
         {
-            OutputFormat.Uppaal => new UppaalGenerator()
-            {
-                IsQuiet = Quiet,
-            },
+            OutputFormat.Uppaal => new UppaalGenerator(Quiet),
             OutputFormat.TikzDocument => new TikzGenerator(true),
             OutputFormat.TikzFigure => new TikzGenerator(false),
             _ => throw new ArgumentOutOfRangeException(nameof(Format))
@@ -228,7 +225,8 @@ internal sealed class BuildCommand
             {
                 Log.WriteLineIf(Verbose, "Pruning Clocks");
                 Log.StartTimeIf(Verbose, out sw);
-                timedAutomaton.PruneClocks();
+                // timedAutomaton.PruneClocks();
+                timedAutomaton.ReduceClocks();
                 Log.StopTime(sw, "Clocks pruned in {0}");
             }
             
