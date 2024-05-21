@@ -7,13 +7,12 @@ The user can also decide the output format of the TA at this point, if it has no
 TREAT can also be called with arguments, in order to bypass the interface completely.
 
 If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet.
-An automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has an edge for each of the symbols of the alphabet, and broadcasts its symbol on channels that are also declared in the declarations in UPPAAL. Checking is described further in \cref{subsec:checking}.
+An automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has an edge for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
 
 The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree (AST). 
-
 From the AST, the TA can be created using the rules from Eugene et al., with the modifications described in \cref{subsec:semantics}.
 
-This is done by visiting each node in the tree, and generating states and edges in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition are valid. Another goes through the AST, to specifically implement the iterator and the absorbed iterator. The last visitor is responsible for implementing the rules of all other tokens.
+This is done by visiting each node in the tree, and generating states and edges in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition are valid. Another goes through the AST, to convert the iterator and the absorbed iterator into lower level components using union and iterator. The last visitor is responsible for implementing the rules of all other tokens.
 
 At this stage, the TA is pruned as described in \cref{subsec:pruning}. 
 % The dataformat of the internal TA is an object containing hashsets and dictionaries corresponding to the sets of the tuples described in \cref{sec:preliminaries}. 
