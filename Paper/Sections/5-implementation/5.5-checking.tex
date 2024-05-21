@@ -7,8 +7,8 @@
 Using the UPPAAL output format, enables the user to make use of UPPAAL's model checking and verification capabilities.
 By constructing a TA representing a given timed word, it is possible to verify that a given TRE satisfies the timing constraints of the timed word.
 Given a timed word: $$(A, 0), (A, 2), (B, 3), (B, 3), (A, 8), (B, 12)$$
-We can use the following TRE to look for the word ABBA in a span of 10 seconds, which it should find starting at index 1. (assuming the timed word is in seconds): $$(ABBA)[0;10]$$
-On such a small timed word, and a trivial TRE it is easy to do manually, but with timed words with thousands of timed events, it is useful to have the ability to automate this with UPPAAL.
+We can use the following TRE to look for the word ABBA in a span of 10 time units, which it should find starting at index 1: $$(ABBA)[0;10]$$
+On such a small timed word, and a trivial TRE it is easy to do manually, but with timed words with thousands or millions of timed characters, it is useful to have the ability to automate this with UPPAAL.
 
 \subsubsection{Timed Automaton Representation}\label{subsubsec:ta_rep}
 In UPPAAL, TAs are represented by a set of states and transitions connecting these states.
@@ -19,7 +19,7 @@ The TA shown on \cref{fig:ta_rep} is constructed from the TRE described above. F
     \captionof{figure}{TA constructed from the TRE $(ABBA)[0;10]$.}
     \label{fig:ta_rep}
 \end{center}
-The word is recognized by the TA, if the execution terminates at an accepting state.
+The word is recognized by the TA, if the execution terminates at a final state.
 In the case of the TA on \cref{fig:ta_rep}, the only accepted word is ABBA, and it is only accepted if the 4 symbols appear within 10 seconds of eachother.
 
 The accepting state can only be reached by traversing the graph's transitions, and these transitions have been constructed to meet the requirements of the TRE. Each symbol in the TRE is converted into a datatype called a Broadcast Channel \cite{UPPAAL}. While the documentation says they are used to synchronize processes (TA), the intuition in this paper, is that they are used to send and receive signals across channels. The syntax is as following:
@@ -68,9 +68,8 @@ All query syntax and semantics can be found on UPPAAL's documentation \cite{UPPA
 \begin{lstlisting}[basicstyle=\scriptsize]
     operation{condition} : subject
 \end{lstlisting}
-finds the infimum of startIndex and endIndex shown in \cref{fig:ta_rep}, but only if startIndex is initialized and the TA has reached an accepting state. The infimum operation finds the minimum value of the subject given the condition is true, which in this case finds the first occurence of $ABBA$ in the timed word.
+finds the infimum of startIndex and endIndex shown in \cref{fig:ta_rep}, but only if startIndex is greater than or equal to 0 and the TA has reached a final state. The infimum operation finds the minimum value of the subject given the condition is true, which in this case finds the first occurence of $ABBA$ in the timed word.
 
-When using TREAT, and the output format is UPPAAL (which is default), this query is generated, but cannot be properly utilized without a timed word, which can be specified.
 
 \subsubsection{Shortcomings}\label{subsubsec:shortcomings}
 We have encountered some limitations with UPPAAL, that we have had to work around.
@@ -81,7 +80,7 @@ We have encountered some limitations with UPPAAL, that we have had to work aroun
 % clock_t i typedef
 % floating point clocks ??
 
-One of the most prominent issues we found is with UPPAAL's integer size, which is equal to a short, only 16 bits. This meant, that when implementing timed words, the elements in the times array had a maximum bound of 32.767, which is fine for smaller timed words, but they can contain millions of timed events. In UPPAAL, it is possible to define custom datatypes, and since we compare these times in the array to clock, in the following example, we thought to define a datatype with the same size as the clock datatype.
+One of the most prominent issues we found is with UPPAAL's integer size, which is equal to a int16. This meant, that when implementing timed words, the elements in the times array had a maximum bound of 32.767, which is fine for smaller timed words, but they can contain millions of timed events. In UPPAAL, it is possible to define custom datatypes, and since we compare these times in the array to clock, in the following example, we thought to define a datatype with the same size as the clock datatype.
 
 \begin{lstlisting} [basicstyle=\scriptsize]
     word[index] == "A" && times[index] == c0
