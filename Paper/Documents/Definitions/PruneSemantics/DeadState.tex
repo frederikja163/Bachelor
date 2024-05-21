@@ -4,13 +4,9 @@
     Dead state pruning:
     
     \sembox{
-        $\deadstate(A)=\left\{\begin{array}{ll}
-            A & \text{if } \forall q\in Q:\neg D(q) \\
-            \deadstate(\automaton[][Q'][C][\Delta'][\Sigma][s][F]) & otherwise \\
-        \end{array}\right.
-        $
+        $\deadstate\automaton[]=\automaton[][Q'][C][\Delta'][\Sigma][s][F]$
 
-        $D(q)=q\neq s\wedge q\notin F_1\wedge \transition[_1]\notin\Delta_1$
+        $D(q)=q\neq s\wedge q\notin F\wedge\nexists (\phi,p,a,q'):\transition[]\in\Delta$
 
         $Q'=\{q\in Q\mid\neg D(q)\}$
 

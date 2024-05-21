@@ -201,14 +201,16 @@ internal sealed class BuildCommand
         Log.WriteLineIf(Verbose, $"Edges/TotalEdges: {timedAutomaton.GetEdges().Count()}/{TimedAutomaton.TotalEdgeCount}");
         Log.WriteLineIf(Verbose, $"Clock/TotalClocks: {timedAutomaton.GetClocks().Count()}/{TimedAutomaton.TotalClockCount}");
 
-        if (!StatePruning || !ClockPruning || !EdgePruning)
+        bool anythingReduced = true;
+        while (anythingReduced && (!StatePruning || !ClockPruning || !EdgePruning))
         {
+            anythingReduced = false;
             Log.StartTimeIf(Verbose, out Stopwatch? totalPruning);
             if (!EdgePruning)
             {
                 Log.WriteLineIf(Verbose, "Pruning Edges");
                 Log.StartTimeIf(Verbose, out sw);
-                timedAutomaton.PruneEdges();
+                anythingReduced |= timedAutomaton.PruneEdges();
                 Log.StopTime(sw, "Edges pruned in {0}");
             }
             
@@ -216,8 +218,8 @@ internal sealed class BuildCommand
             {
                 Log.WriteLineIf(Verbose, "Pruning States");
                 Log.StartTimeIf(Verbose, out sw);
-                timedAutomaton.PruneDeadStates();
-                timedAutomaton.PruneUnreachableStates();
+                anythingReduced |= timedAutomaton.PruneDeadStates();
+                anythingReduced |= timedAutomaton.PruneUnreachableStates();
                 Log.StopTime(sw, "States pruned in {0}");
             }
             
@@ -225,8 +227,8 @@ internal sealed class BuildCommand
             {
                 Log.WriteLineIf(Verbose, "Pruning Clocks");
                 Log.StartTimeIf(Verbose, out sw);
-                // timedAutomaton.PruneClocks();
-                timedAutomaton.ReduceClocks();
+                anythingReduced |= timedAutomaton.ReduceClocks();
+                anythingReduced |= timedAutomaton.PruneClocks();
                 Log.StopTime(sw, "Clocks pruned in {0}");
             }
             
@@ -234,6 +236,7 @@ internal sealed class BuildCommand
             Log.WriteLineIf(Verbose, $"States: {timedAutomaton.GetStates().Count()}");
             Log.WriteLineIf(Verbose, $"Edges: {timedAutomaton.GetEdges().Count()}");
             Log.WriteLineIf(Verbose, $"Clock: {timedAutomaton.GetClocks().Count()}");
+            Log.WriteLineIf(Verbose && anythingReduced, "Found something to prune, pruning again.");
         }
 
         ITimedAutomaton ta = timedAutomaton;

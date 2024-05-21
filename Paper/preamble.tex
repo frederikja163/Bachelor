@@ -22,6 +22,8 @@ every picture/.style={
 }
 
 \usepackage{caption}
+\captionsetup{font=small, margin=20pt}
+
 \usepackage{graphics}
 \usepackage[T1]{fontenc}
 \usepackage{multicol}
@@ -51,15 +53,21 @@ every picture/.style={
 \newcommandx{\transition}[6][1=, 2=q, 3=q', 4=\phi, 5=p, 6=a]{
     (#2#1, #4#1, #5#1, #6, #3#1)
 }
+\newcommandx{\clockreduction}[0]{
+    \mathbb{C}_r
+}
 \newcommandx{\deadedge}[0]{
-    \mathbb{E}_d
+    \mathbb{T}_d
 }
 \newcommandx{\deadclock}[0]{
-    \mathbb{C}
+    \mathbb{C}_d
 }
 \newcommandx{\deadstate}[0]{
     \mathbb{S}_d
 }
 \newcommandx{\unreachable}[0]{
     \mathbb{S}_u
+}
+\newcommandx{\pruning}[0]{
+    \mathbb{P}
 }

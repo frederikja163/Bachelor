@@ -5,9 +5,9 @@
     Dead clock pruning:
     
     \sembox{
-        $\deadclock(A)=\automaton[][Q][C'][\Delta'][\Sigma][s][F]$
+        $\deadclock\automaton=\automaton[][Q][C'][\Delta'][\Sigma][s][F]$
         
-        $C'=\{c\mid\exists\transition[]\in\Delta:\langle c\in I\rangle\in\phi_1\}$
+        $C'=\{c\mid\exists\transition[]\in\Delta:(c, I)\in\phi\}$
 
         $\Delta'=\{\transition[][q][q'][\phi][p\cap C']\mid\transition\in\Delta\}$
     }

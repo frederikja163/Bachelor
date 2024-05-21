@@ -131,13 +131,13 @@ internal sealed class TikzGenerator : IGenerator
         if (edge.GetClockRanges().Any())
         {
             tw.Write("\\mid ");
-            tw.Write(string.Join("\\wedge", edge.GetClockRanges()
+            tw.Write(string.Join(" \\wedge ", edge.GetClockRanges()
                 .Select(t => t.Item2 is null ? "false" : $"c_{t.Item1.Id}\\in{t.Item2.ToString()}")));
         }
         if (edge.GetClockResets().Any())
         {
             tw.Write("\\mid ");
-            tw.Write(string.Join("\\wedge", edge.GetClockResets().Select(c => $"<c_{c.Id}>")));
+            tw.Write(string.Join(" \\wedge ", edge.GetClockResets().Select(c => $"<c_{c.Id}>")));
             tw.Write("=0");
         }
         tw.Write("$}");

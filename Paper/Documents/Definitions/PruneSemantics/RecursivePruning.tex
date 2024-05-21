@@ -1,0 +1,13 @@
+\begin{definition}\label{definition:recursivePruning}
+    Recursive pruning:
+    
+    \sembox{
+        $\pruning(A)=\left\{\begin{array}{ll}
+            A & \text{if }A=A' \\
+        \pruning(A') & otherwise \\
+        \end{array}\right.
+        $
+
+        $A' = \clockreduction\circ\deadedge\circ\deadstate\circ\unreachable\circ\deadclock(A)$
+    }
+\end{definition}
