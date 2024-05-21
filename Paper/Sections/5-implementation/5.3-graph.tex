@@ -1,4 +1,4 @@
-\subsection{Graph Layout}
+\subsection{Graph Layout}\label{subsec:graphlayout}
 
 % Motivation for implementing algorithm ourselves
 %   - alternative: use DOT language for Graphviz. 
@@ -19,7 +19,9 @@
 As mentioned in \cref{sec:related work}, the layout algorithm used in (TODO: Insert name of program) to organize and arrange the states in TAs (Timed Automaton), is called the Sugiyama framework, also known as layered graph drawing (TODO: cite sugiyama when \#343 merged). The method comprises four steps that, when combined, results in a layered graph with minimized transition crossings. These steps are discussed below, using the TA shown on \cref{fig:graph_step0}, which was constructed using the following TRE(Timed Regular Expression): $$"(CDE\mid(BC)+)\mid A"$$
 
 % Visualise steps with different automata
-\input{Documents/Diagrams/GraphFigures/graphstep0.tex}
+\begin{center}
+    \input{Documents/Diagrams/GraphFigures/graphstep0.tex}
+\end{center}
 
 \subsubsection{Make automata acyclic}
 The first step of the Sugiyama framework is to, temporarily, make the automaton acyclic. This is necessary because subsequent steps require transitions to have a consistent direction. As described by Mazetti et al., this is done by reversing a specific list of transitions \cite{Mazetti2012}.
@@ -32,7 +34,9 @@ In the implementation, reversible transitions are completely omitted. This is do
 % mention self loops
 
 % insert image of step
-\input{Documents/Diagrams/GraphFigures/graphstep1.tex}
+\begin{center}
+    \input{Documents/Diagrams/GraphFigures/graphstep1.tex}
+\end{center}
 
 \subsubsection{Assign states to layers}
 The next step is to assign states to layers. Mazetti et al. describes this process by assigning a given state to the layer index equal to the longest path from the initial state. If a transition spans multiple layers, dummy states are placed to ensure that transitions only move between adjacent layers. \cite{Mazetti2012}
@@ -45,7 +49,9 @@ Dummy states are introduced if two connected states are more than one layer apar
 This implementation can be seen on \cref{fig:graph_step2}, which has resulted in a much more structured TA.
 
 % insert image of step
-\input{Documents/Diagrams/GraphFigures/graphstep2.tex}
+\begin{center}
+    \input{Documents/Diagrams/GraphFigures/graphstep2.tex}
+\end{center}
 
 \subsubsection{Order states in layers}
 After all states have been assigned to a layer, they are ordered in those layers to ensure the smallest number of transition crossings. These crossings, more often than not, degrade the visual clarity of the automata.
@@ -55,12 +61,13 @@ This sweep is performed thrice, once forward, once backwards, and lastly, forwar
 This ensures that both a given state's incoming and outgoing states play a role in minimizing transition crossings. \cite{Mazetti2012}
 
 The approach implemented for this paper shares the same philosophies as the step described above, and can be seen on \cref{fig:graph_step3}.
-
 % insert image of step
-\input{Documents/Diagrams/GraphFigures/graphstep3.tex}
+\begin{center}
+    \input{Documents/Diagrams/GraphFigures/graphstep3.tex}
+\end{center}
 
 \subsubsection{Assign positions}
-The last step is to assign positions to each state.
+The last step is to assign positions to each state. The aim of this step is to balance the graph by straightening transitions as much as possible, while minimizing the size of the graph.
 Mazetti et al.'s procedure for this step is to prioritze all states in each layer based on the number of connected states in the previous layer.
 More connections give a higher priority. This is quite similar to the previous step except, dummy states are given the highest prioritization.
 Each state is placed based on their priority, with the ability to move states with lower priority.
@@ -69,4 +76,6 @@ Lastly, transitions between dummy states are merged, and restoring the correct t
 As of writing this paper, this approach for assigning positions has not yet been implemented. Instead, states are simply placed based on their layer, and their index on said layer, which already offers much visual clarity. The cycles are reintroduced at the very end of this step. This is reflected in the TA on \cref{fig:graph_step4}.
 
 % insert image of step
-\input{Documents/Diagrams/GraphFigures/graphstep4.tex}
+\begin{center}
+    \input{Documents/Diagrams/GraphFigures/graphstep4.tex}
+\end{center}
