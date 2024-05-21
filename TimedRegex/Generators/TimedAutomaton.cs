@@ -73,13 +73,15 @@ internal sealed class TimedAutomaton : ITimedAutomaton
     public State? InitialState { get; internal set; }
     public string Regex { get; }
 
-    internal void PruneEdges()
+    internal bool PruneEdges()
     {
-        List<Edge> deadEdges = GetEdges().Where(e => e.IsDead).ToList();
-        foreach (Edge deadEdge in deadEdges)
+        bool anythingPruned = false;
+        foreach (Edge deadEdge in GetEdges().Where(e => e.IsDead))
         {
-            _edges.Remove(deadEdge.Id);
+            anythingPruned |= _edges.Remove(deadEdge.Id);
         }
+
+        return anythingPruned;
     }
 
     private bool TryPruneSates(bool pruneToState)
@@ -135,28 +137,40 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         return result;
     }
 
-    internal void PruneDeadStates()
+    internal bool PruneDeadStates()
     {
+        bool anythingPruned = false;
         while (TryPruneSates(false))
         {
-            
+            anythingPruned = true;
         }
+
+        return anythingPruned;
     }
 
-    internal void PruneUnreachableStates()
+    internal bool PruneUnreachableStates()
     {
+        bool anythingPruned = false;
         while (TryPruneSates(true))
         {
-            
+            anythingPruned = true;
         }
+
+        return anythingPruned;
     }
 
-    internal void ReduceClocks()
+    internal bool ReduceClocks()
     {
+        bool anythingPruned = false;
         foreach ((int _, Clock clock1) in _clocks)
         {
             foreach ((int _, Clock clock2) in _clocks)
             {
+                if (clock1.Id == clock2.Id)
+                {
+                    continue;
+                }
+                
                 bool areEqual = true;
                 foreach ((int _, Edge edge) in _edges)
                 {
@@ -169,14 +183,18 @@ internal sealed class TimedAutomaton : ITimedAutomaton
 
                 if (areEqual)
                 {
+                    anythingPruned = true;
                     clock1.Id = clock2.Id;
                 }
             }
         }
+
+        return anythingPruned;
     }
 
-    internal void PruneClocks()
+    internal bool PruneClocks()
     {
+        bool anythingPruned = false;
         HashSet<Clock> usedClocks = _edges.Values
             .SelectMany(e => e.GetClockRanges())
             .Select(c => c.Item1).ToHashSet();
@@ -185,6 +203,7 @@ internal sealed class TimedAutomaton : ITimedAutomaton
         {
             if (!usedClocks.Contains(clock))
             {
+                anythingPruned = true;
                 _clocks.Remove(index);
                 foreach ((_, Edge edge) in _edges)
                 {
@@ -192,6 +211,8 @@ internal sealed class TimedAutomaton : ITimedAutomaton
                 }
             }
         }
+
+        return anythingPruned;
     }
     
     public IEnumerable<Clock> GetClocks()
