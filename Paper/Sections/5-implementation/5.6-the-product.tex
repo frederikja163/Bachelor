@@ -4,7 +4,6 @@ We have named this piece of software "TREAT", short for "Timed Regular Expressio
 
 TREAT is accessed through a command line interface. The user can type in their TRE, along with a few options such as adding a timed word through a .csv file, turning off pruning, and silencing any warnings or info messages.
 The user can also decide the output format of the TA at this point, if it has not already been specified. 
-TREAT can also be called with arguments, in order to bypass the interface completely.
 
 If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet.
 An automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has an edge for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
