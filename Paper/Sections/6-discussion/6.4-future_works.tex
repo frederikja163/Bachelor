@@ -6,12 +6,12 @@ A paper by Daws et al. \cite{Daws1996} describes clock pruning in timed automata
 Clock pruning is one example of an area in which further optimization may be found. It should be noted, however, that adding several more pruning steps, might decrease performance in certain areas.
 This conundrum should be adressed with testing and benchmarking, to determine which pruning algorithms would effectively improve performance in relevant areas.
 
-A pruning method that was previously in development for TREAT, was "final state pruning", in which, final states would be merged together. This method was ultimately not implemented, because we were unable to formally define a well-formed algorithm, and therefore could not be certain that a pruned TA would always be equivelant to its un-pruned counterpart.
+A pruning method that was previously in development for TREAT, was "final state pruning", in which, final states would be merged together. This method was ultimately not implemented, because we were unable to formally define a proper algorithm, and therefore could not be certain that a pruned TA would always be equivalent to its un-pruned counterpart.
 
 
 \subsubsection{TRE from TA}
-According to Eugene et al.,\cite{Eugene2001} it should always be possible to create TRE from a TA that is equivelant to the TA it was created based on.
-A future TREAT project could use the methods described in Eugene et al., in order to create TREs from a given representation of a TA, such as one from a UPPAAL file.
-This would involve parsing the UPPAAL file, converting that information in to an automaton, and then converting that automaton to a TRE.
-While this feature was not prioritized for implementation in the version of TREAT accompanying the release of this paper, the feature may prove usefull for representing TAs as TREs, and even converting a TA originally represented in one format, such as UPPAAL, to a different one, such as TikZ.
+According to Eugene et al.\cite{Eugene2001}, it should always be possible to create a TRE from a TA that is equivelant to the TA it was created based on.
+A future TREAT project could use the methods described by Eugene et al., in order to create TREs from a given representation of a TA, such as one from a UPPAAL file.
+This would involve parsing the UPPAAL file, converting that information into an automaton, and then converting that automaton to a TRE.
+While this feature was not prioritized for implementation in the version of TREAT accompanying the release of this paper, the feature may prove useful for representing TAs as TREs, and even converting a TA originally represented in one format, such as UPPAAL, to a different one, such as TikZ.
 
