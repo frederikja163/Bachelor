@@ -1,0 +1,51 @@
+\lstdefinestyle{transcript}{
+    basicstyle=\scriptsize\ttfamily,
+    escapeinside={|*}{*|},
+    emphstyle=[2]\textcolor{purple},
+    emphstyle=[3]\textcolor{lightgray},
+    emph=[2]{LMP, CC, CDR, CMP, CT, MSFN, SC, CDF, MS, PRESIDENT, HORNET, SWIM1},
+    emph=[3]{message},
+    literate=
+        {0}{{\textcolor{teal}0}}{1}%
+        {1}{{\textcolor{teal}1}}{1}%
+        {2}{{\textcolor{teal}2}}{1}%
+        {3}{{\textcolor{teal}3}}{1}%
+        {4}{{\textcolor{teal}4}}{1}%
+        {5}{{\textcolor{teal}5}}{1}%
+        {6}{{\textcolor{teal}6}}{1}%
+        {7}{{\textcolor{teal}7}}{1}%
+        {8}{{\textcolor{teal}8}}{1}%
+        {9}{{\textcolor{teal}9}}{1}%
+        {<}{{\textcolor{lightgray}<}}{1}%
+        {>}{{\textcolor{lightgray}>}}{1}%
+}
+
+\begin{center}
+    \captionsetup{width=0.45\columnwidth}
+    \begin{minipage}{.6\columnwidth}
+        \begin{lstlisting}[style=transcript]
+    00 00 00 04 CDR <message>
+    00 00 00 13 CDR <message>
+    00 00 00 15 CMP <message>
+    00 00 00 34 CDR <message>
+    00 00 00 44 CDR <message>
+    00 00 01 02 CC  <message>
+    |*$\vdots$*|
+        \end{lstlisting}
+    \end{minipage}$\Longrightarrow$
+    \begin{minipage}{.25\columnwidth}
+        \begin{lstlisting}[style=transcript]
+    CDR, 4
+    CDR, 13
+    CMP, 15
+    CDR, 34
+    CDR, 44
+    CC,  62
+    |*$\vdots$*|
+        \end{lstlisting}
+    \end{minipage}
+\end{center}
+\vspace{-1em}
+\captionof{lstlisting}{Transcript (Left), Timed word (Right).}
+\vspace{1em}
+\label{lstlisting:transcript}
