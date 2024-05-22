@@ -1,0 +1,7 @@
+Name    Mean    Err     Dev     Alloc
+NP      576     28      1       2
+AP      1409    183     10      4
+SP      1841    405     22      3
+POSPAS  1848    125     6       3
+POSPAA  1408    178     9       4
+POAPAS  1864    31      1       3

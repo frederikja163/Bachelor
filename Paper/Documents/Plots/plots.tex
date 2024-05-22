@@ -1,0 +1,110 @@
+\pgfplotstableread{Documents/Plots/data.dat}\loadedtable
+% \pgfplotstableread{
+%     Name    Mean    Err     Dev     Alloc
+%     NP      576     28      1       2
+%     AP      1409    183     10      4
+%     SP      1841    405     22      3
+%     POSPAS  1848    125     6       3
+%     POSPAA  1408    178     9       4
+%     POAPAS  1864    31      1       3
+% }\loadedtable
+
+% all time metrics
+\begin{tikzpicture}
+    \begin{semilogyaxis}[
+            ybar=5pt,
+            width=\textwidth,
+            height=6cm,
+            title = {All data},
+            ylabel={Time (ns)},
+            ymin=0, ymax=10000,
+            xtick=data,
+            xticklabels from table={\loadedtable}{Name},
+            nodes near coords,
+            nodes near coords align={vertical},
+            bar width=0.2,
+            enlarge y limits=false,
+        ]
+        \addplot [fill=red] table [x expr=\coordindex, y=Mean]{\loadedtable};
+        \addplot [fill=green] table [x expr=\coordindex, y=Err]{\loadedtable};
+        \addplot [fill=blue] table [x expr=\coordindex, y=Dev]{\loadedtable};
+
+
+    \end{semilogyaxis}
+\end{tikzpicture}
+
+% mean
+\begin{tikzpicture}
+    \begin{axis}[
+            width=10cm,
+            height=6cm,
+            title = {Mean runtime},
+            ylabel={Time (ns)},
+            ymin=0, ymax=3000,
+            xtick=data,
+            xticklabels from table={\loadedtable}{Name},
+            x tick label style={rotate=60, anchor=east, yshift=-0.5em},
+            nodes near coords,
+            nodes near coords align={vertical},
+            bar width=0.75,
+        ]
+        \addplot [ybar, fill=red!80!blue] table [x expr=\coordindex, y=Mean]{\loadedtable};
+    \end{axis}
+\end{tikzpicture}
+
+% err
+\begin{tikzpicture}
+    \begin{axis}[
+            width=10cm,
+            height=6cm,
+            title = {Error Margin},
+            ylabel={Time (ns)},
+            ymin=0, ymax=500,
+            xtick=data,
+            xticklabels from table={\loadedtable}{Name},
+            x tick label style={rotate=60, anchor=east, yshift=-0.5em},
+            nodes near coords,
+            nodes near coords align={vertical},
+            bar width=0.75,
+        ]
+        \addplot [ybar, fill=red!80!blue] table [x expr=\coordindex, y=Err]{\loadedtable};
+    \end{axis}
+\end{tikzpicture}
+
+% dev
+\begin{tikzpicture}
+    \begin{axis}[
+            width=10cm,
+            height=6cm,
+            title = {Standard Deviation},
+            ylabel={Time (ns)},
+            ymin=0, ymax=25,
+            xtick=data,
+            xticklabels from table={\loadedtable}{Name},
+            x tick label style={rotate=60, anchor=east, yshift=-0.5em},
+            nodes near coords,
+            nodes near coords align={vertical},
+            bar width=0.75,
+        ]
+        \addplot [ybar, fill=red!80!blue] table [x expr=\coordindex, y=Dev]{\loadedtable};
+    \end{axis}
+\end{tikzpicture}
+
+% alloc
+\begin{tikzpicture}
+    \begin{axis}[
+            width=10cm,
+            height=6cm,
+            title = {Allocated Memory},
+            ylabel={Memory (kb)},
+            ymin=0, ymax=5,
+            xtick=data,
+            xticklabels from table={\loadedtable}{Name},
+            x tick label style={rotate=60, anchor=east, yshift=-0.5em},
+            nodes near coords,
+            nodes near coords align={vertical},
+            bar width=0.75,
+        ]
+        \addplot [ybar, fill=red!80!blue] table [x expr=\coordindex, y=Alloc]{\loadedtable};
+    \end{axis}
+\end{tikzpicture}
