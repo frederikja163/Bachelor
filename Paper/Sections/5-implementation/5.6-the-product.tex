@@ -10,7 +10,7 @@ TREAT is accessed through a command line interface(CLI)(see \cref*{fig:TREATdiag
 The user can also decide the output format of the TA at this point using "--format".
 
 If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet. This is shown as a separate branching to the right from CLI in \cref*{fig:TREATdiagram}
-Looking at the left branch from CLI in \cref*{fig:TREATdiagram}, an automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has an edge for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
+Looking at the left branch from CLI in \cref*{fig:TREATdiagram}, an automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has a transition for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
 
 The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree (AST). 
 
