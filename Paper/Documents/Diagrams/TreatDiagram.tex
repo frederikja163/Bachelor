@@ -1,20 +1,21 @@
 \section{TREAT Diagram}\label{fig:TREATdiagram}
 The following diagram shows the flow of data through the TREAT program. The diagram is meant as an overall outline, and is not supposed to be precise. 
 
-\begin{tikzpicture}[node distance = 3cm, auto]
+\begin{tikzpicture}[node distance = 1cm, auto]
     \node (CLI) {CLI};
-    \node (TimedWord) [below right of = CLI] {Timed Word};
-    \node (TRE) [right of = CLI] {TRE};
-    \node (Tokenizer) [right of = TRE] {Tokenizer};
-    \node (TAGenerator) [right of = Tokenizer] {TA Generator};
-    \node (Pruning) [right of = TAGenerator] {Pruning};
-    \node (Graph) [right of = Pruning] {Graph};
+    
+    \node (TRE) [node distance = 2cm, below left of = CLI] {TRE};
+    \node (TimedWord) [node distance = 3cm, right of = TRE] {Timed Word};
+    \node (Tokenizer) [below of = TRE] {Tokenizer};
+    \node (TAGenerator) [below of = Tokenizer] {TA Generator};
+    \node (Pruning) [node distance = 2cm, below right of = TAGenerator] {Pruning};
+    \node (Graph) [below of = Pruning] {Graph};
     \node (Output) [below of = Graph] {Output};
-    \node (UPPAAL) [below left of = Output] {UPPAAL};
+    \node (UPPAAL) [node distance = 1.5cm, below left of = Output] {UPPAAL};
     \node (XML) [below of = UPPAAL] {XML};
     \node (UPPAALAutomaton) [below of = XML] {UPPAAL Automaton};
-    \node (TikZ) [below right of = Output] {TikZ};
-    \node (TimedWordGenerator) [node distance = 7 cm, right of = TimedWord] {Timed Word Generator};
+    \node (TikZ) [node distance = 1.5cm, below right of = Output] {TikZ};
+    \node (TimedWordGenerator) [node distance = 3cm, right of = TAGenerator,  align=left] {Timed Word\\Generator};
 
     \draw[->] (CLI) -- (TRE);
     \draw[->] (TRE) -- (Tokenizer);
