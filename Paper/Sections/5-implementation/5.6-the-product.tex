@@ -3,6 +3,7 @@ The research in this paper has culminated in a software product that allows a us
 We have named this piece of software "TREAT", short for "Timed Regular Expression to Automaton Transformation".
 An overview of the data flow through the program, is shown in \cref{fig:TREATdiagram}.
 
+<<<<<<< HEAD
 %The following diagram shows the flow of data through the TREAT program. The diagram is meant as an overall outline, and is not supposed to be precise. 
 \input{Documents/Diagrams/TreatDiagram.tex}
 
@@ -18,8 +19,18 @@ Checking is described further in \cref{subsec:checking}.
 The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree (AST). 
 
 This AST is sent from the tokenizer, to the TA Generator, as illustrated in \cref*{fig:TREATdiagram}. The TA can be created using the rules from Eugene et al., with the modifications described in \cref{subsec:semantics}.
+=======
+TREAT is accessed through a command line interface. The user can type in their TRE, along with a few options such as adding a timed word through a .csv file, turning off pruning, and silencing any warnings or info messages using "--quiet".
+The user can also decide the output format of the TA at this point using "--format".
 
-This is done by visiting each node in the tree, and generating states and edges in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition are valid. Another goes through the AST, to specifically implement the iterator and the absorbed iterator. The last visitor is responsible for implementing the rules of all other tokens.
+If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet.
+An automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has an edge for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
+
+The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree (AST). 
+From the AST, the TA can be created using the rules from Eugene et al., with the modifications described in \cref{subsec:semantics}.
+>>>>>>> main
+
+This is done by visiting each node in the tree, and generating states and edges in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition are valid. Another goes through the AST, to convert the iterator and the absorbed iterator into lower level components using union and iterator. The last visitor is responsible for implementing the rules of all other tokens.
 
 At the next stage, the TA is pruned as described in \cref{subsec:pruning}. 
 % The dataformat of the internal TA is an object containing hashsets and dictionaries corresponding to the sets of the tuples described in \cref{sec:preliminaries}. 
