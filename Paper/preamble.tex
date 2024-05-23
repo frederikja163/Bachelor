@@ -75,7 +75,7 @@ every picture/.style={
     \underline{#1}
 }
 
-\newcommandx{\plot}[7]{
+\newcommandx{\plot}[8]{
     \begin{tikzpicture}
         \begin{semilogyaxis}[
                 title={Mean Time},
@@ -85,23 +85,23 @@ every picture/.style={
                 legend pos=north west,
                 xlabel={Iterations},
                 ylabel={Time(ns)},
-                xtick={1,2,4},
+                xtick={#1},
                 ymajorgrids=true,
             ]
-    
-            \addplot[color=blue, mark=square*] coordinates {#1};
-            \addlegendentry{N}
+
             \addplot[color=red, mark=square*] coordinates {#2};
+            \addlegendentry{N}
+            \addplot[color=gray, mark=square*] coordinates {#3};
             \addlegendentry{E}
-            \addplot[color=green!60!blue, mark=square*] coordinates {#3};
+            \addplot[color=yellow, mark=square*] coordinates {#4};
             \addlegendentry{S}
-            \addplot[color=red!60!blue, mark=square*] coordinates {#4};
+            \addplot[color=green, mark=square*] coordinates {#5};
             \addlegendentry{SS}
-            \addplot[color=teal, mark=square*] coordinates {#5};
+            \addplot[color=blue, mark=square*] coordinates {#6};
             \addlegendentry{SE}
-            \addplot[color=purple, mark=square*] coordinates {#6};
-            \addlegendentry{ES}
             \addplot[color=black, mark=square*] coordinates {#7};
+            \addlegendentry{ES}
+            \addplot[color=violet, mark=square*] coordinates {#8};
             \addlegendentry{EE}
         \end{semilogyaxis}
     \end{tikzpicture}
