@@ -74,3 +74,35 @@ every picture/.style={
 \newcommandx{\str}[1]{
     \underline{#1}
 }
+
+\newcommandx{\plot}[7]{
+    \begin{tikzpicture}
+        \begin{semilogyaxis}[
+                title={Mean Time},
+                width=15cm,
+                height=10cm,
+                ymin=0,
+                legend pos=north west,
+                xlabel={Iterations},
+                ylabel={Time(ns)},
+                xtick={1,2,4},
+                ymajorgrids=true,
+            ]
+    
+            \addplot[color=blue, mark=square*] coordinates {#1};
+            \addlegendentry{N}
+            \addplot[color=red, mark=square*] coordinates {#2};
+            \addlegendentry{E}
+            \addplot[color=green!60!blue, mark=square*] coordinates {#3};
+            \addlegendentry{S}
+            \addplot[color=red!60!blue, mark=square*] coordinates {#4};
+            \addlegendentry{SS}
+            \addplot[color=teal, mark=square*] coordinates {#5};
+            \addlegendentry{SE}
+            \addplot[color=purple, mark=square*] coordinates {#6};
+            \addlegendentry{ES}
+            \addplot[color=black, mark=square*] coordinates {#7};
+            \addlegendentry{EE}
+        \end{semilogyaxis}
+    \end{tikzpicture}
+}
