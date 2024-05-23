@@ -1,0 +1,42 @@
+\subsection{The Product}\label{subsec:theProduct}
+The research in this paper has culminated in a software product that allows a user to enter a timed regular expression (TRE), and have it converted into a timed automaton (TA).
+We have named this piece of software "TREAT", short for "Timed Regular Expression to Automaton Transformation".
+
+TREAT is accessed through a command line interface. The user can type in their TRE, along with a few options such as adding a timed word through a .csv file, turning off pruning, and silencing any warnings or info messages using "--quiet".
+The user can also decide the output format of the TA at this point using "--format".
+
+If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet.
+An automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has an edge for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
+
+The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree (AST). 
+From the AST, the TA can be created using the rules from Eugene et al., with the modifications described in \cref{subsec:semantics}.
+
+This is done by visiting each node in the tree, and generating states and edges in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition are valid. Another goes through the AST, to convert the iterator and the absorbed iterator into lower level components using union and iterator. The last visitor is responsible for implementing the rules of all other tokens.
+
+At this stage, the TA is pruned as described in \cref{subsec:pruning}. 
+% The dataformat of the internal TA is an object containing hashsets and dictionaries corresponding to the sets of the tuples described in \cref{sec:preliminaries}. 
+% This means that the code executed in the functions responsible for pruning, map very closely to the mathematical operations in \cref{sec:preliminaries}.
+
+Since the TA is now in its final form with regards to states, transitions, and the guards associated with them, each state is now assigned a position based on the algorithm described in \cref{subsec:graph}.
+
+Finally, the TA is output to one of the selected formats as described in \cref{subsec:formats}.
+
+
+
+
+
+% \subsubsection{Command Line Interface}
+
+% \subsubsection{Tokenizer}
+
+% \subsubsection{AST}
+
+% \subsubsection{Automaton Generator}
+
+% \subsubsection{Pruning}
+
+% \subsubsection{Location Assignment}
+
+% \subsubsection{Output}
+
+% \subsubsection{Timed Words}
