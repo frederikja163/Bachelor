@@ -31,25 +31,16 @@ Each configuration is a mix of pruning before and after generation of the automa
 Note: When we say prune during generation, we are talking about pruning the operands of the explosive operators.
 This means the left and right operand of an intersection and the single operand of an absorbed iterator.
 
-As for the tests there is a list of regular expressions we have generated to show different aspects of the performance.
-Each regular expression is generated with a number, indicating how many times it is repeated.
-This is to allow us to graph the results later.
+As for the tests we have generated 6 parameterized TREs, that we use to generate a total of 19 unique TREs.
+Each TRE serves a unique purpose.
+All these TREs can be found in \cref{app:RegularExpressionTable}.
 
-\begin{enumerate}
-    \item \textbf{Repeated intersection}: The string "$A[1;1]$" has been repeated n times.
-    \item \textbf{Nested absorbed iterator}: The string "$A$" has been nested inside "$(<x>)\oplus$" n times.
-    \item \textbf{Nested interval absorbed iterator}: The string "$A[1;1]$" has been nested inside "$(<x>)\oplus$" n times.
-    \item \textbf{Interval concat and intersection}: The string "$A[1;10]$" has been repeated n times followed by "$\&A[1;1]$".
-    \item \textbf{Concat and intersection}: The string "$A$" has been repeated n times followed by "$\&A$".
-    \item \textbf{Concat and absorbed iterator}: The string "$A$" has been repeated n times followed by "$+'$".
-\end{enumerate}
-
-Repeated intersection, nested absorbed iterator and nested interval absorbed iterator were all chosen because they would benefit pruning while generating.
+TRE $a$, $b$ and $f$ were all chosen because they would benefit pruning while generating.
 Serving as a best case scenario for SS, SE, ES and EE.
 The theory being these configurations limit the amount of states used in the explosive operators, therefore making them less explosive.
 Ideally it should make them resemble a linear complexity, since the final TAs are of constant length.
 
-The three concat regular expressions where all chosen to benefit no pruning while generating.
+TRE $c$, $d$ and $e$ where all chosen to benefit no pruning while generating.
 Serving as a best case scenario for N, S and E.
 The theory being these regular expressions wont benefit from pruning while generating, since a limited or no pruning can be done during generation.
 
@@ -61,3 +52,4 @@ The results can be split into 3 main categories.
     \item SS, SE, ES and EE configurations are better.
     \item N, S, SS configurations are better.
 \end{enumerate}
+
