@@ -125,19 +125,19 @@ internal sealed class TikzGenerator : IGenerator
         {
             tw.Write(" [loop above]");
         }
-        tw.Write(" node");
+        tw.Write(" node[align=left]");
         
         tw.Write($"{{${(edge.Symbol == "\0" ? "\\epsilon" : edge.Symbol)}");
         if (edge.GetClockRanges().Any())
         {
-            tw.Write("\\mid ");
-            tw.Write(string.Join("\\wedge", edge.GetClockRanges()
+            tw.Write("$\\\\$");
+            tw.Write(string.Join(" \\wedge ", edge.GetClockRanges()
                 .Select(t => t.Item2 is null ? "false" : $"c_{t.Item1.Id}\\in{t.Item2.ToString()}")));
         }
         if (edge.GetClockResets().Any())
         {
-            tw.Write("\\mid ");
-            tw.Write(string.Join("\\wedge", edge.GetClockResets().Select(c => $"<c_{c.Id}>")));
+            tw.Write("$\\\\$");
+            tw.Write(string.Join(" \\wedge ", edge.GetClockResets().Select(c => $"<c_{c.Id}>")));
             tw.Write("=0");
         }
         tw.Write("$}");

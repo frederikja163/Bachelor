@@ -8,7 +8,8 @@ The tuples have the form $\transition$
 
 $q$: The starting state of the transition
 
-$\phi$: A set of boolean formulas written like $x\in I$
+$\phi$: A set of tuples $C\times I$ where $I$ is any interval.
+A transition can only be taken when $\forall (c,I)\in\phi: c\in I$
 
 $p$:Clocks to be reset when the transition is taken
 
