@@ -1,5 +1,5 @@
 \scalebox{0.9}{
-    \begin{tikzpicture}[node distance = 1cm, auto]\label{fig:TREATdiagram}
+    \begin{tikzpicture}[node distance = 1cm, auto]
         \node (CLI) {CLI};
         
         \node (TRE) [node distance = 2cm, below left of = CLI] {TRE};
@@ -29,4 +29,4 @@
         \draw[->] (TimedWord) -- (TimedWordGenerator);
         \draw[->] (TimedWordGenerator) -- (Pruning);
     \end{tikzpicture}
-}
+}\label{fig:TREATdiagram}
