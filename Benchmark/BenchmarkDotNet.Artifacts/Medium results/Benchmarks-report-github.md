@@ -1,0 +1,154 @@
+```
+
+BenchmarkDotNet v0.13.12, EndeavourOS
+Intel Core i9-9900K CPU 3.60GHz (Coffee Lake), 1 CPU, 16 logical and 8 physical cores
+.NET SDK 8.0.104
+  [Host]    : .NET 8.0.4 (8.0.424.16909), X64 RyuJIT AVX2
+  MediumRun : .NET 8.0.4 (8.0.424.16909), X64 RyuJIT AVX2
+
+Job=MediumRun  Runtime=.NET 8.0  Toolchain=net8.0  
+IterationCount=15  LaunchCount=2  WarmupCount=10  
+
+```
+| Method                    | regex | root                 | Mean                | Error             | StdDev              | Median              | Gen0        | Gen1      | Gen2      | Allocated     |
+|-------------------------- |------ |--------------------- |--------------------:|------------------:|--------------------:|--------------------:|------------:|----------:|----------:|--------------:|
+| **NoPruning**                 | **0**     | **Timed(...)rator [41]** |          **1,634.9 ns** |           **9.87 ns** |            **14.47 ns** |          **1,642.0 ns** |      **0.0610** |         **-** |         **-** |       **5.04 KB** |
+| AllPrunings               | 0     | Timed(...)rator [41] |          2,130.0 ns |          11.54 ns |            16.55 ns |          2,136.5 ns |      0.0725 |         - |         - |       5.98 KB |
+| StatePruning              | 0     | Timed(...)rator [41] |          2,027.1 ns |           6.68 ns |             9.14 ns |          2,028.0 ns |      0.0687 |         - |         - |       5.89 KB |
+| PreOpStatePruningAndState | 0     | Timed(...)rator [41] |          2,348.2 ns |           4.18 ns |             5.86 ns |          2,348.6 ns |      0.0801 |         - |         - |       6.72 KB |
+| PreOpStatePruningAndAll   | 0     | Timed(...)rator [41] |          2,417.8 ns |          12.02 ns |            17.62 ns |          2,408.9 ns |      0.0801 |         - |         - |       6.81 KB |
+| PreOpAllPruningAndState   | 0     | Timed(...)rator [41] |          2,394.1 ns |           7.05 ns |            10.33 ns |          2,397.4 ns |      0.0801 |         - |         - |       6.81 KB |
+| PreOpAllPruningAndAll     | 0     | Timed(...)rator [41] |          2,461.5 ns |          12.50 ns |            16.25 ns |          2,459.4 ns |      0.0839 |         - |         - |       6.91 KB |
+| **NoPruning**                 | **1**     | **Timed(...)rator [41]** |          **6,036.6 ns** |          **56.42 ns** |            **82.70 ns** |          **6,097.2 ns** |      **0.1755** |         **-** |         **-** |      **14.63 KB** |
+| AllPrunings               | 1     | Timed(...)rator [41] |          8,039.4 ns |          37.01 ns |            55.40 ns |          8,033.7 ns |      0.2136 |         - |         - |      17.63 KB |
+| StatePruning              | 1     | Timed(...)rator [41] |          6,962.4 ns |         143.05 ns |           200.54 ns |          6,799.6 ns |      0.1907 |         - |         - |      15.67 KB |
+| PreOpStatePruningAndState | 1     | Timed(...)rator [41] |          7,674.8 ns |         186.12 ns |           278.58 ns |          7,669.3 ns |      0.2060 |         - |         - |      17.33 KB |
+| PreOpStatePruningAndAll   | 1     | Timed(...)rator [41] |          8,672.8 ns |          43.27 ns |            64.77 ns |          8,675.9 ns |      0.2289 |         - |         - |      19.28 KB |
+| PreOpAllPruningAndState   | 1     | Timed(...)rator [41] |          7,637.9 ns |          13.79 ns |            20.21 ns |          7,645.1 ns |      0.2136 |         - |         - |      17.52 KB |
+| PreOpAllPruningAndAll     | 1     | Timed(...)rator [41] |          8,800.2 ns |          22.93 ns |            33.62 ns |          8,798.2 ns |      0.2289 |         - |         - |      19.47 KB |
+| **NoPruning**                 | **10**    | **Timed(...)ction [27]** |      **1,552,189.8 ns** |       **4,112.69 ns** |         **6,155.67 ns** |      **1,552,457.7 ns** |     **58.5938** |   **21.4844** |         **-** |    **4915.88 KB** |
+| AllPrunings               | 10    | Timed(...)ction [27] |      1,640,849.7 ns |       8,326.43 ns |        12,204.78 ns |      1,648,903.8 ns |     60.5469 |   19.5313 |         - |    4948.77 KB |
+| StatePruning              | 10    | Timed(...)ction [27] |      1,614,288.9 ns |      11,917.71 ns |        17,468.83 ns |      1,622,644.2 ns |     60.5469 |   13.6719 |         - |    4948.09 KB |
+| PreOpStatePruningAndState | 10    | Timed(...)ction [27] |      1,572,649.2 ns |      10,392.10 ns |        15,554.41 ns |      1,572,842.8 ns |     58.5938 |   19.5313 |         - |    4872.73 KB |
+| PreOpStatePruningAndAll   | 10    | Timed(...)ction [27] |      1,567,464.8 ns |       2,522.52 ns |         3,697.48 ns |      1,567,685.0 ns |     58.5938 |   21.4844 |         - |    4873.41 KB |
+| PreOpAllPruningAndState   | 10    | Timed(...)ction [27] |      1,613,948.4 ns |       3,672.80 ns |         5,497.28 ns |      1,612,299.2 ns |     58.5938 |   17.5781 |         - |     4887.9 KB |
+| PreOpAllPruningAndAll     | 10    | Timed(...)ction [27] |      1,609,730.6 ns |       9,676.92 ns |        13,878.34 ns |      1,608,487.3 ns |     58.5938 |   19.5313 |         - |    4888.58 KB |
+| **NoPruning**                 | **11**    | **Timed(...)ction [27]** |      **5,441,492.3 ns** |      **28,112.35 ns** |        **42,077.25 ns** |      **5,443,850.1 ns** |    **210.9375** |  **125.0000** |         **-** |   **17662.75 KB** |
+| AllPrunings               | 11    | Timed(...)ction [27] |      5,715,852.7 ns |       6,080.15 ns |         8,523.52 ns |      5,714,072.2 ns |    210.9375 |  117.1875 |         - |   17730.58 KB |
+| StatePruning              | 11    | Timed(...)ction [27] |      5,623,561.5 ns |      15,302.34 ns |        22,429.97 ns |      5,620,045.6 ns |    210.9375 |  117.1875 |         - |    17729.9 KB |
+| PreOpStatePruningAndState | 11    | Timed(...)ction [27] |      5,609,644.0 ns |      11,036.86 ns |        15,472.14 ns |      5,608,025.8 ns |    210.9375 |  109.3750 |         - |   17579.53 KB |
+| PreOpStatePruningAndAll   | 11    | Timed(...)ction [27] |      5,491,159.6 ns |      23,273.37 ns |        34,113.80 ns |      5,488,853.9 ns |    210.9375 |  125.0000 |         - |   17580.21 KB |
+| PreOpAllPruningAndState   | 11    | Timed(...)ction [27] |      5,510,257.2 ns |      10,030.97 ns |        14,703.27 ns |      5,509,956.2 ns |    210.9375 |  101.5625 |         - |   17611.64 KB |
+| PreOpAllPruningAndAll     | 11    | Timed(...)ction [27] |      5,583,399.1 ns |      38,305.29 ns |        56,147.39 ns |      5,545,160.0 ns |    210.9375 |  109.3750 |         - |   17612.32 KB |
+| **NoPruning**                 | **12**    | **Timed(...)ation [28]** |        **438,380.5 ns** |       **1,855.76 ns** |         **2,661.48 ns** |        **439,950.3 ns** |     **16.1133** |    **3.4180** |         **-** |    **1344.23 KB** |
+| AllPrunings               | 12    | Timed(...)ation [28] |        455,207.0 ns |       2,573.48 ns |         3,851.86 ns |        455,383.9 ns |     16.6016 |    3.9063 |         - |    1365.41 KB |
+| StatePruning              | 12    | Timed(...)ation [28] |        454,085.5 ns |       1,587.65 ns |         2,225.66 ns |        452,693.8 ns |     16.6016 |    3.9063 |         - |    1358.13 KB |
+| PreOpStatePruningAndState | 12    | Timed(...)ation [28] |        446,637.5 ns |       2,502.28 ns |         3,507.85 ns |        448,952.7 ns |     16.6016 |    3.9063 |         - |    1358.96 KB |
+| PreOpStatePruningAndAll   | 12    | Timed(...)ation [28] |        459,558.8 ns |       3,345.14 ns |         4,797.50 ns |        460,456.6 ns |     16.6016 |    3.9063 |         - |    1366.24 KB |
+| PreOpAllPruningAndState   | 12    | Timed(...)ation [28] |        450,664.2 ns |       4,110.95 ns |         5,762.97 ns |        453,953.1 ns |     16.6016 |    3.4180 |         - |    1359.05 KB |
+| PreOpAllPruningAndAll     | 12    | Timed(...)ation [28] |        458,164.2 ns |       1,655.20 ns |         2,426.17 ns |        459,618.3 ns |     16.6016 |    3.4180 |         - |    1366.34 KB |
+| **NoPruning**                 | **13**    | **Timed(...)ation [28]** |      **1,477,177.5 ns** |       **1,462.66 ns** |         **2,050.45 ns** |      **1,477,241.6 ns** |     **56.6406** |   **23.4375** |         **-** |    **4732.96 KB** |
+| AllPrunings               | 13    | Timed(...)ation [28] |      1,511,804.0 ns |       6,297.65 ns |         8,828.43 ns |      1,510,737.8 ns |     56.6406 |   23.4375 |         - |    4777.54 KB |
+| StatePruning              | 13    | Timed(...)ation [28] |      1,501,376.8 ns |       2,245.42 ns |         3,291.30 ns |      1,501,064.8 ns |     56.6406 |   25.3906 |         - |    4762.46 KB |
+| PreOpStatePruningAndState | 13    | Timed(...)ation [28] |      1,530,411.6 ns |       7,332.51 ns |        10,516.06 ns |      1,529,417.4 ns |     56.6406 |   23.4375 |         - |    4763.29 KB |
+| PreOpStatePruningAndAll   | 13    | Timed(...)ation [28] |      1,525,024.1 ns |       1,776.38 ns |         2,547.63 ns |      1,525,165.1 ns |     56.6406 |   23.4375 |         - |    4778.37 KB |
+| PreOpAllPruningAndState   | 13    | Timed(...)ation [28] |      1,521,473.5 ns |       2,837.26 ns |         4,158.81 ns |      1,522,342.5 ns |     56.6406 |   25.3906 |         - |    4763.38 KB |
+| PreOpAllPruningAndAll     | 13    | Timed(...)ation [28] |      1,532,103.4 ns |       5,675.10 ns |         7,955.70 ns |      1,536,225.3 ns |     56.6406 |   23.4375 |         - |    4778.46 KB |
+| **NoPruning**                 | **14**    | **Timed(...)ation [28]** |      **5,328,251.7 ns** |       **9,635.87 ns** |        **13,508.14 ns** |      **5,329,462.9 ns** |    **210.9375** |  **140.6250** |         **-** |   **17289.26 KB** |
+| AllPrunings               | 14    | Timed(...)ation [28] |      5,406,084.6 ns |      19,226.40 ns |        27,573.93 ns |      5,406,630.6 ns |    210.9375 |  140.6250 |         - |   17384.65 KB |
+| StatePruning              | 14    | Timed(...)ation [28] |      5,323,808.2 ns |      44,007.39 ns |        64,505.45 ns |      5,367,876.2 ns |    210.9375 |  140.6250 |         - |   17352.64 KB |
+| PreOpStatePruningAndState | 14    | Timed(...)ation [28] |      5,503,721.2 ns |       6,996.40 ns |        10,034.03 ns |      5,504,045.1 ns |    210.9375 |  132.8125 |         - |   17353.47 KB |
+| PreOpStatePruningAndAll   | 14    | Timed(...)ation [28] |      5,348,640.0 ns |      43,266.43 ns |        62,051.42 ns |      5,388,433.8 ns |    210.9375 |  132.8125 |         - |   17385.48 KB |
+| PreOpAllPruningAndState   | 14    | Timed(...)ation [28] |      5,359,476.8 ns |      18,235.38 ns |        24,960.80 ns |      5,371,932.9 ns |    210.9375 |  117.1875 |         - |   17353.56 KB |
+| PreOpAllPruningAndAll     | 14    | Timed(...)ation [28] |      5,515,236.7 ns |      13,930.15 ns |        20,418.63 ns |      5,513,582.8 ns |    210.9375 |  125.0000 |         - |   17385.58 KB |
+| **NoPruning**                 | **15**    | **Timed(...)erval [23]** |            **625.1 ns** |           **2.92 ns** |             **4.09 ns** |            **624.9 ns** |      **0.0286** |         **-** |         **-** |       **2.38 KB** |
+| AllPrunings               | 15    | Timed(...)erval [23] |          1,512.2 ns |           3.56 ns |             5.33 ns |          1,511.6 ns |      0.0572 |         - |         - |       4.75 KB |
+| StatePruning              | 15    | Timed(...)erval [23] |          1,117.2 ns |           3.44 ns |             5.04 ns |          1,117.0 ns |      0.0439 |         - |         - |       3.73 KB |
+| PreOpStatePruningAndState | 15    | Timed(...)erval [23] |          1,125.3 ns |           5.79 ns |             8.66 ns |          1,128.6 ns |      0.0439 |         - |         - |       3.73 KB |
+| PreOpStatePruningAndAll   | 15    | Timed(...)erval [23] |          1,511.3 ns |           2.95 ns |             4.41 ns |          1,511.1 ns |      0.0572 |         - |         - |       4.75 KB |
+| PreOpAllPruningAndState   | 15    | Timed(...)erval [23] |          1,130.7 ns |           2.07 ns |             3.09 ns |          1,130.8 ns |      0.0439 |         - |         - |       3.73 KB |
+| PreOpAllPruningAndAll     | 15    | Timed(...)erval [23] |          1,507.7 ns |           3.85 ns |             5.76 ns |          1,507.3 ns |      0.0572 |         - |         - |       4.75 KB |
+| **NoPruning**                 | **16**    | **Timed(...)ction [27]** |          **4,363.0 ns** |           **7.50 ns** |            **11.00 ns** |          **4,362.4 ns** |      **0.1450** |         **-** |         **-** |       **12.3 KB** |
+| AllPrunings               | 16    | Timed(...)ction [27] |          6,262.7 ns |          11.33 ns |            16.25 ns |          6,264.8 ns |      0.1831 |         - |         - |       15.5 KB |
+| StatePruning              | 16    | Timed(...)ction [27] |          5,341.5 ns |          12.86 ns |            18.03 ns |          5,339.1 ns |      0.1678 |         - |         - |      13.86 KB |
+| PreOpStatePruningAndState | 16    | Timed(...)ction [27] |          4,758.7 ns |          42.89 ns |            64.20 ns |          4,750.0 ns |      0.1602 |         - |         - |      13.37 KB |
+| PreOpStatePruningAndAll   | 16    | Timed(...)ction [27] |          5,500.0 ns |          35.59 ns |            53.27 ns |          5,500.8 ns |      0.1755 |         - |         - |      14.63 KB |
+| PreOpAllPruningAndState   | 16    | Timed(...)ction [27] |          5,522.4 ns |          43.80 ns |            62.82 ns |          5,477.6 ns |      0.1831 |         - |         - |       15.4 KB |
+| PreOpAllPruningAndAll     | 16    | Timed(...)ction [27] |          6,226.0 ns |          83.36 ns |           122.19 ns |          6,319.5 ns |      0.1984 |         - |         - |      16.66 KB |
+| **NoPruning**                 | **17**    | **Timed(...)ction [27]** |         **23,745.2 ns** |          **49.79 ns** |            **74.52 ns** |         **23,749.4 ns** |      **0.7019** |    **0.0305** |         **-** |      **59.38 KB** |
+| AllPrunings               | 17    | Timed(...)ction [27] |         34,755.7 ns |         254.33 ns |           364.76 ns |         34,751.1 ns |      0.9766 |         - |         - |      83.24 KB |
+| StatePruning              | 17    | Timed(...)ction [27] |         26,400.8 ns |          37.83 ns |            55.46 ns |         26,394.5 ns |      0.7324 |    0.0305 |         - |       62.1 KB |
+| PreOpStatePruningAndState | 17    | Timed(...)ction [27] |         12,385.5 ns |          80.16 ns |           117.49 ns |         12,404.3 ns |      0.3967 |         - |         - |      33.36 KB |
+| PreOpStatePruningAndAll   | 17    | Timed(...)ction [27] |         13,643.0 ns |          72.74 ns |           108.87 ns |         13,646.4 ns |      0.4272 |         - |         - |      36.13 KB |
+| PreOpAllPruningAndState   | 17    | Timed(...)ction [27] |         15,279.1 ns |         166.63 ns |           238.98 ns |         15,109.0 ns |      0.4578 |         - |         - |      39.59 KB |
+| PreOpAllPruningAndAll     | 17    | Timed(...)ction [27] |         15,860.8 ns |         102.35 ns |           146.79 ns |         15,930.8 ns |      0.4883 |         - |         - |      40.86 KB |
+| **NoPruning**                 | **18**    | **Timed(...)ction [27]** |        **404,847.5 ns** |       **2,978.33 ns** |         **4,457.83 ns** |        **404,539.6 ns** |     **11.2305** |    **1.9531** |         **-** |     **917.55 KB** |
+| AllPrunings               | 18    | Timed(...)ction [27] |      1,039,886.9 ns |       2,864.49 ns |         4,198.73 ns |      1,041,291.5 ns |     29.2969 |   13.6719 |         - |    2515.32 KB |
+| StatePruning              | 18    | Timed(...)ction [27] |        441,169.9 ns |       1,979.55 ns |         2,839.01 ns |        442,855.6 ns |     11.2305 |    4.3945 |         - |     934.43 KB |
+| PreOpStatePruningAndState | 18    | Timed(...)ction [27] |         29,107.9 ns |         100.08 ns |           146.70 ns |         29,081.2 ns |      0.9155 |    0.0305 |         - |      76.75 KB |
+| PreOpStatePruningAndAll   | 18    | Timed(...)ction [27] |         33,642.9 ns |          89.41 ns |           128.23 ns |         33,611.3 ns |      1.0376 |         - |         - |      86.02 KB |
+| PreOpAllPruningAndState   | 18    | Timed(...)ction [27] |         35,954.9 ns |         194.75 ns |           279.30 ns |         35,966.1 ns |      1.0376 |         - |         - |      89.39 KB |
+| PreOpAllPruningAndAll     | 18    | Timed(...)ction [27] |         36,579.7 ns |          63.92 ns |            93.69 ns |         36,585.2 ns |      1.0986 |         - |         - |      90.66 KB |
+| **NoPruning**                 | **19**    | **Timed(...)ction [27]** |    **388,956,329.8 ns** |  **25,239,927.44 ns** |    **37,777,934.96 ns** |    **396,098,198.0 ns** |   **6000.0000** | **6000.0000** | **4000.0000** |   **315469.2 KB** |
+| AllPrunings               | 19    | Timed(...)ction [27] |  2,007,281,088.0 ns |  63,324,812.08 ns |    90,818,553.26 ns |  2,036,489,152.5 ns |  27000.0000 | 9000.0000 | 5000.0000 |  1955655.8 KB |
+| StatePruning              | 19    | Timed(...)ction [27] |    439,493,172.0 ns |  25,717,693.35 ns |    36,883,547.32 ns |    449,660,552.0 ns |   6000.0000 | 6000.0000 | 4000.0000 |  321366.52 KB |
+| PreOpStatePruningAndState | 19    | Timed(...)ction [27] |         69,831.3 ns |         180.95 ns |           270.84 ns |         69,889.2 ns |      2.0752 |    0.1221 |         - |     174.71 KB |
+| PreOpStatePruningAndAll   | 19    | Timed(...)ction [27] |         85,871.9 ns |         412.77 ns |           591.99 ns |         85,651.6 ns |      2.4414 |    0.1221 |         - |     208.98 KB |
+| PreOpAllPruningAndState   | 19    | Timed(...)ction [27] |         85,025.0 ns |         159.55 ns |           233.87 ns |         85,044.3 ns |      2.3193 |    0.1221 |         - |     193.98 KB |
+| PreOpAllPruningAndAll     | 19    | Timed(...)ction [27] |         87,248.7 ns |         784.32 ns |         1,149.64 ns |         87,974.0 ns |      2.3193 |    0.1221 |         - |     195.24 KB |
+| **NoPruning**                 | **2**     | **Timed(...)rator [41]** |        **365,861.8 ns** |       **1,766.60 ns** |         **2,644.17 ns** |        **365,384.0 ns** |      **7.8125** |    **1.9531** |         **-** |     **668.95 KB** |
+| AllPrunings               | 2     | Timed(...)rator [41] |        530,259.4 ns |       7,480.44 ns |        10,964.74 ns |        521,403.1 ns |     11.7188 |    2.9297 |         - |     971.15 KB |
+| StatePruning              | 2     | Timed(...)rator [41] |        394,797.3 ns |         576.68 ns |           863.15 ns |        394,564.5 ns |      8.3008 |    2.4414 |         - |     679.97 KB |
+| PreOpStatePruningAndState | 2     | Timed(...)rator [41] |        402,027.0 ns |         936.47 ns |         1,343.05 ns |        402,349.1 ns |      8.3008 |    2.4414 |         - |     684.61 KB |
+| PreOpStatePruningAndAll   | 2     | Timed(...)rator [41] |        533,352.9 ns |       1,004.86 ns |         1,472.92 ns |        533,494.6 ns |     11.7188 |    2.9297 |         - |     975.79 KB |
+| PreOpAllPruningAndState   | 2     | Timed(...)rator [41] |        270,858.2 ns |       1,131.18 ns |         1,693.10 ns |        271,188.1 ns |      6.8359 |    1.4648 |         - |     566.77 KB |
+| PreOpAllPruningAndAll     | 2     | Timed(...)rator [41] |        368,669.7 ns |       1,670.77 ns |         2,500.73 ns |        367,754.5 ns |      9.2773 |    1.9531 |         - |     768.92 KB |
+| **NoPruning**                 | **3**     | **Timed(...)rator [41]** |          **5,352.0 ns** |         **133.94 ns** |           **196.33 ns** |          **5,504.3 ns** |      **0.1526** |         **-** |         **-** |      **12.73 KB** |
+| AllPrunings               | 3     | Timed(...)rator [41] |          7,892.0 ns |          40.73 ns |            55.75 ns |          7,911.1 ns |      0.1984 |         - |         - |      16.92 KB |
+| StatePruning              | 3     | Timed(...)rator [41] |          6,849.0 ns |          14.18 ns |            19.88 ns |          6,843.2 ns |      0.1831 |         - |         - |      15.16 KB |
+| PreOpStatePruningAndState | 3     | Timed(...)rator [41] |          5,774.6 ns |          52.84 ns |            75.78 ns |          5,754.8 ns |      0.1602 |         - |         - |       13.2 KB |
+| PreOpStatePruningAndAll   | 3     | Timed(...)rator [41] |          6,492.7 ns |          14.03 ns |            21.00 ns |          6,493.8 ns |      0.1755 |         - |         - |      14.71 KB |
+| PreOpAllPruningAndState   | 3     | Timed(...)rator [41] |          6,098.4 ns |           8.54 ns |            11.98 ns |          6,093.4 ns |      0.1678 |         - |         - |      14.21 KB |
+| PreOpAllPruningAndAll     | 3     | Timed(...)rator [41] |          6,843.2 ns |          14.32 ns |            21.43 ns |          6,850.9 ns |      0.1907 |         - |         - |      15.73 KB |
+| **NoPruning**                 | **4**     | **Timed(...)rator [41]** |         **33,275.6 ns** |         **252.37 ns** |           **361.95 ns** |         **33,037.8 ns** |      **0.8545** |         **-** |         **-** |      **69.88 KB** |
+| AllPrunings               | 4     | Timed(...)rator [41] |         46,225.8 ns |          59.53 ns |            89.10 ns |         46,228.2 ns |      1.0986 |    0.0610 |         - |      89.88 KB |
+| StatePruning              | 4     | Timed(...)rator [41] |         39,386.9 ns |         129.39 ns |           189.65 ns |         39,293.8 ns |      0.9155 |         - |         - |       76.1 KB |
+| PreOpStatePruningAndState | 4     | Timed(...)rator [41] |         18,779.8 ns |          40.31 ns |            56.51 ns |         18,777.7 ns |      0.4578 |         - |         - |      38.41 KB |
+| PreOpStatePruningAndAll   | 4     | Timed(...)rator [41] |         21,796.9 ns |          91.81 ns |           131.67 ns |         21,810.0 ns |      0.5188 |         - |         - |      44.69 KB |
+| PreOpAllPruningAndState   | 4     | Timed(...)rator [41] |         17,999.6 ns |         154.18 ns |           221.13 ns |         18,123.7 ns |      0.4578 |         - |         - |      38.64 KB |
+| PreOpAllPruningAndAll     | 4     | Timed(...)rator [41] |         20,351.3 ns |         190.70 ns |           267.34 ns |         20,166.2 ns |      0.5188 |         - |         - |      42.84 KB |
+| **NoPruning**                 | **5**     | **Timed(...)rator [41]** |     **14,345,441.6 ns** |     **106,317.27 ns** |       **155,838.48 ns** |     **14,360,473.9 ns** |    **234.3750** |  **218.7500** |  **109.3750** |   **16675.07 KB** |
+| AllPrunings               | 5     | Timed(...)rator [41] |     21,889,111.1 ns |     263,640.17 ns |       369,586.70 ns |     21,986,565.8 ns |    343.7500 |  312.5000 |  125.0000 |   26493.89 KB |
+| StatePruning              | 5     | Timed(...)rator [41] |     15,581,794.2 ns |      57,071.73 ns |        85,422.28 ns |     15,575,622.0 ns |    234.3750 |  218.7500 |  109.3750 |   17172.08 KB |
+| PreOpStatePruningAndState | 5     | Timed(...)rator [41] |      6,445,558.3 ns |      68,269.20 ns |       102,182.12 ns |      6,426,665.7 ns |     93.7500 |   78.1250 |   31.2500 |    7064.14 KB |
+| PreOpStatePruningAndAll   | 5     | Timed(...)rator [41] |      9,163,154.7 ns |      77,369.76 ns |       115,803.41 ns |      9,179,374.2 ns |    140.6250 |  125.0000 |   46.8750 |   11009.93 KB |
+| PreOpAllPruningAndState   | 5     | Timed(...)rator [41] |      3,569,375.9 ns |      10,572.83 ns |        15,163.23 ns |      3,574,975.3 ns |     58.5938 |   54.6875 |   27.3438 |     4924.5 KB |
+| PreOpAllPruningAndAll     | 5     | Timed(...)rator [41] |      5,761,799.7 ns |      18,151.44 ns |        24,231.65 ns |      5,756,398.0 ns |    101.5625 |   93.7500 |   31.2500 |    7486.67 KB |
+| **NoPruning**                 | **6**     | **Timed(...)ction [27]** |      **1,058,482.1 ns** |       **4,507.33 ns** |         **6,318.65 ns** |      **1,055,488.1 ns** |     **33.2031** |   **13.6719** |         **-** |    **2774.94 KB** |
+| AllPrunings               | 6     | Timed(...)ction [27] |    130,202,842.2 ns |   1,165,246.45 ns |     1,744,086.02 ns |    130,263,725.1 ns |   1750.0000 |  500.0000 |         - |  158752.09 KB |
+| StatePruning              | 6     | Timed(...)ction [27] |      1,087,341.0 ns |       4,657.28 ns |         6,679.32 ns |      1,086,714.2 ns |     33.2031 |   13.6719 |         - |    2799.35 KB |
+| PreOpStatePruningAndState | 6     | Timed(...)ction [27] |        882,452.6 ns |      13,988.79 ns |        19,610.32 ns |        866,000.2 ns |     28.3203 |   12.6953 |         - |    2338.61 KB |
+| PreOpStatePruningAndAll   | 6     | Timed(...)ction [27] |     40,407,196.0 ns |      71,260.18 ns |       104,452.24 ns |     40,386,796.0 ns |    153.8462 |         - |         - |   14810.97 KB |
+| PreOpAllPruningAndState   | 6     | Timed(...)ction [27] |    176,619,156.3 ns |     289,428.88 ns |       415,090.25 ns |    176,570,478.8 ns |   1333.3333 |  333.3333 |         - |  112051.15 KB |
+| PreOpAllPruningAndAll     | 6     | Timed(...)ction [27] |    218,959,171.3 ns |     546,414.44 ns |       783,651.26 ns |    219,103,037.2 ns |   1333.3333 |  333.3333 |         - |  124523.45 KB |
+| **NoPruning**                 | **7**     | **Timed(...)ction [27]** |      **3,484,513.8 ns** |      **29,916.06 ns** |        **44,776.95 ns** |      **3,486,315.8 ns** |    **117.1875** |  **113.2813** |         **-** |    **9617.03 KB** |
+| AllPrunings               | 7     | Timed(...)ction [27] |  1,547,147,583.4 ns |   8,026,410.82 ns |    11,765,008.91 ns |  1,549,048,615.0 ns |  15000.0000 | 1000.0000 |         - | 1245220.51 KB |
+| StatePruning              | 7     | Timed(...)ction [27] |      3,566,171.7 ns |      13,619.88 ns |        19,963.84 ns |      3,574,351.7 ns |    117.1875 |   89.8438 |         - |    9667.24 KB |
+| PreOpStatePruningAndState | 7     | Timed(...)ction [27] |      3,037,890.7 ns |       4,994.25 ns |         7,475.16 ns |      3,036,768.7 ns |    105.4688 |   82.0313 |         - |    8618.71 KB |
+| PreOpStatePruningAndAll   | 7     | Timed(...)ction [27] |    548,214,611.6 ns |   3,979,121.03 ns |     5,955,761.00 ns |    548,884,287.0 ns |   1000.0000 |         - |         - |  102171.73 KB |
+| PreOpAllPruningAndState   | 7     | Timed(...)ction [27] |  2,454,885,536.6 ns |   4,488,862.38 ns |     6,579,716.27 ns |  2,454,092,008.0 ns |  10000.0000 | 1000.0000 |         - |  884427.52 KB |
+| PreOpAllPruningAndAll     | 7     | Timed(...)ction [27] |  2,995,173,650.1 ns |  18,242,043.28 ns |    25,572,796.96 ns |  3,012,707,120.0 ns |  11000.0000 | 1000.0000 |         - |  977979.83 KB |
+| **NoPruning**                 | **8**     | **Timed(...)ction [27]** |     **12,697,373.2 ns** |      **21,288.66 ns** |        **29,843.72 ns** |     **12,697,516.0 ns** |    **437.5000** |  **421.8750** |         **-** |   **36055.38 KB** |
+| AllPrunings               | 8     | Timed(...)ction [27] | 21,617,377,726.5 ns | 288,524,813.91 ns |   431,850,356.17 ns | 21,785,903,112.0 ns | 120000.0000 | 3000.0000 | 1000.0000 | 9871874.21 KB |
+| StatePruning              | 8     | Timed(...)ction [27] |     12,737,119.2 ns |     118,281.48 ns |       177,038.15 ns |     12,737,861.9 ns |    437.5000 |  421.8750 |         - |   36160.29 KB |
+| PreOpStatePruningAndState | 8     | Timed(...)ction [27] |     11,038,197.9 ns |     124,283.70 ns |       178,243.96 ns |     11,168,117.2 ns |    390.6250 |  375.0000 |         - |   33125.43 KB |
+| PreOpStatePruningAndAll   | 8     | Timed(...)ction [27] |  8,368,043,360.9 ns |  48,410,361.58 ns |    72,458,349.80 ns |  8,392,358,432.5 ns |   9000.0000 | 1000.0000 |         - |  756806.44 KB |
+| PreOpAllPruningAndState   | 8     | Timed(...)ction [27] | 34,743,709,646.1 ns | 671,871,810.11 ns |   963,578,473.62 ns | 33,914,698,636.5 ns |  86000.0000 | 4000.0000 | 1000.0000 | 7031719.82 KB |
+| PreOpAllPruningAndAll     | 8     | Timed(...)ction [27] | 42,989,588,867.6 ns | 984,507,838.03 ns | 1,473,564,976.07 ns | 42,965,379,610.5 ns |  94000.0000 | 5000.0000 | 1000.0000 | 7755400.13 KB |
+| **NoPruning**                 | **9**     | **Timed(...)ction [27]** |        **466,234.1 ns** |       **3,325.83 ns** |         **4,977.94 ns** |        **466,314.1 ns** |     **17.0898** |    **3.9063** |         **-** |    **1433.59 KB** |
+| AllPrunings               | 9     | Timed(...)ction [27] |        498,700.1 ns |       2,530.69 ns |         3,547.67 ns |        496,592.0 ns |     17.5781 |    3.9063 |         - |    1450.21 KB |
+| StatePruning              | 9     | Timed(...)ction [27] |        495,040.8 ns |       1,200.99 ns |         1,797.58 ns |        494,859.9 ns |     17.5781 |    2.9297 |         - |    1449.53 KB |
+| PreOpStatePruningAndState | 9     | Timed(...)ction [27] |        480,547.2 ns |       2,326.44 ns |         3,482.11 ns |        480,458.0 ns |     17.0898 |    3.4180 |         - |    1412.54 KB |
+| PreOpStatePruningAndAll   | 9     | Timed(...)ction [27] |        479,276.2 ns |       2,269.46 ns |         3,326.54 ns |        477,245.7 ns |     17.0898 |    3.4180 |         - |    1413.22 KB |
+| PreOpAllPruningAndState   | 9     | Timed(...)ction [27] |        488,593.6 ns |       1,034.18 ns |         1,483.18 ns |        488,766.5 ns |     16.6016 |    3.9063 |         - |    1419.92 KB |
+| PreOpAllPruningAndAll     | 9     | Timed(...)ction [27] |        485,500.6 ns |       1,923.13 ns |         2,818.90 ns |        486,744.9 ns |     17.0898 |    3.4180 |         - |    1420.59 KB |
