@@ -8,7 +8,6 @@ An overview of the data flow through the program, is shown in \cref{fig:TREATdia
 
 TREAT is accessed through a command line interface (CLI)(See \cref{fig:TREATdiagram}). The user can type in their TRE, along with a few options such as adding a timed word through a .csv file, turning off pruning, and silencing any warnings or info messages.
 The user can also decide the output format of the TA at this point, if it has not already been specified. 
-TREAT can also be called with arguments, in order to bypass the interface completely.
 
 If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet. This is shown as a separate branching from CLI in \cref*{fig:TREATdiagram}
 Looking at the left branch from CLI in \cref*{fig:TREATdiagram}, an automaton is created, that represents the timed word. 
