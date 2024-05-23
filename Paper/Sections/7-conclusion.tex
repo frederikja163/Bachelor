@@ -1,1 +1,11 @@
 \section{Conclusion}
+"TREAT", short for "Timed Regular Expression to Automaton Transformation", is a software product developed for the purpose of allowing a user to convert timed regular expressions (TREs) to timed automata (TAs).
+It allows the user to output the TA to TikZ or UPPAAL.
+When outputting to UPPAAL, the user can check timed words against the TRE, for data analysis.
+The development of this program has required research that has uncovered issues with established methods of performing this transformation, such as those described by Eugene et al. \cite{Eugene2001}.
+Optimizing these transformation steps, and pruning the resulting TA, has led to more minimized versions of the generated automata. This, along with a graphing algorithm, results in automata that are more human readable overall, than those that would otherwise result from explosive operations on the TRE.
+
+The success of these efforts to create readable TAs, can be evaluated through the figures in \cref{subsec:readability}, and the performance enhancement, resulting from the pruning steps, can be seen in the benchmarks found in %\cref{app:benchmarks}
+and described in \cref{subsec:benchmarks}.
+
+TREAT is successful in allowing a user to easily check a TRE, and get a readable visual representation of the resulting TA.
