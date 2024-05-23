@@ -1,1 +1,63 @@
-\subsection{Benchmarks}\label{subsec:benchmarks}
+\subsection{Benchmark UPPAAL}\label{sub:benchmark_uppaal}
+More states should intuitively mean UPPAAL runs slower, however this might not be the case if these extra states are easily pruneable.
+Therefore we tried running the same query twice in UPPAAL on a large timed word.
+The timed word used in these examples are 34198 timed characters long, and the last character happens at time 238817.
+The data of these benchmarks can be found on \cref{table:uppaal_benchmarks}.
+
+\input{Documents/Tables/UppaalBenchmarks.tex}
+
+As can be seen on \cref{table:uppaal_benchmarks}, checking is faster with pruning.
+This points to UPPAAL not pruning the unnecessary states when checking.
+So pruning not only helps with readability, it also helps with performance. 
+
+\subsection{Benchmark TREAT}
+\subsubsection{Setup}
+Next step is checking if the prunings have an effect on performance on TREAT.
+The original implementation pruned steps after generating the entire automaton.
+However it might be faster if we prune while generating the automaton.
+Therefore we have created a series of regular expressions, and test configurations to put them all against each other and see how each perform.
+Each configuration is a mix of pruning before and after generation of the automaton.
+
+\begin{enumerate}
+    \item \textbf{N}: This configuration has no pruning.
+    \item \textbf{S}: This configuration prunes only states after generation.
+    \item \textbf{E}: This configuration prunes everything after generation.
+    \item \textbf{SS}: This configuration prunes states during generation and everything after generation.
+    \item \textbf{SE}: This configuration prunes states during generation and only states after generation.
+    \item \textbf{ES}: This configuration prunes everything during generation and only states after generation.
+    \item \textbf{EE}: This configuration prunes everything during generation and everything after generation.
+\end{enumerate}
+
+Note: When we say prune during generation, we are talking about pruning the operands of the explosive operators.
+This means the left and right operand of an intersection and the single operand of an absorbed iterator.
+
+As for the tests there is a list of regular expressions we have generated to show different aspects of the performance.
+Each regular expression is generated with a number, indicating how many times it is repeated.
+This is to allow us to graph the results later.
+
+\begin{enumerate}
+    \item \textbf{Repeated intersection}: The string "$A[1;1]$" has been repeated n times.
+    \item \textbf{Nested absorbed iterator}: The string "$A$" has been nested inside "$(<x>)\oplus$" n times.
+    \item \textbf{Nested interval absorbed iterator}: The string "$A[1;1]$" has been nested inside "$(<x>)\oplus$" n times.
+    \item \textbf{Interval concat and intersection}: The string "$A[1;10]$" has been repeated n times followed by "$\&A[1;1]$".
+    \item \textbf{Concat and intersection}: The string "$A$" has been repeated n times followed by "$\&A$".
+    \item \textbf{Concat and absorbed iterator}: The string "$A$" has been repeated n times followed by "$+'$".
+\end{enumerate}
+
+Repeated intersection, nested absorbed iterator and nested interval absorbed iterator were all chosen because they would benefit pruning while generating.
+Serving as a best case scenario for SS, SE, ES and EE.
+The theory being these configurations limit the amount of states used in the explosive operators, therefore making them less explosive.
+Ideally it should make them resemble a linear complexity, since the final TAs are of constant length.
+
+The three concat regular expressions where all chosen to benefit no pruning while generating.
+Serving as a best case scenario for N, S and E.
+The theory being these regular expressions wont benefit from pruning while generating, since a limited or no pruning can be done during generation.
+
+\subsubsection{Results}
+The results can be split into 3 main categories.
+
+\begin{enumerate}
+    \item Equivalent performance between configurations.
+    \item SS, SE, ES and EE configurations are better.
+    \item N, S, SS configurations are better.
+\end{enumerate}
