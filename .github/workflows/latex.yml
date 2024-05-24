@@ -10,7 +10,7 @@ jobs:
   compile:
     strategy:
       matrix:
-        file: ["main.tex", "figures.tex"]
+        file: ["main.tex"]
     runs-on: ubuntu-latest
 
     steps:
