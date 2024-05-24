@@ -53,14 +53,20 @@ The results can be split into 3 main categories.
     \item N, S, SS configurations are better.
 \end{enumerate}
 
-All the plots can be seen on \cref{TODO}, with all the data on \cref{TODO}, however a few will be presented here.
+All the plots can be seen on \cref{sec:BenchmarkGraphs}, with all the data on \cref{sec:BenchmarkTable}, however a few will be presented here.
 
 The TREs $a$, $b$, $d$ and $e$ are all equivalent in performance.
 By this we mean their graphs are all curved in the same way, and they are within a few percent of each other.
 An example of this can be seen on \cref{fig:mean3-5} (this is the one with the biggest difference in this category).
 
-\input{Documents/Plots/Mean/3-5.tex}
-\captionof{figure}{Graph for runtime of regular expression 3-5 ($b$).}
+\resizebox{\columnwidth}{!}{
+    \input{Documents/Plots/Mean/3-5.tex}
+}
+
+\resizebox{\columnwidth}{!}{
+    \input{Documents/Plots/Allocated/3-5.tex}
+}
+\captionof{figure}{Graphs for time and memory of regular expression 3-5 ($b$).}
 \label{fig:mean3-5}
 
 Since we were expecting $a$ and $b$ to be more performant on SS, SE, ES and EE, this result is not what we expected.
@@ -76,8 +82,14 @@ The TRE $f$ performs better on SS, SE, ES and EE.
 This graph can be seen on \cref{fig:mean15-19}.
 This is the kind of performance difference we expected, and proves pruning while generation is a lot better for intersection.
 
-\input{Documents/Plots/Mean/15-19.tex}
-\captionof{figure}{Graph for runtime of regular expression 15-19 ($f$).}
+\resizebox{\columnwidth}{!}{
+    \input{Documents/Plots/Mean/15-19.tex}
+}
+
+\resizebox{\columnwidth}{!}{
+    \input{Documents/Plots/Allocated/15-19.tex}
+}
+\captionof{figure}{Graphs for time and memory of regular expression 15-19 ($f$).}
 \label{fig:mean15-19}
 
 Finally the TRE $c$ performs better on N, S and SS.
@@ -85,8 +97,14 @@ This graph can be seen on \cref{fig:mean6-8}
 This is probably because the pruning of everything is too expensive in terms of time and memory for it to make sense for this automaton.
 While this is an interesting result, it does not mean these prunings are better, since they dont get rid of all the extra states.
 
-\input{Documents/Plots/Mean/6-8.tex}
-\captionof{figure}{Graph for runtime of regular expression 6-8 ($c$).}
+\resizebox{\columnwidth}{!}{
+    \input{Documents/Plots/Mean/6-8.tex}
+}
+
+\resizebox{\columnwidth}{!}{
+    \input{Documents/Plots/Allocated/6-8.tex}
+}
+\captionof{figure}{Graphs for time and memory of regular expression 6-8 ($c$).}
 \label{fig:mean6-8}
 
 \subsubsection{Conclusions}
