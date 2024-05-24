@@ -41,7 +41,7 @@ The theory being these configurations limit the amount of states used in the exp
 Ideally it should make them resemble a linear complexity, since the final TAs are of constant length.
 
 TRE $c$, $d$ and $e$ where all chosen to benefit no pruning while generating.
-Serving as a best case scenario for N, S and E.
+, serving as a best case scenario for N, S and E.
 The theory being these regular expressions wont benefit from pruning while generating, since a limited or no pruning can be done during generation.
 
 \subsubsection{Results}
@@ -109,8 +109,8 @@ While this is an interesting result, it does not mean these prunings are better,
 
 \subsubsection{Conclusions}
 We have shown that in UPPAAL you can gain significant performance by pruning the states.
-So pruning should be worth it to do most of the time, since pruning is a startup cost.
+, so pruning should be worth it to do most of the time, since pruning is a startup cost.
 
 Pruning by itself can lead to really explosive performance on some regular expressions.
-Even if we prune while the automaton is generating.
+, even if we prune while the automaton is generating.
 However in the large picture it seems like pruning during has the ability to turn some generations from parabolic to linear.
