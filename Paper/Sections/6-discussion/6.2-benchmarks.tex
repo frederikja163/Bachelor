@@ -13,9 +13,9 @@ So pruning not only helps with readability, it also helps with performance.
 \subsection{Benchmark TREAT}
 \subsubsection{Setup}
 Next step is checking if the prunings have an effect on performance on TREAT.
-The original implementation pruned steps after generating the entire automaton.
+In the original implementation, all pruning steps were performed after generating the entire automaton.
 However, it might be faster if pruning is performed while generating the automaton.
-For this reason, we have created a series of regular expressions and test configurations, and put them all against each other to see how each perform.
+For this reason, we have created a series of TREs and test configurations, and put them all against each other to see how each perform.
 Each configuration is a mix of pruning before and after generation of the automaton.
 
 \begin{enumerate}
@@ -31,18 +31,18 @@ Each configuration is a mix of pruning before and after generation of the automa
 Note: When we say prune during generation, we are talking about pruning the operands of the explosive operators.
 This means the left and right operand of an intersection and the single operand of an absorbed iterator.
 
-As for the tests we have generated 6 parameterized TREs, that we use to generate a total of 19 unique TREs.
+As for the tests, we have generated 6 parameterized TREs, that we use to generate a total of 19 unique TREs.
 Each TRE serves a unique purpose.
 All these TREs can be found in \cref{app:RegularExpressionTable}.
 
 TREs $a$, $b$ and $f$ were all chosen because they would benefit from pruning while generating.
 , serving as a best case scenario for SS, SE, ES and EE.
-The theory being, that these configurations limit the amount of states used in the explosive operators, therefore making them less explosive.
+The theory is, that these configurations limit the amount of states used in the explosive operators, therefore making them less explosive.
 Ideally it should make them resemble a linear complexity, since the final TAs are of constant length.
 
 TRE $c$, $d$ and $e$ where all chosen to benefit no pruning while generating.
 , serving as a best case scenario for N, S and E.
-The theory being these regular expressions wont benefit from pruning while generating, since a limited or no pruning can be done during generation.
+The theory is, these regular expressions will not benefit from pruning while generating, since limited or no pruning can be done during generation.
 
 \subsubsection{Results}
 The results can be split into 3 main categories.
@@ -83,7 +83,7 @@ Creating bigger automata only expands on this problem. This is something that co
 
 The TRE $f$ performs better on SS, SE, ES and EE.
 This graph can be seen on \cref{fig:mean15-19}.
-This is the kind of performance difference we expected, and proves pruning while generation is a lot better for intersection.
+This is the kind of performance difference we expected, and proves pruning during generation is a lot better for intersection.
 
 \resizebox{\columnwidth}{!}{
     \input{Documents/Plots/Mean/15-19.tex}
@@ -95,10 +95,10 @@ This is the kind of performance difference we expected, and proves pruning while
 \captionof{figure}{Graphs for time and memory of regular expression 15-19 ($f$).}
 \label{fig:mean15-19}
 
-Finally the TRE $c$ performs better on N, S and SS.
+Finally, the TRE $c$ performs better on N, S and SS.
 This graph can be seen on \cref{fig:mean6-8}
 This is probably because the pruning of everything is too expensive in terms of time and memory for it to make sense for this automaton.
-While this is an interesting result, it does not mean these prunings are better, since they dont get rid of all the extra states.
+While this is an interesting result, it does not mean these prunings are better, since they do not get rid of all the extra states.
 
 \resizebox{\columnwidth}{!}{
     \input{Documents/Plots/Mean/6-8.tex}
@@ -111,9 +111,9 @@ While this is an interesting result, it does not mean these prunings are better,
 \label{fig:mean6-8}
 
 \subsubsection{Conclusions}
-We have shown that in UPPAAL you can gain significant performance by pruning the states.
+We have shown that, in UPPAAL, you can gain significant performance by pruning the states.
 , so pruning should be worth it to do most of the time, since pruning is a startup cost.
 
 Pruning by itself can lead to really explosive performance on some regular expressions.
 , even if we prune while the automaton is generating.
-However, in the large picture, it seems like pruning during generation has the ability to turn some generations from parabolic to linear.
+However, in general, it seems like pruning during generation has the ability to turn some generations from parabolic to linear.
