@@ -8,7 +8,10 @@
 \usepackage{tikz-uml}
 \usepackage[figuresleft]{rotating}
 \usepackage{pgfplots, pgfplotstable}
+\usepackage{pdfpages}
+\usepackage{uppaal}
 %\usepackage{parskip} % automatically adds line breaks
+\usepackage{hyperref}
 
 \usetikzlibrary{arrows}
 \usetikzlibrary{arrows.meta}
@@ -24,6 +27,9 @@ every picture/.style={
 }
 
 \usepackage{caption}
+\captionsetup{font=small, margin=20pt}
+\usepackage{subcaption}
+
 \usepackage{graphics}
 \usepackage[T1]{fontenc}
 \usepackage{multicol}
@@ -37,6 +43,7 @@ every picture/.style={
 \newtheorem{definition}[defCounter]{Definition}
 \crefname{defCounter}{Definition}{Definitions}
 \crefname{figure}{Figure}{Figures}
+\crefname{lstlisting}{Listing}{Listings}
 
 \setlength{\parindent}{0pt}
 \usepackage{etoolbox}

@@ -10,6 +10,7 @@
 *.blg
 *.run.xml
 *.synctex(busy)
+*.out
 
 .vscode/
 .idea/
