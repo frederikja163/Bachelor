@@ -54,6 +54,7 @@ The results can be split into 3 main categories.
 \end{enumerate}
 
 All the plots can be seen on \cref{sec:BenchmarkGraphs}, with all the data on \cref{sec:BenchmarkTable}, however a few will be presented here.
+On all the graphs we see the relationship between time to run/memory usage (y-axis) and a value for how long the regular expression is (x-axis). The value is explained further in \cref{sec:RegularExpressions}.
 
 The TREs $a$, $b$, $d$ and $e$ are all equivalent in performance.
 By this we mean their graphs are all curved in the same way, and they are within a few percentages of each other.
@@ -70,11 +71,13 @@ An example of this can be seen on \cref{fig:mean3-5} (this is the one with the b
 \label{fig:mean3-5}
 
 Since we were expecting $a$ and $b$ to be more performant on SS, SE, ES and EE, this result is not what we expected.
-After opening up one of the automata (\cref{fig:FailedAutomata}) we can see state $q1$ should have been pruned, since it can never be reached from the starting state.
+After opening up one of the automata (\cref{fig:FailedPruning}) we can see state $q1$ should have been pruned, since it can never be reached from the starting state.
 However it is not pruned, because it is neither unreachable nor dead because of the self loop.
 So we have a problem where a loop to a state itself will keep a state throughout our pruning rules.
 
 \input{Automata/FailedPruning.tex}
+\captionof{figure}{A fully pruned automata with a self loop that could be pruned.}
+\label{fig:FailedPruning}
 
 Creating bigger automata only expands on this problem. This is something that could be fixed, but for now we are leaving it as is.
 
