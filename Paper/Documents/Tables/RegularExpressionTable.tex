@@ -1,0 +1,47 @@
+\label{app:RegularExpressionTable}
+$$p_l=\str{(}$$
+$$p_r=\str{)}$$
+$$a=\str{+'}$$
+$$i=\str{|}$$
+$$s=\str{j}$$
+$$i_1=\str{j[1;10]}$$
+$$i_2=\str{j[1;1]}$$
+
+$$a(n)=p_l^n \circ s \circ (p_r \circ a)^n$$
+$$b(n)=p_l^n \circ i_1 \circ (p_r \circ a)^n$$
+$$c(n)=i_1^n \circ i \circ i_2$$
+$$d(n)=s^n \circ i \circ s$$
+$$e(n)=s^n \circ a$$
+$$f(n)=(i_2 \circ i)^{n-1} \circ i_2$$
+
+\begin{tabular}{|c|c|}
+    \hline
+    index & expression \\
+    \hline
+    0  & a(1) \\
+    1  & a(2) \\
+    2  & a(4) \\
+    \hline
+    3  & b(1) \\
+    4  & b(2) \\
+    5  & b(4) \\
+    \hline
+    6  & c(64) \\
+    7  & c(128) \\
+    8  & c(256) \\
+    \hline
+    9  & d(64) \\
+    10 & d(128) \\
+    11 & d(256) \\
+    \hline
+    12 & e(64) \\
+    13 & e(128) \\
+    14 & e(256) \\
+    \hline
+    15 & f(1) \\
+    16 & f(2) \\
+    17 & f(4) \\
+    18 & f(8) \\
+    19 & f(16) \\
+    \hline
+\end{tabular}
