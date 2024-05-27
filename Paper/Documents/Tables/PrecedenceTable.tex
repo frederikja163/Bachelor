@@ -2,18 +2,28 @@
     \hline
     \textbf{Precedence Table} \\
     \hline
-    $($\quad$)$ \\
+    $(a)$ \quad
+    $a$ \quad
+    $<a>$ \quad
+    $.$ \\
     \hline
-    $[$\quad$;$\quad$]$ \\
+    $a[t_1;t_2]$ \quad
+    $a[t_1;t_2[$ \quad
+    $a]t_1;t_2]$ \quad
+    $a]t_1;t_2[$ \\
     \hline
-    $+$ \quad $+'$ \quad $*$ \quad $*'$ \\
+    $a+$ \quad
+    $a+'$ \quad
+    $a*$ \quad
+    $a*'$ \\
     \hline
-    $ab$ \quad $a'b$ \\
+    $ab$ \quad
+    $a'b$ \\
     \hline
-    $|$ \\
+    $a|b$ \\
     \hline
-    $\&$ \\
+    $a\&b$ \\
     \hline
-    $\{$\quad$,$\quad$\}$ \\
+    $a\{a0,b1\}$ \\
     \hline
 \end{tabular}
