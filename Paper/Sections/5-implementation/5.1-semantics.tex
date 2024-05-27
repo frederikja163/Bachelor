@@ -33,7 +33,7 @@ An updated version of the union semantics can be seen in \cref{def:union-semanti
 The semantics work by checking if there is a transition looping back to the initial state on either automaton.
 If this is the case they are concatenated with an epsilon automaton.
 That means in the case where both automata have a transition to their initial state, our new semantics will create the same result as the one in the paper.
-However, when an automaton does not have a transition back to the initial location, we do not need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one automaton, and then move to the other automaton.
+However, when an automaton does not have a transition back to the initial state, we do not need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one automaton, and then move to the other automaton.
 
 \input{Automata/Union}
 
