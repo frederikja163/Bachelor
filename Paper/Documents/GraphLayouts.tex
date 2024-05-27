@@ -10,18 +10,18 @@ Steps:
 \begin{enumerate}
     \item Temporarily make graph acyclic.
           \begin{itemize}
-              \item This step is trivially solved, since we know when cycles are created, and during generation, we can mark edges to be reversed.
+              \item This step is trivially solved, since we know when cycles are created, and during generation, we can mark transitions to be reversed.
               \item This can be done through DFS, or heuristics, two of which are described by Berger and Shor in their paper titled "Approximation algorithms for the maximum acyclic subgraph problem" \cite{Berger1990} and Eades et al. in the paper "A fast and effective heuristic for the feedback arc set problem" \cite{Eades1993}, respectively.
-              \item Temporarily reverse edges found from previous step.
+              \item Temporarily reverse transitions found from previous step.
           \end{itemize}
     \item Assign locations to layers.
           \begin{itemize}
               \item Longest path algorithm. Assign location to $i$-th layer, where $i$ is the length of the longest path to the location.
-              \item For edges that span multiple layers, create dummy location, equivalent to nails in Uppaal.
+              \item For transitions that span multiple layers, create dummy location, equivalent to nails in Uppaal.
           \end{itemize}
     \item Order locations on each layer.
           \begin{itemize}
-              \item Minimize edge crossings.
+              \item Minimize transition crossings.
               \item Can be done using either the Barycenter or Median function. The implementation is very similar, except for using the barycenter (average) or the median.
                     \begin{enumerate}
                         \item Sweep through the layers multiple times to ensure all locations are considered in the ordering.
@@ -41,17 +41,17 @@ Steps:
                                   \item For each location in layer from highest to lowest priority, place location as close to barycenter of connected vertices in previous layer.
                               \end{enumerate}
                     \end{enumerate}
-              \item Remove temporary edge reversion.
+              \item Remove temporary transition reversion.
           \end{itemize}
 \end{enumerate}
 \noindent
-Complexity depends on the specific implementation, but a general complexity is around $O(LE)$, where $L$ and $E$ are the amount of locations and edges, respectively, in a given automaton.
+Complexity depends on the specific implementation, but a general complexity is around $O(LE)$, where $L$ and $E$ are the amount of locations and transitions, respectively, in a given automaton.
 
 \subsection{Force-directed algorithm}
 
 Idea:
 \begin{itemize}
     \item Locations act as repulsive entities.
-    \item Edges act as springs pulling connected locations together.
+    \item Transitions act as springs pulling connected locations together.
     \item Calculate forces on Locations continuously until reaching stable layout.
 \end{itemize}
