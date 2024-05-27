@@ -28,9 +28,9 @@ These steps are discussed below, using the TA shown on \cref{fig:graph_step0} as
 \subsubsection{Make automata acyclic}
 The first step of the Sugiyama framework is to, temporarily, make the TA acyclic. This is necessary because subsequent steps require transitions to have a consistent direction. As described by Mazetti et al., this is done by reversing a specific list of transitions \cite{Mazetti2012}.
 
-In our case since we are creating the TA, we can use the generation rules to find transitions, that need to be reversed.
-The reversible transitions are the new transitions, added to TAs, in abosrbed iterator and iterator.
-Instead of reversing transitions, it is also possible to omit them completely while generating the graph. This will make the algortihm simpler, since it is no longer necessary to reverse the transitions again later. However, this comes at the cost of possible transition crossings in later, since the reversible transitions are no longer considered when minimising these. A reversible transition can be seen on \cref{fig:graph_step1} (dashed line), described as $q2\rightarrow q1$.
+In our case since we are creating the TA we can use the generation rules to find transitions that need to be reversed.
+The reversible transitions are the new edges added to TAs in abosrbed iterator and iterator.
+Instead of reversing transitions it is also possible to omit them completely while generating the graph. This will make the algorithm simpler, since it is no longer necessary to reverse the transitions again later. However, this comes at the cost of possible transition crossings later, since the reversible transitions are no longer considered when minimizing these. A reversible transition can be seen on \cref{fig:graph_step1} (dashed line), described as $q2\rightarrow q1$.
 % mention self loops
 
 % insert image of step
@@ -39,7 +39,7 @@ Instead of reversing transitions, it is also possible to omit them completely wh
 \end{center}
 
 \subsubsection{Assign states to layers}
-The next step is to assign states to layers. Mazetti et al. describes this process by assigning a given state to the layer index equal to the length of the longest path from the initial state. If a transition spans multiple layers, dummy states are placed to ensure that transitions only move between adjacent layers.  For this step there is no simplification, as it is already really simple. \cite{Mazetti2012}
+The next step is to assign states to layers. Mazetti et al. describes this process by assigning a given state to the layer index equal to the length of the longest path from the initial state. If a transition spans multiple layers, dummy states are placed to ensure that transitions only move between adjacent layers.  For this step there is no simplification, as it is already simple enough for our needs. \cite{Mazetti2012}
 
 The result of this step can be seen on \cref{fig:graph_step2}, which has resulted in a much more structured TA.
 
