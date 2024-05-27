@@ -11,6 +11,11 @@
 \usepackage{pdfpages}
 \usepackage{uppaal}
 % \usepackage{parskip} % automatically adds line breaks
+
+\renewenvironment{abstract}
+{\par%
+    {\bfseries \textit{\abstractname:}}}
+{\par}
 \usepackage{hyperref}
 
 \usetikzlibrary{arrows}
