@@ -28,7 +28,7 @@ The first step of the Sugiyama framework is to, temporarily, make the automaton 
 Mazetti describes several methods for finding this list of transitions, including using a depth first search to visit all states, and any transitions that lead to already visited states, should be reversed.
 This is the method used by Graphviz' implementation of the Sugiyama framework \cite{Graphviz}. % could be irrelevant
 
-This step, however, is trivially completed during the conversion from a TRE to a TA, since we can deduce where they are by using the semantics described by Eugene et al.
+This step, however, is trivially completed during the conversion from a TRE to a TA, since we can deduce where they are by using the semantics described by Asarin et al.
 More specifically, in the construction of guaranteed iterator automata, and it's absorbed variant\cite{Eugene2001}.
 In the implementation, reversible transitions are completely omitted. This is done because some reversible transitions are self-looping which do not change when reversed $(ex. q9\rightarrow q9)$, and handling all reversible transitions equally makes the algorithm much simpler. This could, however, introduce unforeseen transition crossings when reintroducing the reversible transitions, but we chose the simpler algorithm. A reversible transition can be seen on \cref{fig:graph_step1} (dashed line), described as $q2\rightarrow q1$.
 % mention self loops

@@ -15,7 +15,7 @@ Looking at the left branch from CLI in \cref*{fig:TREATdiagram}, an automaton is
 The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree (AST). 
 It should be noted here, that TREAT allows for multicharacter symbols by utilizing angle brackets (<>). This allows the user to create a dictionary with an indefinite number of symbols. An example of this use case, is provided in \cref{lstlisting:transcript}.
 
-This AST is sent from the tokenizer, to the TA Generator, as illustrated in \cref*{fig:TREATdiagram}. The TA can be created using the rules from Eugene et al., with the modifications described in \cref{subsec:semantics}.
+This AST is sent from the tokenizer, to the TA Generator, as illustrated in \cref*{fig:TREATdiagram}. The TA can be created using the rules from Asarin et al., with the modifications described in \cref{subsec:semantics}.
 
 This is done by visiting each node in the tree, and generating states and edges in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition are valid. Another goes through the AST, to convert the iterator and the absorbed iterator into lower level components using union and iterator. The last visitor is responsible for implementing the rules of all other tokens.
 
