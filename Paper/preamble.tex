@@ -133,19 +133,19 @@ every picture/.style={
                 ymajorgrids=true,
             ]
 
-            \addplot[color=red, mark=square*] coordinates {#2};
+            \addplot[color=yellow, mark=square*] coordinates {#2};
             \addlegendentry{N}
             \addplot[color=gray, mark=square*] coordinates {#3};
             \addlegendentry{E}
-            \addplot[color=yellow, mark=square*] coordinates {#4};
+            \addplot[color=red, mark=square*] coordinates {#4};
             \addlegendentry{S}
-            \addplot[color=green, mark=square*] coordinates {#5};
+            \addplot[color=black, mark=square*] coordinates {#5};
             \addlegendentry{SS}
-            \addplot[color=blue, mark=square*] coordinates {#6};
+            \addplot[color=green, mark=square*] coordinates {#6};
             \addlegendentry{SE}
-            \addplot[color=black, mark=square*] coordinates {#7};
+            \addplot[color=violet, mark=square*] coordinates {#7};
             \addlegendentry{ES}
-            \addplot[color=violet, mark=square*] coordinates {#8};
+            \addplot[color=blue, mark=square*] coordinates {#8};
             \addlegendentry{EE}
         \end{semilogyaxis}
     \end{tikzpicture}

@@ -5,7 +5,7 @@ An optional pruning step is performed on the automaton, in order to remove trans
 and clocks, that do not affect the transition system.
 This leads to better performance (see \cref{subsec:benchmarks}), and better readability.
 
-Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work. Throughout these definitions, underscore ($\_$) will be used for unused variables in quantifiers.
+Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work.
 The TA is equivalent to the following TRE, although a few states have been pruned already to make it fit on the page.
 $$C(A[5;10]\&(BA|A)[1;3])$$
 
@@ -32,7 +32,7 @@ Dead transition pruning is formally defined in \cref{definition:deadEdgePruning}
 In the automaton \cref{fig:prune1} we can see that after merging the two clocks, the clock intervals on $q3\rightarrow q2$ and $q4\rightarrow q2$ can be simplified to false:
 $$c_1\in[5;10]\wedge c_1\in[1;3]=false$$
 A clock can not have a value bigger than 5 and smaller than 3 at the same time.
-Since the edge can now no longer be taken, it can easily be removed.
+Since the transition can now no longer be taken, it can easily be removed.
 The result of this operation can be seen in \cref{fig:prune2}.
 
 \input{Automata/Prune2.tex}
@@ -65,7 +65,7 @@ The result of this operation can be seen in \cref{fig:prune4}.
 \input{Automata/Prune4.tex}
 
 \subsubsection{Dead Clock Pruning}\label[subsubsection]{deadClockPruning}
-Clocks that are never used in ranges to constrain any edges are considered "dead", and can be removed without changing the language of the automaton.
+Clocks that are never used in ranges to constrain any transitions are considered "dead", and can be removed without changing the language of the automaton.
 Since these clocks never constrain any transitions, it does not change the possible ways to reach final states, hence it does not change the language to remove them.
 This rule is formally defined in \cref{definition:deadClockPruning}
 
@@ -74,7 +74,7 @@ This rule is formally defined in \cref{definition:deadClockPruning}
 In the automaton in \cref{fig:prune4}
 We can see that clock $c_0$ is not being used.
 This clock is however reset on the transition $q0\rightarrow q3$.
-This means we can remove the clock, since it does not effect the ability to take any edges.
+This means we can remove the clock, since it does not effect the ability to take any transitions.
 The result of this operation can be seen in \cref{fig:prune5}
 
 \input{Automata/Prune5.tex}
