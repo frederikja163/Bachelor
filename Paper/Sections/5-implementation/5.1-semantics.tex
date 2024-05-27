@@ -1,47 +1,48 @@
 \subsection{Semantics}\label{subsec:semantics}
 \begin{comment}
-    Where do most of our semantics come from?
-    
-    Intersection semantics
-     - Motivation
+Where do most of our semantics come from?
 
-    Describe union semantics
-     - Motivation
-     - New definition
-     - Visual change
-    
-    Describe MatchAny semantics
-     - Motivation
-     - Definition
-     - Visual
+Intersection semantics
+- Motivation
+
+Describe union semantics
+- Motivation
+- New definition
+- Visual change
+
+Describe MatchAny semantics
+- Motivation
+- Definition
+- Visual
 \end{comment}
 
 Most of the semantics on constructing TAs from TREs have been copied directly from the paper by Asarin et al. \cite{Eugene2001}. However, we have made modifications to some of the semantics described in the paper.
 
 \subsubsection{Intersection}
-When creating automata using an intersection with the rules from Asarin et al.
+When creating TAs using an intersection with the rules from Asarin et al.
 many states are created with no transitions.
 By creating the intersection states lazily as needed for transitions, we can greatly decrease the number of states created.
 
 \subsubsection{Union}
-The only semantics changed from the paper by Asarin et al. is the semantics for union.
-We noticed the epsilon transitions from the union semantics could be slightly optimized, by only creating an extra epsilon transition when there is a loop going back to the initial state.
+The epsilon transitions from the union semantics of Asarin et al. can be slightly optimized, by only creating an extra epsilon transition when there is a loop going back to the initial state.
 An updated version of the union semantics can be seen in \cref{def:union-semantics}.
 
 \input{Documents/Definitions/PruneSemantics/Union}
 
-The semantics work by checking if there is a transition looping back to the initial state on either automaton.
-If this is the case they are concatenated with an epsilon automaton.
-That means in the case where both automata have a transition to their initial state, our new semantics will create the same result as the one in the paper.
-However, when an automaton does not have a transition back to the initial state, we do not need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one automaton, and then move to the other automaton.
+The semantics work by checking if there is a transition looping back to the initial state on either TAs.
+If this is the case, they are concatenated with an epsilon TRE.
+That means in the case where both TAs have a transition to their initial state, our new semantics will create the same result as the one in the paper.
+However, when a TA does not have a transition back to the initial state, we do not need the extra epsilon transition, as the purpose of the extra transition is to make sure you can not first take a loop in one TA, and then move to the other TA. An example of this rule can be seen on \cref{fig:union}.
 
 \input{Automata/Union}
+\captionof{figure}{Example of union semantics on: $A|B$ (TOP) and $A+|B$ (BOTTOM).}
+\label{fig:union}
 
-These new union semantics are not entirely equivalent to the ones described by Asarin et al. since we removed the time constraint from the epsilon edges.
+These new union semantics are not entirely equivalent to the ones described by Asarin et al., since we removed the time constraint from the epsilon edges.
 This time constraint creates an error that makes the TRE and the TA accept different languages.
-The mistake and what we did to fix it is further described in \cref{sec:PaperCorrections}
+This mistake, and what we did to fix it, is further described in \cref{sec:PaperCorrections}
 
 \subsubsection{Match any}
-Only match on a single character was defined in the paper by Asarin et al. and we wanted to have a way to match all possible characters like normal regular expressions and Monaa. For this we used a '.' like in normal regular expressions. Transitions with this symbol are allowed to be taken like any other transition when any input is given. Otherwise this symbol is the same as all other symbols in the automaton.
+Only match on a single character was defined in the paper by Asarin et al. and we wanted to have a way to match all possible characters like normal regular expressions. For this we used a '.' like in normal regular expressions. Transitions with this symbol are allowed to be taken like any other transition when any input is given. Otherwise, this symbol is the same as all other symbols in the TA.
 
 \input{Automata/MatchAny}

@@ -1,7 +1,7 @@
 \subsection{Benchmark UPPAAL}\label{sub:benchmark_uppaal}
 More states should intuitively mean UPPAAL runs slower, however this might not be the case if these extra states are easily pruneable.
 Therefore, we tried running the same query twice in UPPAAL on a large timed word.
-The timed word used in these examples are 34198 timed characters long, and the last character happens at time 238817.
+The timed word used in these examples is 34198 timed characters long, and the last character happens at time 238817.
 The data of these benchmarks can be found on \cref{table:uppaal_benchmarks}.
 
 \input{Documents/Tables/UppaalBenchmarks.tex}
@@ -10,13 +10,12 @@ As can be seen on \cref{table:uppaal_benchmarks}, checking is faster with prunin
 This points to UPPAAL not pruning the unnecessary states when checking.
 So pruning not only helps with readability, it also helps with performance.
 
-\subsection{Benchmark TREAT}
+\subsection{Benchmark TREAT}\label{sub:benchmark_treat}
 \subsubsection{Setup}
-Next step is checking if the prunings have an effect on performance on TREAT.
-In the original implementation, all pruning steps were performed after generating the entire automaton.
-However, it might be faster if pruning is performed while generating the automaton.
-For this reason, we have created a series of TREs and test configurations, and put them all against each other to see how each perform.
-Each configuration is a mix of pruning before and after generation of the automaton.
+In the original implementation, all pruning steps were performed after generating the entire Timed Automaton (TA).
+However, it might be faster if pruning is performed while generating the TA.
+For this reason, we have created a series of Timed Regular Expressions (TREs) and test configurations, and put them all against each other to see how each perform.
+Each configuration is a mix of pruning before and after generation of the TA.
 
 \begin{enumerate}
     \item \textbf{N}: This configuration has no pruning.
@@ -39,8 +38,8 @@ TREs $a$, $b$ and $f$ were all chosen because they would benefit from pruning wh
 The theory is, that these configurations limit the amount of states used in the explosive operators, therefore making them less explosive.
 Ideally it should make them resemble a linear complexity, since the final TAs are of constant length.
 
-TRE $c$, $d$ and $e$ where all chosen to benefit no pruning while generating, serving as a best case scenario for N, S and E.
-The theory is, these regular expressions will not benefit from pruning while generating, since limited or no pruning can be done during generation.
+TRE $c$, $d$ and $e$ were all chosen to benefit from no pruning while generating, serving as the best case scenario for N, S and E.
+The theory is, that these TREs will not benefit from pruning while generating, since limited or no pruning can be performed during generation.
 
 \subsubsection{Results}
 The results can be split into 3 main categories.
@@ -55,7 +54,7 @@ All the plots can be seen on \cref{sec:BenchmarkGraphs}, with all the data on \c
 On all the graphs we see the relationship between time to run/memory usage (y-axis) and a value for how long the regular expression is (x-axis). The value is explained further in \cref{sec:RegularExpressions}.
 
 The TREs $a$, $b$, $d$ and $e$ are all equivalent in performance.
-By this we mean their graphs are all curved in the same way, and they are within a few percentages of each other.
+By this we mean their graphs are all curved similarly, and they are within a few percentages of each other.
 An example of this can be seen on \cref{fig:mean3-5} (this is the one with the biggest difference in this category).
 
 \resizebox{\columnwidth}{!}{
@@ -69,15 +68,15 @@ An example of this can be seen on \cref{fig:mean3-5} (this is the one with the b
 \label{fig:mean3-5}
 
 Since we were expecting $a$ and $b$ to be more performant on SS, SE, ES and EE, this result is not what we expected.
-After opening up one of the automata (\cref{fig:FailedPruning}) we can see state $q1$ should have been pruned, since it can never be reached from the initial state.
+After inspecting one of the TAs (\cref{fig:FailedPruning}) we can see state $q1$ could have been pruned, since it can never be reached from the initial state.
 However, it is not pruned, because it is neither unreachable nor dead because of the self loop.
-So we have a problem where a loop to a state itself will keep a state throughout our pruning rules.
+So the pruning definitions, presented in this paper, could be more efficient by pruning patterns like this.
 
 \input{Automata/FailedPruning.tex}
 \captionof{figure}{A fully pruned TA, according to our definition, with a self loop that could be pruned.}
 \label{fig:FailedPruning}
 
-Creating bigger automata only expands on this problem. This is something that could be fixed, but for now we are leaving it as is.
+Creating bigger TAs only expands on this problem. This is something that could be fixed, but that is out of the scope of this paper.
 
 The TRE $f$ performs better on SS, SE, ES and EE.
 This graph can be seen on \cref{fig:mean15-19}.
@@ -95,8 +94,8 @@ This is the kind of performance difference we expected, and proves pruning durin
 
 Finally, the TRE $c$ performs better on N, S and SS.
 This graph can be seen on \cref{fig:mean6-8}
-This is probably because the pruning of everything is too expensive in terms of time and memory for it to make sense for this automaton.
-While this is an interesting result, it does not mean these prunings are better, since they do not get rid of all the extra states.
+This is probably because the pruning of everything is too expensive in terms of time and memory for it to make sense for this TA.
+While this is an interesting result, it does not mean these prunings are better, since they do not get rid of all the extra states, transitions and clocks.
 
 \resizebox{\columnwidth}{!}{
     \input{Documents/Plots/Mean/6-8.tex}
@@ -108,8 +107,5 @@ While this is an interesting result, it does not mean these prunings are better,
 \captionof{figure}{Graphs for time and memory of regular expression 6-8 ($c$).}
 \label{fig:mean6-8}
 
-\subsubsection{Conclusions}
-We have shown that, in UPPAAL, you can gain significant performance by pruning the states, so pruning should be worth it to do most of the time, since pruning is a startup cost.
-
-Pruning by itself can lead to really explosive performance on some regular expressions, even if we prune while the automaton is generating.
+In conclusion, pruning by itself can lead to really explosive performance on some regular expressions, even if we prune while the automaton is generating.
 However, in general, it seems like pruning during generation has the ability to turn some generations from parabolic to linear.

@@ -1,14 +1,14 @@
 \subsection{Output Formats}\label{subsec:formats}
 
-In order to represent the automaton created from timed regular expressions, we have explored two formats, both described in this subsection.
+In order to represent the Timed Automata (TAs) created from Timed Regular Expressions (TREs), we have explored two formats, both described in this subsection.
 
 \subsubsection{UPPAAL}
-UPPAAL, mentioned in \cref{sec:related work}, is a state of the art program for representing timed automata \cite{UPPAAL}. 
-When outputting to this format, it is possible to check timed words on the timed regular expression, as further described in \cref{subsec:checking}.
-Outputting to UPPAAL is achieved through translating the automata to an XML file, which can be interpreted by the UPPAAL program.
-When outputting to this format, there are several challenges that have to be overcome all of these have to do with checking so they will also be described in \cref{subsec:checking}.
+UPPAAL, mentioned in \cref{sec:related work}, is a state-of-the-art program for representing TAs \cite{UPPAAL}.
+When outputting to this format, it is possible to check timed words on the TRE, as further described in \cref{subsec:checking}.
+Outputting to UPPAAL is achieved through translating the TAs to an XML file, which can be interpreted by the UPPAAL program.
+When outputting to this format, there are several challenges that have to be overcome all of these have to do with checking, so they will also be described in \cref{subsec:checking}.
 
 \subsubsection{TikZ}
-TikZ can be used to visualize figures and graphs in LaTeX . TikZ uses some specialized statements for specifying certain parts of a graph \cite{Tikz}.
-Outputting graphs in TikZ is trivial when the automaton is loaded into memory. As the syntax is simple, and it is only used for visualization.
-This output format is useful for getting a simple visualization of one or more automata, as well as dynamically creating visualizations of automata for scientific papers written in LaTeX.
+TikZ can be used to visualize figures and graphs in LaTeX. TikZ uses some specialized statements for specifying certain parts of a graph \cite{Tikz}.
+Outputting graphs in TikZ is trivial when the TA is loaded into memory, as the syntax is simple, and it is only used for visualization.
+This output format is useful for getting a simple visualization of one or more TAs, as well as dynamically creating visualizations of TAs for scientific papers written in LaTeX.
