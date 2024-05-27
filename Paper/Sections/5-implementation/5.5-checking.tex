@@ -22,7 +22,7 @@ The TA shown on \cref{fig:ta_rep} is constructed from the TRE described above. F
 The word is recognized by the TA, if the execution terminates at a final state.
 In the case of the TA on \cref{fig:ta_rep}, the only accepted word is ABBA, and it is only accepted if the 4 symbols appear within 10 seconds of eachother.
 
-The accepting state can only be reached by traversing the graph's transitions, and these transitions have been constructed to meet the requirements of the TRE. Each symbol in the TRE is converted into a datatype called a Broadcast Channel \cite{UPPAAL}. While the documentation says they are used to synchronize processes (TA), the intuition in this paper, is that they are used to send and receive signals across channels. The syntax is as following:
+The final state can only be reached by traversing the graph's transitions, and these transitions have been constructed to meet the requirements of the TRE. Each symbol in the TRE is converted into a datatype called a Broadcast Channel \cite{UPPAAL}. While the documentation says they are used to synchronize processes (TA), the intuition in this paper, is that they are used to send and receive signals across channels. The syntax is as following:
 \begin{itemize}
     \setlength\itemsep{-0.5em}
     \item $x!$ - Outgoing signal (send)
@@ -52,16 +52,16 @@ From this timed word, a TA can be constructed to interact with the other TA cons
 The TA consists of a single state, and one looping transition for each unique symbol in the timed word, plus an extra transition that matches any symbol.
 Each transition has a Guard, a Synchronization and an Update. Take the transition for the symbol $A$.
 It boils down to: "\textit{If the current symbol is $A$ and the current time matches its timestamp (Guard), send a signal on channel $A$(Synchronization) and move to the next symbol (Update).}"
-This is the case for all transitions, except the match-any transition, since it sends a signal for each symbol in the timed word. The signals sent by the outgoing Synchronizations are ofcourse being received by the TA on \cref{fig:ta_rep}, which potentially progresses the TA. If there is a sequence of symbols in the timed word that matches the initial TRE, the TA should reach the accepting state. UPPAAL has a tool that makes this process of verification much simpler.
+This is the case for all transitions, except the match-any transition, since it sends a signal for each symbol in the timed word. The signals sent by the outgoing Synchronizations are being received by the TA on \cref{fig:ta_rep}, which potentially progresses the TA. If there is a sequence of symbols in the timed word that matches the initial TRE, the TA should reach the final state. UPPAAL has a tool that makes this process of verification much simpler.
 
 \subsubsection{Verifier}\label{subsubsec:verifier}
-The verifier in UPPAAL can be used to check a multitude of properties of a given TA, but in this project, it is only used to check if the TA has reached an accepting state. The query on \cref{lstlisting:query} shows the query for checking just that for the TA on \cref{fig:ta_rep}.
+The verifier in UPPAAL can be used to check a multitude of properties of a given TA, but in this project, it is only used to check if the TA has reached a final state. The query on \cref{lstlisting:query} shows the query for checking just that for the TA on \cref{fig:ta_rep}.
 
 \begin{lstlisting}[basicstyle=\scriptsize]
     inf{ta0.startIndex >= 0 && (ta0.loc4Final)} : 
     ta0.startIndex, ta0.endIndex
 \end{lstlisting}
-\captionof{lstlisting}{Query for checking if accepting state is reached.}
+\captionof{lstlisting}{Query for checking if a final state is reached.}
 \label{lstlisting:query}
 
 All query syntax and semantics can be found on UPPAAL's documentation \cite{UPPAAL}, but this specific query is structured like this:
@@ -94,7 +94,7 @@ With the actual size of clocks, we defined a new datatype called \verb|clock_t|,
     typedef int[-1073741822,1073741822] clock_t;
 \end{lstlisting}
 
-This means that TREAT can handle much larger timed words.
+This means that UPPAAL can handle much larger timed words.
 
 % RAM issues (works fine on linux, nono on windows)
 % output where match occurs
