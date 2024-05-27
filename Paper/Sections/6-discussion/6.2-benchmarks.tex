@@ -71,8 +71,8 @@ An example of this can be seen on \cref{fig:mean3-5} (this is the one with the b
 \label{fig:mean3-5}
 
 Since we were expecting $a$ and $b$ to be more performant on SS, SE, ES and EE, this result is not what we expected.
-After opening up one of the automata (\cref{fig:FailedPruning}) we can see state $q1$ should have been pruned, since it can never be reached from the starting state.
-However it is not pruned, because it is neither unreachable nor dead because of the self loop.
+After opening up one of the automata (\cref{fig:FailedPruning}) we can see state $q1$ should have been pruned, since it can never be reached from the initial state.
+However, it is not pruned, because it is neither unreachable nor dead because of the self loop.
 So we have a problem where a loop to a state itself will keep a state throughout our pruning rules.
 
 \input{Automata/FailedPruning.tex}

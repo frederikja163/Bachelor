@@ -3,10 +3,9 @@
 Some of the semantics from \cref{subsec:semantics} can lead to TA of an explosive size.
 An optional pruning step is performed on the automaton, in order to remove transitions, states,
 and clocks, that do not affect the transition system.
-This leads to better performance (see \cref{subsec:benchmarks}), and better readability. 
-%TODO: Affirm claims made about performance after benchmarks
+This leads to better performance (see \cref{subsec:benchmarks}), and better readability.
 
-Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work.
+Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work. Throughout these definitions, underscore ($\_$) will be used for unused variables in quantifiers.
 The TA is equivalent to the following TRE, although a few states have been pruned already to make it fit on the page.
 $$C(A[5;10]\&(BA|A)[1;3])$$
 
@@ -24,7 +23,7 @@ The result of this operation can be seen in \cref{fig:prune1}.
 \input{Automata/Prune1.tex}
 
 \subsubsection{Dead Transition Pruning}\label[subsubsection]{deadTransitionPruning}
-Edges that are overconstrained on one or more clocks, are considered "dead" transitions, and can be removed without changing the language of the automaton.
+Transitions that have unsatisfiable constraints, are considered "dead" transitions, and can be removed without changing the language of the automaton.
 Since these transitions could never be taken by any transition system, removing them does not change the language.
 Dead transition pruning is formally defined in \cref{definition:deadEdgePruning}.
 
