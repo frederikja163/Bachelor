@@ -3,11 +3,11 @@
 % This shouldn't have a huge impact, but it will allow us to create a more minimal declaration field in Uppaal.
 \begin{definition}\label{definition:deadClockPruning}
     Dead clock pruning:
-    
+
     \sembox{
         $\deadclock\automaton=\automaton[][Q][C'][\Delta'][\Sigma][s][F]$
-        
-        $C'=\{c\mid\exists\transition[]\in\Delta,I:(c, I)\in\phi\}$
+
+        $C'=\{c\mid\exists\transition[]\in\Delta:\exists(c',I) \in\phi:c=c'\}$
 
         $\Delta'=\{\transition[][q][q'][\phi][p\cap C']\mid\transition\in\Delta\}$
     }
