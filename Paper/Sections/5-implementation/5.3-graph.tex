@@ -30,7 +30,7 @@ The first step of the Sugiyama framework is to, temporarily, make the TA acyclic
 
 In our case since we are creating the TA we can use the generation rules to find transitions that need to be reversed.
 The reversible transitions are the new edges added to TAs in abosrbed iterator and iterator.
-Instead of reversing transitions it is also possible to omit them completely while generating the graph. This will make the algortihm simpler, since it is no longer necessary to reverse the transitions again later. However, this comes at the cost of possible transition crossings in later, since the reversible transitions are no longer considered when minimising these. A reversible transition can be seen on \cref{fig:graph_step1} (dashed line), described as $q2\rightarrow q1$.
+Instead of reversing transitions it is also possible to omit them completely while generating the graph. This will make the algorithm simpler, since it is no longer necessary to reverse the transitions again later. However, this comes at the cost of possible transition crossings later, since the reversible transitions are no longer considered when minimizing these. A reversible transition can be seen on \cref{fig:graph_step1} (dashed line), described as $q2\rightarrow q1$.
 % mention self loops
 
 % insert image of step
