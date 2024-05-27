@@ -1,2 +1,25 @@
 \section*{Summary}
 \thispagestyle{empty}
+
+Our paper "Timed Regular Expression to Automaton Transformation", describes the research process, as well as the implementation and functionality of the software product of the same name (abbreviated to TREAT).
+The program seeks to streamline the use of timed regular expressions (TREs), as well as serve as a tool for visualizing TREs as timed automata (TAs).
+
+An existing software product called "MONAA" is used for timed pattern matching on timed words. In this regard, it accomplishes a similar goal to TREAT, in so far as matching timed words to timed regular expressions, though MONAA functions somewhat differently in its use.
+MONAA also falls short of implementing certain operations, outlined in a paper by Asarin et al., which TREAT borrows closely from.
+
+When performing timed pattern matching over timed words, TREAT requires the assistance of the tool UPPAAL. UPPAAL allows visualization and simulation of timed automata.
+TREAT is able to output to the XML file format, which can be loaded into UPPAAL. The XML file declares all of the information contained in the automaton, as well as any declarations such as variables and clocks.
+
+The semantic rules that define how TREs are transformed into TAs, is borrowed from the paper "Timed Regular Expressions" by Eugene Asarin et al. Some modifications have been made in order to optimize the generation process, and to fix an error with the semantic rules for creating unions.
+
+These semantic rules can leave clocks, states, and transitions, that have no effect on the language recognized by the TA. For this reason, as well as to increase readability, the TAs go through several pruning steps, all of which can be individually disabled by the user.
+These pruning steps lead to a more minimal TA in terms of number of clocks, states, and transitions, though further improvements could be made, as described in the discussion section.
+
+Benchmarks show that continuous pruning during generation of the TA, can improve performance. A pruned TA also leads to better performance when verifying using UPPAAL, when compared to its unpruned counterpart.
+
+To increase readability, TREAT implements part of the Sugiyama framework, also known as layered graph drawing. This leads to a TA where each state exists on a layer, which spreads out the states, hereby increasing readability. Our implementation of this framework leaves some room for improvements, such as fanning out transitions so that they are not placed on top of each other, and assigning positions to states as the framework specifies.
+
+As mentioned, TREAT can output in XML format, which can be opened in UPPAAL which allows the user to verify timed words against the constructed TA. If, however, the user wishes to merely view the TA, TREAT can also output to TikZ. This will define the TA as a TikZ graph, to be viewed in LaTeX.
+
+TREAT sets out to allow users to convert TREs into readable TAs, as well as output those TAs to an external tool (UPPAAL) in order to check a timed word loaded from a .csv file.
+An example usecase is provided in the paper, in which a transcript from the Apollo 11 mission has been converted to a timed word, an a TRE is input to TREAT, which outputs a TA to UPPAAL that can be used to verify the TRE. This example illustrates how TREAT can be utilized on large datasets, with a given TRE, in order to easily perform data analysis.
