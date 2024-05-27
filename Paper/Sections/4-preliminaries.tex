@@ -26,4 +26,7 @@ The initial state is the unique state from which the automaton starts, and is en
 
 The final states are a finite set of states. If any of these states are reachable, given a timed word, that timed word is accepted.
 
-The words describe sets of events that happen one after the other. A timed automaton is able to analyse timed words, where each event has an associated time, to determine whether the word is accepted by the automaton. We use the definitons of timed words given by Asain et al.\cite{Eugene2001}
+The words describe sets of events that happen one after the other. A timed automaton is able to analyse timed words, where each event has an associated time, to determine whether the word is accepted by the automaton.
+\input{Documents/Definitions/TimedWord.tex}
+
+We have developed a concrete syntax, with an accompanying precedence, that can be found in \cref{sec:Syntax} and \cref{sec:Precedence}.
