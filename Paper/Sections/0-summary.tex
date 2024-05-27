@@ -1,2 +1,26 @@
 \section*{Summary}
 \thispagestyle{empty}
+
+Timed Automata are commonly used to verify correct behaviour in real-time systems. Examples include, finding vital issues in airplane instrumentation, long delays in radio transcriptions and detecting attacks on server infrastructure. Constructing Timed Automata from these usecases, can be enhanced by using Timed Regular Expressions.
+
+This paper describes the research process, as well as the implementation and functionality of the software product named "Timed Regular Expression to Automaton Transformation" (abbreviated to TREAT).
+The program seeks to streamline the use of timed regular expressions (TREs), as well as serve as a tool for visualizing TREs as timed automata (TAs).
+
+An existing software product called "MONAA" is used for timed pattern matching on timed words. In this regard, it accomplishes a similar goal to this paper, in so far as matching timed words to TREs, though MONAA functions somewhat differently in its use.
+
+The semantic rules that define how TREs are transformed into TAs, are borrowed from the paper "Timed Regular Expressions" by Eugene Asarin et al. Some modifications have been made in order to optimize the generation process, and to fix an error with the semantic rules for creating unions. These semantic rules can create clocks, states, and transitions, that have no effect on the language recognized by the TA. To increase readability, the TAs go through several pruning steps, all of which can be individually disabled by a user of TREAT.
+These pruning steps lead to a more minimal TA in terms of number of clocks, states, and transitions, though further improvements could be made, as described in the discussion section.
+
+To further increase readability, this paper describes the implementation of part of the Sugiyama framework, also known as layered graph drawing. This leads to a TA where each state is placed in layers based on the length of the longest path from the initial state. These states are then ordered in each layer, to minimize transition crossings. Our use of this framework leaves some room for improvements, such as fanning out transitions that have the same source and target states, which makes them easier to differentiate.
+
+When performing timed pattern matching over timed words, TREAT requires the assistance of the tool UPPAAL. UPPAAL allows visualization and simulation of TAs.
+TREAT is able to output to the XML file format, which can be loaded into UPPAAL. The XML file declares all the information contained in the automaton, as well as any declarations such as variables and clocks. When implementing TREAT, we encountered a number of hurdles, forcing us to find workarounds. An example of this, is the fact that UPPAAL uses int16 as the native integer size, and has no int32 equivalent by default.
+
+As mentioned, TREAT can output in XML format, which can be opened in UPPAAL. This allows the user to verify timed words against the constructed TA. If, however, the user wishes to merely view the TA, TREAT can also output to TikZ. This will define the TA as a TikZ graph, to be viewed in LaTeX.
+
+TREAT sets out to allow users to convert TREs into readable TAs, as well as output those TAs to an external tool (UPPAAL) in order to check a timed word loaded from a .csv file.
+An example usecase is provided in the paper, in which a transcript from the Apollo 11 mission has been converted to a timed word, and a TRE is input to TREAT, which outputs a TA to UPPAAL that can be used to verify the TRE. This example illustrates how TREAT can be utilized on large datasets, with a given TRE, in order to easily perform data analysis.
+
+Finally, we have benchmarked our solution to figure out the best way to prune states while negatively impacting performance as little as possible. These benchmarks showed significant improvements in UPPAAL when using pruning. The benchmarks showed us that pruning can improve performance, whereas the naive pruning (Pruning everything after generation, once) might hinder performance.
+
+We believe, throughout this paper, that we make a valuable contribution to the field of Timed Pattern Matching. This is done through pruning, graph layout and a new CLI tool.
