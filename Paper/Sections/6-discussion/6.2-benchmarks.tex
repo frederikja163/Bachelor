@@ -35,13 +35,11 @@ As for the tests, we have generated 6 parameterized TREs, that we use to generat
 Each TRE serves a unique purpose.
 All these TREs can be found in \cref{app:RegularExpressionTable}.
 
-TREs $a$, $b$ and $f$ were all chosen because they would benefit from pruning while generating.
-, serving as a best case scenario for SS, SE, ES and EE.
+TREs $a$, $b$ and $f$ were all chosen because they would benefit from pruning while generating, serving as a best case scenario for SS, SE, ES and EE.
 The theory is, that these configurations limit the amount of states used in the explosive operators, therefore making them less explosive.
 Ideally it should make them resemble a linear complexity, since the final TAs are of constant length.
 
-TRE $c$, $d$ and $e$ where all chosen to benefit no pruning while generating.
-, serving as a best case scenario for N, S and E.
+TRE $c$, $d$ and $e$ where all chosen to benefit no pruning while generating, serving as a best case scenario for N, S and E.
 The theory is, these regular expressions will not benefit from pruning while generating, since limited or no pruning can be done during generation.
 
 \subsubsection{Results}
@@ -111,9 +109,7 @@ While this is an interesting result, it does not mean these prunings are better,
 \label{fig:mean6-8}
 
 \subsubsection{Conclusions}
-We have shown that, in UPPAAL, you can gain significant performance by pruning the states.
-, so pruning should be worth it to do most of the time, since pruning is a startup cost.
+We have shown that, in UPPAAL, you can gain significant performance by pruning the states, so pruning should be worth it to do most of the time, since pruning is a startup cost.
 
-Pruning by itself can lead to really explosive performance on some regular expressions.
-, even if we prune while the automaton is generating.
+Pruning by itself can lead to really explosive performance on some regular expressions, even if we prune while the automaton is generating.
 However, in general, it seems like pruning during generation has the ability to turn some generations from parabolic to linear.
