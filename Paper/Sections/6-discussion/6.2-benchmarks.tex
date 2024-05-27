@@ -76,7 +76,7 @@ However, it is not pruned, because it is neither unreachable nor dead because of
 So we have a problem where a loop to a state itself will keep a state throughout our pruning rules.
 
 \input{Automata/FailedPruning.tex}
-\captionof{figure}{A fully pruned automata with a self loop that could be pruned.}
+\captionof{figure}{A fully pruned TA, according to our definition, with a self loop that could be pruned.}
 \label{fig:FailedPruning}
 
 Creating bigger automata only expands on this problem. This is something that could be fixed, but for now we are leaving it as is.
