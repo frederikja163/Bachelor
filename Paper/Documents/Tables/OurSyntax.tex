@@ -1,0 +1,39 @@
+\begin{tabular}{ |c|c|c| }
+    \hline
+    \textbf{Name} & \textbf{Abstract Syntax} & \textbf{Concrete Syntax} \\
+    \hline
+    Empty string & $\epsilon$ & $-$ \\
+    \hline
+    Match & $a$ & $a$ \\
+    && $<a>$ \\
+    \hline
+    Match any & $x$ & $.$ \\
+    \hline
+    Order of operations & $-$ & $(a)$ \\
+    \hline
+    Union & $\varphi_1\vee\varphi_2$ & $a \mid b$ \\
+    \hline
+    Intersection & $\varphi_1\wedge\varphi_2$ & $a\&b$ \\
+    \hline
+    Concatenation & $\varphi_1\cdot\varphi_2$ & $ab$ \\
+    \hline
+    Absorbed & & \\
+    concatenation & $\varphi_1\circ\varphi_2$ & $a'b$ \\
+    \hline
+    Guaranteed iteration & $\varphi^+$ & $a+$ \\
+    \hline
+    Absorbed & & \\
+    guaranteed iteration & $\varphi^\oplus$ & $a+'$ \\
+    \hline
+    Iteration & $\varphi_1*$ & $a*$ \\
+    \hline
+    Absorbed iteration & $\varphi_1\ostar\varphi_2$ & $a*'$ \\
+    \hline
+    Interval & $\varphi_I$ & $a[t_1;t_2]$ \\
+    && $a[t_1;t_2[$ \\
+    && $a]t_1;t_2]$ \\
+    && $a]t_1;t_2[$ \\
+    \hline
+    Rename & $\theta(\varphi)$ & $a\{a0,b1\}$ \\
+    \hline
+\end{tabular}
