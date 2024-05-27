@@ -1,9 +1,9 @@
 \subsection{Pruning}\label{subsec:pruning}
 
-Some of the semantics from \cref{subsec:semantics} can lead to TA of an explosive size.
-An optional pruning step is performed on the automaton, in order to remove transitions, states,
+Some of the semantics from \cref{subsec:semantics} can lead to TAs of an explosive size.
+An optional pruning step is performed on the TA, in order to remove transitions, states,
 and clocks, that do not affect the transition system.
-This leads to better performance (see \cref{subsec:benchmarks}), and better readability.
+This leads to better readability, and performance (see \cref{sub:benchmark_uppaal} and \cref{sub:benchmark_treat}).
 
 Throughout this section the TA seen on \cref{fig:prune0} will be used as an example of how the prunings work.
 The TA is equivalent to the following TRE, although a few states have been pruned already to make it fit on the page.
@@ -12,24 +12,24 @@ $$C(A[5;10]\&(BA|A)[1;3])$$
 \input{Automata/Prune0.tex}
 
 \subsubsection{Clock Reduction}\label[subsubsection]{clockReduction}
-The amount of clocks in the automaton can be reduced after generating the TA.
+The amount of clocks in the TA can be reduced after generating the TA.
 The "Reducing the number of clock variables of timed automata" paper by Daws et al. describes these methods \cite{Daws1996}.
-Therefore we won't go into detail about it in this paper.
-We will use $\clockreduction\automaton$ as a function reducing the clocks of automaton $\automaton$.
+Therefore, we won't go into detail about it in this paper.
+We will use $\clockreduction\automaton$ as a function reducing the clocks of TA $\automaton$.
 
-In the automaton in \cref{fig:prune0} both clock $c_0$ and $c_1$ can be combined into one clock since they are reset at the same time.
+In the TA in \cref{fig:prune0}, both clock $c_0$ and $c_1$ can be combined into one clock since they are reset at the same time.
 The result of this operation can be seen in \cref{fig:prune1}.
 
 \input{Automata/Prune1.tex}
 
 \subsubsection{Dead Transition Pruning}\label[subsubsection]{deadTransitionPruning}
-Transitions that have unsatisfiable constraints, are considered "dead" transitions, and can be removed without changing the language of the automaton.
+Transitions that have unsatisfiable constraints, are considered "dead" transitions, and can be removed without changing the language of the TA.
 Since these transitions could never be taken by any transition system, removing them does not change the language.
 Dead transition pruning is formally defined in \cref{definition:deadEdgePruning}.
 
 \input{Documents/Definitions/PruneSemantics/DeadEdge.tex}
 
-In the automaton \cref{fig:prune1} we can see that after merging the two clocks, the clock intervals on $q3\rightarrow q2$ and $q4\rightarrow q2$ can be simplified to false:
+In the TA on \cref{fig:prune1}, we can see that after merging the two clocks, the clock intervals on $q3\rightarrow q2$ and $q4\rightarrow q2$ can be simplified to false:
 $$c_1\in[5;10]\wedge c_1\in[1;3]=false$$
 A clock can not have a value bigger than 5 and smaller than 3 at the same time.
 Since the transition can now no longer be taken, it can easily be removed.
@@ -38,13 +38,13 @@ The result of this operation can be seen in \cref{fig:prune2}.
 \input{Automata/Prune2.tex}
 
 \subsubsection{Unreachable State Pruning}\label[subsubsection]{unreachableStatePruning}
-States that are not the destination of any transition or the initial state, are considered "unreachable" states, and can be removed without changing the language of the automaton.
-Since these states can never be reached, they are not part of the transition system for any words recognized by the automaton, hence it does not change the language to remove them.
+States that are not the destination of any transition or the initial state, are considered "unreachable" states, and can be removed without changing the language of the TA.
+Since these states can never be reached, they are not part of the transition system for any words recognized by the TA, hence it does not change the language to remove them.
 Unreachable state pruning is formally defined in \cref{definition:unreachableStatePruning}
 
 \input{Documents/Definitions/PruneSemantics/Unreachable.tex}
 
-In the automaton in \cref{fig:prune2}, $q4$ and $q2$ can be removed since they are neither the destination of any transition, nor the initial state.
+In the TA in \cref{fig:prune2}, $q4$ and $q2$ can be removed since they are neither the destination of any transition, nor the initial state.
 This means there is no way to enter $q4$ or $q2$, and they can be removed.
 The result of this operation can be seen in \cref{fig:prune3}.
 
@@ -52,42 +52,41 @@ The result of this operation can be seen in \cref{fig:prune3}.
 
 \subsubsection{Dead State Pruning}\label[subsubsection]{deadStatePruning}
 States that are not final states, or the source of any transition,
-are considered "dead" states, and can be removed without changing the language of the automaton.
-Since these states can not reach final states, they are not part of the transition system for any words recognized by the automaton, hence it does not change the language to remove them.
+are considered "dead" states, and can be removed without changing the language of the TA.
+Since these states can not reach final states, they are not part of the transition system for any words recognized by the TA, hence it does not change the language to remove them.
 Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
 
 \input{Documents/Definitions/PruneSemantics/DeadState.tex}
 
-In the automaton in \cref{fig:prune3}, $q7$ can be removed since it is neither the source of any transition, nor a final state.
+In the TA in \cref{fig:prune3}, $q7$ can be removed since it is neither the source of any transition, nor a final state.
 This means there is no way to reach a final state from $q7$, and it can be removed.
 The result of this operation can be seen in \cref{fig:prune4}.
 
 \input{Automata/Prune4.tex}
 
 \subsubsection{Dead Clock Pruning}\label[subsubsection]{deadClockPruning}
-Clocks that are never used in ranges to constrain any transitions are considered "dead", and can be removed without changing the language of the automaton.
+Clocks that are never used in ranges to constrain any transitions, are considered "dead", and can be removed without changing the language of the TA.
 Since these clocks never constrain any transitions, it does not change the possible ways to reach final states, hence it does not change the language to remove them.
 This rule is formally defined in \cref{definition:deadClockPruning}
 
 \input{Documents/Definitions/PruneSemantics/DeadClock.tex}
 
-In the automaton in \cref{fig:prune4}
-We can see that clock $c_0$ is not being used.
-This clock is however reset on the transition $q0\rightarrow q3$.
-This means we can remove the clock, since it does not effect the ability to take any transitions.
-The result of this operation can be seen in \cref{fig:prune5}
+In the TA in \cref{fig:prune4}, we can see that clock $c_0$ is not being used.
+This clock is reset on the transition $q0\rightarrow q3$.
+This means we can remove the clock, since it does not affect the ability to take any transitions.
+The result of this operation can be seen in \cref{fig:prune5}.
 
 \input{Automata/Prune5.tex}
 
 \subsubsection{Recursive pruning}
 All the prunings described in this section need to happen recursively to get rid of everything.
-The recursion stops when no changes have been made to the automaton.
+The recursion stops when no changes have been made to the TA.
 This recursion is formally defined in \cref{definition:recursivePruning}
 
 \input{Documents/Definitions/PruneSemantics/RecursivePruning.tex}
 
-In the automaton in \cref{fig:prune5}, there are still things left to be pruned.
+In the TA in \cref{fig:prune5}, there are still things left to be pruned.
 The state $q3$ is a dead state and can therefore be removed.
-The recursion will take care of that and turn the automaton into the one in \cref{fig:prune6}.
+The recursion will take care of that and turn the TA into the one in \cref{fig:prune6}.
 
 \input{Automata/Prune6.tex}

@@ -11,14 +11,13 @@
 
 
 The research in this paper is based on the research done in the paper "Timed Regular Expressions" by Asarin et al.\cite{Eugene2001}. The Paper describes the equivalence between Timed Regular Expressions (TREs) and Timed Automata (TAs). Their methods of constructing a TA from a TRE, are used and expanded upon throughout this paper. It should be noted, that Asarin et al.'s definition of TREs is also used in this paper.
-An TA can be defined as a set of states, and a set of transitions between those states. This can be visualized as a directed graph of nodes(states) with edges(transitions) connecting them.
+A TA can be defined as a set of states, and a set of transitions between those states. This can be visualized as a directed graph of nodes(states) with edges(transitions) connecting them.
 A TA is a type of automaton that can analyze events happening one after the other, after or within, a specified time, and can be formally defined as a sextuple\cite{ALUR1994}. See \cref{definition:automatonDefinition}.
 \input{Documents/Definitions/Automaton.tex}
 
 Clocks are variables that track time. All clocks count up simultaneously, but may be individually reset on transitions.
 
 Transition relations are the transitions between states, and may be formally described with the following tuple. See \cref{definition:transition}.
-\input{Documents/Definitions/Transition.tex}
 
 The alphabet is the set of symbols the automaton can read.
 
@@ -26,6 +25,9 @@ The initial state is the unique state from which the automaton starts, and is en
 
 The final states are a finite set of states. If any of these states are reachable, given a timed word, that timed word is accepted.
 
-The words describe sets of events that happen one after the other. A timed automaton is able to analyse timed words, where each event has an associated time, to determine whether the word is accepted by the automaton. We use the definitons of timed words given by Asarin et al. \cite{Eugene2001}
+
+The words describe sets of events that happen one after the other. A TA is able to analyze timed words, where each event has an associated time, to determine whether the word is accepted by the automaton. We use the definitions of timed words given by Asarin et al. \cite{Eugene2001}
+
+\input{Documents/Definitions/Transition.tex}
 
 We have developed a concrete syntax, with an accompanying precedence, that can be found in \cref{sec:Syntax} and \cref{sec:Precedence}.

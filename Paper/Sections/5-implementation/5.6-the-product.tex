@@ -1,21 +1,23 @@
 \subsection{The Product}\label{subsec:theProduct}
-The research in this paper has culminated in a software product that allows a user to enter a timed regular expression (TRE), and have it converted into a timed automaton (TA).
+The research in this paper has culminated in a software product that allows a user to enter a Timed Regular Expression (TRE), and have it converted into a Timed Automaton (TA).
 We have named this piece of software "TREAT", short for "Timed Regular Expression to Automaton Transformation".
 An overview of the data flow through the program, is shown in \cref{fig:TREATdiagram}.
 
 %The following diagram shows the flow of data through the TREAT program. The diagram is meant as an overall outline, and is not supposed to be precise. 
-\input{Documents/Diagrams/TreatDiagram.tex}
+\begin{center}
+    \input{Documents/Diagrams/TreatDiagram.tex}
+\end{center}
 
-TREAT is accessed through a command line interface(CLI)(see \cref*{fig:TREATdiagram}). The user can type in their TRE, along with a few options such as adding a timed word through a .csv file, turning off pruning, and silencing any warnings or info messages using "--quiet".
-The user can also decide the output format of the TA at this point using "--format".
+TREAT is accessed through a command line interface(CLI)(see \cref{fig:TREATdiagram}). The user can type in their TRE, along with a few options such as adding a timed word through a .CSV file, turning off pruning, and silencing any warnings or info messages using "$--$quiet".
+The user can also decide the output format of the TA at this point using "$--$format".
 
-If the user opted to add a timed word, it is loaded from the .csv file, into two arrays. Each unique symbol in the word is added to the alphabet. This is shown as a separate branching to the right from CLI in \cref*{fig:TREATdiagram}
-Looking at the left branch from CLI in \cref*{fig:TREATdiagram}, an automaton is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This automaton has a transition for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
+If the user opted to add a timed word, it is loaded from the .CSV file, into two arrays. Each unique symbol in the word is added to the alphabet. This is shown as a separate branching to the right from CLI in \cref{fig:TREATdiagram}.
+Looking at the left branch from CLI in \cref{fig:TREATdiagram}, a TA is created, that represents the timed word. This is required for checking the TRE with UPPAAL. This TA has a transition for each of the symbols of the alphabet, and broadcasts its symbol on channels at the correct time. Checking is described further in \cref{subsec:checking}.
 
 The TRE is parsed into tokens by a tokenizer. These tokens are connected as children of one another, to form an abstract syntax tree (AST).
-It should be noted here, that TREAT allows for multicharacter symbols by utilizing angle brackets (<>). This allows the user to create a dictionary with an indefinite number of symbols. An example of this use case, is provided later in \cref{subsec:usecases}.
+It should be noted here, that TREAT allows for multicharacter symbols by utilizing angle brackets (\verb|< >|). This allows the user to create a dictionary with an indefinite number of symbols. An example of this use case, is provided later in \cref{subsec:usecases}.
 
-This AST is sent from the tokenizer, to the TA Generator, as illustrated in \cref*{fig:TREATdiagram}. The TA can be created using the rules from Asarin et al., with the modifications described in \cref{subsec:semantics}.
+The AST is sent from the tokenizer, to the TA Generator, as illustrated in \cref{fig:TREATdiagram}. The TA can be created using the rules from Asarin et al., with the modifications described in \cref{subsec:semantics}.
 
 This is done by visiting each node in the tree, and generating states and transitions in the TA, according to the rules. Three visitors go through the tree: One checks whether intervals on any given transition are valid. Another goes through the AST, to convert the iterator and the absorbed iterator into lower level components using union and iterator. The last visitor is responsible for implementing the rules of all other tokens.
 
@@ -23,6 +25,6 @@ At the next stage, the TA is pruned as described in \cref{subsec:pruning}.
 % The dataformat of the internal TA is an object containing hashsets and dictionaries corresponding to the sets of the tuples described in \cref{sec:preliminaries}. 
 % This means that the code executed in the functions responsible for pruning, map very closely to the mathematical operations in \cref{sec:preliminaries}.
 
-Since the TA is now in its final form with regards to states, transitions, and the guards associated with them, each state is now assigned a position based on the algorithm described in \cref{subsec:graph}.
+Since the TA is now in its final form with regards to states, transitions, and the guards associated with them, each state is now assigned a position based on the algorithm described in \cref{subsec:graphlayout}.
 
-Finally, the TA is output to one of the selected formats as described in \cref{subsec:formats}. The different output formats are represented with separate branches in \cref*{fig:TREATdiagram}.
+Finally, the TA is output to one of the selected formats as described in \cref{subsec:formats}. The different output formats are represented with separate branches in \cref{fig:TREATdiagram}.

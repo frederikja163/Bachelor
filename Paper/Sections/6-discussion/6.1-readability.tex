@@ -2,7 +2,7 @@
 
 \subsubsection{Graph Layout}
 % missing from graph paper
-The Sugiyama Layout algorithm discussed in \cref{subsec:graphlayout} served the purpose of increasing visual clarity and readability of the TA outputted by TREAT.
+The Sugiyama Layout algorithm described in \cref{subsec:graphlayout} served the purpose of increasing visual clarity and readability of the TA outputted by TREAT.
 Two of the most prevalent ways this was achieved was by layering the TAs states based on the length of the longest path from the initial state. The other was by ordering the states in each layer to achieve the smallest number of transition crossings.
 While some of the specific approaches described by Mazetti et al. \cite{Mazetti2012} was not implemented into TREAT, the resulting implementation still greatly increases readability.
 
@@ -16,15 +16,17 @@ In all TAs pictured in \cref{subsec:graphlayout} and this section, any such tran
 \end{center}
 
 % formats
-As described in \cref{output formats}, two output formats can be used to represent TAs.
+As described in \cref{subsec:formats}, two output formats can be used to represent TAs.
 The first format is UPPAAL. In UPPAAL, if no positions are given, the states are simply placed in a grid. This means, that using a graph layout algorithm is not strictly necessary.
 To show its advantages, however, \cref{fig:treatLayout} shows the TA described in \cref{subsec:graphlayout}, which uses TREATs positioning, while \cref{fig:uppaalLayout} shows UPPAALs positioning. Both of these figures are constructed in UPPAAL
 
 \begin{center}
     \includegraphics[width=0.8\columnwidth]{Documents/Diagrams/ReadabilityFigures/treat.png}
     \captionof{figure}{TA with TREATs state positioning.}
+    \label{fig:uppaalLayout}
     \includegraphics[width=0.6\columnwidth]{Documents/Diagrams/ReadabilityFigures/uppaal.png}
     \captionof{figure}{TA with UPPAALs state positioning.}
+    \label{fig:treatLayout}
 \end{center}
 \vspace{1em}
 
@@ -32,8 +34,8 @@ The other output format is TikZ, used to represent graphs in LaTeX. Unlike UPPAA
 
 \subsubsection{Pruning}
 
-The pruning steps described in \cref{sec:pruning} have an arguably greater effect to readability, since this can dramatically reduce the size and complexity of the output TA, while having no effect on the language accepted by the TA.
-The TA on \cref{fig:nopruning} represents the same TRE as the one on \cref{fig:graph_step4}, except, no unreachable states, dead states, or dead transitions have been pruned.
+The pruning steps described in \cref{subsec:pruning} have an arguably greater effect to readability, since these can dramatically reduce the size and complexity of the output TA, while having no effect on the language accepted by the TA.
+The TA on \cref{fig:nopruning} represents the same TRE as the one on \cref{fig:graph_step4} and \cref{fig:treatLayout}, except, no unreachable states, dead states, or dead transitions have been pruned.
 
 \begin{center}
     \input{Documents/Diagrams/ReadabilityFigures/pruningLayout.tex}
