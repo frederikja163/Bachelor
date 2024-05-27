@@ -1,1 +1,17 @@
 \section{Conclusion}
+
+% Conclude on discussion (results)
+%   readability
+%   benchmarks
+%   future works
+
+In this paper, the program TREAT (Timed Regular Expression to Automaton Transformation), a program to convert TREs to TAs, has been described, and its result have been discussed.
+Using TREAT, it is possible to utilize the capabilities of UPPAAL to perform timed pattern matching on timed words, or simply display TAs constructed from TREs in LaTeX using TikZ.
+
+In \cref{subsec:readability}, the implementation of the Sugiyama Framework method has been discussed, which brought clear advantages in the form of visual clarity and better readability, both for UPPAAL and TikZ formats.
+Pruning has an arguably more profound effect on readability, since it minimizes the size of the graph.
+
+The benchmarks constructed and performed in \cref{subsec:benchmarks} also show that pruning is not only effective for visual clarity, but also for the general performance of TREAT, both in runtime and in memory allocation.
+The benchmarks do, however, show that pruning is not as effective as it could be, primarily due to the fact that, according to our pruning definitions (see \cref{subsec:pruning}), self-looping transitions are never pruned, which snowballs through all other pruning steps.
+
+Ultimately, while potential future features for TREAT are described in \cref{subsec:futureWorks}, the steps described in this paper, have resulted in a program that succesfully enables its users to generate TAs from TREs and even perform timed pattern matching on timed words.
