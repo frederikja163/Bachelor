@@ -14,7 +14,7 @@ $$C(A[5;10]\&(BA|A)[1;3])$$
 
 \subsubsection{Clock Reduction}\label[subsubsection]{clockReduction}
 The amount of clocks in the TA can be reduced after generating the TA.
-The "Reducing the number of clock variables of timed automata" paper by Daws et al. describes these methods \cite{Daws1996}.
+The ``Reducing the number of clock variables of timed automata'' paper by Daws et al. describes these methods \cite{Daws1996}.
 Therefore, we won't go into detail about it in this paper.
 We will use $\clockreduction\automaton$ as a function reducing the clocks of TA $\automaton$.
 
@@ -24,7 +24,7 @@ The result of this operation can be seen in \cref{fig:prune1}.
 \input{Automata/Prune1.tex}
 
 \subsubsection{Dead Transition Pruning}\label[subsubsection]{deadTransitionPruning}
-Transitions that have unsatisfiable constraints, are considered "dead" transitions, and can be removed without changing the language of the TA.
+Transitions that have unsatisfiable constraints, are considered ``dead'' transitions, and can be removed without changing the language of the TA.
 Since these transitions could never be taken by any transition system, removing them does not change the language.
 Dead transition pruning is formally defined in \cref{definition:deadEdgePruning}.
 
@@ -41,7 +41,7 @@ The result of this operation can be seen in \cref{fig:prune2}.
 \input{Automata/Prune2.tex}
 
 \subsubsection{Unreachable State Pruning}\label[subsubsection]{unreachableStatePruning}
-States that are not the destination of any transition or the initial state, are considered "unreachable" states, and can be removed without changing the language of the TA.
+States that are not the destination of any transition or the initial state, are considered ``unreachable'' states, and can be removed without changing the language of the TA.
 Since these states can never be reached, they are not part of the transition system for any words recognized by the TA, hence it does not change the language to remove them.
 Unreachable state pruning is formally defined in \cref{definition:unreachableStatePruning}.
 
@@ -57,7 +57,7 @@ The result of this operation can be seen in \cref{fig:prune3}.
 
 \subsubsection{Dead State Pruning}\label[subsubsection]{deadStatePruning}
 States that are not final states, or the source of any transition,
-are considered "dead" states, and can be removed without changing the language of the TA.
+are considered ``dead'' states, and can be removed without changing the language of the TA.
 Since these states can not reach final states, they are not part of the transition system for any words recognized by the TA, hence it does not change the language to remove them.
 Dead state pruning is formally defined in \cref{definition:deadStatePruning}.
 
@@ -72,7 +72,7 @@ The result of this operation can be seen in \cref{fig:prune4}.
 \input{Automata/Prune4.tex}
 
 \subsubsection{Dead Clock Pruning}\label[subsubsection]{deadClockPruning}
-Clocks that are never used in ranges to constrain any transitions, are considered "dead", and can be removed without changing the language of the TA.
+Clocks that are never used in ranges to constrain any transitions, are considered ``dead'', and can be removed without changing the language of the TA.
 Since these clocks never constrain any transitions, it does not change the possible ways to reach final states, hence it does not change the language to remove them.
 This rule is formally defined in \cref{definition:deadClockPruning}
 
