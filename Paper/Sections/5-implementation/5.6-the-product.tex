@@ -1,6 +1,6 @@
 \subsection{The Product}\label{subsec:theProduct}
 The research in this paper has culminated in a software product that allows a user to enter a Timed Regular Expression (TRE), and have it converted into a Timed Automaton (TA).
-We have named this piece of software "TREAT", short for "Timed Regular Expression to Automaton Transformation".
+We have named this piece of software ``TREAT'', short for ``Timed Regular Expression to Automaton Transformation''.
 An overview of the data flow through the program, is shown in \cref{fig:TREATdiagram}.
 
 %The following diagram shows the flow of data through the TREAT program. The diagram is meant as an overall outline, and is not supposed to be precise. 
@@ -10,8 +10,8 @@ An overview of the data flow through the program, is shown in \cref{fig:TREATdia
 \vspace{0.75em}
 
 
-TREAT is accessed through a command line interface(CLI)(see \cref{fig:TREATdiagram}). The user can type in their TRE, along with a few options such as adding a timed word through a .CSV file, turning off pruning, and silencing any warnings or info messages using "$--$quiet".
-The user can also decide the output format of the TA at this point using "$--$format".
+TREAT is accessed through a command line interface(CLI)(see \cref{fig:TREATdiagram}). The user can type in their TRE, along with a few options such as adding a timed word through a .CSV file, turning off pruning, and silencing any warnings or info messages using ``$--$quiet''.
+The user can also decide the output format of the TA at this point using ``$--$format''.
 
 \vspace{.5\baselineskip plus 2pt}
 If the user opted to add a timed word, it is loaded from the .CSV file, into two arrays. Each unique symbol in the word is added to the alphabet. This is shown as a separate branching to the right from CLI in \cref{fig:TREATdiagram}.

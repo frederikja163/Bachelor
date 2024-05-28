@@ -3,7 +3,7 @@
 % first compare the two algortihms, then go into detail with layered
 
 \subsection{Layered Graph Algorithm}
-Also called the Sugiyama Framework. The steps involved in this algorithm as described below, are discussed in detail, with accompanying pseudocode, in the paper "Visualisation of state machines using the Sugiyama framework" by Mazetti et al. \cite{Mazetti2012}.
+Also called the Sugiyama Framework. The steps involved in this algorithm as described below, are discussed in detail, with accompanying pseudocode, in the paper ``Visualisation of state machines using the Sugiyama framework'' by Mazetti et al. \cite{Mazetti2012}.
 \noindent
 
 Steps:
@@ -11,7 +11,7 @@ Steps:
     \item Temporarily make graph acyclic.
           \begin{itemize}
               \item This step is trivially solved, since we know when cycles are created, and during generation, we can mark transitions to be reversed.
-              \item This can be done through DFS, or heuristics, two of which are described by Berger and Shor in their paper titled "Approximation algorithms for the maximum acyclic subgraph problem" \cite{Berger1990} and Eades et al. in the paper "A fast and effective heuristic for the feedback arc set problem" \cite{Eades1993}, respectively.
+              \item This can be done through DFS, or heuristics, two of which are described by Berger and Shor in their paper titled ``Approximation algorithms for the maximum acyclic subgraph problem'' \cite{Berger1990} and Eades et al. in the paper ``A fast and effective heuristic for the feedback arc set problem'' \cite{Eades1993}, respectively.
               \item Temporarily reverse transitions found from previous step.
           \end{itemize}
     \item Assign locations to layers.
