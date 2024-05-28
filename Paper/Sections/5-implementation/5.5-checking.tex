@@ -24,7 +24,7 @@ The TA shown on \cref{fig:ta_rep} is constructed from the TRE described above. F
 \vspace{0.75em}
 
 The word is recognized by the TA, if the execution terminates at a final state.
-In the case of the TA on \cref{fig:ta_rep}, the only accepted word is ABBA, and it is only accepted if the 4 symbols appear within 10 seconds of each other.
+In the case of the TA on \cref{fig:ta_rep}, the only accepted word is ABBA, and it is only accepted if the 4 symbols appear within 10 time units of each other.
 
 \vspace{.5\baselineskip plus 2pt}
 The final state can only be reached by traversing the graph's transitions, and these transitions have been constructed to meet the requirements of the TRE. Each symbol in the TRE is converted into a datatype called a Channel \cite{UPPAAL}. While the documentation says they are used to synchronize processes (TA), the intuition in this paper, is that they are used to send and receive signals across channels. The syntax is as follows:
@@ -37,7 +37,7 @@ The final state can only be reached by traversing the graph's transitions, and t
 \end{itemize}
 \vspace{0.5em}
 
-Where $x$ is any symbol. This syntax is used in Synchronizations on transitions. On \cref{fig:ta_rep}, each transition has an incoming synchronization label, meaning that each transition can only be traversed, when the corresponding signal is given. The outgoing signals will be administered by timed words. On the last transition in the TA, an additional Guard label is present, which represents the timing constraint. Along with an incoming signal, the clock $c0$ has to be within 10 seconds for the transition to be taken.
+Where $x$ is any symbol. This syntax is used in Synchronizations on transitions. On \cref{fig:ta_rep}, each transition has an incoming synchronization label, meaning that each transition can only be traversed, when the corresponding signal is given. The outgoing signals will be administered by timed words. On the last transition in the TA, an additional Guard label is present, which represents the timing constraint. Along with an incoming signal, the clock $c0$ has to be within 10 time units for the transition to be taken.
 
 \subsubsection{Timed Word Representation}\label{subsubsec:tw_rep}
 In UPPAAL, timed words are represented by two arrays. One array for the symbols of the timed word, and another for the times. This way, the two arrays form pairs of symbols and their corresponding times. The timed word described above would be written like this:
