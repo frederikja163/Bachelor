@@ -3,12 +3,12 @@
 
 Timed Automata (TAs) are commonly used to verify correct behaviour in real-time systems. Examples could include, finding vital issues in airplane instrumentation, long delays in radio transcriptions and detecting attacks on server infrastructure. Constructing TAs for these use cases, can be enhanced by using Timed Regular Expressions (TREs).
 
-This paper describes the research process, as well as the implementation and functionality of the software product named "Timed Regular Expression to Automaton Transformation" (abbreviated to TREAT).
+This paper describes the research process, as well as the implementation and functionality of the software product named ``Timed Regular Expression to Automaton Transformation'' (abbreviated to TREAT).
 The program seeks to streamline the use of TREs, as well as serve as a tool for visualizing TREs as TAs.
 
 An existing software product called ``MONAA'' is used for timed pattern matching on timed words. In this regard, it accomplishes a similar goal to this paper, in so far as matching timed words to TREs, though MONAA functions somewhat differently in its use.
 
-The semantic rules that define how TREs are transformed into TAs, are borrowed from the paper "Timed Regular Expressions" by Eugene Asarin et al. Some modifications have been made in order to optimize the generation process, and to fix an error with the semantic rules for creating unions. These semantic rules can create clocks, states, and transitions, that have no effect on the language recognized by the TA. To increase readability, the TAs go through several pruning steps, all of which can be individually disabled by a user of TREAT.
+The semantic rules that define how TREs are transformed into TAs, are borrowed from the paper ``Timed Regular Expressions'' by Eugene Asarin et al. Some modifications have been made in order to optimize the generation process, and to fix an error with the semantic rules for creating unions. These semantic rules can create clocks, states, and transitions, that have no effect on the language recognized by the TA. To increase readability, the TAs go through several pruning steps, all of which can be individually disabled by a user of TREAT.
 These pruning steps lead to a more minimal TA in terms of number of clocks, states, and transitions, though further improvements could be made, as described in the discussion section.
 
 To further increase readability, this paper describes the implementation of part of the Sugiyama framework, also known as layered graph drawing. This leads to a TA where each state is placed in layers based on the length of the longest path from the initial state. These states are then ordered in each layer, to minimize transition crossings. Our use of this framework leaves some room for improvements, such as fanning out transitions that have the same source and target states, which makes them easier to differentiate.

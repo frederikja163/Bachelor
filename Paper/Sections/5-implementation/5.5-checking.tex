@@ -64,7 +64,7 @@ From this timed word, a TA can be constructed to interact with the other TA cons
 
 The TA consists of a single state, and one looping transition for each unique symbol in the timed word, plus an extra transition that matches any symbol.
 Each transition has a Guard, a Synchronization and an Update. Take the transition for the symbol $A$.
-It boils down to: "\textit{If the current symbol is $A$ and the current time matches its timestamp (Guard), send a signal on channel $A$(Synchronization) and move to the next symbol (Update).}"
+It boils down to: ``\textit{If the current symbol is $A$ and the current time matches its timestamp (Guard), send a signal on channel $A$(Synchronization) and move to the next symbol (Update).}''
 This is the case for all transitions, except the match-any transition, since it sends a signal for each symbol in the timed word. The signals sent by the outgoing Synchronizations are being received by the TA on \cref{fig:ta_rep}, which potentially progresses the TA. If there is a sequence of symbols in the timed word that matches the initial TRE, the TA should reach the final state. UPPAAL has a tool that makes this process of verification much simpler.
 
 \subsubsection{Verifier}\label{subsubsec:verifier}
