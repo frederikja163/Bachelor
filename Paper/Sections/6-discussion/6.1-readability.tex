@@ -6,29 +6,35 @@ The Sugiyama Layout algorithm described in \cref{subsec:graphlayout} served the 
 Two of the most prevalent ways this was achieved was by layering the TAs states based on the length of the longest path from the initial state. The other was by ordering the states in each layer to achieve the smallest number of transition crossings.
 While some of the specific approaches described by Mazetti et al. \cite{Mazetti2012} was not implemented into TREAT, the resulting implementation still greatly increases readability.
 
+\vspace{.5\baselineskip plus 2pt}
 As mentioned in \cref{subsec:graphlayout}, the last step of the Sugiyama framework was not implemented, namely, properly positioning states in relation to each other. This might be developed in the future.
 
+\vspace{.5\baselineskip plus 2pt}
 Another feature that would unequivocally improve readability is to visually separate transitions that share states, such as reversible transitions.
 In all TAs pictured in \cref{subsec:graphlayout} and this section, any such transitions have been manually separated, since this feature has not been implemented. The difference can be seen on \cref{fig:transitions}.
 
 \begin{center}
     \input{Documents/Diagrams/ReadabilityFigures/transitions.tex}
 \end{center}
+\vspace{0.75em}
 
 % formats
 As described in \cref{subsec:formats}, two output formats can be used to represent TAs.
 The first format is UPPAAL. In UPPAAL, if no positions are given, the states are simply placed in a grid. This means, that using a graph layout algorithm is not strictly necessary.
 To show its advantages, however, \cref{fig:treatLayout} shows the TA described in \cref{subsec:graphlayout}, which uses TREATs positioning, while \cref{fig:uppaalLayout} shows UPPAALs positioning. Both of these figures are constructed in UPPAAL
 
+\vspace{0.75em}
 \begin{center}
     \includegraphics[width=0.8\columnwidth]{Documents/Diagrams/ReadabilityFigures/treat.png}
     \captionof{figure}{TA with TREATs state positioning.}
     \label{fig:uppaalLayout}
+    \vspace{0.75em}
+
     \includegraphics[width=0.6\columnwidth]{Documents/Diagrams/ReadabilityFigures/uppaal.png}
     \captionof{figure}{TA with UPPAALs state positioning.}
     \label{fig:treatLayout}
 \end{center}
-\vspace{1em}
+\vspace{0.75em}
 
 The other output format is TikZ, used to represent graphs in LaTeX. Unlike UPPAAL, states in TikZ need positions, which necessitates some form of graph layout algorithm.
 
@@ -40,6 +46,8 @@ The TA on \cref{fig:nopruning} represents the same TRE as the one on \cref{fig:g
 \begin{center}
     \input{Documents/Diagrams/ReadabilityFigures/pruningLayout.tex}
 \end{center}
+\vspace{0.75em}
+
 % maybe this figure is too big to include in the paper?
 
 While disabling pruning on this example TA has significantly lowered the visual clarity, the TRE it represents is quite simple, and more complex TREs would only worsen the effect. This shows that pruning is a necessary step to ensure readability and visual clarity.
