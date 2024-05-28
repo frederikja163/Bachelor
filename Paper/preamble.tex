@@ -10,7 +10,7 @@
 \usepackage{pgfplots, pgfplotstable}
 \usepackage{pdfpages}
 \usepackage{uppaal}
-% \usepackage{parskip} % automatically adds line breaks
+\usepackage{parskip} % automatically adds line breaks
 
 \renewenvironment{abstract}
 {\par%
@@ -52,7 +52,6 @@ every picture/.style={
 
 \setlength{\parindent}{0pt}
 \usepackage{etoolbox}
-\AtBeginEnvironment{definition}{\setlength{\parindent}{0em}}
 
 
 \newcommand{\semaut}[1]{[\![#1]\!]}

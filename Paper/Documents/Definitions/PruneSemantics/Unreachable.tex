@@ -4,11 +4,16 @@
 % Repeat until no such states exist.
 \begin{definition}\label{definition:unreachableStatePruning}
     Unreachable state pruning:
+    \vspace{0.5em}
 
     \sembox{
         $\unreachable\automaton=\automaton[][Q'][C][\Delta'][\Sigma][s][F']$
 
+        \vspace{0.5em}
+
         $U(q'_i)=q'_i\neq s \wedge\nexists(q,\phi,p,a,q') \in \Delta:q'=q'_i$
+
+        \vspace{0.5em}
 
         $Q'=\{q\in Q\mid \neg U(q)\}$
 

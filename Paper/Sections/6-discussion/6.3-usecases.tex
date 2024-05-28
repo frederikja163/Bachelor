@@ -5,14 +5,19 @@
 
 This section will detail and run through a couple of usecase examples, documenting the process of using TREAT from the CLI.
 
-The first example is the most extensively tested usecase, and involves the Apollo 11 Air-To-Ground Voice Transcription (can be found at \url{https://www.nasa.gov/history/alsj/a11/a11transcript_tec.html}). For the purposes of this example, the transcript in its current form is not desirable, so it should be converted into a timed word. \cref{lstlisting:transcript} shows this conversion for the first 62 seconds of the transcription.
+\vspace{.5\baselineskip plus 2pt}
+The first example is the most extensively tested usecase, and involves the Apollo 11 Air-To-Ground Voice Transcription (can be found at \url{https://www.nasa.gov/history/alsj/a11/a11transcript_tec.html}).
+
+For the purposes of this example, the transcript in its current form is not desirable, so it should be converted into a timed word. \cref{lstlisting:transcript} shows this conversion for the first 62 seconds of the transcription.
 
 \input{Documents/Listings/transcript.tex}
 
 The Apollo 11 transcript also shows the message transcribed at the corresponding timestamp, which has been excluded in the timed word, since we, in this example, want to search for who said what, and when. The transcription timestamp (DD HH MM SS) has been converted to seconds.
 
+\vspace{.5\baselineskip plus 2pt}
 It is now possible to run a TRE on the timed word using TREAT. The following command searches the timed word for a point where LMP (Buzz Aldrin, Lunar Module Pilot) has two back and forths with CC (Capsule Communicator) within 10 seconds.
 
+\vspace{0.75em}
 \begin{minipage}{\columnwidth}
     \begin{lstlisting}[basicstyle=\scriptsize\ttfamily]
     treat "(<LMP><CC><LMP><CC>)[0;10]"
@@ -22,10 +27,11 @@ It is now possible to run a TRE on the timed word using TREAT. The following com
 \vspace{-1em}
 \captionof{lstlisting}{LMP and CC conversation.}
 \label{lstlisting:lmpcctre}
-\vspace{1em}
+\vspace{0.75em}
 
 This command opens UPPAAL, and by running the generated query in UPPAAL's verifier, a start- and endIndex is returned: $2242$ and $2245$ respectively. At these indices in the timed word are timestamps that mark the following sequence in the Apollo 11 transcript:
 
+\vspace{0.75em}
 \begin{minipage}{\columnwidth}
     \begin{lstlisting}[style=transcript]
         02 08 03 34 LMP
@@ -44,7 +50,7 @@ This command opens UPPAAL, and by running the generated query in UPPAAL's verifi
 \vspace{-1em}
 \captionof{lstlisting}{Transcript sequence from \cref{lstlisting:lmpcctre}.}
 \label{lstlisting:lmpccconv}
-\vspace{1em}
+\vspace{0.75em}
 
 There are many other TREs to experiment with on the Apollo 11 transcript, such as:
 \begin{lstlisting}[basicstyle=\scriptsize\ttfamily,xleftmargin=.3\columnwidth]
@@ -59,6 +65,7 @@ Which searches for a point at which CDR (Neil Armstrong, Commander) broadcasts t
 
 Which searches for a sequence containing all the occurences of President Nixon speaking to the astronauts aboard Apollo 11.
 
+\newpage
 This transcript is just one usecase. Other usecases could be:
 \begin{itemize}
     \setlength\itemsep{0em}

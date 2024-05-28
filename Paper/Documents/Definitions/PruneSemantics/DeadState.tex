@@ -2,11 +2,16 @@
 %These states are pruned by removing all states that have no edges away from them unless they are final states, this is repeated until no states satisfy this property.
 \begin{definition}\label{definition:deadStatePruning}
     Dead state pruning:
+    \vspace{0.5em}
 
     \sembox{
         $\deadstate\automaton[]=\automaton[][Q'][C][\Delta'][\Sigma][s][F]$
 
+        \vspace{0.5em}
+
         $D(q_i)=q_i\neq s\wedge q_i\notin F\wedge\nexists (q,\phi,p,a,q') \in\Delta:q=q_i$
+
+        \vspace{0.5em}
 
         $Q'=\{q\in Q\mid\neg D(q)\}$
 

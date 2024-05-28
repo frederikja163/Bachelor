@@ -1,8 +1,13 @@
+
 \begin{definition}\label{definition:deadEdgePruning}
     Dead transition pruning:
 
+    \vspace{0.5em}
+
     \sembox{
         $\deadedge\automaton=\automaton[][Q][C][\Delta'][\Sigma][s][F]$
+
+        \vspace{0.5em}
 
         $\Delta'=\{\transition\in\Delta\mid\nexists c \in C: \cap_{(c, I)\in\phi} I = \emptyset\}$
     }
