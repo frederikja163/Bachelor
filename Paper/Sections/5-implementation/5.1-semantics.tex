@@ -44,6 +44,8 @@ This time constraint creates an error that makes the TRE and the TA accept diffe
 This mistake, and what we did to fix it, is further described in \cref{sec:PaperCorrections}
 
 \subsubsection{Match any}
-Only match on a single character was defined in the paper by Asarin et al. and we wanted to have a way to match all possible characters like normal regular expressions. For this we used a '.' like in normal regular expressions. Transitions with this symbol are allowed to be taken like any other transition when any input is given. Otherwise, this symbol is the same as all other symbols in the TA.
+Only match on a single character was defined in the paper by Asarin et al. and we wanted to have a way to match all possible characters like normal regular expressions. For this we used a '.' like in normal regular expressions (see \cref{fig:matchAny}). Transitions with this symbol are allowed to be taken like any other transition when any input is given. Otherwise, this symbol is the same as all other symbols in the TA.
 
 \input{Automata/MatchAny}
+\captionof{figure}{Example of match any semantics.}
+\label{fig:matchAny}
