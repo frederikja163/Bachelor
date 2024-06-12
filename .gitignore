@@ -11,6 +11,9 @@
 *.run.xml
 *.synctex(busy)
 *.out
+*.toc
+*.nav
+*.snm
 
 .vscode/
 .idea/
