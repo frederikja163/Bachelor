@@ -146,7 +146,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                     .Select(t => (clockSet.Contains(t.Item1) ? t.Item1 : newClock, t.Item2))
                     .ToList();
                 
-                Edge edge = ta.AddEdge(from, to, childEdge.Symbol);
+                Edge edge = ta.AddEdge(from, to, childEdge.Symbol, childEdge.IsReversible);
                 edge.AddClockResets(childEdge.GetClockResets());
                 edge.AddClockRanges(ranges);
 
@@ -184,13 +184,13 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                 {
                     State from = GetNewEdge(lEdge.From, rEdge.From);
                     State to = GetNewEdge(lEdge.To, rEdge.To);
-                    Edge edge = ta.AddEdge(from, to, c);
+                    Edge edge = ta.AddEdge(from, to, c, lEdge.IsReversible || rEdge.IsReversible);
                     edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
                     edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
 
                     if (left.IsFinal(lEdge.To) && right.IsFinal(rEdge.To))
                     {
-                        edge = ta.AddEdge(from, final, c);
+                        edge = ta.AddEdge(from, final, c, lEdge.IsReversible || rEdge.IsReversible);
                         edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
                         edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
                     }
@@ -217,7 +217,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
                 {
                     State from = GetNewEdge(lEdge.From, rEdge.From);
                     State to = GetNewEdge(lEdge.To, rEdge.To);
-                    Edge edge = ta.AddEdge(from, to, "\0");
+                    Edge edge = ta.AddEdge(from, to, "\0", lEdge.IsReversible || rEdge.IsReversible);
                     edge.AddClockRanges(lEdge.GetClockRanges());
                     edge.AddClockResets(lEdge.GetClockResets());
                 }
