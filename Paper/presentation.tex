@@ -12,11 +12,16 @@
 \institute{Aalborg Universitet}
 \date{2024}
 
-\usepackage{tikz-uml}
-\usepackage[T1]{fontenc}
 \usepackage{listings}
+\usepackage{amsmath}
+\usepackage{verbatim}
+\usepackage{tikz-uml}
 \usetikzlibrary {automata,positioning}
-\usepackage{xcolor}
+\usepackage{xargs}
+\input{commands.tex}
+\newcommandx{\captionof}[2]{
+
+}
 
 \usetheme{Frankfurt}
 \useinnertheme{rectangles}
@@ -28,6 +33,7 @@
     \insertframenumber/\inserttotalframenumber
 }
 
+
 \begin{document}
 
 
@@ -38,9 +44,14 @@
 \end{frame}
 
 \section{Introduction} % each section gets own category on top bar, each frame within gets a subcategory
+
 \begin{frame} {Process}
 
 \end{frame}
+
+\input{marcus.tex}
+
+\input{frederik.tex}
 
 \input{emil.tex}
 
