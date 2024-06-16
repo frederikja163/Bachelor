@@ -1,0 +1,86 @@
+%Marcus Section
+
+\begin{frame}{Introduction}
+    \centering
+    \LARGE\textbf{TREAT} \\
+    \vspace{0.5cm}
+    \Large\textit{Timed Regular Expression to Automaton Transformation}
+\end{frame}
+
+\section{Process}
+
+\begin{frame}{Process}
+    \begin{itemize}
+        \item Initial Problem
+        \item Pivot
+        \item Human Readability and Usability
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Process}
+    \textbf{Initial Problem}
+
+    ``Better Timed Pattern Searching in Log Files''
+    \newline
+    \begin{itemize}
+        \item The paper: ``Timed Regular Expressions''
+        \item What should the program contain?
+              \begin{itemize}
+                  \item Parse TREs
+                  \item Convert TREs to timed automata
+                  \item Perform checking (Output to UPPAAL)
+              \end{itemize}
+    \end{itemize}
+
+    Can we output to UPPAAL in a better way?
+\end{frame}
+
+\begin{frame}{Process}
+    \textbf{Pivot}
+
+    We will still have the same features, but checking will take a lower priority.
+    \newline
+    \begin{itemize}
+        \item Pruning
+        \item Graphing
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Process}
+    \textbf{Human Readability and Usability}
+
+    Focus on efficient transformation from TRE to TA.
+    \newline
+    \begin{itemize}
+        \item TRE input improvement
+              \begin{itemize}
+                  \item Multi-character symbols
+              \end{itemize}
+        \item CLI
+        \item TikZ
+    \end{itemize}
+
+    These could have been done regardless, but became a larger focus now.
+\end{frame}
+
+\section{Program}
+
+\begin{frame}[shrink=5]{Implementation}
+    \begin{center}
+        \input{Documents/Diagrams/TreatDiagram.tex}
+    \end{center}
+\end{frame}
+
+\begin{frame}[shrink=20]{Parser}
+    \input{Documents/Diagrams/cfg.tex}
+\end{frame}
+
+\begin{frame}{Parser}
+    \input{Documents/Diagrams/parserUml.tex}
+\end{frame}
+
+\begin{frame}{TA UML}
+    \input{Documents/Diagrams/AutomatonUml.tex}
+\end{frame}
+
+%End of Marcus section

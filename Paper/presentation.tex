@@ -1,5 +1,7 @@
 \documentclass{beamer}
 
+\usepackage{tikz-uml}
+\usepackage[T1]{fontenc}
 \usepackage{listings}
 \usepackage{amsmath}
 \usepackage{verbatim}
@@ -11,20 +13,21 @@
 
 }
 
-\title{TREAT}
-\subtitle{Timed Regular Expression to Automaton Transformation}
-\author{Group 30}
-\institute{Aalborg Universitet}
-\date{2024}
-
-\title{TREAT}
-\subtitle{Timed Regular Expression to Automaton Transformation}
-\author{Group 30}
-\institute{Aalborg Universitet}
-\date{2024}
-
 \usetheme{Frankfurt}
 \useinnertheme{rectangles}
+% \setbeamertemplate{footline}[frame number]
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
+
+\title{TREAT}
+\subtitle{Timed Regular Expression to Automaton Transformation}
+\author{Group 30}
+\institute{Aalborg Universitet}
+\date{2024}
 
 \begin{document}
 
@@ -36,10 +39,15 @@
 \end{frame}
 
 \section{Introduction} % each section gets own category on top bar, each frame within gets a subcategory
+
 \begin{frame} {Process}
 
 \end{frame}
 
+\input{marcus.tex}
+
 \input{frederik.tex}
+
+\input{emil.tex}
 
 \end{document}

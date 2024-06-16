@@ -1,13 +1,42 @@
-\frametitle{Removing recursive edges}
-In graphlayout
-    \begin{lstlisting}[language=c++,basicstyle=\tiny]
-private void AssignLayers(TimedAutomaton ta, TaState taState, int layerIndex)
-...
-foreach (Edge edge in ta.GetEdgesFrom(taState)
-    .Where(e => !e.IsReversible))
-    ...
-foreach (Edge edge in ta.GetEdgesTo(taState)
-    .Where(e => e.IsReversible && !e.To.Equals(taState)))
-    ...
-...
+\frametitle{UPPAAL}
+\definecolor{bluekeywords}{rgb}{0,0,1}
+    \definecolor{greencomments}{rgb}{0,0.5,0}
+    \definecolor{redstrings}{rgb}{0.64,0.08,0.08}
+    \definecolor{xmlcomments}{rgb}{0.5,0.5,0.5}
+    \definecolor{types}{rgb}{0.17,0.57,0.68}
+
+    \lstset{language=[Sharp]C,
+        captionpos=b,
+        %numbers=left, %Nummerierung
+        %numberstyle=\tiny, % kleine Zeilennummern
+        frame=lines, % Oberhalb und unterhalb des Listings ist eine Linie
+        showspaces=false,
+        showtabs=false,
+        breaklines=true,
+        showstringspaces=false,
+        breakatwhitespace=true,
+        commentstyle=\color{greencomments},
+        morekeywords={partial, var, value, get, set},
+        keywordstyle=\color{bluekeywords},
+        stringstyle=\color{redstrings},
+        basicstyle=\ttfamily\tiny,
+    }
+    \begin{lstlisting}
+internal Nta()
+{
+    _templates = new List<Template>();
+    Declaration = new Declaration(new List<string>(), new List<string>());
+}
+    \end{lstlisting}
+    \vspace{1em}
+    \begin{lstlisting}
+internal Template(...)
+{
+    Declaration = declaration;
+    Declaration.AddClocks(clocks);
+    Name = name;
+    Init = init;
+    _locations = locations.ToArray();
+    _transitions = transitions.ToArray();
+}
     \end{lstlisting}
