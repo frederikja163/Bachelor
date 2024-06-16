@@ -1,0 +1,20 @@
+\begin{tikzpicture}[auto]
+    \node[] at (0, 0)(cr){$\clockreduction$};
+    \node[] at (4, -1)(sd){$\deadstate$};
+    \node[] at (4, 1)(su){$\unreachable$};
+    \node[] at (2, 0)(td){$\deadedge$};
+    \node[] at (6, 0)(cd){$\deadclock$};
+    
+    \path[->]
+        (su)edge [loop above] node{}(su)
+        (sd)edge [loop below] node{}(sd)
+        (su)edge node[align=left]{}(cr)
+        (sd)edge node[align=left]{}(cr)
+        (td)edge node[align=left]{}(sd)
+        (td)edge node[align=left]{}(su)
+        (sd)edge node[align=left]{}(cd)
+        (su)edge node[align=left]{}(cd)
+        (td)edge node[align=left]{}(cd)
+        (cr)edge node[align=left]{}(td)
+        ;
+\end{tikzpicture}

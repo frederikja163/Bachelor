@@ -1,0 +1,304 @@
+% =======================================================================
+% Semantics
+% =======================================================================
+
+\section{Semantics}
+\begin{frame}[fragile]{Match semantics}
+    Assarin et al.
+
+    \textit{The automaton for \underline{$[\![a]\!]$}}, $a\in\Sigma$ is $(\{s,f\},\emptyset,\Delta,\Sigma,s,\{f\})$ where the transition relation is $\Delta={(s,true,\emptyset,a,f)}$.
+    
+    \begin{lstlisting}[language=c++,basicstyle=\small]
+void Visit(Match match)
+{
+    TimedAutomaton ta = new(_regex);
+    
+    State initial = ta.AddState(newInitial: true);
+    State final = ta.AddState(true);
+
+    ta.AddEdge(initial, final, match.Token.Match);
+
+    _stack.Push(ta);
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Union semantics}
+    Assarin et al.
+
+    \textit{The automaton for $[[\varphi_1\vee\varphi_2]]$ is $(Q_1\cup Q_2 \cup \{s\},C_1\cup C_2,\Delta,\Sigma,s,F_1\cup F_2)$, where $\Delta$ is constructed
+by adding to $\Delta_1\cup \Delta_2$ two new $\epsilon$-transitions $(s, x = 0,\emptyset,\epsilon,s_i)$, where $x$ is any clock and $i\in{1,2}$
+(if there is no clock in the automata we should add one).}
+
+\input{Automata/AsarinUnion.tex}
+\input{Automata/CustomUnion.tex}
+\end{frame}
+
+\begin{frame}{Union semantics revised}
+    \input{Documents/Definitions/PruneSemantics/Union.tex}
+\end{frame}
+
+\begin{frame}[fragile]{Union implementation}
+    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+(TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
+EpsilonConcat(right);
+EpsilonConcat(left);
+TimedAutomaton ta = new(left, right, e => IsNotInitial(e.From), IsNotInitial);
+
+State initial = ta.AddState(newInitial: true);
+
+foreach (Edge edges in left.GetEdgesFrom(left.InitialState!)
+    .Concat(right.GetEdgesFrom(right.InitialState!)))
+{
+    Edge e = ta.AddEdge(initial, edges.To, edges.Symbol);
+    e.AddClockRanges(edges.GetClockRanges());
+    e.AddClockResets(edges.GetClockResets());
+}
+
+static void EpsilonConcat(TimedAutomaton ta)
+{
+    if (ta.GetEdgesTo(ta.InitialState!).Any())
+    {
+        State oldInitial = ta.InitialState!;
+        State newInitial = ta.AddState(ta.IsFinal(oldInitial), true);
+        Edge edge = ta.AddEdge(newInitial, oldInitial, "\0");
+    }
+}
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Lazy intersection}
+    Lazily generate new states
+    \begin{lstlisting}[basicstyle=\tiny]
+State GetNewState(State lState, State rState)
+{
+    if (!newLocs.TryGetValue((lState, rState), out State? state))
+    {
+        state = ta.AddState();
+        newLocs[(lState, rState)] = state;
+    }
+
+    return state;
+}
+    \end{lstlisting}
+\end{frame}
+
+% =======================================================================
+% Timed word generator
+% =======================================================================
+\section{Timed words}
+\begin{frame}[fragile]{Timed word generation}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            nasa.gov
+            \begin{lstlisting}[basicstyle=\tiny]
+00 00 00 04 CDR
+Roger. Clock.
+
+00 00 00 13 CDR
+Roger. We got a roll program.
+
+00 00 00 15 CMP
+Roger. Roll.
+
+00 00 00 34 CDR
+Roll's complete and the pitch is programed.
+
+00 00 00 44 CDR
+One Bravo.
+
+00 00 01 02 CC
+Apollo 11, Houston. You're good at 1 minute.
+...
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            apollo11transcript.csv
+            \begin{lstlisting}[basicstyle=\tiny]
+CDR, 4
+
+
+CDR, 13
+
+
+CMP, 15
+
+
+CDR, 34
+
+
+CDR, 44
+
+
+CC, 62
+
+...
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Words as timed automata.}
+    In Uppaal
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \input{Automata/Word.tex}
+            
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \begin{lstlisting}[basicstyle=\tiny]
+update: index++
+guard: index <= 8439 &&
+    word[index] == "" &&
+    times[index] == "CDR"
+            \end{lstlisting}
+        \end{column}
+    \end{columns}
+    \begin{lstlisting}[basicstyle=\tiny]
+clock c0;
+int32_t index = 0;
+const string word[8439] = {"CDR", "CDR", "CMP", "CDR", "CDR", "CC", ... }
+clock_t times[8439] = {4, 13, 15, 34, 44, 62, ... }
+    \end{lstlisting}
+\end{frame}
+
+% =======================================================================
+% Pruning
+% =======================================================================
+\section{Pruning}
+\newcommandx{\captionof}[2]{
+
+}
+\begin{frame}{Example}
+    $$C(A[5;10]\&(BA|A)[1;3])$$
+    \input{Automata/Prune0.tex}
+\end{frame}
+\begin{frame}{Clock reduction}
+    Daws et al.
+    \input{Automata/Prune1.tex}
+\end{frame}
+\begin{frame}{Dead transition}
+    \input{Documents/Definitions/PruneSemantics/DeadEdge.tex}
+    \input{Automata/Prune2.tex}
+\end{frame}
+\begin{frame}{Unreachable state}
+    \input{Documents/Definitions/PruneSemantics/Unreachable.tex}
+    \input{Automata/Prune3.tex}
+\end{frame}
+\begin{frame}{Dead state}
+    \input{Documents/Definitions/PruneSemantics/DeadState.tex}
+    \input{Automata/Prune4.tex}
+\end{frame}
+\begin{frame}{Dead clock}
+    \input{Documents/Definitions/PruneSemantics/DeadClock.tex}
+    \input{Automata/Prune5.tex}
+\end{frame}
+\begin{frame}{Recursion}
+    \input{Documents/Definitions/PruneSemantics/RecursivePruning.tex}
+    \input{Automata/Prune6.tex}
+\end{frame}
+
+\begin{frame}
+    \input{Documents/Definitions/PruneSemantics/RecursivePruning.tex}
+    \input{Documents/Diagrams/RecursionDependency.tex}
+\end{frame}
+
+% =======================================================================
+% Graph layout
+% =======================================================================
+\section{Graph layout}
+\begin{frame}
+    We dont need precise algorithm
+    \begin{itemize}
+        \item Make graph acyclic (trivial)
+        \item Assign states to layers
+        \item Order states in layers (just needs to be good enough)
+        \item Assign positions (simplicity over correctness)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Creation of recursive edges}
+    In automaton generator visitor
+    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+public void Visit(GuaranteedIterator guaranteedIterator)
+{
+    TimedAutomaton ta = _stack.Pop();
+
+    foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
+    {
+        Edge edge = ta.AddEdge(oldEdge.From, ta.InitialState!, oldEdge.Symbol, true);
+        edge.AddClockRanges(oldEdge.GetClockRanges());
+        edge.AddClockResets(ta.GetClocks());
+    }
+
+    _stack.Push(ta);
+}
+    \end{lstlisting}
+    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+public void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
+    ...
+    foreach (Edge childEdge in child.GetEdges())
+        ...
+        foreach (SortedSet<Clock> clockSet in clockPowerSet)
+            ...    
+            if (child.IsFinal(childEdge.To))
+            {
+                edge = ta.AddEdge(from, ta.InitialState!, childEdge.Symbol, true);
+                edge.AddClockResets(childEdge.GetClockResets());
+                edge.AddClockRanges(ranges);
+            }
+            ...
+        ...
+    ...
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Keeping reversible edges}
+    In automaton generator visitor
+    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+public void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
+...
+foreach (Edge childEdge in child.GetEdges())
+    ...
+    foreach (SortedSet<Clock> clockSet in clockPowerSet)
+        ...
+        Edge edge = ta.AddEdge(from, to, childEdge.Symbol, childEdge.IsReversible);
+        edge.AddClockResets(childEdge.GetClockResets());
+        edge.AddClockRanges(ranges);
+        ...
+    ...
+...
+    \end{lstlisting}
+    
+    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+public void Visit(Intersection intersection)
+...
+foreach (Edge lEdge in lEdges)
+    ...
+    foreach (Edge rEdge in rEdges)
+        ...
+        State from = GetNewEdge(lEdge.From, rEdge.From);
+        State to = GetNewEdge(lEdge.To, rEdge.To);
+        Edge edge = ta.AddEdge(from, to, c, lEdge.IsReversible || rEdge.IsReversible);
+        edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
+        edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
+        ...
+    ...
+...
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Removing recursive edges}
+    In graphlayout
+    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+private void AssignLayers(TimedAutomaton ta, TaState taState, int layerIndex)
+...
+foreach (Edge edge in ta.GetEdgesFrom(taState)
+    .Where(e => !e.IsReversible))
+    ...
+foreach (Edge edge in ta.GetEdgesTo(taState)
+    .Where(e => e.IsReversible && !e.To.Equals(taState)))
+    ...
+...
+    \end{lstlisting}
+\end{frame}
