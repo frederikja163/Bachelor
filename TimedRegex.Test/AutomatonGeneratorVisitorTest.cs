@@ -79,10 +79,10 @@ public sealed class AutomatonGeneratorVisitorTest
         {
             Assert.That(ta.GetStates().Count(), Is.EqualTo(2));
             Assert.That(ta.GetEdges().Count(), Is.EqualTo(1));
-            Assert.That(ta.GetClocks().Count(), Is.EqualTo(1));
+            Assert.That(ta.GetClocks().Count(), Is.EqualTo(0));
 
             Assert.That(ta.GetEdges().First().Symbol, Is.EqualTo("\0"));
-            Assert.That(ta.GetEdges().First().GetClockRanges().Count(), Is.EqualTo(1));
+            Assert.That(ta.GetEdges().First().GetClockRanges().Count(), Is.EqualTo(0));
             Assert.That(ta.GetAlphabet(), Is.EquivalentTo(new[] { "\0" }));
         });
     }

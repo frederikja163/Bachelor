@@ -25,9 +25,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
         TimedAutomaton ta = new(_regex);
         State initial = ta.AddState(false, true);
         State final = ta.AddState(true);
-        Clock clock = ta.AddClock();
-        Edge edge = ta.AddEdge(initial, final, "\0");
-        edge.AddClockRange(clock, new Range(0.00f, 0.00f, true, true));
+        ta.AddEdge(initial, final, "\0");
         _stack.Push(ta);
     }
 
@@ -310,9 +308,7 @@ internal class AutomatonGeneratorVisitor : IAstVisitor
             {
                 State oldInitial = ta.InitialState!;
                 State newInitial = ta.AddState(ta.IsFinal(oldInitial), true);
-                Edge edge = ta.AddEdge(newInitial, oldInitial, "\0");
-                Clock clock = ta.GetClocks().FirstOrDefault() ?? ta.AddClock();
-                edge.AddClockRange(clock, new Range(0, 0, true, true));
+                ta.AddEdge(newInitial, oldInitial, "\0");
             }
         }
 
