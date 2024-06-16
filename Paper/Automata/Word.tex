@@ -1,0 +1,10 @@
+% "(<CDR>|<CC>|<CMP>)+"
+\begin{tikzpicture}[auto]
+    \node[state, initial] at (0, 0)(q1){$q1$};
+    
+    \path[->]
+        (q1)edge [loop above] node[align=left]{$CDR!$}(q1)
+        (q1)edge [loop below] node[align=left]{$CC!$}(q1)
+        (q1)edge [loop right] node[align=left]{$CMP!$}(q1)
+        ;
+\end{tikzpicture}
