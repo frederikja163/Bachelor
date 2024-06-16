@@ -25,6 +25,29 @@
     \insertframenumber/\inserttotalframenumber
 }
 
+\definecolor{bluekeywords}{rgb}{0,0,1}
+\definecolor{greencomments}{rgb}{0,0.5,0}
+\definecolor{redstrings}{rgb}{0.64,0.08,0.08}
+\definecolor{xmlcomments}{rgb}{0.5,0.5,0.5}
+\definecolor{types}{rgb}{0.17,0.57,0.68}
+
+\lstdefinestyle{csharp}{language=[Sharp]C,
+    captionpos=b,
+    %numbers=left, %Nummerierung
+    %numberstyle=\tiny, % kleine Zeilennummern
+    frame=lines, % Oberhalb und unterhalb des Listings ist eine Linie
+    showspaces=false,
+    showtabs=false,
+    breaklines=true,
+    showstringspaces=false,
+    breakatwhitespace=true,
+    commentstyle=\color{greencomments},
+    morekeywords={partial, var, value, get, set},
+    keywordstyle=\color{bluekeywords},
+    stringstyle=\color{redstrings},
+    basicstyle=\ttfamily\tiny,
+}
+
 \usetheme{Frankfurt}
 \useinnertheme{rectangles}
 % \setbeamertemplate{footline}[frame number]
