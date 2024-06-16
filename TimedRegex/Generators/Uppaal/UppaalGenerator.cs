@@ -90,7 +90,7 @@ internal sealed class UppaalGenerator : IGenerator
 
         if (declaration.GetTypes().Any())
         {
-            string str = string.Join(";\n",
+            string str = string.Join("",
                 declaration.GetTypes().Select(t => $"typedef int[-{t.maxValue},{t.maxValue}] {t.name};\n"));
             xmlWriter.WriteValue(str);
         }
@@ -111,7 +111,7 @@ internal sealed class UppaalGenerator : IGenerator
         if (declaration.GetInts().Any())
         {
             string str = string.Join(", ", declaration.GetInts());
-            xmlWriter.WriteValue($"int {str} = 0;\n");
+            xmlWriter.WriteValue($"int32_t {str} = 0;\n");
         }
 
         xmlWriter.WriteEndElement();

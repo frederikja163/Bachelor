@@ -179,7 +179,7 @@ public sealed class UppaalGeneratorTest
         declaration.AddTimedCharacters(new List<TimedCharacter>([new TimedCharacter("a", 1), new TimedCharacter("b", 4), new TimedCharacter("a", 6)]));
         UppaalGenerator generator = new();
         StringBuilder sb = new();
-        string expected = "<declaration>clock c;\nchan a, b;\ntypedef int[-100,100] test;\nconst string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nclock_t times[4] = {1, 4, 6, 7};\nint index = 0;\n</declaration>";
+        string expected = "<declaration>clock c;\nchan a, b;\ntypedef int[-100,100] test;\nconst string word[4] = {\"a\", \"b\", \"a\", \"\\0\"};\nclock_t times[4] = {1, 4, 6, 7};\nint32_t index = 0;\n</declaration>";
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
         {
@@ -364,7 +364,7 @@ public sealed class UppaalGeneratorTest
         Declaration declaration = new Declaration(new List<string> { "c1", "c2" }, new List<string>());
         Nta nta = new(template, declaration);
 
-        const string expected = "<nta>\n  <declaration>clock c1, c2;\ntypedef int[-1073741822,1073741822] clock_t;\nint index = 0;\n</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n  <queries />\n</nta>";
+        const string expected = "<nta>\n  <declaration>clock c1, c2;\ntypedef int[-1073741822,1073741822] clock_t;\nint32_t index = 0;\n</declaration>\n  <template>\n    <name>ta1</name>\n  </template>\n  <system>system ta1;</system>\n  <queries />\n</nta>";
         StringBuilder sb = new();
 
         using (XmlWriter xmlWriter = XmlWriter.Create(sb, UppaalGenerator.XmlSettings))
