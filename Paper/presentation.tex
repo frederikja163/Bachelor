@@ -6,6 +6,7 @@
 \usepackage{amsmath}
 \usepackage{verbatim}
 \usepackage{tikz-uml}
+\usepackage{ifthen}
 \usetikzlibrary {automata,positioning}
 \usepackage{xargs}
 \input{commands.tex}
@@ -13,15 +14,21 @@
 
 }
 
-\usetheme{Frankfurt}
-\useinnertheme{rectangles}
-% \setbeamertemplate{footline}[frame number]
+\newcommand{\name}{}
+
 \addtobeamertemplate{navigation symbols}{}{%
     \usebeamerfont{footline}%
     \usebeamercolor[fg]{footline}%
     \hspace{1em}%
+    \name
+    \hspace{1em}%
     \insertframenumber/\inserttotalframenumber
 }
+
+\usetheme{Frankfurt}
+\useinnertheme{rectangles}
+% \setbeamertemplate{footline}[frame number]
+
 
 \title{TREAT}
 \subtitle{Timed Regular Expression to Automaton Transformation}
@@ -38,12 +45,14 @@
     \tableofcontents
 \end{frame}
 
-\section{Introduction} % each section gets own category on top bar, each frame within gets a subcategory
-
+\section{Intro} % each section gets own category on top bar, each frame within gets a subcategory
+\renewcommand{\name}{Marcus}
 \input{marcus.tex}
 
+\renewcommand{\name}{Frederik}
 \input{frederik.tex}
 
+\renewcommand{\name}{Emil}
 \input{emil.tex}
 
 \end{document}

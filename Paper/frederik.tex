@@ -2,12 +2,12 @@
 % Semantics
 % =======================================================================
 
-\section{Semantics}
+\section{TA Generator}
 \begin{frame}[fragile]{Match semantics}
     Assarin et al.
 
     \textit{The automaton for \underline{$[\![a]\!]$}}, $a\in\Sigma$ is $(\{s,f\},\emptyset,\Delta,\Sigma,s,\{f\})$ where the transition relation is $\Delta={(s,true,\emptyset,a,f)}$.
-    
+
     \begin{lstlisting}[language=c++,basicstyle=\small]
 void Visit(Match match)
 {
@@ -27,11 +27,11 @@ void Visit(Match match)
     Assarin et al.
 
     \textit{The automaton for $[[\varphi_1\vee\varphi_2]]$ is $(Q_1\cup Q_2 \cup \{s\},C_1\cup C_2,\Delta,\Sigma,s,F_1\cup F_2)$, where $\Delta$ is constructed
-by adding to $\Delta_1\cup \Delta_2$ two new $\epsilon$-transitions $(s, x = 0,\emptyset,\epsilon,s_i)$, where $x$ is any clock and $i\in{1,2}$
-(if there is no clock in the automata we should add one).}
+        by adding to $\Delta_1\cup \Delta_2$ two new $\epsilon$-transitions $(s, x = 0,\emptyset,\epsilon,s_i)$, where $x$ is any clock and $i\in{1,2}$
+        (if there is no clock in the automata we should add one).}
 
-\input{Automata/AsarinUnion.tex}
-\input{Automata/CustomUnion.tex}
+    \input{Automata/AsarinUnion.tex}
+    \input{Automata/CustomUnion.tex}
 \end{frame}
 
 \begin{frame}{Union semantics revised}
@@ -89,7 +89,7 @@ State GetNewState(State lState, State rState)
 \section{Timed words}
 \begin{frame}[fragile]{Timed word generation}
     \begin{columns}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.6\textwidth}
             nasa.gov
             \begin{lstlisting}[basicstyle=\tiny]
 00 00 00 04 CDR
@@ -112,7 +112,7 @@ Apollo 11, Houston. You're good at 1 minute.
 ...
             \end{lstlisting}
         \end{column}
-        \begin{column}{0.5\textwidth}
+        \begin{column}{0.4\textwidth}
             apollo11transcript.csv
             \begin{lstlisting}[basicstyle=\tiny]
 CDR, 4
@@ -139,11 +139,11 @@ CC, 62
 \end{frame}
 
 \begin{frame}[fragile]{Words as timed automata.}
-    In Uppaal
+    In UPPAAL
     \begin{columns}
         \begin{column}{0.5\textwidth}
             \input{Automata/Word.tex}
-            
+
         \end{column}
         \begin{column}{0.5\textwidth}
             \begin{lstlisting}[basicstyle=\tiny]
@@ -203,8 +203,8 @@ clock_t times[8439] = {4, 13, 15, 34, 44, 62, ... }
 % =======================================================================
 % Graph layout
 % =======================================================================
-\section{Graph layout}
-\begin{frame}
+\section{Graph}
+\begin{frame}{Sugiyama Framework}
     We dont need precise algorithm
     \begin{itemize}
         \item Make graph acyclic (trivial)
@@ -266,7 +266,7 @@ foreach (Edge childEdge in child.GetEdges())
     ...
 ...
     \end{lstlisting}
-    
+
     \begin{lstlisting}[language=c++,basicstyle=\tiny]
 public void Visit(Intersection intersection)
 ...
