@@ -72,11 +72,6 @@ internal sealed class UppaalGenerator : IGenerator
 
     internal void WriteDeclaration(XmlWriter xmlWriter, Declaration declaration)
     {
-        if (!declaration.GetClocks().Any() && !declaration.GetChannels().Any())
-        {
-            return;
-        }
-
         xmlWriter.WriteStartElement("declaration");
         if (declaration.GetClocks().Any())
         {
