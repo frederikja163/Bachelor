@@ -5,8 +5,9 @@
     %classes
     \umlclass[x=0,y=-6]{IBinary}{left: IAstNode}{right: IAstNode}
     \umlclass[x=3.5,y=-6]{IUnary}{child: IAstNode}{}
+    \umlclass[x=9,y=-6]{MatchAny}{}{}
     \umlclass[x=6.5,y=-6]{Match}{}{}
-    \umlclass[x=9,y=-6]{Epsilon}{}{}
+    \umlclass[x=11.5,y=-6]{Epsilon}{}{}
     \umlsimpleclass[x=3.5,y=-8,draw=none,fill=none,alias=unarydots,scale=2]{...}
     \umlsimpleclass[x=3.5,y=-8,fill=none,draw=none,alias=phantomunary]{ }
     \umlsimpleclass[x=0,y=-8,fill=none,draw=none,scale=2]{...}
@@ -15,6 +16,7 @@
     %transitions
     \umlVHVinherit[arm1=1.5cm]{IUnary}{IAstNode}
     \umlVHVinherit[]{IBinary}{IAstNode}
+    \umlVHVinherit[arm1=1.5cm]{MatchAny}{IAstNode}
     \umlVHVinherit[arm1=1.5cm]{Match}{IAstNode}
     \umlVHVinherit[arm1=1.5cm]{Epsilon}{IAstNode}
     \umlVHVinherit[arm1=0.5cm]{phantomunary}{IUnary}
