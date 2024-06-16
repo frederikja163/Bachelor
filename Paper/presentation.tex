@@ -12,8 +12,20 @@
 \institute{Aalborg Universitet}
 \date{2024}
 
+\usepackage{tikz-uml}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage{xcolor}
+
 \usetheme{Frankfurt}
 \useinnertheme{rectangles}
+% \setbeamertemplate{footline}[frame number]
+\addtobeamertemplate{navigation symbols}{}{%
+    \usebeamerfont{footline}%
+    \usebeamercolor[fg]{footline}%
+    \hspace{1em}%
+    \insertframenumber/\inserttotalframenumber
+}
 
 \begin{document}
 
@@ -27,6 +39,116 @@
 \section{Introduction} % each section gets own category on top bar, each frame within gets a subcategory
 \begin{frame} {Process}
 
+\end{frame}
+
+\section{Implementation}
+\begin{frame}{UPPAAL}
+    \begin{columns}
+        \begin{column}{0.4\textwidth}
+            \begin{itemize}
+                \item UML
+                \item Structured using UPPAAL .dtd
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.6\textwidth}
+            \scalebox{0.8}{
+                \input{Documents/Diagrams/UppaalUml.tex}
+            }
+        \end{column}
+    \end{columns}
+    % \hspace{10em}
+
+\end{frame}
+\begin{frame}[fragile]{UPPAAL}
+    \definecolor{bluekeywords}{rgb}{0,0,1}
+    \definecolor{greencomments}{rgb}{0,0.5,0}
+    \definecolor{redstrings}{rgb}{0.64,0.08,0.08}
+    \definecolor{xmlcomments}{rgb}{0.5,0.5,0.5}
+    \definecolor{types}{rgb}{0.17,0.57,0.68}
+
+    \lstset{language=[Sharp]C,
+        captionpos=b,
+        %numbers=left, %Nummerierung
+        %numberstyle=\tiny, % kleine Zeilennummern
+        frame=lines, % Oberhalb und unterhalb des Listings ist eine Linie
+        showspaces=false,
+        showtabs=false,
+        breaklines=true,
+        showstringspaces=false,
+        breakatwhitespace=true,
+        commentstyle=\color{greencomments},
+        morekeywords={partial, var, value, get, set},
+        keywordstyle=\color{bluekeywords},
+        stringstyle=\color{redstrings},
+        basicstyle=\ttfamily\tiny,
+    }
+    \begin{lstlisting}
+internal Nta()
+{
+    _templates = new List<Template>();
+    Declaration = new Declaration(new List<string>(), new List<string>());
+}    
+    \end{lstlisting}
+    \vspace{1em}
+    \begin{lstlisting}
+internal Template(...)
+{
+    Declaration = declaration;
+    Declaration.AddClocks(clocks);
+    Name = name;
+    Init = init;
+    _locations = locations.ToArray();
+    _transitions = transitions.ToArray();
+}  
+    \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Demonstration}
+
+\end{frame}
+
+\section{Discussion}
+\begin{frame}{Future works}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{itemize}
+                \item Pruning
+                \item <4>TA $\rightarrow$ TRE
+            \end{itemize}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \visible<2-3> {
+                \includegraphics<1-4>[width=\columnwidth]{Documents/Diagrams/finalStateExample.png}
+            }
+            \vspace{2em}
+            \visible<3> {
+                \includegraphics<1-4>[width=\columnwidth]{Documents/Diagrams/finalStateExampleAfter.png}
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+\begin{frame}{Enhancements}
+    \begin{itemize}
+        \item Bugfixes after hand-in
+              \begin{itemize}
+                  \item int32 indices
+                  \item graph layout crashes
+                  \item $\cdots$
+              \end{itemize}
+    \end{itemize}
+
+\end{frame}
+\begin{frame}{Learning Goals}
+    \begin{itemize}
+        \item is this relevant? genuine question
+    \end{itemize}
+\end{frame}
+\section{Conclusion}
+\begin{frame}{Conclusion}
+    \begin{itemize}
+        \item TREAT
+        \item Readability
+    \end{itemize}
 \end{frame}
 
 \end{document}
