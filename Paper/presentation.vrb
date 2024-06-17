@@ -1,13 +1,21 @@
-\frametitle{Removing recursive edges}
-In graphlayout
-    \begin{lstlisting}[style=csharp,basicstyle=\tiny]
-private void AssignLayers(TimedAutomaton ta, TaState taState, int layerIndex)
-...
-foreach (Edge edge in ta.GetEdgesFrom(taState)
-    .Where(e => !e.IsReversible))
-    ...
-foreach (Edge edge in ta.GetEdgesTo(taState)
-    .Where(e => e.IsReversible && !e.To.Equals(taState)))
-    ...
-...
+\frametitle{UPPAAL}
+
+    \begin{lstlisting}[style=csharp]
+internal Nta()
+{
+    _templates = new List<Template>();
+    Declaration = new Declaration(new List<string>(), new List<string>());
+}
+    \end{lstlisting}
+    \vspace{1em}
+    \begin{lstlisting}[style=csharp]
+internal Template(...)
+{
+    Declaration = declaration;
+    Declaration.AddClocks(clocks);
+    Name = name;
+    Init = init;
+    _locations = locations.ToArray();
+    _transitions = transitions.ToArray();
+}
     \end{lstlisting}
