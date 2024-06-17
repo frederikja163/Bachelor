@@ -1,10 +1,10 @@
 \scalebox{0.8}{\begin{tikzpicture}
     %interfaces
-    \umlclass[x=0,y=-3]{IAstNode}{token: Token}{}
+    \umlclass[x=0,y=-3,type=abstract]{IAstNode}{token: Token}{}
 
     %classes
-    \umlclass[x=0,y=-6]{IBinary}{left: IAstNode}{right: IAstNode}
-    \umlclass[x=3.5,y=-6]{IUnary}{child: IAstNode}{}
+    \umlclass[x=0,y=-6,type=abstract]{IBinary}{left: IAstNode}{right: IAstNode}
+    \umlclass[x=3.5,y=-6,type=abstract]{IUnary}{child: IAstNode}{}
     \umlclass[x=9,y=-6]{MatchAny}{}{}
     \umlclass[x=6.5,y=-6]{Match}{}{}
     \umlclass[x=11.5,y=-6]{Epsilon}{}{}
