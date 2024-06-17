@@ -9,11 +9,13 @@
     \end{center}
 \end{frame}
 \begin{frame}[fragile]{Match semantics}
-    Assarin et al.
-
-    \textit{The automaton for \underline{$[\![a]\!]$}}, $a\in\Sigma$ is $(\{s,f\},\emptyset,\Delta,\Sigma,s,\{f\})$ where the transition relation is $\Delta={(s,true,\emptyset,a,f)}$.
-
-    \begin{lstlisting}[language=c++,basicstyle=\small]
+    \begin{definition}
+        Assarin et al.
+        
+        The automaton for \underline{$[\![a]\!]$}, $a\in\Sigma$ is $(\{s,f\},\emptyset,\Delta,\Sigma,s,\{f\})$ where the transition relation is $\Delta={(s,true,\emptyset,a,f)}$.
+    \end{definition}
+        
+    \begin{lstlisting}[style=csharp,basicstyle=\small]
 void Visit(Match match)
 {
     TimedAutomaton ta = new(_regex);
@@ -44,7 +46,7 @@ void Visit(Match match)
 \end{frame}
 
 \begin{frame}[fragile]{Union implementation}
-    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+    \begin{lstlisting}[style=csharp,basicstyle=\tiny]
 (TimedAutomaton right, TimedAutomaton left) = (_stack.Pop(), _stack.Pop());
 EpsilonConcat(right);
 EpsilonConcat(left);
@@ -74,7 +76,7 @@ static void EpsilonConcat(TimedAutomaton ta)
 
 \begin{frame}[fragile]{Lazy intersection}
     Lazily generate new states
-    \begin{lstlisting}[basicstyle=\tiny]
+    \begin{lstlisting}[style=csharp,basicstyle=\tiny]
 State GetNewState(State lState, State rState)
 {
     if (!newLocs.TryGetValue((lState, rState), out State? state))
@@ -234,80 +236,69 @@ clock_t times[8439] = {4, 13, 15, 34, 44, 62, ... }
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Creation of recursive edges}
-    In automaton generator visitor
-    \begin{lstlisting}[language=c++,basicstyle=\tiny]
-public void Visit(GuaranteedIterator guaranteedIterator)
-{
-    TimedAutomaton ta = _stack.Pop();
-
-    foreach (Edge oldEdge in ta.GetEdgesTo(ta.GetFinalStates()).ToList())
-    {
-        Edge edge = ta.AddEdge(oldEdge.From, ta.InitialState!, oldEdge.Symbol, true);
-        edge.AddClockRanges(oldEdge.GetClockRanges());
-        edge.AddClockResets(ta.GetClocks());
-    }
-
-    _stack.Push(ta);
-}
-    \end{lstlisting}
-    \begin{lstlisting}[language=c++,basicstyle=\tiny]
-public void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
-    ...
-    foreach (Edge childEdge in child.GetEdges())
-        ...
-        foreach (SortedSet<Clock> clockSet in clockPowerSet)
-            ...    
-            if (child.IsFinal(childEdge.To))
-            {
-                edge = ta.AddEdge(from, ta.InitialState!, childEdge.Symbol, true);
-                edge.AddClockResets(childEdge.GetClockResets());
-                edge.AddClockRanges(ranges);
-            }
-            ...
-        ...
-    ...
-    \end{lstlisting}
+\begin{frame}[fragile,shrink=5]{Creation of recursive edges}
+    \begin{definition}Asarin et al.
+        The automaton for $[\![\varphi^+_1 ]\!]$ is $A = (Q_1,C_1,\Sigma,\Delta,s_1,F_1)$ where $\Delta_1$ is constructed from $\Delta_1$ by adding
+        for every transition of the form $(q,\varphi,p,a, f_1)$ in $\Delta_1$ with $f_1 \in F_1$ a transition of the form
+        $(q,\varphi,C_1,a,s_1)$.
+    \end{definition}
+        
+    \begin{definition}
+        Asarin et al.
+        The automaton for $[\![\varphi\oplus_1 ]\!]$ is $A = (Q_1 \times 2^{C_1}, C_1 \cup \{x\},\Sigma,\Delta,(s_1,\emptyset),F_1 \times 2^{C_1})$. The second component of the state records which clocks have been reset during the current iteration of $[\![\varphi_1]\!]$.
+        There are two types of transitions in $\Delta$:
+        \begin{itemize}
+            \item Transitions simulating those of $A$ : for every transition of the form $(q,\varphi,p,a,q)$ in $\Delta_1$
+            and every $D \subset C_1$ the relation $\Delta$ contains $((q,D),\varphi_D,p,a,(q',D\cup p))$
+            \item Looping transitions: for every transition of the form $(q_1,\varphi,p,a, f_1)$ in $\Delta_1$ with $f_1 \in F_1$ and
+            every $D \subset C_1$ the relation $\Delta$ contains $((q_1,D),\varphi_D,p,a,(s_1,\emptyset))$.
+        \end{itemize}
+        Here $\varphi_D$ is obtained by replacing in $\varphi$ all occurrences of clocks not belonging to $D$ by $x$
+    \end{definition}
 \end{frame}
+    
+\begin{frame}[fragile]{Keeping reversible edges (1)}
+    \begin{definition}
+        Asarin et al.
+        The automaton for $[\![\varphi\oplus_1 ]\!]$ is $A = (Q_1 \times 2^{C_1}, C_1 \cup \{x\},\Sigma,\Delta,(s_1,\emptyset),F_1 \times 2^{C_1})$. The second component of the state records which clocks have been reset during the current iteration of $[\![\varphi_1]\!]$.
+        There are two types of transitions in $\Delta$:
+        \begin{itemize}
+            \item Transitions simulating those of $A$ : for every transition of the form $(q,\varphi,p,a,q)$ in $\Delta_1$
+            and every $D \subset C_1$ the relation $\Delta$ contains $((q,D),\varphi_D,p,a,(q',D\cup p))$
+            \item Looping transitions: for every transition of the form $(q_1,\varphi,p,a, f_1)$ in $\Delta_1$ with $f_1 \in F_1$ and
+            every $D \subset C_1$ the relation $\Delta$ contains $((q_1,D),\varphi_D,p,a,(s_1,\emptyset))$.
+        \end{itemize}
+        Here $\varphi_D$ is obtained by replacing in $\varphi$ all occurrences of clocks not belonging to $D$ by $x$
+    \end{definition}
+\end{frame}
+\begin{frame}[fragile]{Keeping reversible edges (2)}
+    \begin{definition}
+        The automaton for $[\![\varphi_1\wedge\varphi_2]\!]$ is $(Q_1\times Q_2 \cup \{f\}, C_1\cup C_2,\Delta,\Sigma,(s_1,s_2),\{f\})$, where $\Delta$ contains
+        \begin{itemize}
+            \item a transition $\{((q_1,q_2),\Phi_1\wedge\Phi_2,p_1\cup p_2, a, (q'_1,q'_2))$for any$(q_1,\Phi_1,p_1,a,q'_1)\in\Delta_1$and any$(q_2,\Phi_2,p_2,a,q'_2)\in\Delta_2\}$;
+            \item a transition $\{((q_1,q_2),\Phi_1\wedge\Phi_2,p_1\cup p_2, a, f)$for any$(q_1,\Phi_1,p_1,a,f'_1)\in\Delta_1$and any$(q_2,\Phi_2,p_2,a,f'_2)\in\Delta_2\}$ where $f_1\in F_1$ and $f_2\in F_2$;
+            \item a transition $\{((q_1,q_2),\Phi_1,p_1,\epsilon,(q'_1,q))$for any$(q_1,\Phi_1,p_1,\epsilon,q'_1)\in\Delta_1\}$;
+            \item a transition $\{((q_1,q_2),\Phi_2,p_2,\epsilon,(q,q'_2))$for any$(q_2,\Phi_2,p_2,\epsilon,q'_2)\in\Delta_2\}$;
+        \end{itemize}
+    \end{definition}
 
-\begin{frame}[fragile]{Keeping reversible edges}
-    In automaton generator visitor
-    \begin{lstlisting}[language=c++,basicstyle=\tiny]
-public void Visit(AbsorbedGuaranteedIterator absorbedGuaranteedIterator)
-...
-foreach (Edge childEdge in child.GetEdges())
-    ...
-    foreach (SortedSet<Clock> clockSet in clockPowerSet)
-        ...
-        Edge edge = ta.AddEdge(from, to, childEdge.Symbol, childEdge.IsReversible);
-        edge.AddClockResets(childEdge.GetClockResets());
-        edge.AddClockRanges(ranges);
-        ...
-    ...
-...
-    \end{lstlisting}
-
-    \begin{lstlisting}[language=c++,basicstyle=\tiny]
-public void Visit(Intersection intersection)
-...
-foreach (Edge lEdge in lEdges)
-    ...
-    foreach (Edge rEdge in rEdges)
-        ...
-        State from = GetNewEdge(lEdge.From, rEdge.From);
-        State to = GetNewEdge(lEdge.To, rEdge.To);
-        Edge edge = ta.AddEdge(from, to, c, lEdge.IsReversible || rEdge.IsReversible);
-        edge.AddClockRanges(lEdge.GetClockRanges().Concat(rEdge.GetClockRanges()));
-        edge.AddClockResets(lEdge.GetClockResets().Concat(rEdge.GetClockResets()));
-        ...
-    ...
-...
-    \end{lstlisting}
+    % \begin{lstlisting}[style=csharp,basicstyle=\tiny]
+    %     State GetNewState(State lState, State rState)
+    %     {
+    %         if (!newLocs.TryGetValue((lState, rState), out State? state))
+    %         {
+    %             state = ta.AddState();
+    %             newLocs[(lState, rState)] = state;
+    %         }
+        
+    %         return state;
+    %     }
+    % \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Removing recursive edges}
     In graphlayout
-    \begin{lstlisting}[language=c++,basicstyle=\tiny]
+    \begin{lstlisting}[style=csharp,basicstyle=\tiny]
 private void AssignLayers(TimedAutomaton ta, TaState taState, int layerIndex)
 ...
 foreach (Edge edge in ta.GetEdgesFrom(taState)
