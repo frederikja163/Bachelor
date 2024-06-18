@@ -16,6 +16,10 @@ internal sealed class TimedCharacter : IEquatable<TimedCharacter>
         }
         _symbol = strArr[0];
         _time = float.Parse(strArr[1], CultureInfo.InvariantCulture);
+        if (_symbol == ".")
+        {
+            throw new FormatException(". is a reserved symbol, try renaming it to something else.");
+        }
     }
 
     public TimedCharacter(string symbol, float time)
