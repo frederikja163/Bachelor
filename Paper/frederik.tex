@@ -31,11 +31,14 @@ void Visit(Match match)
 \end{frame}
 
 \begin{frame}{Union semantics}
-    Assarin et al.
-
-    \textit{The automaton for $[[\varphi_1\vee\varphi_2]]$ is $(Q_1\cup Q_2 \cup \{s\},C_1\cup C_2,\Delta,\Sigma,s,F_1\cup F_2)$, where $\Delta$ is constructed
+    \begin{definition}
+        
+        Assarin et al.
+        
+        The automaton for $[[\varphi_1\vee\varphi_2]]$ is $(Q_1\cup Q_2 \cup \{s\},C_1\cup C_2,\Delta,\Sigma,s,F_1\cup F_2)$, where $\Delta$ is constructed
         by adding to $\Delta_1\cup \Delta_2$ two new $\epsilon$-transitions $(s, x = 0,\emptyset,\epsilon,s_i)$, where $x$ is any clock and $i\in{1,2}$
-        (if there is no clock in the automata we should add one).}
+        (if there is no clock in the automata we should add one).
+    \end{definition}
 
     \input{Automata/AsarinUnion.tex}
     \input{Automata/CustomUnion.tex}
@@ -183,32 +186,31 @@ clock_t times[8439] = {4, 13, 15, 34, 44, 62, ... }
         \input{Documents/Diagrams/TreatDiagram.tex}
     \end{center}
 \end{frame}
-\begin{frame}{Example}
+\begin{frame}{Clock reduction}
+    Daws et al.
+
     $$C(A[5;10]\&(BA|A)[1;3])$$
     \input{Automata/Prune0.tex}
 \end{frame}
-\begin{frame}{Clock reduction}
-    Daws et al.
-    \input{Automata/Prune1.tex}
-\end{frame}
 \begin{frame}{Dead transition}
     \input{Documents/Definitions/PruneSemantics/DeadEdge.tex}
-    \input{Automata/Prune2.tex}
+    \input{Automata/Prune1.tex}
 \end{frame}
 \begin{frame}{Unreachable state}
     \input{Documents/Definitions/PruneSemantics/Unreachable.tex}
-    \input{Automata/Prune3.tex}
+    \input{Automata/Prune2.tex}
 \end{frame}
 \begin{frame}{Dead state}
     \input{Documents/Definitions/PruneSemantics/DeadState.tex}
-    \input{Automata/Prune4.tex}
+    \input{Automata/Prune3.tex}
 \end{frame}
 \begin{frame}{Dead clock}
     \input{Documents/Definitions/PruneSemantics/DeadClock.tex}
-    \input{Automata/Prune5.tex}
+    \input{Automata/Prune4.tex}
 \end{frame}
 \begin{frame}{Recursion}
     \input{Documents/Definitions/PruneSemantics/RecursivePruning.tex}
+    \input{Automata/Prune5.tex}
     \input{Automata/Prune6.tex}
 \end{frame}
 
@@ -237,15 +239,17 @@ clock_t times[8439] = {4, 13, 15, 34, 44, 62, ... }
 \end{frame}
 
 \begin{frame}[fragile,shrink=5]{Creation of recursive edges}
-    \begin{definition}Asarin et al.
+    \begin{definition}Asarin et al. (Guaranteed iterator)
+
         The automaton for $[\![\varphi^+_1 ]\!]$ is $A = (Q_1,C_1,\Sigma,\Delta,s_1,F_1)$ where $\Delta_1$ is constructed from $\Delta_1$ by adding
         for every transition of the form $(q,\varphi,p,a, f_1)$ in $\Delta_1$ with $f_1 \in F_1$ a transition of the form
         $(q,\varphi,C_1,a,s_1)$.
     \end{definition}
         
     \begin{definition}
-        Asarin et al.
-        The automaton for $[\![\varphi\oplus_1 ]\!]$ is $A = (Q_1 \times 2^{C_1}, C_1 \cup \{x\},\Sigma,\Delta,(s_1,\emptyset),F_1 \times 2^{C_1})$. The second component of the state records which clocks have been reset during the current iteration of $[\![\varphi_1]\!]$.
+        Asarin et al. (Absorbed guaranteed iterator)
+
+        The automaton for $[\![\varphi^\oplus_1 ]\!]$ is $A = (Q_1 \times 2^{C_1}, C_1 \cup \{x\},\Sigma,\Delta,(s_1,\emptyset),F_1 \times 2^{C_1})$. The second component of the state records which clocks have been reset during the current iteration of $[\![\varphi_1]\!]$.
         There are two types of transitions in $\Delta$:
         \begin{itemize}
             \item Transitions simulating those of $A$ : for every transition of the form $(q,\varphi,p,a,q)$ in $\Delta_1$
@@ -259,8 +263,9 @@ clock_t times[8439] = {4, 13, 15, 34, 44, 62, ... }
     
 \begin{frame}[fragile]{Keeping reversible edges (1)}
     \begin{definition}
-        Asarin et al.
-        The automaton for $[\![\varphi\oplus_1 ]\!]$ is $A = (Q_1 \times 2^{C_1}, C_1 \cup \{x\},\Sigma,\Delta,(s_1,\emptyset),F_1 \times 2^{C_1})$. The second component of the state records which clocks have been reset during the current iteration of $[\![\varphi_1]\!]$.
+        Asarin et al. (Absorbed guaranteed iterator)
+
+        The automaton for $[\![\varphi^\oplus_1 ]\!]$ is $A = (Q_1 \times 2^{C_1}, C_1 \cup \{x\},\Sigma,\Delta,(s_1,\emptyset),F_1 \times 2^{C_1})$. The second component of the state records which clocks have been reset during the current iteration of $[\![\varphi_1]\!]$.
         There are two types of transitions in $\Delta$:
         \begin{itemize}
             \item Transitions simulating those of $A$ : for every transition of the form $(q,\varphi,p,a,q)$ in $\Delta_1$
