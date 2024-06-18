@@ -1,21 +1,20 @@
-\frametitle{UPPAAL}
+\frametitle{Match semantics}
+\begin{definition}
+        Assarin et al.
 
-    \begin{lstlisting}[style=csharp]
-internal Nta()
+        The automaton for \underline{$[\![a]\!]$}, $a\in\Sigma$ is $(\{s,f\},\emptyset,\Delta,\Sigma,s,\{f\})$ where the transition relation is $\Delta={(s,true,\emptyset,a,f)}$.
+    \end{definition}
+
+    \begin{lstlisting}[style=csharp,basicstyle=\small]
+void Visit(Match match)
 {
-    _templates = new List<Template>();
-    Declaration = new Declaration(new List<string>(), new List<string>());
-}
-    \end{lstlisting}
-    \vspace{1em}
-    \begin{lstlisting}[style=csharp]
-internal Template(...)
-{
-    Declaration = declaration;
-    Declaration.AddClocks(clocks);
-    Name = name;
-    Init = init;
-    _locations = locations.ToArray();
-    _transitions = transitions.ToArray();
+    TimedAutomaton ta = new(_regex);
+
+    State initial = ta.AddState(newInitial: true);
+    State final = ta.AddState(true);
+
+    ta.AddEdge(initial, final, match.Token.Match);
+
+    _stack.Push(ta);
 }
     \end{lstlisting}
